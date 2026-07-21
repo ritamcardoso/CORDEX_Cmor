@@ -1,8 +1,0 @@
-wrfvar = 'HGT_M'
-vaid = 'orog'
-vunts = 'm'
-lname = 'Surface Altitude'
-stname = 'surface_altitude'
-cmethods = 'area: mean'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-# 

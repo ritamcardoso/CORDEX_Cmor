@@ -1,8 +1,0 @@
-wrfvar = 'T2'
-vaid = 'tas'
-vunts = 'K'
-lname = 'Near-Surface Air Temperature'
-stname = 'air_temperature'
-cmethods = 'area: mean time: point'
-height = 2.0
-factor = 0.0           ! costant to multipy variable with ( used only if /= 0)

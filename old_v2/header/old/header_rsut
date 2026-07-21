@@ -1,8 +1,0 @@
-wrfvar    'ACSWUPT'
-vaid      'rsut'
-vunts     'W m-2'
-lname     'TOA Outgoing Shortwave Radiation'
-stname    'toa_outgoing_shortwave_flux'
-cmethods  'area: time: mean'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-# 

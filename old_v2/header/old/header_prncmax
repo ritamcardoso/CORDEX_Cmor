@@ -1,8 +1,0 @@
-wrfvar    'RAINNCVMAX'
-vaid      'prncmax'
-vunts     'kg m-2 s-1'
-lname     'Daily Maximum Grid Scale Precipitation'
-stname    'daily_maximum_grid_scale_precipitation_flux'
-cmethods  'time: point'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

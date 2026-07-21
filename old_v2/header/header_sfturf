@@ -1,8 +1,0 @@
-wrfvar = 'LU_INDEX'
-vaid = 'sfturf'
-vunts = '%'
-lname = 'Percentage of the Grid Cell Occupied by Urban Area'
-stname = 'area_fraction'
-cmethods = 'area: mean'
-factor = 100.           # costant to multipy variable with ( used only if /= 0)
-# 

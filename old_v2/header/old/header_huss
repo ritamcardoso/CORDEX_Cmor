@@ -1,9 +1,0 @@
-wrfvar    'Q2'
-vaid      'huss'
-vunts     '1'
-lname     'Near-Surface Specific Humidity'
-stname    'specific_humidity'
-cmethods  'area: mean time: point'
-height    2.
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

@@ -1,8 +1,0 @@
-wrfvar    'PBLH'
-vaid      'zmla'
-vunts     'm'
-lname     'Height of Boundary Layer'
-stname    'atmosphere_boundary_layer_thickness'
-cmethods  'area: mean time: point'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

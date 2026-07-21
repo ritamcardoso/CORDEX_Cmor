@@ -1,7 +1,0 @@
-wrfvar    'SH2O'
-vaid      'mrsfl'
-vunts     'kg m-2'
-lname     'Frozen Water Content of Soil Layer'
-stname    'frozen_water_content_of_soil_layer'
-cmethods  'area: mean where land time: point'
-factor    0.           # costant to multipy variable with ( used only if /= 0)

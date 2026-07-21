@@ -1,8 +1,0 @@
-wrfvar    'QVAPOR'
-vaid      'prw'
-vunts     'kg m-2'
-lname     'Water Vapor Path'
-stname    'atmosphere_mass_content_of_water_vapor'
-cmethods  'area: mean time: point'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

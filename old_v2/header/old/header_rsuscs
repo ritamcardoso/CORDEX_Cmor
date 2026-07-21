@@ -1,8 +1,0 @@
-wrfvar    'ACSWUPBC'
-vaid      'rsuscs'
-vunts     'W m-2'
-lname     'Surface Upwelling Clear-Sky Shortwave Radiation'
-stname    'surface_upwelling_shortwave_flux_in_air_assuming_clear_sky'
-cmethods  'area: time: mean'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-# 

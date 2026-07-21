@@ -1,9 +1,0 @@
-wrfvar    'T'
-vaid      'ta70'
-pres      7000.
-vunts     'K'
-lname     'Air Temperature at 70hPa'
-stname    'air_temperature'
-cmethods  'area: mean time: point'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

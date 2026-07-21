@@ -1,8 +1,0 @@
-wrfvar    'V10'
-vaid      'tauv'
-vunts     'Pa'
-lname     'Surface Downward Northward Wind Stress'
-stname    'surface_downward_northward_stress'
-cmethods  'area: time: mean'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

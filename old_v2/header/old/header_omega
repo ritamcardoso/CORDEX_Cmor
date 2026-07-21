@@ -1,7 +1,0 @@
-vaid      'omega'
-vunts     'Pa s-1'
-lname     'Pressure velocity'
-stname    'pressure_velocity'
-cmethods  'time: point'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

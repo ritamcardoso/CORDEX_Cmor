@@ -1,9 +1,0 @@
-wrfvar = 'QVAPOR'
-vaid = 'hus50m'
-height = 50.
-vunts = '1'
-lname = 'Specific Humidity at 50m'
-stname = 'specific_humidity'
-cmethods = 'area: mean time: point'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-#

@@ -1,9 +1,0 @@
-wrfvar = 'U10'
-vaid = 'uas'
-vunts = 'ms-1'
-lname = 'Eastward Near-Surface Wind'
-stname = 'eastward_wind'
-cmethods = 'area: mean time: point'
-height = 10.
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-#

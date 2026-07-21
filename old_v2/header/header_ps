@@ -1,8 +1,0 @@
-wrfvar = 'PSFC'
-vaid = 'ps'
-vunts = 'Pa'
-lname = 'Surface Air Pressure'
-stname = 'surface_air_pressure'
-cmethods = 'area: mean time: point'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-# 

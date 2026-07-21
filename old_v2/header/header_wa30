@@ -1,9 +1,0 @@
-wrfvar = 'W'
-vaid = 'wa30'
-pres = 3000.
-vunts = 'm s-1'
-lname = 'Upward Air Velocity at 30hPa'
-stname = 'upward_air_velocity'
-cmethods = 'area: mean time: point'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-#

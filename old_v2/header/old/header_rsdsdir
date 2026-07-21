@@ -1,8 +1,0 @@
-wrfvar    'ACSWDNBC'
-vaid      'rsdsdir'
-vunts     'W m-2'
-lname     'Surface Direct Downwelling Shortwave Radiation'
-stname    'surface_direct_downwelling_shortwave_flux_in_air'
-cmethods  'area: time: mean'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-# 

@@ -1,9 +1,0 @@
-wrfvar    'U'
-vaid      'ua400'
-pres      40000.
-vunts     'm s-1'
-lname     'Eastward Wind at 400hPa'
-stname    'eastward_wind'
-cmethods  'area: mean time: point'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

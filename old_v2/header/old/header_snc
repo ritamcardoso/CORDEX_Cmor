@@ -1,8 +1,0 @@
-wrfvar    'SNOWC'
-vaid      'snc'
-vunts     '%'
-lname     'Snow Area Percentage'
-stname    'surface_snow_area_fraction'
-cmethods  'area: time: mean'
-factor    100.           # costant to multipy variable with ( used only if /= 0)
-#                                                                                

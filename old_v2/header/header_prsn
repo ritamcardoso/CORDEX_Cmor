@@ -1,8 +1,0 @@
-wrfvar = 'SNOWNC'
-vaid = 'prsn'
-vunts = 'kg m-2 s-1'
-lname = 'Snowfall Flux'
-stname = 'snowfall_flux'
-cmethods = 'area: time: mean'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-#                                                                            

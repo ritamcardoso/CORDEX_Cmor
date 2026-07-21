@@ -1,8 +1,0 @@
-wrfvar    'ACSNOM'
-vaid      'snm'
-vunts     'kg m-2 s-1'
-lname     'Surface Snow Melt'
-stname    'surface_snow_melt_flux'
-cmethods  'area: mean where land time: mean'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#                                                                            

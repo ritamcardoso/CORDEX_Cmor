@@ -1,8 +1,0 @@
-wrfvar    'SNOWH'
-vaid      'snd'
-vunts     'm'
-lname     'Snow Depth'
-stname    'surface_snow_thickness'
-cmethods  'area: mean where land time: mean'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#                                                                 

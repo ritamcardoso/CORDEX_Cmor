@@ -1,7 +1,0 @@
-wrfvar = 'ISLTYP'
-vaid = 'mrsofc'
-vunts = 'kg m-2'
-lname = 'Capacity of Soil to Store Water'
-stname = 'soil_moisture_content_at_field_capacity'
-cmethods = 'time: fx'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)

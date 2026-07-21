@@ -1,9 +1,0 @@
-wrfvar = 'U10'
-vaid = 'sfcWind'
-vunts = 'ms-1'
-lname = 'Near-Surface Wind Speed'
-stname = 'wind_speed'
-cmethods = 'area: mean time: point'
-height = 10.
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-#

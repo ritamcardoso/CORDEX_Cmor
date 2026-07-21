@@ -1,8 +1,0 @@
-wrfvar    'HFX'
-vaid      'hfss'
-vunts     'W m-2'
-lname     'Surface Upward Sensible Heat Flux'
-stname    'surface_upward_sensible_heat_flux'
-cmethods  'area: time: mean'
-factor    0.           # costant to multipy variable with ( used only if /= 0)
-#

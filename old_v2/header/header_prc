@@ -1,8 +1,0 @@
-wrfvar = 'RAINC'
-vaid = 'prc'
-vunts = 'kg m-2 s-1'
-lname = 'Convective Precipitation'
-stname = 'convective_precipitation_flux'
-cmethods = 'area: time: mean'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-#
