@@ -7,8 +7,6 @@ implicit none
 real :: u_unstag, v_unstag
 integer :: ix, iy
 
-cp = (7.0/2.0) * Rd
-
 ! Read configuration using shared_subs subroutine
 call init_cordex_environment
 
@@ -148,7 +146,7 @@ do year = yeari, yearf, 1
 
               ! Earth-relative Eastward Wind component (U)
               wrfv3D_u(ix, iy, iz) = u_unstag * cosalp(ix, iy) - v_unstag * sinalp(ix, iy)
-              
+
               ! Earth-relative Northward Wind component (V)
               wrfv3D_v(ix, iy, iz) = v_unstag * cosalp(ix, iy) + u_unstag * sinalp(ix, iy)
             enddo
@@ -190,11 +188,11 @@ subroutine calc_plev_dual(f3d_u, f3d_v, f2d_u, f2d_v)
   real, dimension(nlon, nlat, nz), intent(in)  :: f3d_u, f3d_v
   real, dimension(nlon, nlat),     intent(out) :: f2d_u, f2d_v
   real :: weight_factor
-  
+
   f2d_u = 1.e+20
   f2d_v = 1.e+20
 !  pressure(1) = presl
-  
+
   do iy = 1, nlat
     do ix = 1, nlon
       p_loop: do iz = 1, nz - 1
@@ -205,7 +203,7 @@ subroutine calc_plev_dual(f3d_u, f3d_v, f2d_u, f2d_v)
           ! Extract common weighting log factor once
           weight_factor = (log(press(ix, iy, iz)) - log(presl)) / &
                           (log(press(ix, iy, iz)) - log(press(ix, iy, iz+1)))
-          
+
           ! Interpolate both fields simultaneously
           f2d_u(ix, iy) = f3d_u(ix, iy, iz) + weight_factor * (f3d_u(ix, iy, iz+1) - f3d_u(ix, iy, iz))
           f2d_v(ix, iy) = f3d_v(ix, iy, iz) + weight_factor * (f3d_v(ix, iy, iz+1) - f3d_v(ix, iy, iz))
@@ -220,11 +218,11 @@ subroutine calc_invplev_dual(f3d_u, f3d_v, f2d_u, f2d_v)
   real, dimension(nlon, nlat, nz), intent(in)  :: f3d_u, f3d_v
   real, dimension(nlon, nlat),     intent(out) :: f2d_u, f2d_v
   real :: weight_factor
-  
+
   f2d_u = 1.e+20
   f2d_v = 1.e+20
 !  pressure(1) = presl
-  
+
   do iy = 1, nlat
     do ix = 1, nlon
       p_loop: do iz = nz - 1, 2, -1
@@ -232,7 +230,7 @@ subroutine calc_invplev_dual(f3d_u, f3d_v, f2d_u, f2d_v)
           ! Extract common weighting log factor once
           weight_factor = (log(press(ix, iy, iz-1)) - log(presl)) / &
                           (log(press(ix, iy, iz-1)) - log(press(ix, iy, iz)))
-          
+
           ! Interpolate both fields simultaneously
           f2d_u(ix, iy) = f3d_u(ix, iy, iz-1) + weight_factor * (f3d_u(ix, iy, iz) - f3d_u(ix, iy, iz-1))
           f2d_v(ix, iy) = f3d_v(ix, iy, iz-1) + weight_factor * (f3d_v(ix, iy, iz) - f3d_v(ix, iy, iz-1))
