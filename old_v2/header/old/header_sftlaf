@@ -1,0 +1,8 @@
+wrfvar    'LU_INDEX'
+vaid      'sftlaf'
+vunts     '%'
+lname     'Percentage of the Grid Cell Occupied by Lake'
+stname    'area_fraction'
+cmethods  'area: mean'
+factor    100.           # costant to multipy variable with ( used only if /= 0)
+# 

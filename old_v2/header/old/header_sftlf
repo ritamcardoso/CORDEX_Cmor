@@ -1,0 +1,8 @@
+wrfvar    'LANDMASK'
+vaid      'sftlf'
+vunts     '%'
+lname     'Percentage of the Grid Cell Occupied by Land'
+stname    'land_area_fraction'
+cmethods  'area: mean'
+factor    100.           # costant to multipy variable with ( used only if /= 0)
+# 

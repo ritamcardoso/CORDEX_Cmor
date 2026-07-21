@@ -1,0 +1,7 @@
+wrfvar = 'UST'
+vaid = 'z0'
+vunts = 'm'
+lname = 'Surface Roughness Length'
+stname = 'surface_roughness_length'
+cmethods = 'area: time: mean'
+factor = 0.           # costant to multipy variable with ( used only if /= 0)

@@ -1,0 +1,8 @@
+wrfvar    'SWDOWN'
+vaid      'sund'
+vunts     's'
+lname     'Daily Duration of Sunshine'
+stname    'duration_of_sunshine'
+cmethods  'time: sum'
+factor    0.           # costant to multipy variable with ( used only if /= 0)
+#

@@ -1,0 +1,9 @@
+wrfvar    'U'
+vaid      'ua850'
+pres      85000.
+vunts     'm s-1'
+lname     'Eastward Wind at 850hPa'
+stname    'eastward_wind'
+cmethods  'area: mean time: point'
+factor    0.           # costant to multipy variable with ( used only if /= 0)
+#

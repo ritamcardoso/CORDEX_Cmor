@@ -1,0 +1,9 @@
+wrfvar    'T'
+vaid      'ta400'
+pres      40000.
+vunts     'K'
+lname     'Air Temperature at 400hPa'
+stname    'air_temperature'
+cmethods  'area: mean time: point'
+factor    0.           # costant to multipy variable with ( used only if /= 0)
+#

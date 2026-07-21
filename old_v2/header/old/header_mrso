@@ -1,0 +1,7 @@
+wrfvar    'SMOIS'
+vaid      'mrso'
+vunts     'kg m-2'
+lname     'Total Soil Moisture Content'
+stname    'mass_content_of_water_in_soil'
+cmethods  'area: mean where land time: point'
+factor    0.           # costant to multipy variable with ( used only if /= 0)

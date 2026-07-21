@@ -1,0 +1,9 @@
+wrfvar = 'PH'
+vaid = 'zg100'
+pres = 10000.
+vunts = 'm'
+lname = 'Geopotential Height at 100hPa'
+stname = 'geopotential_height'
+cmethods = 'area: mean time: point'
+factor = 0.           # costant to multipy variable with ( used only if /= 0)
+#

@@ -1,0 +1,8 @@
+wrfvar = 'ACLWUPTC'
+vaid = 'rlutcs'
+vunts = 'W m-2'
+lname = 'TOA Outgoing Clear-Sky Longwave Radiation'
+stname = 'toa_outgoing_longwave_flux_assuming_clear_sky'
+cmethods = 'area: time: mean'
+factor = 0.           # costant to multipy variable with ( used only if /= 0)
+# 

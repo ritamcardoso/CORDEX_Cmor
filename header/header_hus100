@@ -1,0 +1,9 @@
+wrfvar = 'QVAPOR'
+vaid = 'hus100'
+pres = 10000.
+vunts = '1'
+lname = 'Specific Humidity at 100hPa'
+stname = 'specific_humidity'
+cmethods = 'area: mean time: point'
+factor = 0.           # costant to multipy variable with ( used only if /= 0)
+#

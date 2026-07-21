@@ -1,0 +1,8 @@
+wrfvar = 'PSFC'
+vaid = 'psl'
+vunts = 'Pa'
+lname = 'Sea Level Pressure'
+stname = 'air_pressure_at_mean_sea_level'
+cmethods = 'area: mean time: point'
+factor = 0.           # costant to multipy variable with ( used only if /= 0)
+#

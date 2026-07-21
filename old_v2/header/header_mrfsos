@@ -1,0 +1,7 @@
+wrfvar = 'SH2O'
+vaid = 'mrfsos'
+vunts = 'kg m-2'
+lname = 'Frozen Water Content in Upper Portion of Soil Column'
+stname = 'frozen_water_content_of_soil_layer'
+cmethods = 'area: mean where land time: point'
+factor = 0.           # costant to multipy variable with ( used only if /= 0)

@@ -1,0 +1,8 @@
+wrfvar = 'QCLOUD'
+vaid = 'clwvi'
+vunts = 'kg m-2'
+lname = 'Condensed Water Path'
+stname = 'atmosphere_mass_content_of_cloud_condensed_water'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

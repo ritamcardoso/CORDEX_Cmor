@@ -1,0 +1,9 @@
+wrfvar    'TH2'
+vaid      'th'
+vunts     'K'
+lname     'Near-Surface Potential Air Temperature'
+stname    'potential_air_temperature'
+cmethods  'area: mean time: point'
+height    2.
+factor    0.           # costant to multipy variable with ( used only if /= 0)
+#

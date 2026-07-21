@@ -1,0 +1,9 @@
+wrfvar    'V'
+vaid      'va150'
+pres      15000.
+vunts     'm s-1'
+lname     'Northward Wind at 150hPa'
+stname    'northward_wind'
+cmethods  'area: mean time: point'
+factor    0.           # costant to multipy variable with ( used only if /= 0)
+#

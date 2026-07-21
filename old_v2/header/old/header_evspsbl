@@ -1,0 +1,8 @@
+wrfvar    'QFX'
+vaid      'evspsbl'
+vunts     'kg m-2 s-1'
+lname     'Evaporation Including Sublimation and Transpiration'
+stname    'water_evapotranspiration_flux'
+cmethods  'area: time: mean'
+factor    0.           # costant to multipy variable with ( used only if /= 0)
+# 

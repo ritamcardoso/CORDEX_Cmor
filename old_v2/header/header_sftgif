@@ -1,0 +1,8 @@
+wrfvar = 'LU_INDEX'
+vaid = 'sftgif'
+vunts = '%'
+lname = 'Percentage of the Grid Cell Covered by Glacier'
+stname = 'land_ice_area_fraction'
+cmethods = 'area: mean'
+factor = 100.           # costant to multipy variable with ( used only if /= 0)
+# 

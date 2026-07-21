@@ -1,0 +1,8 @@
+wrfvar    'ACLWDNB'
+vaid      'rlds'
+vunts     'W m-2'
+lname     'Surface Downwelling Longwave Radiation'
+stname    'surface_downwelling_longwave_flux_in_air'
+cmethods  'area: time: mean'
+factor    0.           # costant to multipy variable with ( used only if /= 0)
+# 

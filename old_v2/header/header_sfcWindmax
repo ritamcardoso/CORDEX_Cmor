@@ -1,0 +1,9 @@
+wrfvar = 'SPDUV10MAX'
+vaid = 'sfcWindmax'
+vunts = ' ms-1'
+lname = 'Daily Maximum Near-Surface Wind Speed'
+stname = 'wind_speed'
+cmethods = 'area: mean time: maximum'
+height = 10.
+factor = 0.           # costant to multipy variable with ( used only if /= 0)
+#
