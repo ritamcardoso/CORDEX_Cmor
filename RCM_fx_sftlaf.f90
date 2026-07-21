@@ -1,5 +1,3 @@
-
-!
 program read_wrfout
 !use cloud
 use netcdf

@@ -4,4 +4,5 @@ vunts = '1'
 lname = 'Ambient Aerosol Optical Thickness at 550nm'
 stname = 'atmosphere_optical_thickness_due_to_ambient_aerosol_particles'
 cmethods = 'area: mean time: point'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

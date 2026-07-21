@@ -4,6 +4,7 @@ vunts = 'kg m-2'
 lname = 'Condensed Water Path'
 stname = 'atmosphere_cloud_condensed_water_content'
 cmethods = 'time: mean'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 #
 press = # turn on pressure - reads P, PB and PSFC; calculates press=p+pb for all model levels
+!

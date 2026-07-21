@@ -60,8 +60,8 @@ cd Analysis
 #
 if [ $yeari -le $year_lim ]; then
 #
-#  sbatch run_out_snw.sh ${datebeg} ${dateend} ${year_lim}
-   sbatch run_out_acum.sh ${datebeg} ${dateend} ${year_lim}
+  sbatch run_out_snw.sh ${datebeg} ${dateend} ${year_lim}
+#   sbatch run_out_acum.sh ${datebeg} ${dateend} ${year_lim}
 #
 fi
 

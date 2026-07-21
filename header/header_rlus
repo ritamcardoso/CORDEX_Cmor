@@ -4,5 +4,6 @@ vunts = 'W m-2'
 lname = 'Surface Upwelling Longwave Radiation'
 stname = 'surface_upwelling_longwave_flux_in_air'
 cmethods = 'area: time: mean'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 # 
+!

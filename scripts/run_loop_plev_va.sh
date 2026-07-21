@@ -68,7 +68,7 @@ echo $dateend
 cd Analysis
 #
 if [ $yeari -le $year_lim ]; then
-  sbatch run_out_plev_va.sh ${datebeg} ${dateend} ${year_lim}
+  sbatch run_out_plev_uava.sh ${datebeg} ${dateend} ${year_lim}
 fi
 
 cd ${RUN_DIR}

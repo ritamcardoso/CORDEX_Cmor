@@ -4,5 +4,6 @@ vunts = '%'
 lname = 'Percentage of the Grid Cell Covered by Glacier'
 stname = 'land_ice_area_fraction'
 cmethods = 'area: mean'
-factor = 100.           # costant to multipy variable with ( used only if /= 0)
+factor = 100.           ! costant to multipy variable with ( used only if /= 0)
 # 
+!

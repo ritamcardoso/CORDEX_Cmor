@@ -4,4 +4,5 @@ vunts = 'kg m-2'
 lname = 'Total Water Content of Soil Layer'
 stname = 'mass_content_of_water_in_soil_layer'
 cmethods = 'area: mean where land time: point'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

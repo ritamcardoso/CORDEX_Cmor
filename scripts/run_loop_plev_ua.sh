@@ -65,11 +65,11 @@ echo $datebeg
 dateend=${yearf}${mmf}
 echo $dateend
 
-cd Analysis
-
-if [ $yeari -le $year_lim ]; then
-  sbatch run_out_plev_ua.sh ${datebeg} ${dateend} ${year_lim}
-fi
+#cd Analysis
+#
+#if [ $yeari -le $year_lim ]; then
+#  sbatch run_out_plev_ua.sh ${datebeg} ${dateend} ${year_lim}
+#fi
 
 cd ${RUN_DIR}
 

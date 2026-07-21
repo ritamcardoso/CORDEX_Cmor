@@ -6,3 +6,4 @@ stname = 'atmosphere_mass_content_of_cloud_ice'
 cmethods = 'area: mean time: point'
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
+!

@@ -45,37 +45,38 @@ echo $yearf
 cd Analysis
 
 # out -> soil 
-sbatch run_out.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out.sh ${datebeg} ${dateend} ${year_lim}
+sbatch run_out_psl.sh ${datebeg} ${dateend} ${year_lim}
 
-sleep 120
+#sleep 120
 
 # acum -> snw
-sbatch run_out_acum.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_acum.sh ${datebeg} ${dateend} ${year_lim}
 
-sleep 120
+#sleep 120
 
 # cloud -> wxtrm
-sbatch run_out_cloud.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_cloud.sh ${datebeg} ${dateend} ${year_lim}
 
-sleep 120
+#sleep 120
 
 # plev_wa -> plev_zg
-sbatch run_out_plev_wa.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_plev_wa.sh ${datebeg} ${dateend} ${year_lim}
 
-sleep 120
+#sleep 120
 
 # plev_ua 
-sbatch run_out_plev_ua.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_plev_ua.sh ${datebeg} ${dateend} ${year_lim}
 
-sleep 120
+#sleep 120
 
 # plev_va 
-sbatch run_out_plev_va.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_plev_va.sh ${datebeg} ${dateend} ${year_lim}
 
-sleep 120
+#sleep 120
 
 # zlev_hus -> plev_hus
-sbatch run_out_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
 
 sleep 120
 
@@ -85,27 +86,27 @@ sbatch run_out_zlev_ta.sh ${datebeg} ${dateend} ${year_lim}
 sleep 120
 
 # zlev_ua0 
-sbatch run_out_zlev_ua0.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_zlev_ua0.sh ${datebeg} ${dateend} ${year_lim}
 
 sleep 120
 
 # zlev_ua1  
-sbatch run_out_zlev_ua1.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_zlev_ua1.sh ${datebeg} ${dateend} ${year_lim}
 
 sleep 120
 
 # zlev_va0
-sbatch run_out_zlev_va0.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_zlev_va0.sh ${datebeg} ${dateend} ${year_lim}
 
 sleep 120
 
 # zlev_va1
-sbatch run_out_zlev_va1.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_zlev_va1.sh ${datebeg} ${dateend} ${year_lim}
 
 sleep 120
 
 # tau -> wpth
-sbatch run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
+sbatch run_out_wpth.sh ${datebeg} ${dateend} ${year_lim}
 
 
 echo "$0 done."

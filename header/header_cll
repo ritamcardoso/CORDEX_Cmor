@@ -4,5 +4,6 @@ vunts = '%'
 lname = 'Low Level Cloud Fraction'
 stname = 'cloud_area_fraction_in_atmosphere_layer'
 cmethods = 'area: time: mean'
-factor = 100.           # costant to multipy variable with ( used only if /= 0)
+factor = 100.           ! costant to multipy variable with ( used only if /= 0)
 #
+!

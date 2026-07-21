@@ -4,5 +4,6 @@ vunts = '%'
 lname = 'Total Cloud Cover Percentage'
 stname = 'cloud_area_fraction'
 cmethods = 'area: time: mean'
-factor = 100.           # costant to multipy variable with ( used only if /= 0)
+factor = 100.           ! costant to multipy variable with ( used only if /= 0)
 #
+!

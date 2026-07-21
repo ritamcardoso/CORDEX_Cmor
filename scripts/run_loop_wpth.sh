@@ -18,7 +18,7 @@ module load prgenv/intel netcdf4 hpcx-openmpi jasper/2.0.14 hdf5/1.12.2 nco/4.9.
 #module load prgenv/intel intel/2021.4.0 hpcx-openmpi/2.9.0 netcdf4/4.7.4
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NETCDF4_DIR/lib
 
-declare -a var=("prw" "clivi" "clwvi")
+declare -a var=("clivi" "clwvi" "prw")
 
 RUN_DIR=$SCRATCH/ssp370/output
 
@@ -58,8 +58,8 @@ cd Analysis
 #
 if [ $yeari -le $year_lim ]; then
 #
-#  sbatch run_out_wpth.sh ${datebeg} ${dateend} ${year_lim}
-  sbatch run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
+  sbatch run_out_wpth.sh ${datebeg} ${dateend} ${year_lim}
+#  sbatch run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
 #
 fi
 

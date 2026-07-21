@@ -56,14 +56,14 @@ echo $datebeg
 dateend=${yearf}${mmf}
 echo $dateend
 
-#cd Analysis
+cd Analysis
 
-#if [ $yeari -le $year_lim ]; then
+if [ $yeari -le $year_lim ]; then
 
-#  sbatch run_out_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
+  sbatch run_out_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
 
 #  sbatch run_out_plev_hus.sh ${datebeg} ${dateend} ${year_lim}
-#fi
+fi
 
 cd ${RUN_DIR}
 

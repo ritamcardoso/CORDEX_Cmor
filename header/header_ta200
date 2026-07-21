@@ -5,5 +5,6 @@ vunts = 'K'
 lname = 'Air Temperature at 200hPa'
 stname = 'air_temperature'
 cmethods = 'area: mean time: point'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 #
+!

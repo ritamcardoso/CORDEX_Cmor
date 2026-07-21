@@ -1,5 +1,3 @@
-
-!
 program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s

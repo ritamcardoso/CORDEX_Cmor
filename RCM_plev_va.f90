@@ -1,6 +1,3 @@
-
-
-
 program read_wrfout
 use datvar_s
 use shared_subs

@@ -1,0 +1,61 @@
+File: run_out_acum.sh
+declare -a var=("pr" "prc" "sund")
+declare -a varb=("rsds" "rlds" "rsus" "rlus" "rldscs" "rluscs" "rlut" "rlutcs" "rsdscs" "rsdsdir" "rsdt" "rsuscs" "rsut" "rsutcs")
+----------------------------------------
+File: run_out_cloud.sh
+declare -a var=("clh" "clm" "cll" "clt")
+----------------------------------------
+File: run_out_plev_hus.sh
+declare -a var=("hus1000" "hus925" "hus850" "hus750" "hus700" "hus600" "hus500" "hus400" "hus300" "hus250" "hus200" "hus150" "hus100" "hus70" "hus50" "hus30")
+----------------------------------------
+File: run_out_plev_ta.sh
+declare -a var=("ta1000" "ta925" "ta850" "ta750" "ta700" "ta600" "ta500" "ta400" "ta300" "ta250" "ta200" "ta150" "ta100" "ta70" "ta50" "ta30")
+----------------------------------------
+File: run_out_plev_ua.sh
+declare -a var=("ua1000" "ua925" "ua850" "ua750" "ua700" "ua600" "ua500" "ua400" "ua300" "ua250" "ua200" "ua150" "ua100" "ua70" "ua50" "ua30")
+----------------------------------------
+File: run_out_plev_va.sh
+declare -a var=("va1000" "va925" "va850" "va750" "va700" "va600" "va500" "va400" "va300" "va250" "va200" "va150" "va100" "va70" "va50" "va30")
+----------------------------------------
+File: run_out_plev_wa.sh
+declare -a var=("wa1000" "wa925" "wa850" "wa750" "wa700" "wa600" "wa500" "wa400" "wa300" "wa250" "wa200" "wa150" "wa100" "wa70" "wa50" "wa30")
+----------------------------------------
+File: run_out_plev_zg.sh
+declare -a var=("zg1000" "zg925" "zg850" "zg750" "zg700" "zg600" "zg500" "zg400" "zg300" "zg250" "zg200" "zg150" "zg100" "zg70" "zg50" "zg30")
+----------------------------------------
+File: run_out.sh
+declare -a var=("tas" "ts" "th" "hurs" "huss" "hfls" "hfss" "evspsbl" "psl" "ps" "sfcWind" "uas" "vas" "z0" "zmla" "od550aer")
+----------------------------------------
+File: run_out_snw.sh
+declare -a var=("prsn" "snm" "snc" "snw" "snd" "siconca")
+----------------------------------------
+File: run_out_soil.sh
+declare -a var=("mrfso" "mrfsos" "mrso" "mrsos" "mrro" "mrros" "tsl" "mrsfl" "mrsol")
+----------------------------------------
+File: run_out_tau.sh
+declare -a var=("tauu" "tauv")
+----------------------------------------
+File: run_out_wpth.sh
+declare -a var=("prw" "clivi" "clwvi")
+----------------------------------------
+File: run_out_wxtrm.sh
+declare -a var=("tasmax" "tasmin" "sfcWindmax" "prcmax" "prncmax")
+----------------------------------------
+File: run_out_zlev_hus.sh
+declare -a var=("hus50m")
+----------------------------------------
+File: run_out_zlev_ta.sh
+declare -a var=("ta50m")
+----------------------------------------
+File: run_out_zlev_ua0.sh
+declare -a var=("ua50m" "ua150m" "ua100m")
+----------------------------------------
+File: run_out_zlev_ua1.sh
+declare -a var=("ua200m" "ua250m" "ua300m")
+----------------------------------------
+File: run_out_zlev_va0.sh
+declare -a var=("va50m" "va150m" "va100m")
+----------------------------------------
+File: run_out_zlev_va1.sh
+declare -a var=("va200m" "va250m" "va300m")
+----------------------------------------

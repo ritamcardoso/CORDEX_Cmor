@@ -347,3 +347,4 @@ variables:
 		:HYBRID_OPT = 2 ;
 		:ETAC = 0.2f ;
 }
+!

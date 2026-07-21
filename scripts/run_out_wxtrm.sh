@@ -49,6 +49,7 @@ ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
 
 PROG_DIR=$HPCPERM/CORDEX/scenarios/Analysis
 HEADER_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header
+HEADER_INI_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header_ini
 RUN_DIR=$SCRATCH/ssp370/wxtrm
 mkdir -p ssp370/wxtrm
 
@@ -89,7 +90,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
  for (( r=0; r<${#run[@]}; r++)); do
 
-  cp ${HEADER_DIR}/global_EUR-11_${run[$r]}.ini  global_data.inp
+  cp ${HEADER_INI_DIR}/global_EUR-11_${run[$r]}.ini  global_data.inp
 	 
 #
 # Variables
@@ -101,12 +102,12 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
    cat ${HEADER_DIR}/cordex_xtrm_EUR-11_${run[$r]}.ini | sed s/_START_YY_/$START_YY/ | \
                                              sed s/_END_YY_/$END_YY/  > ${RUN_DIR}/header_${run[$r]}
    cat header_${run[$r]} > inputlist.inp
-   echo "#" >> inputlist.inp
-   echo "# Variable" >> inputlist.inp
-   echo "#" >> inputlist.inp
+   echo "!" >> inputlist.inp
+   echo "! Variable" >> inputlist.inp
+   echo "!" >> inputlist.inp
    cat ${HEADER_DIR}/header_${var[$v]} >> inputlist.inp
-   echo "#" >> inputlist.inp
-   echo "end" >> inputlist.inp
+   echo "!" >> inputlist.inp
+   echo "/" >> inputlist.inp
 #
 # Compiling
 #

@@ -4,5 +4,5 @@ vunts = 'W m-2'
 lname = 'Surface Upward Latent Heat Flux'
 stname = 'surface_upward_latent_heat_flux'
 cmethods = 'area: time: mean'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
-#
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+#!

@@ -4,5 +4,6 @@ vunts = 'kg m-2 s-1'
 lname = 'Surface Runoff'
 stname = 'surface_runoff_flux'
 cmethods = 'area: mean where land time: point'
-factor = 0.           # costant to multipy variable with ( used only if /= 0)
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 #
+!
