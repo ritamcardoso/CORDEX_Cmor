@@ -7,10 +7,6 @@
 #SBATCH --hint=nomultithread
 #SBATCH --output=wrf-o.%j.out
 #SBATCH --error=wrf-o.%j.out
-#SBATCH --account=spptcard
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=rmcardoso@fc.ul.pt
-#SBATCH --chdir=/ec/res4/scratch/ptrt
 set -x
 
 #### Load libraries for compiling 

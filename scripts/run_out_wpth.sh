@@ -7,10 +7,6 @@
 #SBATCH --hint=nomultithread
 #SBATCH --output=wrf-wpth.%j.out
 #SBATCH --error=wrf-wpth.%j.out
-#SBATCH --account=spptcard
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=rmcardoso@fc.ul.pt
-#SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
 #                           TO CHANGE                           |
@@ -133,7 +129,17 @@ done #year
 #  Call loop batch to advance time and call the next run script
 #
 cd ../../Analysis
+yeari=$(( $yeari + 1 ))
+yearf=$(( $yearf + 1 ))
 
-sbatch run_loop_wpth.sh ${datebeg} ${dateend} ${year_lim}
+datebeg=${yeari}
+echo $datebeg
+dateend=${yearf}
+echo $dateend
+
+if [ $yeari -le $year_lim ]; then
+# sbatch --file=slurm_common.opts run_loop_wpth.sh ${datebeg} ${dateend} ${year_lim}
+ sbatch --file=slurm_common.opts run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
+fi
 
 echo "$0 done."

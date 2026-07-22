@@ -7,10 +7,6 @@
 #SBATCH --hint=nomultithread
 #SBATCH --output=wrf-va0.%j.out
 #SBATCH --error=wrf-va0.%j.out
-#SBATCH --account=spptcard
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=rmcardoso@fc.ul.pt
-#SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
 #                           TO CHANGE                           |
@@ -135,7 +131,17 @@ done #year
 #
 cd ../../Analysis
 
-sbatch run_loop_zlev_va0.sh ${datebeg} ${dateend} ${year_lim}
-#sbatch run_out_plev_ta.sh ${datebeg} ${dateend} ${year_lim}
+yeari=$(( $yeari + 1 ))
+yearf=$(( $yearf + 1 ))
+
+datebeg=${yeari}
+echo $datebeg
+dateend=${yearf}
+echo $dateend
+
+if [ $yeari -le $year_lim ]; then
+# sbatch --file=slurm_common.opts run_loop_zlev_uava0.sh ${datebeg} ${dateend} ${year_lim}
+ sbatch --file=slurm_common.opts run_out_zlev_uava0.sh ${datebeg} ${dateend} ${year_lim}
+fi
 
 echo "$0 done."

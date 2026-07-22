@@ -1,0 +1,4 @@
+#SBATCH --account=
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=
+#SBATCH --chdir=

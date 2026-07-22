@@ -7,10 +7,6 @@
 #SBATCH --hint=nomultithread
 #SBATCH --output=wrf-cld.%j.out
 #SBATCH --error=wrf-cld.%j.out
-#SBATCH --account=spptcard
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=rmcardoso@fc.ul.pt
-#SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
 #                           TO CHANGE                           |
@@ -136,7 +132,17 @@ done #year
 #
 cd ../../Analysis
 
-sbatch run_loop_cloud.sh ${datebeg} ${dateend} ${year_lim}
-sbatch run_out_wxtrm.sh ${datebeg} ${dateend} ${year_lim}
+#yeari=$(( $yeari + 1 ))
+#yearf=$(( $yearf + 1 ))
+
+#datebeg=${yeari}
+#echo $datebeg
+#dateend=${yearf}
+#echo $dateend
+
+if [ $yeari -le $year_lim ]; then
+# sbatch --file=slurm_common.opts run_loop_cloud.sh ${datebeg} ${dateend} ${year_lim}
+ sbatch --file=slurm_common.opts run_out_wxtrm.sh ${datebeg} ${dateend} ${year_lim}
+fi
 
 echo "$0 done."
