@@ -13,7 +13,7 @@
 #----------------------------------------------------------------
 
 ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
-PROG_DIR=${ROOT_DIR}
+PROG_DIR=${ROOT_DIR}/f90_src
 HEADER_DIR=${ROOT_DIR}/header
 HEADER_INI_DIR=${ROOT_DIR}/header_ini
 RUN_DIR=$SCRATCH/ssp370/plev_ta
