@@ -129,7 +129,7 @@ done #year
 #
 #  Call loop batch to advance time and call the next run script
 #
-cd ../../Analysis
+cd ${ROOT_DIR}/scripts
 
 #sbatch --file=slurm_common.opts run_cp_zlev_ua1.sh ${datebeg} ${dateend} ${year_lim}
 #sbatch --file=slurm_common.opts run_cp_zlev_va1.sh ${datebeg} ${dateend} ${year_lim}

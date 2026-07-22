@@ -1,31 +1,63 @@
-Fortran programs to cmorise WRF output, and their running scripts
-The fortran programs extract each variable on an yearly basis
+Here is a revised, polished version of your documentation. I’ve fixed the typos (like "characterisitcs," "cemorised," and "submited"), improved the formatting for readability using Markdown, and restructured the instructions so they are much easier for a user to scan and follow.
 
-How to run:
-1) Put all the files and sub folders into a folder using the same structure;
+---
 
-2) In header_ini change the grid characterisitcs acording to your simulation.
+# Guide to CMORising WRF Output
 
-  2.1) Change the location of your wrfout files in "dir" and the location of the cemorised output in "dir2".   
-  2.2) Change the domain of the wrfout file (don't forget to change the "geog" name as well)
-  2.3) Change the general name of the domain and model of the cemorised variables
-  2.4) global_EUR-11_d01.ini is a file with the global characteristics of the variables. Should be changed according to the experiment
+These Fortran programs and accompanying scripts extract and convert WRF output into CMOR-compliant format on a yearly basis.
 
-3) The header folder contains the headers of each variable. There shouldn't be a need to change
+## 1. Directory Setup
 
-4) The scripts folder contains the submission scripts. There are is a main script called RCM_run.... where all of the environment, and the variables ara declared, see the sequence in run_Analysis_v2.sh.
-  4.1) The environment variables and paths should be updated according to the users configuration
-  4.2) The section "To Change" has the paths to the folders, if you have the same structure you only need to change ROOT_DIR to the path of the folder where you placed the programs. The fortran programs should be (PROG_DIR=ROOT_dir/f90_src); the headers (HEADER_DIR==ROOT_dir/header and HEADER_INI_DIR==ROOT_dir/header_ini). 
-  4.3) The program is run in RUN_DIR, change to your run folder (don't forget to change the mkdir dir line to the same folder). Each script has each own folder, keep this since the script builds a namelist with a generic name for each variable.  
-  4.4) The section "To Change" has the number of domains (run=("d01")) change according to the number of domains in your run. You can add as many as you like, you just need to have the header_ini files for each domain
-   4.5) The section "To Change" also has the name of the variables that are going to extract. A full list of variables and the scripts which run the is in the summary_list.txt
-   4.6) Update slurm_common.opts to your HPC account, mail, and general folder where you are running 
-   4.7) All scripts can submitted using run_Analysis_v2.sh. It submits some of the scripts sequentially, so that variables are extracted in parallel. The scripts which weren't submited initially will be submited after the end of the first. The year_limit is used to loop the the extraction scripts until that year  
-   Submit as;
-    sbatch --file=slurm_common.opts run_Analysis_v2.sh ${datebeg} ${dateend} ${year_lim}
+Place all files and subfolders into a single root directory, ensuring you maintain the provided folder structure.
 
-    e.g.  sbatch --file=slurm_common.opts run_Analysis_v2.sh 2001 2001 2005
-    
-    The scripts will be submitted sequentially until the end of 2005. The fortran programs extract each variable on an yearly basis
-   
-    If you need to extract just one variable look at the summary_list.txt to see which script submits that variable, change it accordingly and submit it
+## 2. Configuration (`header_ini`)
+
+Update the grid characteristics in the `header_ini` file to match your specific simulation:
+
+* **Directories:** Update `dir` to point to the location of your raw `wrfout` files, and `dir2` to the destination folder for the CMORised output.
+* **Domain & Geography:** Update the domain of the `wrfout` file (ensure you also update the `geog` name to match).
+* **Naming Conventions:** Change the general domain and model names used for the CMORised variables.
+* **Global Properties:** Edit `global_EUR-11_d01.ini`. This file contains the global characteristics of the variables and must be tailored to your specific experiment.
+
+## 3. Headers (`header` folder)
+
+The `header` folder contains the specific headers for each variable. Under normal circumstances, you do not need to modify these files.
+
+## 4. Submission Scripts (`scripts` folder)
+
+The `scripts` folder contains all job submission scripts. The primary script is `run_Analysis_v2.sh`, which sequentially calls individual variable scripts (e.g., `RCM_run*.sh`).
+
+### Script Configuration
+
+Before running, open the scripts and update the variables in the **"To Change"** sections:
+
+* **Environment & Paths:** Update the environment variables to match your system. If you kept the default structure, simply set `ROOT_DIR` to your main folder path. The scripts expect programs in `PROG_DIR=$ROOT_DIR/f90_src`, headers in `HEADER_DIR=$ROOT_DIR/header`, and configs in `HEADER_INI_DIR=$ROOT_DIR/header_ini`.
+* **Run Directory:** Update `RUN_DIR` to your execution folder (and ensure the `mkdir` command matches this path). Each script generates a generic namelist for its variables and creates its own folder—**do not change this behavior**.
+* **Domains:** Update the `run=("d01")` array with the number of domains in your simulation. You can add as many as you need, provided you have a corresponding `header_ini` file for each.
+* **Variables:** Define the specific variables you want to extract. (Refer to `summary_list.txt` for a full list of variables and the scripts that process them).
+* **Slurm Options:** Update `slurm_common.opts` with your HPC account details, email address, and execution paths.
+
+---
+
+## Job Submission Instructions
+
+You can submit all scripts using the main controller, `run_Analysis_v2.sh`. This script manages the dependencies, submitting some extraction tasks in parallel and queuing others to start once the initial batch finishes.
+
+**Standard Submission:**
+The `year_lim` parameter acts as a failsafe, stopping the extraction loop at a specific year so an error doesn't run indefinitely.
+
+# Syntax
+sbatch --file=slurm_common.opts run_Analysis_v2.sh ${datebeg} ${dateend} ${year_lim}
+
+# Example: Run sequentially until the end of 2005
+sbatch --file=slurm_common.opts run_Analysis_v2.sh 2001 2001 2005
+
+
+**Alternative Execution Methods:**
+
+* **Extracting a single variable:** Check `summary_list.txt` to find the specific script that handles your target variable. Modify that individual script and submit it directly.
+* **Extracting multiple years in a single submission:** Set your start date, end date, and year limit to encompass the whole period:
+
+sbatch --file=slurm_common.opts run_Analysis_v2.sh 2001 2005 2005
+
+*Note: If you do this, you **must** comment out all lines below `# Call loop batch to advance time and call the next run script` in all `run_out*.sh` files to prevent the script from looping over itself.*
