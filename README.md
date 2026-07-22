@@ -5,7 +5,8 @@ How to run:
 1) Put all the files and sub folders into a folder using the same structure;
 
 2) In header_ini change the grid characterisitcs acording to your simulation.
-  2.1) Change the location of your wrfout files in "dir" and the location of the cemorised output in "dir2".     
+
+  2.1) Change the location of your wrfout files in "dir" and the location of the cemorised output in "dir2".   
   2.2) Change the domain of the wrfout file (don't forget to change the "geog" name as well)
   2.3) Change the general name of the domain and model of the cemorised variables
   2.4) global_EUR-11_d01.ini is a file with the global characteristics of the variables. Should be changed according to the experiment
