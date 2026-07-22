@@ -1,7 +1,3 @@
-Here is a revised, polished version of your documentation. I’ve fixed the typos (like "characterisitcs," "cemorised," and "submited"), improved the formatting for readability using Markdown, and restructured the instructions so they are much easier for a user to scan and follow.
-
----
-
 # Guide to CMORising WRF Output
 
 These Fortran programs and accompanying scripts extract and convert WRF output into CMOR-compliant format on a yearly basis.
