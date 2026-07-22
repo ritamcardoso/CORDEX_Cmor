@@ -132,6 +132,8 @@ done #year
 #
 cd ../../Analysis
 
+#sbatch --file=slurm_common.opts run_cp_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
+
 #yeari=$(( $yeari + 1 ))
 #yearf=$(( $yearf + 1 ))
 
@@ -141,7 +143,7 @@ cd ../../Analysis
 #echo $dateend
 
 if [ $yeari -le $year_lim ]; then
-# sbatch --file=slurm_common.opts run_loop_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
+# sbatch --file=slurm_common.opts run_out_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
  sbatch --file=slurm_common.opts run_out_plev_hus.sh ${datebeg} ${dateend} ${year_lim}
 fi
 

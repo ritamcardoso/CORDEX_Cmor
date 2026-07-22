@@ -173,6 +173,8 @@ done #year
 #
 cd ../../Analysis
 
+# sbatch --file=slurm_common.opts run_cp_acum.sh ${datebeg} ${dateend} ${year_lim}
+
 #yeari=$(( $yeari + 1 ))
 #yearf=$(( $yearf + 1 ))
 
@@ -182,7 +184,7 @@ cd ../../Analysis
 #echo $dateend
 
 if [ $yeari -le $year_lim ]; then
-# sbatch --file=slurm_common.opts run_loop_acum.sh ${datebeg} ${dateend} ${year_lim}
+# sbatch --file=slurm_common.opts run_out_acum.sh ${datebeg} ${dateend} ${year_lim}
  sbatch --file=slurm_common.opts run_out_snw.sh ${datebeg} ${dateend} ${year_lim}
 fi
 echo "$0 done."

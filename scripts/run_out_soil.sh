@@ -134,6 +134,8 @@ done #year
 #
 cd ../../Analysis
 
+#sbatch --file=slurm_common.opts run_cp_soil.sh ${datebeg} ${dateend} ${year_lim}
+
 yeari=$(( $yeari + 1 ))
 yearf=$(( $yearf + 1 ))
 
@@ -143,9 +145,8 @@ dateend=${yearf}
 echo $dateend
 
 if [ $yeari -le $year_lim ]; then
-# sbatch run_loop_soil.sh ${datebeg} ${dateend} ${year_lim}
- sbatch run_out.sh ${datebeg} ${dateend} ${year_lim}
-
+# sbatch --file=slurm_common.opts run_out_soil.sh ${datebeg} ${dateend} ${year_lim}
+ sbatch --file=slurm_common.opts run_out.sh ${datebeg} ${dateend} ${year_lim}
 fi
 
 echo "$0 done."

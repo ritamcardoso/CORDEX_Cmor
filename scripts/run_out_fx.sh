@@ -1,12 +1,12 @@
 #!/bin/sh
-#SBATCH --job-name=wrf-va1
+#SBATCH --job-name=wrf-fx
 #SBATCH --qos=nf
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=16:00:00
+#SBATCH --time=3:00:00
 #SBATCH --hint=nomultithread
-#SBATCH --output=wrf-va1.%j.out
-#SBATCH --error=wrf-va1.%j.out
+#SBATCH --output=wrf-fx.%j.out
+#SBATCH --error=wrf-fx.%j.out
 
 #----------------------------------------------------------------
 #                           TO CHANGE                           |
@@ -16,11 +16,11 @@ ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
 PROG_DIR=${ROOT_DIR}/f90_src
 HEADER_DIR=${ROOT_DIR}/header
 HEADER_INI_DIR=${ROOT_DIR}/header_ini
-RUN_DIR=$SCRATCH/ssp370/zlev_va1
-mkdir -p ssp370/zlev_va1
+RUN_DIR=$SCRATCH/ssp370/out
+mkdir -p ssp370/out
 
 declare -a run=("d01")
-declare -a var=("va200m" "va250m" "va300m")
+declare -a var=("orog" "sftlaf" "sftlf" "sfturf" "sftgif")
 
 #----------------------------------------------------------------
 #                          ENVIRONMENT                          |
@@ -39,7 +39,8 @@ hpx_v="2.17";
 # 1. Configuration                                              
 #
 FC="ifort"
-FFLAGS="-O2"
+#FFLAGS="-O2"
+FFLAGS="-traceback -check all"
 MOD_NAME="datvar_s"
 SUB_NAME="shared_subs_v2"
 #
@@ -86,10 +87,11 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
  for (( r=0; r<${#run[@]}; r++)); do
 
-  cp ${HEADER_INI_DIR}/global_EUR-11_${run[$r]}.ini  global_data.inp	 
+  cp ${HEADER_INI_DIR}/global_EUR-11_${run[$r]}.ini  global_data.inp
+	 
 #
 # Variables
-#
+# var
   for (( v=0; v<${#var[@]}; v++)); do
 #
 #  Create list from header_d0?.ini + header_[var]
@@ -104,22 +106,22 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
    echo "!" >> inputlist.inp
    echo "/" >> inputlist.inp
 #
-# Compiling                             
+# Compiling
 #
-# 0. Compile the Module 
+# 0. Compile the Module
 #
-      $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
+   $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
 #
 # 1. Compile the common subroutines
 #
-      $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
+    $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
 #
 # 2. Compile program
-#
-   $FC $FFLAGS ${PROG_DIR}/RCM_zlev_uava.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o RCM_zlev_uava.exe $ALL_LIBS
-   
-   ./RCM_zlev_uava.exe
+#   
+      $FC $FFLAGS ${PROG_DIR}/RCM_fx_${var[$v]}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o RCM_fx_${var[$v]}.exe $ALL_LIBS
 
+   ./RCM_fx_${var[$v]}.exe
+   
    rm inputlist.inp
    rm header_${run[$r]}
   
@@ -131,19 +133,6 @@ done #year
 #
 cd ../../Analysis
 
-#sbatch --file=slurm_common.opts run_cp_zlev_ua1.sh ${datebeg} ${dateend} ${year_lim}
-#sbatch --file=slurm_common.opts run_cp_zlev_va1.sh ${datebeg} ${dateend} ${year_lim}
-
-yeari=$(( $yeari + 1 ))
-yearf=$(( $yearf + 1 ))
-
-datebeg=${yeari}
-echo $datebeg
-dateend=${yearf}
-echo $dateend
-
-if [ $yeari -le $year_lim ]; then
- sbatch --file=slurm_common.opts run_out_zlev_uava1.sh ${datebeg} ${dateend} ${year_lim}
-fi
+#sbatch --file=slurm_common.opts run_cp_fx.sh ${datebeg} ${dateend} ${year_lim}
 
 echo "$0 done."

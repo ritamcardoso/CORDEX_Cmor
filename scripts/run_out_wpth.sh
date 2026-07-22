@@ -129,6 +129,9 @@ done #year
 #  Call loop batch to advance time and call the next run script
 #
 cd ../../Analysis
+
+#sbatch --file=slurm_common.opts run_cp_wpth.sh ${datebeg} ${dateend} ${year_lim}
+
 yeari=$(( $yeari + 1 ))
 yearf=$(( $yearf + 1 ))
 
@@ -138,7 +141,7 @@ dateend=${yearf}
 echo $dateend
 
 if [ $yeari -le $year_lim ]; then
-# sbatch --file=slurm_common.opts run_loop_wpth.sh ${datebeg} ${dateend} ${year_lim}
+# sbatch --file=slurm_common.opts run_out_wpth.sh ${datebeg} ${dateend} ${year_lim}
  sbatch --file=slurm_common.opts run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
 fi
 
