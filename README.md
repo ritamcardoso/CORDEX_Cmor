@@ -18,7 +18,8 @@ How to run:
   4.3) The program is run in RUN_DIR, change to your run folder (don't forget to change the mkdir dir line to the same folder). Each script has each own folder, keep this since the script builds a namelist with a generic name for each variable.  
   4.4) The section "To Change" has the number of domains (run=("d01")) change according to the number of domains in your run. You can add as many as you like, you just need to have the header_ini files for each domain
    4.5) The section "To Change" also has the name of the variables that are going to extract. A full list of variables and the scripts which run the is in the summary_list.txt
-   4.6) All scripts can submitted using run_Analysis_v2.sh. It submits some of the scripts sequentially, so that variables are extracted in parallel. The scripts which weren't submited initially will be submited after the end of the first. The year_limit is used to loop the the extraction scripts until that year  
+   4.6) Update slurm_common.opts to your HPC account, mail, and general folder where you are running 
+   4.7) All scripts can submitted using run_Analysis_v2.sh. It submits some of the scripts sequentially, so that variables are extracted in parallel. The scripts which weren't submited initially will be submited after the end of the first. The year_limit is used to loop the the extraction scripts until that year  
    Submit as;
     sbatch --file=slurm_common.opts run_Analysis_v2.sh ${datebeg} ${dateend} ${year_lim}
 
