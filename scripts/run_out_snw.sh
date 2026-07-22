@@ -13,6 +13,20 @@
 #SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
+#                           TO CHANGE                           |
+#----------------------------------------------------------------
+
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
+PROG_DIR=${ROOT_DIR}
+HEADER_DIR=${ROOT_DIR}/header
+HEADER_INI_DIR=${ROOT_DIR}/header_ini
+RUN_DIR=$SCRATCH/ssp370/snow
+mkdir -p ssp370/snow
+
+declare -a run=("d01")
+declare -a var=("prsn" "snm" "snc" "snw" "snd" "siconca")
+
+#----------------------------------------------------------------
 #                          ENVIRONMENT                          |
 #----------------------------------------------------------------
 set -x
@@ -43,22 +57,10 @@ OTHER_LIBS="-lm -lz"
 
 ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
 
-#----------------------------------------------------------------
-#                           TO CHANGE                           |
-#----------------------------------------------------------------
-
-PROG_DIR=$HPCPERM/CORDEX/scenarios/Analysis
-HEADER_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header
-HEADER_INI_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header_ini
-RUN_DIR=$SCRATCH/ssp370/snow
-mkdir -p ssp370/snow
-
-declare -a run=("d01")
-declare -a var=("prsn" "snm" "snc" "snw" "snd" "siconca")
-
 #---------------------------------------------------------------
 #                        Processing                             |
 #----------------------------------------------------------------
+
 date
 
 date1=$1

@@ -1,12 +1,12 @@
 #!/bin/sh
-#SBATCH --job-name=wrf-ta
+#SBATCH --job-name=wrf-va1
 #SBATCH --qos=nf
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=14:00:00
+#SBATCH --time=16:00:00
 #SBATCH --hint=nomultithread
-#SBATCH --output=wrf-ta.%j.out
-#SBATCH --error=wrf-ta.%j.out
+#SBATCH --output=wrf-va1.%j.out
+#SBATCH --error=wrf-va1.%j.out
 #SBATCH --account=spptcard
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=rmcardoso@fc.ul.pt
@@ -20,11 +20,11 @@ ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
 PROG_DIR=${ROOT_DIR}
 HEADER_DIR=${ROOT_DIR}/header
 HEADER_INI_DIR=${ROOT_DIR}/header_ini
-RUN_DIR=$SCRATCH/ssp370/plev_ta
-mkdir -p ssp370/plev_ta
+RUN_DIR=$SCRATCH/ssp370/zlev_va1
+mkdir -p ssp370/zlev_va1
 
 declare -a run=("d01")
-declare -a var=("ta1000" "ta925" "ta850" "ta750" "ta700" "ta600" "ta500" "ta400" "ta300" "ta250" "ta200" "ta150" "ta100" "ta70" "ta50" "ta30")
+declare -a var=("va200m" "va250m" "va300m")
 
 #----------------------------------------------------------------
 #                          ENVIRONMENT                          |
@@ -55,7 +55,6 @@ HDF_LIB="-L/usr/local/apps/hdf5-parallel/${hdf5_v}/INTEL/${intel_v}/HPCX/${hpx_v
 OTHER_LIBS="-lm -lz"
 
 ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
-
 
 #----------------------------------------------------------------
 #                        Processing                             |
@@ -121,9 +120,9 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
 # 2. Compile program
 #
-   $FC $FFLAGS ${PROG_DIR}/RCM_plev_ta.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o RCM_plev_ta.exe $ALL_LIBS
+   $FC $FFLAGS ${PROG_DIR}/RCM_zlev_uava.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o RCM_zlev_uava.exe $ALL_LIBS
    
-   ./RCM_plev_ta.exe
+   ./RCM_zlev_uava.exe
 
    rm inputlist.inp
    rm header_${run[$r]}
@@ -136,6 +135,7 @@ done #year
 #
 cd ../../Analysis
 
-sbatch run_loop_plev_ta.sh ${datebeg} ${dateend} ${year_lim}
+sbatch run_loop_zlev_va1.sh ${datebeg} ${dateend} ${year_lim}
+#sbatch run_out_plev_ta.sh ${datebeg} ${dateend} ${year_lim}
 
 echo "$0 done."

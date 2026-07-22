@@ -13,6 +13,20 @@
 #SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
+#                           TO CHANGE                           |
+#----------------------------------------------------------------
+
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
+PROG_DIR=${ROOT_DIR}
+HEADER_DIR=${ROOT_DIR}/header
+HEADER_INI_DIR=${ROOT_DIR}/header_ini
+RUN_DIR=$SCRATCH/ssp370/out
+mkdir -p ssp370/out
+
+declare -a run=("d01")
+declare -a var=("tas" "ts" "th" "hurs" "huss" "hfls" "hfss" "evspsbl" "psl" "ps" "sfcWind" "uas" "vas" "z0" "zmla" "od550aer")
+
+#----------------------------------------------------------------
 #                          ENVIRONMENT                          |
 #----------------------------------------------------------------
 set -x
@@ -43,19 +57,6 @@ OTHER_LIBS="-lm -lz"
 
 ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
 
-#----------------------------------------------------------------
-#                           TO CHANGE                           |
-#----------------------------------------------------------------
-
-PROG_DIR=$HPCPERM/CORDEX/scenarios/Analysis
-HEADER_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header
-HEADER_INI_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header_ini
-RUN_DIR=$SCRATCH/ssp370/out
-mkdir -p ssp370/out
-
-declare -a run=("d01")
-declare -a var=("tas" "ts" "th" "hurs" "huss" "hfls" "hfss" "evspsbl" "psl" "ps" "sfcWind" "uas" "vas" "z0" "zmla" "od550aer")
-#declare -a var=("evspsbl")
 #----------------------------------------------------------------
 #                        Processing                             |
 #----------------------------------------------------------------

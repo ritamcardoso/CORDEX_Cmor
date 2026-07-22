@@ -13,6 +13,20 @@
 #SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
+#                           TO CHANGE                           |
+#----------------------------------------------------------------
+
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
+PROG_DIR=${ROOT_DIR}
+HEADER_DIR=${ROOT_DIR}/header
+HEADER_INI_DIR=${ROOT_DIR}/header_ini
+RUN_DIR=$SCRATCH/ssp370/soil
+mkdir -p ssp370/soil
+
+declare -a run=("d01")
+declare -a var=("mrfso" "mrfsos" "mrso" "mrsos" "mrro" "mrros" "tsl" "mrsfl" "mrsol")
+
+#----------------------------------------------------------------
 #                          ENVIRONMENT                          |
 #----------------------------------------------------------------
 set -x
@@ -43,23 +57,10 @@ OTHER_LIBS="-lm -lz"
 
 ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
 
-#----------------------------------------------------------------
-#                           TO CHANGE                           |
-#----------------------------------------------------------------
-
-PROG_DIR=$HPCPERM/CORDEX/scenarios/Analysis
-HEADER_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header
-HEADER_INI_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header_ini
-RUN_DIR=$SCRATCH/ssp370/soil
-mkdir -p ssp370/soil
-
-declare -a run=("d01")
-declare -a var=("mrfso" "mrfsos" "mrso" "mrsos" "mrro" "mrros" "tsl" "mrsfl" "mrsol")
-#declare -a var=("tsl" "mrsfl" "mrsol")
-
 #---------------------------------------------------------------
 #                        Processing                             |
 #----------------------------------------------------------------
+
 date
 
 date1=$1

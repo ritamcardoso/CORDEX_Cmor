@@ -1,12 +1,12 @@
 #!/bin/sh
-#SBATCH --job-name=wrf-ta
+#SBATCH --job-name=wrf-va
 #SBATCH --qos=nf
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --time=14:00:00
 #SBATCH --hint=nomultithread
-#SBATCH --output=wrf-ta.%j.out
-#SBATCH --error=wrf-ta.%j.out
+#SBATCH --output=wrf-va.%j.out
+#SBATCH --error=wrf-va.%j.out
 #SBATCH --account=spptcard
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=rmcardoso@fc.ul.pt
@@ -20,11 +20,11 @@ ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
 PROG_DIR=${ROOT_DIR}
 HEADER_DIR=${ROOT_DIR}/header
 HEADER_INI_DIR=${ROOT_DIR}/header_ini
-RUN_DIR=$SCRATCH/ssp370/plev_ta
-mkdir -p ssp370/plev_ta
+RUN_DIR=$SCRATCH/ssp370/plev_va
+mkdir -p ssp370/plev_va
 
 declare -a run=("d01")
-declare -a var=("ta1000" "ta925" "ta850" "ta750" "ta700" "ta600" "ta500" "ta400" "ta300" "ta250" "ta200" "ta150" "ta100" "ta70" "ta50" "ta30")
+declare -a var=("va1000" "va925" "va850" "va750" "va700" "va600" "va500" "va400" "va300" "va250" "va200" "va150" "va100" "va70" "va50" "va30")
 
 #----------------------------------------------------------------
 #                          ENVIRONMENT                          |
@@ -116,14 +116,14 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
       $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
 #
 # 1. Compile the common subroutines
-#
+#      
       $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
 #
 # 2. Compile program
 #
-   $FC $FFLAGS ${PROG_DIR}/RCM_plev_ta.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o RCM_plev_ta.exe $ALL_LIBS
+   $FC $FFLAGS ${PROG_DIR}/RCM_plev_uava.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o RCM_plev_uava.exe $ALL_LIBS
    
-   ./RCM_plev_ta.exe
+   ./RCM_plev_uava.exe
 
    rm inputlist.inp
    rm header_${run[$r]}
@@ -136,6 +136,6 @@ done #year
 #
 cd ../../Analysis
 
-sbatch run_loop_plev_ta.sh ${datebeg} ${dateend} ${year_lim}
+sbatch run_loop_plev_va.sh ${datebeg} ${dateend} ${year_lim}
 
 echo "$0 done."

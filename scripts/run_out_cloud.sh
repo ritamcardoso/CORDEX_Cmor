@@ -13,6 +13,20 @@
 #SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
+#                           TO CHANGE                           |
+#----------------------------------------------------------------
+
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
+PROG_DIR=${ROOT_DIR}
+HEADER_DIR=${ROOT_DIR}/header
+HEADER_INI_DIR=${ROOT_DIR}/header_ini
+RUN_DIR=$SCRATCH/ssp370/cld
+mkdir -p ssp370/cld
+
+declare -a run=("d01")
+declare -a var=("clh" "clm" "cll" "clt")
+
+#----------------------------------------------------------------
 #                          ENVIRONMENT                          |
 #----------------------------------------------------------------
 set -x
@@ -42,19 +56,7 @@ OTHER_LIBS="-lm -lz"
 
 ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
 
-#----------------------------------------------------------------
-#                           TO CHANGE                           |
-#----------------------------------------------------------------
 
-PROG_DIR=$HPCPERM/CORDEX/scenarios/Analysis
-HEADER_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header
-HEADER_INI_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header_ini
-RUN_DIR=$SCRATCH/ssp370/cld
-mkdir -p ssp370/cld
-
-declare -a run=("d01")
-declare -a var=("clh" "clm" "cll" "clt")
-#declare -a var=("clm")
 #----------------------------------------------------------------
 #                        Processing                             |
 #----------------------------------------------------------------
@@ -111,10 +113,11 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
 # 0. Compile the Module 
 
-      $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
+    $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
 #
 # 1. Compile the common subroutines
-      $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
+#
+    $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
 #
 # 2. Compile program
 #

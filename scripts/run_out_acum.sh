@@ -13,6 +13,21 @@
 #SBATCH --chdir=/ec/res4/scratch/ptrt
 
 #----------------------------------------------------------------
+#                           TO CHANGE                           |
+#----------------------------------------------------------------
+
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
+PROG_DIR=${ROOT_DIR}
+HEADER_DIR=${ROOT_DIR}/header
+HEADER_INI_DIR=${ROOT_DIR}/header_ini
+RUN_DIR=$SCRATCH/ssp370/acum
+mkdir -p ssp370/acum
+
+declare -a run=("d01")
+declare -a var=("pr" "prc" "sund")
+declare -a varb=("rsds" "rlds" "rsus" "rlus" "rldscs" "rluscs" "rlut" "rlutcs" "rsdscs" "rsdsdir" "rsdt" "rsuscs" "rsut" "rsutcs")
+
+#----------------------------------------------------------------
 #                          ENVIRONMENT                          |
 #----------------------------------------------------------------
 set -x
@@ -41,20 +56,6 @@ HDF_LIB="-L/usr/local/apps/hdf5-parallel/${hdf5_v}/INTEL/${intel_v}/HPCX/${hpx_v
 OTHER_LIBS="-lm -lz"
 
 ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
-
-#----------------------------------------------------------------
-#                           TO CHANGE                           |
-#----------------------------------------------------------------
-
-PROG_DIR=$HPCPERM/CORDEX/scenarios/Analysis
-HEADER_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header
-HEADER_INI_DIR=$HPCPERM/CORDEX/scenarios/Analysis/header_ini
-RUN_DIR=$SCRATCH/ssp370/acum
-mkdir -p ssp370/acum
-
-declare -a run=("d01")
-declare -a var=("pr" "prc" "sund")
-declare -a varb=("rsds" "rlds" "rsus" "rlus" "rldscs" "rluscs" "rlut" "rlutcs" "rsdscs" "rsdsdir" "rsdt" "rsuscs" "rsut" "rsutcs")
 
 #----------------------------------------------------------------
 #                        Processing                             |
@@ -149,14 +150,17 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
 # 0. Compile the Module
 #
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
    $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
 #
 # 1. Compile the common subroutines
 #
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
    $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
 #
 # 2. Compile program
 #
+ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
    $FC $FFLAGS ${PROG_DIR}/RCM_sfc_rad.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o RCM_sfc_rad.exe $ALL_LIBS
 
    ./RCM_sfc_rad.exe
