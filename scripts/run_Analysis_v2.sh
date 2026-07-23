@@ -111,7 +111,7 @@ sleep 120
 #sleep 120
 
 # tau -> wpth
-sbatch --file=slurm_common.opts run_out_wpth.sh ${datebeg} ${dateend} ${year_lim}
+sbatch --file=slurm_common.opts run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
 
 
 echo "$0 done."

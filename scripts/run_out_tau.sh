@@ -136,13 +136,13 @@ cd ${ROOT_DIR}/scripts
 
 #sbatch --file=slurm_common.opts run_cp_tau.sh ${datebeg} ${dateend} ${year_lim}
 
-yeari=$(( $yeari + 1 ))
-yearf=$(( $yearf + 1 ))
+#yeari=$(( $yeari + 1 ))
+#yearf=$(( $yearf + 1 ))
 
-datebeg=${yeari}
-echo $datebeg
-dateend=${yearf}
-echo $dateend
+#datebeg=${yeari}
+#echo $datebeg
+#dateend=${yearf}
+#echo $dateend
 
 if [ $yeari -le $year_lim ]; then
 # sbatch --file=slurm_common.opts run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
