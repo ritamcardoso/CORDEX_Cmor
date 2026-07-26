@@ -22,8 +22,8 @@ the provided folder structure:
 ```
 f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90, ...)
 header/        <- per-variable namelist headers
-header_ini/    <- per-domain grid/global config
-config/        <- varsets.sh: the single source of truth for variables/programs/scheduling
+header_ini/    <- per-domain grid/global config (see header_ini/README.md)
+config/        <- varsets.sh: the single source of truth for variables/programs/scheduling (see config/README.md)
 scripts/       <- the 3 generic job scripts
 env.site.sh.example, LICENSE, README.md, MIGRATION.md
 ```
@@ -46,7 +46,11 @@ specific simulation:
 * **Naming Conventions:** change the general domain and model names used
   for the CMORised variables.
 * **Global Properties:** edit `global_EUR-11_d01.ini` — the global
-  characteristics of the variables, tailored to your experiment.
+  characteristics of the variables, tailored to your experiment. These
+  must match the official CORDEX-CMIP6 controlled vocabulary — see
+  [`header_ini/README.md`](header_ini/README.md) and
+  [WCRP-CORDEX/cordex-cmip6-cv](https://github.com/WCRP-CORDEX/cordex-cmip6-cv)
+  for the valid values.
 
 ## 3. Headers (`header` folder)
 
@@ -93,6 +97,16 @@ script" step and `summary_list.txt` — it's the single place that defines
 every variable group ("varset"), what Fortran program(s) process it, how
 long to schedule it for, and how it chains to other varsets. You will
 rarely need to touch anything else once this is set up.
+
+**[`config/README.md`](config/README.md) covers this file in full**,
+including how to turn off the legacy self-resubmission chaining if you
+just want one-shot runs, and how to cut it down to only the variables you
+need. Variable names follow the
+[CORDEX-CMIP6 data request](https://github.com/WCRP-CORDEX/data-request-table),
+and the Fortran programs referenced in each entry correspond to
+[CORDEX-WRF-community/WRF-CMORizer](https://github.com/CORDEX-WRF-community/WRF-CMORizer/tree/main) —
+see `config/README.md` before adding a variable this repo doesn't have a
+program for yet.
 
 ### Fortran program naming
 
@@ -327,6 +341,16 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
   the same fixed program (e.g. `RCM_sfc_rad.f90`, `RCM_plev_ta.f90`)
   repeatedly for each variable/level in its group. Harmless, just matches
   the original's per-variable compile pattern.
+- Scripts use `#!/bin/bash` explicitly (not `#!/bin/sh`) since they rely on
+  bash associative arrays — the originals already used bash-only syntax
+  under a `#!/bin/sh` shebang, which only worked if `/bin/sh` happened to be
+  bash on your system. This makes that assumption explicit and portable.
+- `TIME[]` values for `out` and `plev_ta` were confirmed against the live
+  scripts; the rest are carried over/estimated and worth a check — `rad`
+  and `snw` especially, since what they cover just changed.
+- `CP_TIME[]` (archive-step walltime) is only confirmed for `out`
+  (`20:00:00`, from the live `run_cp_out.sh`); everything else falls back
+  to `DEFAULT_CP_TIME` (`04:00:00`) until you've checked real numbers.
 - `plev_va`, `zlev_va0`, `zlev_va1` are disabled on purpose (old/superseded
   versions) — commented out at the bottom of `config/varsets.sh` rather
   than deleted, so they're easy to compare against or resurrect.
