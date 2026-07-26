@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #SBATCH --job-name=Analysis
 #SBATCH --qos=nf
 #SBATCH --nodes=1
@@ -7,111 +7,62 @@
 #SBATCH --hint=nomultithread
 #SBATCH --output=analysis.%j.out
 #SBATCH --error=analysis.%j.out
+#SBATCH --account=
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=
+#SBATCH --chdir=
 
 # ------------------------------------------------------------------
-#  Run using 
+#  --account/--mail-user/--chdir above are the only site-specific bits left
+#  in this file — edit them directly here (and in run_out_generic.sh /
+#  run_cp_generic.sh, the only other two scripts).
 #
-#  sbatch --file=slurm_common.opts run_Analysis_v2.sh [ initial year - yyyy] [ final year - yyyy]  [loop year -  yyyy] 
+#  Run using (ROOT_DIR must be exported first — see README.md):
 #
+#  export ROOT_DIR=/path/to/this/repo
+#  sbatch $ROOT_DIR/scripts/run_Analysis_v2.sh \
+#         [initial date - yyyymmdd] [final date - yyyymmdd] [loop year limit - yyyy]
+#
+#  You can submit from anywhere (e.g. $SCRATCH/Analysis) — ROOT_DIR is what
+#  tells this script where the actual code/config live; it does not need
+#  to match your cwd.
 #-------------------------------------------------------------------
 
 set -x
 
-#### Load libraries for compiling 
-intel_v="2021.4"; 
-hdf5_v="1.12.2";
-ncdf_v="4.9.3";
-jasper_v="2.0.14";
+# ROOT_DIR must be set in your environment — Slurm copies the submitted
+# script into a spool directory before running it, so $0/dirname can't be
+# used to find this repo reliably (especially when submitting from a
+# different directory, e.g. $SCRATCH/Analysis, than where the code lives).
+: "${ROOT_DIR:?ROOT_DIR is not set. export ROOT_DIR=/path/to/this/repo (e.g. in ~/.bashrc) before submitting — see README.md}"
+REPO_DIR="${ROOT_DIR}"
+
+#### Load libraries used by this orchestration step only
+intel_v="2021.4"
+hdf5_v="1.12.2"
+ncdf_v="4.9.3"
+jasper_v="2.0.14"
 nco_v="4.9.7"
 module load prgenv/intel intel/${intel_v} hpcx-openmpi netcdf4/${ncdf_v} hdf5/${hdf5_v} jasper/${jasper_v} cdo nco/${nco_v} python3
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NETCDF4_DIR/lib
-#
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${NETCDF4_DIR}/lib"
 
 date
 
-date1=$1
-date2=$2
-date3=$3
+datebeg=$1
+dateend=$2
+year_lim=$3
 
-datebeg=${date1}
-dateend=${date2}
-year_lim=${date3}
+echo "$datebeg"
+echo "$dateend"
 
-echo $datebeg
-echo $dateend
+source "${REPO_DIR}/config/varsets.sh"
 
-yeari=`echo $datebeg | cut -c1-4 `
-echo $yeari
-yearf=`echo $dateend | cut -c1-4 `
-echo $yearf
-
-cd Analysis
-
-# out -> soil 
-sbatch --file=slurm_common.opts run_out.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# acum -> snw
-sbatch --file=slurm_common.opts run_out_acum.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# cloud -> wxtrm
-sbatch --file=slurm_common.opts run_out_cloud.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# plev_wa -> plev_zg
-sbatch --file=slurm_common.opts run_out_plev_wa.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# plev_ua 
-sbatch --file=slurm_common.opts run_out_plev_uava.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# plev_va 
-#sbatch --file=slurm_common.opts run_out_plev_va.sh ${datebeg} ${dateend} ${year_lim}
-
-#sleep 120
-
-# zlev_hus -> plev_hus
-sbatch --file=slurm_common.opts run_out_zlev_hus.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# zlev_ta -> plev_ta 
-sbatch --file=slurm_common.opts run_out_zlev_ta.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# zlev_ua0 
-#sbatch --file=slurm_common.opts run_out_zlev_ua0.sh ${datebeg} ${dateend} ${year_lim}
-sbatch --file=slurm_common.opts run_out_zlev_uava0.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# zlev_ua1  
-#sbatch --file=slurm_common.opts run_out_zlev_ua1.sh ${datebeg} ${dateend} ${year_lim}
-sbatch --file=slurm_common.opts run_out_zlev_uava1.sh ${datebeg} ${dateend} ${year_lim}
-
-sleep 120
-
-# zlev_va0
-#sbatch --file=slurm_common.opts run_out_zlev_va0.sh ${datebeg} ${dateend} ${year_lim}
-
-#sleep 120
-
-# zlev_va1
-#sbatch --file=slurm_common.opts run_out_zlev_va1.sh ${datebeg} ${dateend} ${year_lim}
-
-#sleep 120
-
-# tau -> wpth
-sbatch --file=slurm_common.opts run_out_tau.sh ${datebeg} ${dateend} ${year_lim}
-
+for vs in "${ORDER[@]}"; do
+  sbatch --job-name="wrf-${vs}" --time="${TIME[$vs]}" \
+         --output="wrf-${vs}.%j.out" --error="wrf-${vs}.%j.out" \
+         "${REPO_DIR}/scripts/run_out_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${vs}"
+  sleep 120
+done
 
 echo "$0 done."
