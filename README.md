@@ -187,31 +187,3 @@ declare -A TIME=(
 Add it to `ORDER` if it should be submitted directly by `run_Analysis_v2.sh`,
 to `NEXT[]` if some varset should chain into (or from) it, and to
 `ADVANCE_YEAR[]=1` if it should advance the year before resubmitting.
-
-## Notes / things to double check before first real run
-
-- sbatch has no `--file=<opts>` flag to merge in a shared options file
-  (confirmed not supported by ECMWF's sbatch). With only 3 scripts total,
-  `--account`/`--mail-user`/`--chdir` are just plain `#SBATCH` lines at the
-  top of each one rather than a shared file+parser — edit all three if
-  they change.
-- The compile step (Fortran module + subs + program) still runs once per
-  variable, per year, exactly as in the original — including recompiling
-  the same fixed program (e.g. `RCM_sfc_rad.f90`, `RCM_plev_ta.f90`)
-  repeatedly for each variable/level in its group. Harmless, just matches
-  the original's per-variable compile pattern.
-- Scripts use `#!/bin/bash` explicitly (not `#!/bin/sh`) since they rely on
-  bash associative arrays — the originals already used bash-only syntax
-  under a `#!/bin/sh` shebang, which only worked if `/bin/sh` happened to be
-  bash on your system. This makes that assumption explicit and portable.
-- `TIME[]` values for `out` and `plev_ta` were confirmed against the live
-  scripts; the rest are carried over/estimated and worth a check — `rad`
-  and `snw` especially, since what they cover just changed.
-- `CP_TIME[]` (archive-step walltime) is only confirmed for `out`
-  (`20:00:00`, from the live `run_cp_out.sh`); everything else falls back
-  to `DEFAULT_CP_TIME` (`04:00:00`) until you've checked real numbers.
-- `plev_va`, `zlev_va0`, `zlev_va1` are disabled on purpose (old/superseded
-  versions) — commented out at the bottom of `config/varsets.sh` rather
-  than deleted, so they're easy to compare against or resurrect.
-  `plev_ua`, `zlev_ua0`, `zlev_ua1` are also disabled *for processing*, but
-  reactivated as archive-only `VARSETS[]` entries (see Archiving, above).
