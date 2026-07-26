@@ -327,16 +327,6 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
   the same fixed program (e.g. `RCM_sfc_rad.f90`, `RCM_plev_ta.f90`)
   repeatedly for each variable/level in its group. Harmless, just matches
   the original's per-variable compile pattern.
-- Scripts use `#!/bin/bash` explicitly (not `#!/bin/sh`) since they rely on
-  bash associative arrays — the originals already used bash-only syntax
-  under a `#!/bin/sh` shebang, which only worked if `/bin/sh` happened to be
-  bash on your system. This makes that assumption explicit and portable.
-- `TIME[]` values for `out` and `plev_ta` were confirmed against the live
-  scripts; the rest are carried over/estimated and worth a check — `rad`
-  and `snw` especially, since what they cover just changed.
-- `CP_TIME[]` (archive-step walltime) is only confirmed for `out`
-  (`20:00:00`, from the live `run_cp_out.sh`); everything else falls back
-  to `DEFAULT_CP_TIME` (`04:00:00`) until you've checked real numbers.
 - `plev_va`, `zlev_va0`, `zlev_va1` are disabled on purpose (old/superseded
   versions) — commented out at the bottom of `config/varsets.sh` rather
   than deleted, so they're easy to compare against or resurrect.
