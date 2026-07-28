@@ -149,7 +149,7 @@ you include plev/zlev:
 - **zlev**: same — one fixed program per family, covering every height
   level (`RCM_zlev_ua.f90` handles `ua50m`, `ua100m`, `ua150m`, ...).
 
-`plev_uava` and `zlev_uava0`/`zlev_uava1` process `va*` variables through a
+`plev_uava` and `zlev_uava0`/`zlev_uava1` process `ua`and `va` variables through a
 program literally named `RCM_plev_uava` / `RCM_zlev_uava` — that's how the
 source names those programs, not a bug in this config.
 
@@ -204,11 +204,9 @@ list, and archives each `<var>_*.nc` to ECFS and a remote server. There's
 nothing varset-specific to write — adding a new varset to
 `config/varsets.sh` automatically gets archiving for free.
 
-`plev_uava`, `zlev_uava0`, and `zlev_uava1` only *process* the v-component
-(their `VARSETS[]` entries list `va*` variables), but the underlying
-programs produce matching `u*` files too — so their archive step needs two
-calls, not one. `CP_EXTRA[]` in `config/varsets.sh` names the "u" companion
-varset to also archive (`plev_ua`, `zlev_ua0`, `zlev_ua1` respectively —
+`plev_uava`, `zlev_uava0`, and `zlev_uava1`  *process* the u and v-components 
+so their archive step needs two calls, not one. `CP_EXTRA[]` in `config/varsets.sh`
+ names the "u" companion varset to also archive (`plev_ua`, `zlev_ua0`, `zlev_ua1` respectively —
 reactivated from the deprecated block purely for this, since they're not
 used for processing and aren't in `ORDER`/`NEXT`/`TIME`). When
 `CP_EXTRA[$VARSET]` is set, `run_out_generic.sh` submits a second
