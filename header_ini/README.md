@@ -4,27 +4,50 @@ Per-domain grid and global-attribute configuration, read by every
 `RCM_*` Fortran program via `run_out_generic.sh` (see the main
 [README.md](../README.md), §2 and §3, for how these fit into a run).
 
-There are two kinds of file here:
+Every filename here follows one pattern:
 
-## `global_EUR-11_<domain>.ini` — grid/domain setup
+```
+<EXPERIMENT>_[global_|xtrm_]<DOMAIN_ID>_<grid>.ini
+```
 
-One per domain (matching the `run=(...)` array in `env.site.sh`). Update
+- **`<EXPERIMENT>`** — the campaign prefix, from `env.site.sh`'s
+  `EXPERIMENT[]` map: `cordex` for standard CORDEX-CMIP6 runs, `fpsurb` for
+  FPS-URB-RCC runs.
+- **`<DOMAIN_ID>`** — the CORDEX domain identifier, from `env.site.sh`'s
+  `DOMAIN_ID[]` map (e.g. `EUR-11`, `EUR-12`, `PARIS-3`).
+- **`<grid>`** — matches an entry in the `run=(...)` array in
+  `env.site.sh` (e.g. `d01`, `d02`).
+
+There are two kinds of file `run_out_generic.sh` actually reads:
+
+## `<EXPERIMENT>_[xtrm_]<DOMAIN_ID>_<domain>.ini` — grid/domain setup
+
+The `&cordex_config` namelist: raw-data paths and grid dimensions. Update
 per your simulation:
 
 - **`dir` / `dir2`** — `dir` points to your raw `wrfout` files; `dir2` is
   the destination for the CMORised output.
-- **Domain & geography** — the `wrfout` domain, and the matching `geog`
-  name.
-- **Naming conventions** — the general domain and model names used in the
-  CMORised output filenames/attributes.
+- **Domain & geography** — the `wrfout` domain (`nz`/`nlon`/`nlat`/
+  `xoffset`/`yoffset`), and the matching `geog` name.
+- **Naming conventions** — `dom`/`outdom`, the domain and model names used
+  in the CMORised output filenames.
 
-## `cordex_EUR-11_<domain>.ini` — global attributes
+`run_out_generic.sh` automatically picks the `xtrm_` variant (sourced from
+`wrfxtrm` rather than `wrfout` — note the `wrffile` value inside) when, and
+only when, `<varset>` is `wxtrm` (the one that runs `RCM_sfc_xtrm`); every
+other varset uses the plain filename. Keep both files in sync on anything
+that isn't specific to the extreme-variable run (`dir`, `geog`, `dom`,
+`outdom`, ...) — only `wrffile` and the grid/timing fields are expected to
+differ.
 
-Contains the global (file-level) CF/CMOR attributes written into every
-output NetCDF file (institution, driving experiment, domain ID, and so
-on). `run_out_generic.sh` stamps the current year into this file (via the
-`_START_YY_`/`_END_YY_` placeholders) before assembling each run's
-namelist — you don't need to touch that part.
+## `<EXPERIMENT>_global_<DOMAIN_ID>_<domain>.ini` — global attributes
+
+The `&global_metadata` namelist: global (file-level) CF/CMOR attributes
+written into every output NetCDF file (institution, driving experiment,
+domain ID, and so on). `run_out_generic.sh` stamps the current year into
+the *grid/domain setup* file above (via the `_START_YY_`/`_END_YY_`
+placeholders) before assembling each run's namelist — this file needs no
+such stamping.
 
 **The actual values you fill in must come from the official CORDEX-CMIP6
 controlled vocabulary, not be made up per-experiment:**
@@ -37,3 +60,10 @@ controlled vocabulary, not be made up per-experiment:**
   experiment, ...) should be checked against this CV before a real run —
   using a value that isn't in it will produce output that isn't
   CORDEX-CMIP6 compliant even if it runs successfully.
+
+## Other files here
+
+- **`global_<DOMAIN_ID>_<domain>.ini`** (no `<EXPERIMENT>` prefix, e.g.
+  `global_EUR-11_d01.ini`) — superseded by the equivalent
+  `cordex_global_<DOMAIN_ID>_<domain>.ini` (identical content); kept only
+  for reference. Safe to delete once you've confirmed you don't need it.

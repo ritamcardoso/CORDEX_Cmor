@@ -88,6 +88,15 @@ if [ -z "${VARSETS[$VARSET]+x}" ]; then
   exit 1
 fi
 
+# The xtrm variant of the grid/domain-setup ini (<exp>_xtrm_<dom_id>_<grid>.ini,
+# sourced from wrfxtrm rather than wrfout — see header_ini/README.md) is only
+# correct for the varset that actually runs RCM_sfc_xtrm. Every other varset
+# keeps using the plain <exp>_<dom_id>_<grid>.ini.
+ini_kind=""
+if [ "${VARSET}" = "wxtrm" ]; then
+  ini_kind="xtrm_"
+fi
+
 # VARSETS[$VARSET] looks like "PROGRAM_A:var1,var2;PROGRAM_B:var3,var4"
 # (one or more ';'-separated groups; each a program pattern + its variables)
 IFS=';' read -r -a groups <<< "${VARSETS[$VARSET]}"
@@ -118,7 +127,10 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
  for (( r=0; r<${#run[@]}; r++)); do
 
-  cp ${HEADER_INI_DIR}/global_EUR-11_${run[$r]}.ini  global_data.inp
+  dom_id="${DOMAIN_ID[${run[$r]}]:?No DOMAIN_ID set for '${run[$r]}' in env.site.sh — add [${run[$r]}]=\"<CORDEX-domain-id>\" to the DOMAIN_ID array}"
+  exp="${EXPERIMENT[${run[$r]}]:?No EXPERIMENT set for '${run[$r]}' in env.site.sh — add [${run[$r]}]=\"<experiment-name>\" to the EXPERIMENT array}"
+
+  cp ${HEADER_INI_DIR}/${exp}_global_${dom_id}_${run[$r]}.ini  global_data.inp
 
 #
 # Variables (a varset can have more than one group — see config/varsets.sh)
@@ -131,7 +143,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
 #  Create list from header_d0?.ini + header_[var]
 #
-    cat ${HEADER_INI_DIR}/cordex_EUR-11_${run[$r]}.ini | sed s/_START_YY_/$START_YY/ | \
+    cat ${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini | sed s/_START_YY_/$START_YY/ | \
                                               sed s/_END_YY_/$END_YY/  > ${RUN_DIR}/header_${run[$r]}
     cat header_${run[$r]} > inputlist.inp
     echo "!" >> inputlist.inp

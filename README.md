@@ -36,18 +36,23 @@ same directory you submit jobs from.
 ## 2. Configuration (`header_ini`)
 
 Update the grid characteristics in the `header_ini` files to match your
-specific simulation:
+specific simulation (see [`header_ini/README.md`](header_ini/README.md)
+for the full filename pattern):
 
-* **Directories:** update `dir` to point to the location of your raw
-  `wrfout` files, and `dir2` to the destination folder for the CMORised
-  output.
-* **Domain & Geography:** update the domain of the `wrfout` file (and the
-  matching `geog` name).
+* **Directories:** in `<EXPERIMENT>_<DOMAIN_ID>_<grid>.ini` (e.g.
+  `cordex_EUR-11_d01.ini`), update `dir` to point to the location of your
+  raw `wrfout` files, and `dir2` to the destination folder for the
+  CMORised output.
+* **Domain & Geography:** in that same file, update the domain of the
+  `wrfout` file (and the matching `geog` name).
 * **Naming Conventions:** change the general domain and model names used
-  for the CMORised variables.
-* **Global Properties:** edit `global_EUR-11_d01.ini` — the global
-  characteristics of the variables, tailored to your experiment. These
-  must match the official CORDEX-CMIP6 controlled vocabulary — see
+  for the CMORised variables (`dom`/`outdom`, same file).
+* **Global Properties:** edit `<EXPERIMENT>_global_<DOMAIN_ID>_<grid>.ini`
+  (e.g. `cordex_global_EUR-11_d01.ini`) — the global characteristics of the
+  variables, tailored to your experiment. `<EXPERIMENT>` and `<DOMAIN_ID>`
+  must match what you set in `env.site.sh`'s `EXPERIMENT[]`/`DOMAIN_ID[]`
+  maps for that grid (§4). These must also match the official CORDEX-CMIP6
+  controlled vocabulary — see
   [`header_ini/README.md`](header_ini/README.md) and
   [WCRP-CORDEX/cordex-cmip6-cv](https://github.com/WCRP-CORDEX/cordex-cmip6-cv)
   for the valid values.
@@ -80,8 +85,18 @@ now in one place:
   point it wherever you want the scratch data to live.
 * **Compiler/library versions** — `intel_v`, `hdf5_v`, `netcdf_v`, `FC`,
   `FFLAGS`, and the NetCDF/HDF5 include/lib paths.
-* **Domains** — `run=("d01")`. Add as many as you need, provided you have
-  a matching `header_ini` file for each.
+* **Domains** — `run=("d01")` plus a matching entry in `DOMAIN_ID[]` (e.g.
+  `[d01]="EUR-11"`) and `EXPERIMENT[]` (e.g. `[d01]="cordex"`) for each.
+  Together these select `<EXPERIMENT>_<DOMAIN_ID>_<grid>.ini` /
+  `<EXPERIMENT>_global_<DOMAIN_ID>_<grid>.ini` out of `header_ini/` —
+  `EXPERIMENT` is the campaign prefix (`cordex` for standard CORDEX-CMIP6
+  runs, `fpsurb` for FPS-URB-RCC runs; see
+  [`header_ini/README.md`](header_ini/README.md)). Add as many
+  `run`/`DOMAIN_ID`/`EXPERIMENT` triples as you need, provided you have a
+  matching `header_ini` file for each — a single site can even mix
+  experiments across grids (e.g. `d01` on `cordex`, `d02` on `fpsurb`):
+  `run=("d01" "d02")`, `DOMAIN_ID=([d01]="EUR-11" [d02]="PARIS-3")`,
+  `EXPERIMENT=([d01]="cordex" [d02]="fpsurb")`.
 * **Archive step settings** — `CP_MODULES`, `CP_RUN_DIR`, `ECFS_BASE`,
   `REMOTE_HOST`, `REMOTE_BASE` (see [§7, Archiving](#7-archiving)).
 

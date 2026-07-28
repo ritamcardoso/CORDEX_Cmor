@@ -1,0 +1,27 @@
+name: shellcheck
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        # Severity is capped at "error" on purpose: env.site.sh, config/varsets.sh
+        # and scripts/*.sh are designed to be sourced into each other rather than
+        # run standalone, which makes shellcheck flag plenty of info/warning-level
+        # false positives (SC1091 "can't follow non-constant source", SC2034
+        # "appears unused") that aren't real bugs here. Real correctness issues
+        # (undefined variables, syntax errors, ...) are still "error" severity and
+        # will fail this job.
+        run: |
+          shellcheck -S error \
+            scripts/run_out_generic.sh \
+            scripts/run_cp_generic.sh \
+            scripts/run_Analysis_v2.sh \
+            config/varsets.sh \
+            env.site.sh.example
