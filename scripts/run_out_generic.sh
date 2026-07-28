@@ -114,6 +114,9 @@ echo $yeari
 yearf=`echo $dateend | cut -c1-4`
 echo $yearf
 
+RUN_DIR="${ROOT_RUN_DIR}/${VARSET}"
+mkdir -p "${RUN_DIR}"
+
 cd "${RUN_DIR}" || exit 1
 #
 #  Time Loop (yeari <= yearf; it is usually =)
@@ -143,8 +146,13 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
 #  Create list from header_d0?.ini + header_[var]
 #
-    cat ${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini | sed s/_START_YY_/$START_YY/ | \
-                                              sed s/_END_YY_/$END_YY/  > ${RUN_DIR}/header_${run[$r]}
+    cat ${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini | sed \ 
+      -e "s|_START_YY_|$START_YY|g" \
+      -e "s|_END_YY_|$END_YY|g" \
+      -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
+      -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
+      > ${RUN_DIR}/header_${run[$r]}
+
     cat header_${run[$r]} > inputlist.inp
     echo "!" >> inputlist.inp
     echo "! Variable" >> inputlist.inp
