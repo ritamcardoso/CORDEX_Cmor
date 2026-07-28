@@ -146,14 +146,15 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
 #  Create list from header_d0?.ini + header_[var]
 #
-    cat ${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini | sed \
-      -e "s|_START_YY_|$START_YY|g" \
-      -e "s|_END_YY_|$END_YY|g" \
-      -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
-      -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
-      -e "s|_OUT_DOM_|$OUT_DOM|g" \
-      > ${RUN_DIR}/header_${run[$r]}
-
+    sed \
+     -e "s|_START_YY_|$START_YY|g" \
+     -e "s|_END_YY_|$END_YY|g" \
+     -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
+     -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
+     -e "s|_OUT_DOM_|$OUT_DOM|g" \
+     "${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini" \
+     > "${RUN_DIR}/header_${run[$r]}"
+    
     cat header_${run[$r]} > inputlist.inp
     echo "!" >> inputlist.inp
     echo "! Variable" >> inputlist.inp
