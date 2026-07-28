@@ -162,6 +162,102 @@ end subroutine ncerror
 !
 !-----------------------------------------------------------------------
 !
+subroutine write_netcdf_2D(uvar)
+use netcdf
+use datvar_s
+!
+integer :: LatDimID,LonDimID,rlonDimID,rlatDimID,HDimID,BDimID,HeDimID
+integer :: LonVarID,LatVarID,TBVarID,TVarID,rlatVarId,rlonVarID,uVarID,HVarID,rpVarID
+real, dimension(nlon,nlat) :: uvar
+real, parameter :: FillValue=1.e+20
+
+status = nf90_create(fnameout, IOR(nf90_noclobber, nf90_netcdf4), ncid)
+call handle_err(status)
+
+status = nf90_def_dim(ncid, "rlon", nlon, LonDimID)
+status = nf90_def_dim(ncid, "rlat", nlat, LatDimID)
+
+status = nf90_def_var(ncid, "lon", nf90_double, &
+                            (/ LonDimId, LatDimID /), LonVarId)
+status = nf90_def_var(ncid, "lat", nf90_double, &
+                            (/ LonDimId, LatDimID /), LatVarId)
+status = nf90_def_var(ncid, "rlon", nf90_double, &
+                            (/ LonDimId /), rlonVarId)
+status = nf90_def_var(ncid, "rlat", nf90_double, &
+                            (/ LatDimID /), rlatVarId)
+status = nf90_def_var(ncid, "rotted_pole", nf90_char,rpVarId)
+
+status = nf90_def_var(ncid, varname, nf90_float, &
+                            (/ LonDimId, LatDimID /), uVarId)
+call handle_err(status)
+
+! chunk by [nlon, nlat, 1] to optimize for one time-step at a time
+status = nf90_def_var_chunking(ncid, uVarId, nf90_chunked, (/ nlon, nlat, 1 /))
+call handle_err(status)
+
+! Compression call
+status = nf90_def_var_deflate(ncid, uVarId, shuffle = 1, deflate = 1, deflate_level = 2)
+call handle_err(status)                 
+
+status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
+status = nf90_put_att(ncid, uVarID, "long_name",longname)
+status = nf90_put_att(ncid, uVarID, "units",vunits)
+status = nf90_put_att(ncid, uVarID, "grid_mapping","rotated_pole")
+status = nf90_put_att(ncid, uVarID, "cell_methods",cellmethods)
+status = nf90_put_att(ncid, uVarID, "cell_measures","area: areacella")
+status = nf90_put_att(ncid, uVarID, "_FillValue",huge_val)
+status = nf90_put_att(ncid, uVarID, "missing_value",huge_val)
+
+status = nf90_put_att(ncid, LonVarID, "long_name","longitude")
+status = nf90_put_att(ncid, LonVarID, "standard_name","longitude")
+status = nf90_put_att(ncid, LonVarID, "units","degrees_east")
+status = nf90_put_att(ncid, LonVarID, "_CoordinateAxisType","Lon")
+call handle_err(status)
+
+status = nf90_put_att(ncid, LatVarID, "long_name","latitude")
+status = nf90_put_att(ncid, LatVarID, "standard_name","latitude")
+status = nf90_put_att(ncid, LatVarID, "units","degrees_north")
+status = nf90_put_att(ncid, LatVarID, "_CoordinateAxisType","Lat")
+call handle_err(status)
+
+status = nf90_put_att(ncid, rlonVarID, "long_name","longitude in rotated pole grid")
+status = nf90_put_att(ncid, rlonVarID, "standard_name","grid_longitude")
+status = nf90_put_att(ncid, rlonVarID, "units","degrees")
+status = nf90_put_att(ncid, rlonVarID, "axis","X")
+call handle_err(status)
+
+status = nf90_put_att(ncid, rlatVarID, "long_name","latitude in rotated pole grid")
+status = nf90_put_att(ncid, rlatVarID, "standard_name","grid_latitude")
+status = nf90_put_att(ncid, rlatVarID, "units","degrees")
+status = nf90_put_att(ncid, rlatVarID, "axis","Y")
+call handle_err(status)
+
+status = nf90_put_att(ncid, rpVarID, "grid_mapping_name","rotated_latitude_longitude")
+status = nf90_put_att(ncid, rpVarID, "grid_north_pole_latitude", 39.25 )
+status = nf90_put_att(ncid, rpVarID, "grid_north_pole_longitude", -162. )
+call handle_err(status)
+
+status = nf90_enddef(ncid)
+
+status = nf90_put_var(ncid, LonVarId, lon )
+call handle_err(status)
+status = nf90_put_var(ncid, LatVarId, lat )
+call handle_err(status)
+status = nf90_put_var(ncid, rlonVarId, rlon )
+call handle_err(status)
+status = nf90_put_var(ncid, rlatVarId, rlat )
+call handle_err(status)
+status = nf90_put_var(ncid, uVarId, uvar )
+call handle_err(status)
+
+status = nf90_close(ncid)
+call handle_err(status)
+!
+return
+end subroutine write_netcdf_2D(uvar)
+!
+!-----------------------------------------------------------------------
+!
 subroutine write_netcdf_rtime_3d(uvar,mtime,utime,btime)
 use netcdf
 use datvar_s

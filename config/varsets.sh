@@ -45,6 +45,7 @@ declare -A VARSETS=(
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va150m,va100m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
+  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"
   #
   # Archive-only companions — NOT for processing (not in ORDER/NEXT/TIME,
   # so run_out_generic.sh never runs these as their own job). They exist
@@ -70,11 +71,6 @@ declare -A VARSETS=(
 #   [zlev_va0]="RCM_zlev_va:va50m,va150m,va100m"
 #   [zlev_va1]="RCM_zlev_va:va200m,va250m,va300m"
 #
-# run_out_fx.sh (orog, sftlaf, sftlf, sfturf, sftgif -> RCM_fx_<var>) is
-# intentionally NOT included below: those RCM_fx_*.f90 sources don't exist
-# in f90_src/ yet, so wiring it up here would just fail at compile time.
-# Add an [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif" entry once they do.
-
 declare -A TIME=(
   [out]="18:00:00"
   [soil]="12:00:00"
@@ -93,6 +89,7 @@ declare -A TIME=(
   [zlev_ta]="04:00:00"
   [zlev_uava0]="06:00:00"
   [zlev_uava1]="06:00:00"
+  [fx]="01:00:00"
 )
 # out/plev_ta walltimes confirmed against the live scripts; the rest are
 # carried over/estimated — worth a check, especially [rad] and [snw] above
