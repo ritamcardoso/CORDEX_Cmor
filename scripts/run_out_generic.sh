@@ -151,6 +151,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
       -e "s|_END_YY_|$END_YY|g" \
       -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
       -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
+      -e "s|_OUT_DOM_|$OUT_DOM|g" \
       > ${RUN_DIR}/header_${run[$r]}
 
     cat header_${run[$r]} > inputlist.inp

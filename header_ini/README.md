@@ -22,8 +22,8 @@ There are two kinds of file `run_out_generic.sh` actually reads:
 
 ## `<EXPERIMENT>_[xtrm_]<DOMAIN_ID>_<domain>.ini` — grid/domain setup
 
-The `&cordex_config` namelist: raw-data paths and grid dimensions. Update
-per your simulation:
+The `&cordex_config` namelist: raw-data paths and grid dimensions. 
+Under normal circumstances you do not need to modify these files
 
 - **`dir` / `dir2`** — `dir` points to your raw `wrfout` files; `dir2` is
   the destination for the CMORised output.
@@ -60,10 +60,3 @@ controlled vocabulary, not be made up per-experiment:**
   experiment, ...) should be checked against this CV before a real run —
   using a value that isn't in it will produce output that isn't
   CORDEX-CMIP6 compliant even if it runs successfully.
-
-## Other files here
-
-- **`global_<DOMAIN_ID>_<domain>.ini`** (no `<EXPERIMENT>` prefix, e.g.
-  `global_EUR-11_d01.ini`) — superseded by the equivalent
-  `cordex_global_<DOMAIN_ID>_<domain>.ini` (identical content); kept only
-  for reference. Safe to delete once you've confirmed you don't need it.
