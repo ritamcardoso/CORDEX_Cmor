@@ -11,8 +11,8 @@ This used to be two dozen near-duplicate submission scripts, one per
 variable group, each with its own hardcoded paths and variable list. It's
 now 3 generic scripts driven by one small config file
 (`config/varsets.sh`) plus one site-specific settings file
-(`env.site.sh`) — everything below walks through the full setup, start to
-finish.
+(`env.site.sh`), submitted through a single wrapper (`submit.sh`) —
+everything below walks through the full setup, start to finish.
 
 ## 1. Directory Setup
 
@@ -25,7 +25,7 @@ header/        <- per-variable namelist headers
 header_ini/    <- per-domain grid/global config (see header_ini/README.md)
 config/        <- varsets.sh: the single source of truth for variables/programs/scheduling (see config/README.md)
 scripts/       <- the 3 generic job scripts
-env.site.sh.example, LICENSE, README.md, MIGRATION.md
+submit.sh, env.site.sh.example, LICENSE, README.md, MIGRATION.md
 ```
 
 This root directory is referred to as `ROOT_DIR` everywhere below — see
@@ -176,11 +176,14 @@ you include plev/zlev:
 program literally named `RCM_plev_uava` / `RCM_zlev_uava` — that's how the
 source names those programs, not a bug in this config.
 
-To extract the fixed variables `VAR`is set to `fx`
-`run_out_fx.sh` (`orog`, `sftlaf`, `sftlf`, `sfturf`, `sftgif` →
-`RCM_fx_<var>`) 
-`[fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"`It is not called in Analysis since
-is independent of time. Call as a single `VARSET` see §10 (Extracting a single variable/varset). 
+**Fixed (time-invariant) fields** are handled the same way, just with
+their own varset: `[fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"` →
+`RCM_fx_orog.f90`, `RCM_fx_sftlaf.f90`, `RCM_fx_sftlf.f90`,
+`RCM_fx_sfturf.f90`, `RCM_fx_sftgif.f90`. `fx` is deliberately **not** in
+`ORDER`, so `run_Analysis_v2.sh` never submits it automatically — these
+fields don't vary by year, so there's nothing to chain. Submit it once, on
+its own, the same way as any other single varset (§10, "Extracting a
+single variable/varset").
 
 ### Scheduling and chaining
 
@@ -198,9 +201,9 @@ Alongside `VARSETS[]`, the same file holds:
 See [§11, Adding/changing a variable set](#11-addingchanging-a-variable-set)
 for how to extend this file.
 
-## 6. Submission Scripts (`scripts` folder)
+## 6. Submission Scripts (`scripts` folder + `submit.sh`)
 
-Only 3 scripts now, each replacing what used to be a whole family of
+Only 3 job scripts now, each replacing what used to be a whole family of
 per-variable files:
 
 | Script | Replaces | Role |
@@ -217,6 +220,41 @@ all 3 scripts (identical in each).
 
 Everything else in these 3 scripts is generic — you should not need to
 edit anything below their `#SBATCH` block.
+
+### `submit.sh` — how you actually submit
+
+`submit.sh`, at the repo root, is the wrapper you invoke instead of calling
+`sbatch` directly. It auto-detects `ROOT_DIR` from its own location, then
+re-exports it into the job's environment for you:
+
+```bash
+./submit.sh [sbatch options...] <script-name> [script-args...]
+
+# e.g.
+./submit.sh run_Analysis_v2.sh 20010101 20011231 2005
+./submit.sh --job-name=wrf-fx --time=01:00:00 \
+       --output=wrf-fx.%j.out --error=wrf-fx.%j.out \
+       run_out_generic.sh 20010101 20011231 2000 fx
+```
+
+`<script-name>` is looked up under `$ROOT_DIR/scripts/` automatically —
+you don't type `scripts/` or the full path. Anything before it that starts
+with `-` is passed straight through to `sbatch` (`--job-name`, `--time`,
+`--output`, `--error`, ...); anything after it is passed to the target
+script as its own arguments (`<datebeg> <dateend> <year_lim> [<varset>]`).
+
+This is also how the pipeline chains itself internally —
+`run_Analysis_v2.sh` and `run_out_generic.sh` both call
+`${REPO_DIR}/submit.sh` (not `sbatch` directly) whenever they submit a
+follow-up or archive job, so `ROOT_DIR` propagates automatically through
+every hop of the chain without you needing to export it anywhere.
+
+You can still call `sbatch $ROOT_DIR/scripts/<script>.sh ...` directly if
+you'd rather — every script still validates `ROOT_DIR` and fails with a
+clear error if it isn't set — but then `ROOT_DIR` **does** need to already
+be exported in your environment (e.g. `~/.bashrc`), since that path
+skips `submit.sh`'s auto-detection. `submit.sh` is the recommended way in
+because it removes that manual step.
 
 ## 7. Archiving
 
@@ -264,15 +302,25 @@ This repo can live anywhere (e.g. `ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis`)
 — it does **not** need to be checked out into your submission/scratch
 directory, and you don't need to `cd` into it before running `sbatch`.
 
-Every script requires `ROOT_DIR` to already be set in your environment,
-checked at startup with a clear error if it isn't. **Scripts do not try to
-auto-detect their own location from `$0`/`dirname`** — `sbatch` copies the
-submitted script into a spool directory before running it, so `$0` at
-runtime often doesn't point at this repo at all, especially once you submit
-from somewhere else (e.g. `$SCRATCH/Analysis`) than where the code lives.
+Every script requires `ROOT_DIR` to already be set when it runs, checked at
+startup with a clear error if it isn't. **The 3 job scripts in `scripts/`
+do not try to auto-detect their own location from `$0`/`dirname`** —
+`sbatch` copies the submitted script into a spool directory before running
+it, so `$0` at runtime often doesn't point at this repo at all, especially
+once you submit from somewhere else (e.g. `$SCRATCH/Analysis`) than where
+the code lives.
 
-Export it once, e.g. in `~/.bashrc` so every future shell (and every batch
-job, since Slurm inherits your environment by default) has it:
+`submit.sh`, the wrapper at the repo root (§6), sidesteps this: it *is*
+where `$0`/`dirname` still works (you run it directly, so it isn't copied
+to a spool dir), so it auto-detects `ROOT_DIR` from its own location and
+passes it into the job via `sbatch --export`. If you always submit through
+`submit.sh`, you never need to export `ROOT_DIR` yourself.
+
+If you call `sbatch $ROOT_DIR/scripts/<script>.sh ...` directly instead
+(bypassing `submit.sh`), you do need `ROOT_DIR` set in your own
+environment first. Export it once, e.g. in `~/.bashrc` so every future
+shell (and every batch job, since Slurm inherits your environment by
+default) has it:
 
 ```bash
 export ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
@@ -291,14 +339,15 @@ This is completely independent of:
 
 ### First-time setup checklist
 
-1. Check out this repo somewhere permanent — that's `ROOT_DIR`.
-2. `export ROOT_DIR=/path/to/it` (add to `~/.bashrc`).
-3. Fill in `header_ini/` and confirm `header/` (§2, §3).
-4. `cp env.site.sh.example env.site.sh` and fill it in (§4).
-5. Check `config/varsets.sh` covers the variables you need (§5) —
+1. Check out this repo somewhere permanent — that's `ROOT_DIR`. If you
+   always submit via `submit.sh` (§6, recommended) it auto-detects this
+   for you; otherwise `export ROOT_DIR=/path/to/it` (add to `~/.bashrc`).
+2. Fill in `header_ini/` and confirm `header/` (§2, §3).
+3. `cp env.site.sh.example env.site.sh` and fill it in (§4).
+4. Check `config/varsets.sh` covers the variables you need (§5) —
    `MIGRATION.md` maps old script names to varsets if you're coming from
    the previous per-variable-script layout.
-6. Fill in `--account`/`--mail-user`/`--chdir` at the top of all 3 scripts
+5. Fill in `--account`/`--mail-user`/`--chdir` at the top of all 3 scripts
    in `scripts/` (§6).
 
 ### Standard submission
@@ -313,11 +362,15 @@ self-resubmission at a specific year so a stuck loop doesn't run forever.
 cd $SCRATCH/Analysis   # or wherever you want to submit from — doesn't have to be ROOT_DIR
 
 # Syntax
-sbatch $ROOT_DIR/scripts/run_Analysis_v2.sh <datebeg> <dateend> <year_lim>
+$ROOT_DIR/submit.sh run_Analysis_v2.sh <datebeg> <dateend> <year_lim>
 
 # Example: process 2001, then keep chaining year by year until 2005
-sbatch $ROOT_DIR/scripts/run_Analysis_v2.sh 20010101 20011231 2005
+$ROOT_DIR/submit.sh run_Analysis_v2.sh 20010101 20011231 2005
 ```
+
+(If `ROOT_DIR` isn't exported yet, run `submit.sh` by its full or relative
+path the first time, e.g. `/path/to/repo/submit.sh ...` — it doesn't need
+`ROOT_DIR` set beforehand, since it auto-detects it from its own location.)
 
 ### Extracting a single variable/varset
 
@@ -326,9 +379,18 @@ old `run_out_<x>.sh` script went) to find which varset covers your
 variable, then submit it directly — no file to modify:
 
 ```bash
-sbatch --job-name=wrf-soil --time=12:00:00 \
+$ROOT_DIR/submit.sh --job-name=wrf-soil --time=12:00:00 \
        --output=wrf-soil.%j.out --error=wrf-soil.%j.out \
-       $ROOT_DIR/scripts/run_out_generic.sh 19900101 19901231 2000 soil
+       run_out_generic.sh 19900101 19901231 2000 soil
+```
+
+`fx` (§5) — the time-invariant fields — is submitted the same way, just
+with a short walltime and no year range that actually matters:
+
+```bash
+$ROOT_DIR/submit.sh --job-name=wrf-fx --time=01:00:00 \
+       --output=wrf-fx.%j.out --error=wrf-fx.%j.out \
+       run_out_generic.sh 19900101 19900101 1900 fx
 ```
 
 ### Extracting multiple years in a single submission
@@ -343,9 +405,9 @@ since that part is unconditional):
 
 ```bash
 # Process 2001-2005 in one job, no auto-chained follow-up job
-sbatch --job-name=wrf-out --time=18:00:00 \
+$ROOT_DIR/submit.sh --job-name=wrf-out --time=18:00:00 \
        --output=wrf-out.%j.out --error=wrf-out.%j.out \
-       $ROOT_DIR/scripts/run_out_generic.sh 20010101 20051231 2000 out
+       run_out_generic.sh 20010101 20051231 2000 out
 ```
 
 (Previously this required commenting out lines in every `run_out*.sh` file

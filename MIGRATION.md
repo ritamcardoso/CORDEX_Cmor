@@ -4,12 +4,13 @@ Verified directly against the live `scripts/` and `f90_src/` folders in
 [ritamcardoso/CORDEX_Cmor](https://github.com/ritamcardoso/CORDEX_Cmor).
 Each row is now one entry in `config/varsets.sh`.
 
-Submit with (after `export ROOT_DIR=/path/to/this/repo`):
+Submit with (see README.md §6 for `submit.sh` — no need to export
+`ROOT_DIR` yourself, it's auto-detected from `submit.sh`'s location):
 
 ```bash
-sbatch --job-name=wrf-<varset> --time=<TIME[varset]> \
+$ROOT_DIR/submit.sh --job-name=wrf-<varset> --time=<TIME[varset]> \
        --output=wrf-<varset>.%j.out --error=wrf-<varset>.%j.out \
-       $ROOT_DIR/scripts/run_out_generic.sh <datebeg> <dateend> <year_lim> <varset>
+       run_out_generic.sh <datebeg> <dateend> <year_lim> <varset>
 ```
 
 | Old script              | New varset    | Program(s)                          |
@@ -31,6 +32,7 @@ sbatch --job-name=wrf-<varset> --time=<TIME[varset]> \
 | run_out_zlev_ta.sh        | `zlev_ta`     | RCM_zlev_ta (fixed)                  |
 | run_out_zlev_uava0.sh     | `zlev_uava0`  | RCM_zlev_uava (fixed — processes va\*) |
 | run_out_zlev_uava1.sh     | `zlev_uava1`  | RCM_zlev_uava (fixed — processes va\*) |
+| run_out_fx.sh              | `fx`          | RCM_fx_\<var\> (`orog`, `sftlaf`, `sftlf`, `sfturf`, `sftgif`) |
 
 **Renamed / restructured:** `acum` mixed two unrelated things — `pr`/`prc`/
 `sund` (each its own `RCM_sfc_<var>.f90`) and 14 radiation variables (all
@@ -53,9 +55,12 @@ above — since `plev_uava`/`zlev_uava0`/`zlev_uava1` need their variable
 lists to archive the "u" files. They're still absent from
 `ORDER`/`NEXT`/`TIME`, so they never run as their own processing job.
 
-**Not migrated:** `run_out_fx.sh` (`orog`, `sftlaf`, `sftlf`, `sfturf`,
-`sftgif` → `RCM_fx_<var>`) — those `RCM_fx_*.f90` sources don't exist in
-`f90_src/` yet.
+**`fx` (time-invariant fields):** unlike every other varset above, `fx` is
+deliberately **not** in `ORDER` or `NEXT[]` — these fields (orography, land
+fraction, urban fraction, ...) don't vary by year, so there's nothing to
+chain and `run_Analysis_v2.sh` never submits it automatically. It has a
+`TIME[fx]` entry and is submitted like any other single varset (see
+README.md §10, "Extracting a single variable/varset").
 
 ## Archiving
 

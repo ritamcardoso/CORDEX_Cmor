@@ -90,10 +90,12 @@ scheduling/chaining or not:
   **not** need to add it to `ORDER` or `NEXT[]` if you're only ever going
   to submit it manually:
 
+  Make sure you link submit.sh to your submission folder
+
   ```bash
-  sbatch --job-name=wrf-my_few --time=04:00:00 \
+  ./submit.sh --job-name=wrf-my_few --time=04:00:00 \
          --output=wrf-my_few.%j.out --error=wrf-my_few.%j.out \
-         $ROOT_DIR/scripts/run_out_generic.sh 19900101 19901231 2000 my_few
+         run_out_generic.sh 19900101 19901231 2000 my_few
   ```
 
   `CP_TIME[my_few]` is optional (falls back to `DEFAULT_CP_TIME`).
