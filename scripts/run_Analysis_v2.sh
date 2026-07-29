@@ -1,16 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=Analysis
 #SBATCH --qos=nf
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=30:00
 #SBATCH --hint=nomultithread
-#SBATCH --output=analysis.%j.out
-#SBATCH --error=analysis.%j.out
-#SBATCH --account=
+#SBATCH --account=spptcard
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=
-#SBATCH --chdir=
+#SBATCH --mail-user=rmcardoso@fc.ul.pt
+#SBATCH --chdir=/ec/res4/scratch/ptrt
 
 # ------------------------------------------------------------------
 #  --account/--mail-user/--chdir above are the only site-specific bits left
@@ -59,9 +55,9 @@ echo "$dateend"
 source "${REPO_DIR}/config/varsets.sh"
 
 for vs in "${ORDER[@]}"; do
-  sbatch --job-name="wrf-${vs}" --time="${TIME[$vs]}" \
+  ${REPO_DIR}/submit.sh --job-name="wrf-${vs}" --time="${TIME[$vs]}" \
          --output="wrf-${vs}.%j.out" --error="wrf-${vs}.%j.out" \
-         "${REPO_DIR}/scripts/run_out_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${vs}"
+         "run_out_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${vs}"
   sleep 120
 done
 

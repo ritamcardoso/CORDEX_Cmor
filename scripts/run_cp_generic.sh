@@ -1,16 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=cp-out
 #SBATCH --qos=nf
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=20:00:00
 #SBATCH --hint=nomultithread
-#SBATCH --output=cp-out.%j.out
-#SBATCH --error=cp-out.%j.out
-#SBATCH --account=
+#SBATCH --account=spptcard
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=
-#SBATCH --chdir=
+#SBATCH --mail-user=rmcardoso@fc.ul.pt
+#SBATCH --chdir=/ec/res4/scratch/ptrt
 #
 # scripts/run_cp_generic.sh
 #
@@ -102,7 +98,7 @@ for (( v=0; v<${#var[@]}; v++)); do
 done
 
 for (( v=0; v<${#var[@]}; v++)); do
-  scp "${var[$v]}"_*"${yeari}"*.nc "${REMOTE_HOST}:${REMOTE_BASE}/${var[$v]}/raw"
+  scp "${var[$v]}"_*.nc "${REMOTE_HOST}:${REMOTE_BASE}/${var[$v]}/raw"
 done
 
 echo "$0 (${VARSET}) done."

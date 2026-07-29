@@ -1,16 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=wrf-out
 #SBATCH --qos=nf
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=18:00:00
 #SBATCH --hint=nomultithread
-#SBATCH --output=wrf-out.%j.out
-#SBATCH --error=wrf-out.%j.out
-#SBATCH --account=
+#SBATCH --account=spptcard
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=
-#SBATCH --chdir=
+#SBATCH --mail-user=rmcardoso@fc.ul.pt
+#SBATCH --chdir=/ec/res4/scratch/ptrt
 #
 # scripts/run_out_generic.sh
 #
@@ -194,15 +190,16 @@ done #year
 # companion (config/varsets.sh: CP_EXTRA[]), since they only process "v"
 # but the underlying programs also produce matching "u" files.
 #----------------------------------------------------------------
-sbatch --job-name="cp-${VARSET}" --time="${CP_TIME[$VARSET]:-$DEFAULT_CP_TIME}" \
+# cd ${REPO_DIR}
+ ${REPO_DIR}/submit.sh --job-name="cp-${VARSET}" --time="${CP_TIME[$VARSET]:-$DEFAULT_CP_TIME}" \
        --output="cp-${VARSET}.%j.out" --error="cp-${VARSET}.%j.out" \
-       "${REPO_DIR}/scripts/run_cp_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${VARSET}"
+       "run_cp_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${VARSET}"
 
 extra="${CP_EXTRA[$VARSET]:-}"
 if [ -n "${extra}" ]; then
-  sbatch --job-name="cp-${extra}" --time="${CP_TIME[$extra]:-$DEFAULT_CP_TIME}" \
+  ${REPO_DIR}/submit.sh --job-name="cp-${extra}" --time="${CP_TIME[$extra]:-$DEFAULT_CP_TIME}" \
          --output="cp-${extra}.%j.out" --error="cp-${extra}.%j.out" \
-         "${REPO_DIR}/scripts/run_cp_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${extra}"
+         "run_cp_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${extra}"
 fi
 
 #----------------------------------------------------------------
@@ -216,9 +213,9 @@ if [ -n "${next}" ] && [ "$yeari" -le "$year_lim" ]; then
     next_datebeg=$(( yeari + 1 ))
     next_dateend=$(( yearf + 1 ))
   fi
-  sbatch --job-name="wrf-${next}" --time="${TIME[$next]}" \
+  ${REPO_DIR}/submit.sh --job-name="wrf-${next}" --time="${TIME[$next]}" \
          --output="wrf-${next}.%j.out" --error="wrf-${next}.%j.out" \
-         "${REPO_DIR}/scripts/run_out_generic.sh" "${next_datebeg}" "${next_dateend}" "${year_lim}" "${next}"
+         "run_out_generic.sh" "${next_datebeg}" "${next_dateend}" "${year_lim}" "${next}"
 fi
 
 echo "$0 (${VARSET}) done."
