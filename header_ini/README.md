@@ -10,11 +10,14 @@ Every filename here follows one pattern:
 <EXPERIMENT>_[global_|xtrm_]<DOMAIN_ID>_<grid>.ini
 ```
 
-- **`<EXPERIMENT>`** — the campaign prefix, from `env.site.sh`'s
-  `EXPERIMENT[]` map: `cordex` for standard CORDEX-CMIP6 runs, `fpsurb` for
-  FPS-URB-RCC runs.
-- **`<DOMAIN_ID>`** — the CORDEX domain identifier, from `env.site.sh`'s
-  `DOMAIN_ID[]` map (e.g. `EUR-11`, `EUR-12`, `PARIS-3`).
+- **`<EXPERIMENT>`** — the campaign prefix, from `env.site.sh`'s single
+  `EXPERIMENT` value (**not** per-grid, unlike `DOMAIN_ID` below — an
+  experiment always covers every grid in `run` together): `cordex` for
+  standard CORDEX-CMIP6 runs, `fpsurb` for FPS-URB-RCC runs.
+- **`<DOMAIN_ID>`** — the CORDEX domain identifier for that grid, from
+  `env.site.sh`'s `DOMAIN_ID[]` map (e.g. `EUR-12`, `PARIS-3`) — this one
+  *does* vary per grid, even within one experiment (fpsurb is `EUR-12` on
+  `d01`, `PARIS-3` on `d02`).
 - **`<grid>`** — matches a key in the `run` associative array in
   `env.site.sh` (e.g. `d01`, `d02`).
 

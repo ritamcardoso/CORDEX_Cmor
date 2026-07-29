@@ -93,30 +93,33 @@ now in one place:
 * **Compiler/library versions** — `intel_v`, `hdf5_v`, `netcdf_v`, `FC`,
   `FFLAGS`, and the NetCDF/HDF5 include/lib paths.
 * **Domains** — `run` is the set of grids to process, keyed the same way
-  as `DOMAIN_ID[]`/`EXPERIMENT[]` below it (only the keys matter; the
-  value is unused, `1` by convention) — e.g. `run=([d01]=1)`, plus a
-  matching entry in `DOMAIN_ID[]` (e.g. `[d01]="EUR-12"`) and
-  `EXPERIMENT[]` (e.g. `[d01]="cordex"`) for each. Together these select
-  `<EXPERIMENT>_<DOMAIN_ID>_<grid>.ini` /
-  `<EXPERIMENT>_global_<DOMAIN_ID>_<grid>.ini` out of `header_ini/` —
-  `EXPERIMENT` is the campaign prefix (`cordex` for standard CORDEX-CMIP6
-  runs, `fpsurb` for FPS-URB-RCC runs; see
-  [`header_ini/README.md`](header_ini/README.md)). Add as many
-  `run`/`DOMAIN_ID`/`EXPERIMENT` entries as you need, provided you have a
-  matching `header_ini` file for each — a single site can even mix
-  experiments across grids (e.g. `d01` on `cordex`, `d02` on `fpsurb`):
-  `run=([d01]=1 [d02]=1)`, `DOMAIN_ID=([d01]="EUR-12" [d02]="PARIS-3")`,
-  `EXPERIMENT=([d01]="cordex" [d02]="fpsurb")`. Comment a grid's line out
-  in `run` to disable it without deleting its `DOMAIN_ID`/`EXPERIMENT`
-  entries.
-* **Raw/output directories** — `OUTPUT_WRF` (raw `wrfout` location) and
-  `OUTPUT_DIR` (CMORised-output destination), sed'd into each `.ini`
-  file's `_OUTPUT_WRF_`/`_OUTPUT_DIR_` placeholders at run time (see
-  [`header_ini/README.md`](header_ini/README.md)). Unlike `DOMAIN_ID`/
-  `EXPERIMENT`, these are single site-wide values rather than per-grid
-  maps — `env.site.sh.example` ships two ready-made blocks (CORDEX vs.
-  urban-downscaling paths); comment/uncomment whichever matches what
-  you're currently running.
+  as `DOMAIN_ID[]` below it (only the keys matter; the value is unused,
+  `1` by convention) — e.g. `run=([d01]=1)`, plus a matching entry in
+  `DOMAIN_ID[]` (e.g. `[d01]="EUR-12"`) for each. Together with
+  `EXPERIMENT` (below) these select `<EXPERIMENT>_<DOMAIN_ID>_<grid>.ini` /
+  `<EXPERIMENT>_global_<DOMAIN_ID>_<grid>.ini` out of `header_ini/` — see
+  [`header_ini/README.md`](header_ini/README.md). Add as many
+  `run`/`DOMAIN_ID` entries as you need, provided you have a matching
+  `header_ini` file for each. Comment a grid's line out in `run` to
+  disable it without deleting its `DOMAIN_ID` entry.
+* **Experiment + raw/output directories** — `EXPERIMENT` (the campaign
+  prefix, `cordex` for standard CORDEX-CMIP6 runs or `fpsurb` for
+  FPS-URB-RCC runs), `OUTPUT_WRF` (raw `wrfout` location) and `OUTPUT_DIR`
+  (CMORised-output destination, sed'd into each `.ini` file's
+  `_OUTPUT_WRF_`/`_OUTPUT_DIR_` placeholders at run time). **Unlike
+  `DOMAIN_ID`, these three are single site-wide values, not per-grid** —
+  an experiment always spans every grid in `run` together (`cordex` only
+  ever runs `d01`; `fpsurb` runs `d01` *and* `d02` at once, just on
+  different domain IDs — `EUR-12` and `PARIS-3` respectively).
+  `env.site.sh.example` ships two ready-made blocks (CORDEX vs.
+  urban-downscaling); uncomment whichever matches what you're currently
+  running, together with the matching `run`/`DOMAIN_ID` entries above.
+  **Uncomment the whole block, not just some lines** — the two blocks
+  work by plain sequential reassignment (the urban block, being lower in
+  the file, simply overwrites `EXPERIMENT`/`ROOT_RUN_DIR`/`OUTPUT_DIR`/
+  `OUTPUT_WRF` if you leave the CORDEX block active above it), so leaving
+  any one of those four commented out in the block you actually want
+  silently keeps that variable's CORDEX-block value instead.
 * **Archive step settings** — `CP_MODULES`, `CP_RUN_DIR`, `ECFS_BASE`,
   `REMOTE_HOST`, `REMOTE_BASE` (see [§7, Archiving](#7-archiving)).
 
