@@ -3,10 +3,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --hint=nomultithread
-#SBATCH --account=spptcard
+#SBATCH --account=
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=rmcardoso@fc.ul.pt
-#SBATCH --chdir=/ec/res4/scratch/ptrt
+#SBATCH --mail-user=
+#SBATCH --chdir=
 
 # ------------------------------------------------------------------
 #  --account/--mail-user/--chdir above are the only site-specific bits left
@@ -15,8 +15,10 @@
 #
 #  Run using (ROOT_DIR must be exported first — see README.md):
 #
-#  export ROOT_DIR=/path/to/this/repo
-#  sbatch $ROOT_DIR/scripts/run_Analysis_v2.sh \
+#  link submit.sh to this repo
+#  ln -s ${ROOT_DIR}/submit.sh . 
+#  ./submit.sh --job-name=Analysis --time=2:00:00 \
+#       --output=analsysis.%j.out --error=analysis.%j.out run_Analysis_v2.sh \
 #         [initial date - yyyymmdd] [final date - yyyymmdd] [loop year limit - yyyy]
 #
 #  You can submit from anywhere (e.g. $SCRATCH/Analysis) — ROOT_DIR is what
