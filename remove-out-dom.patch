@@ -1,0 +1,29 @@
+diff --git a/header_ini/README.md b/header_ini/README.md
+index 2a12f95..5b4e3ce 100644
+--- a/header_ini/README.md
++++ b/header_ini/README.md
+@@ -40,12 +40,6 @@ Under normal circumstances you do not need to modify these files
+ - **Naming conventions** — `dom`/`outdom`, the domain and model names used
+   in the CMORised output filenames.
+ 
+-`run_out_generic.sh` also sed's an `_OUT_DOM_` placeholder from
+-`$OUT_DOM` — as of this writing `OUT_DOM` isn't set anywhere in
+-`env.site.sh.example` and no `.ini` file here contains `_OUT_DOM_`, so
+-this is currently a no-op. Looks like unfinished work rather than a bug;
+-worth wiring up (or removing) before relying on it.
+-
+ `run_out_generic.sh` automatically picks the `xtrm_` variant (sourced from
+ `wrfxtrm` rather than `wrfout` — note the `wrffile` value inside) when, and
+ only when, `<varset>` is `wxtrm` (the one that runs `RCM_sfc_xtrm`); every
+diff --git a/scripts/run_out_generic.sh b/scripts/run_out_generic.sh
+index 31d64ab..86f4e82 100644
+--- a/scripts/run_out_generic.sh
++++ b/scripts/run_out_generic.sh
+@@ -151,7 +151,6 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
+      -e "s|_END_YY_|$END_YY|g" \
+      -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
+      -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
+-     -e "s|_OUT_DOM_|$OUT_DOM|g" \
+      "${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini" \
+      > "${RUN_DIR}/header_${run[$r]}"
+     

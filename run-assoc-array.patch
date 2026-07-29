@@ -1,0 +1,119 @@
+diff --git a/README.md b/README.md
+index 765f1d8..8c39c58 100644
+--- a/README.md
++++ b/README.md
+@@ -92,18 +92,23 @@ now in one place:
+   point it wherever you want the scratch data to live.
+ * **Compiler/library versions** — `intel_v`, `hdf5_v`, `netcdf_v`, `FC`,
+   `FFLAGS`, and the NetCDF/HDF5 include/lib paths.
+-* **Domains** — `run=("d01")` plus a matching entry in `DOMAIN_ID[]` (e.g.
+-  `[d01]="EUR-12"`) and `EXPERIMENT[]` (e.g. `[d01]="cordex"`) for each.
+-  Together these select `<EXPERIMENT>_<DOMAIN_ID>_<grid>.ini` /
++* **Domains** — `run` is the set of grids to process, keyed the same way
++  as `DOMAIN_ID[]`/`EXPERIMENT[]` below it (only the keys matter; the
++  value is unused, `1` by convention) — e.g. `run=([d01]=1)`, plus a
++  matching entry in `DOMAIN_ID[]` (e.g. `[d01]="EUR-12"`) and
++  `EXPERIMENT[]` (e.g. `[d01]="cordex"`) for each. Together these select
++  `<EXPERIMENT>_<DOMAIN_ID>_<grid>.ini` /
+   `<EXPERIMENT>_global_<DOMAIN_ID>_<grid>.ini` out of `header_ini/` —
+   `EXPERIMENT` is the campaign prefix (`cordex` for standard CORDEX-CMIP6
+   runs, `fpsurb` for FPS-URB-RCC runs; see
+   [`header_ini/README.md`](header_ini/README.md)). Add as many
+-  `run`/`DOMAIN_ID`/`EXPERIMENT` triples as you need, provided you have a
++  `run`/`DOMAIN_ID`/`EXPERIMENT` entries as you need, provided you have a
+   matching `header_ini` file for each — a single site can even mix
+   experiments across grids (e.g. `d01` on `cordex`, `d02` on `fpsurb`):
+-  `run=("d01" "d02")`, `DOMAIN_ID=([d01]="EUR-12" [d02]="PARIS-3")`,
+-  `EXPERIMENT=([d01]="cordex" [d02]="fpsurb")`.
++  `run=([d01]=1 [d02]=1)`, `DOMAIN_ID=([d01]="EUR-12" [d02]="PARIS-3")`,
++  `EXPERIMENT=([d01]="cordex" [d02]="fpsurb")`. Comment a grid's line out
++  in `run` to disable it without deleting its `DOMAIN_ID`/`EXPERIMENT`
++  entries.
+ * **Raw/output directories** — `OUTPUT_WRF` (raw `wrfout` location) and
+   `OUTPUT_DIR` (CMORised-output destination), sed'd into each `.ini`
+   file's `_OUTPUT_WRF_`/`_OUTPUT_DIR_` placeholders at run time (see
+diff --git a/env.site.sh.example b/env.site.sh.example
+index c0c1196..82f0cfc 100644
+--- a/env.site.sh.example
++++ b/env.site.sh.example
+@@ -48,9 +48,15 @@ OTHER_LIBS="-lm -lz"
+ 
+ ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
+ 
+-# Domain(s) to process
+-declare -a run=("d01")
+-#
++# Domain(s) to process — same associative-array style as DOMAIN_ID/EXPERIMENT
++# below, so enabling/disabling a grid and giving it a domain ID/experiment
++# all happen the same way. Only the keys matter here; the value is unused
++# (set to 1 by convention). Comment a line out to disable that grid without
++# deleting it.
++declare -A run=(
++  [d01]=1
++  # [d02]=1
++)
+ 
+ # CORDEX domain ID for each grid above — selects which global_<ID>_<grid>.ini
+ # / cordex_<ID>_<grid>.ini pair run_out_generic.sh uses (see header_ini/).
+diff --git a/header_ini/README.md b/header_ini/README.md
+index 5b4e3ce..d461cac 100644
+--- a/header_ini/README.md
++++ b/header_ini/README.md
+@@ -15,7 +15,7 @@ Every filename here follows one pattern:
+   FPS-URB-RCC runs.
+ - **`<DOMAIN_ID>`** — the CORDEX domain identifier, from `env.site.sh`'s
+   `DOMAIN_ID[]` map (e.g. `EUR-11`, `EUR-12`, `PARIS-3`).
+-- **`<grid>`** — matches an entry in the `run=(...)` array in
++- **`<grid>`** — matches a key in the `run` associative array in
+   `env.site.sh` (e.g. `d01`, `d02`).
+ 
+ There are two kinds of file `run_out_generic.sh` actually reads:
+diff --git a/scripts/run_out_generic.sh b/scripts/run_out_generic.sh
+index 86f4e82..0a028b6 100644
+--- a/scripts/run_out_generic.sh
++++ b/scripts/run_out_generic.sh
+@@ -128,12 +128,12 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
+ #
+ # Domain
+ #
+- for (( r=0; r<${#run[@]}; r++)); do
++ for grid in "${!run[@]}"; do
+ 
+-  dom_id="${DOMAIN_ID[${run[$r]}]:?No DOMAIN_ID set for '${run[$r]}' in env.site.sh — add [${run[$r]}]=\"<CORDEX-domain-id>\" to the DOMAIN_ID array}"
+-  exp="${EXPERIMENT[${run[$r]}]:?No EXPERIMENT set for '${run[$r]}' in env.site.sh — add [${run[$r]}]=\"<experiment-name>\" to the EXPERIMENT array}"
++  dom_id="${DOMAIN_ID[${grid}]:?No DOMAIN_ID set for '${grid}' in env.site.sh — add [${grid}]=\"<CORDEX-domain-id>\" to the DOMAIN_ID array}"
++  exp="${EXPERIMENT[${grid}]:?No EXPERIMENT set for '${grid}' in env.site.sh — add [${grid}]=\"<experiment-name>\" to the EXPERIMENT array}"
+ 
+-  cp ${HEADER_INI_DIR}/${exp}_global_${dom_id}_${run[$r]}.ini  global_data.inp
++  cp ${HEADER_INI_DIR}/${exp}_global_${dom_id}_${grid}.ini  global_data.inp
+ 
+ #
+ # Variables (a varset can have more than one group — see config/varsets.sh)
+@@ -151,10 +151,10 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
+      -e "s|_END_YY_|$END_YY|g" \
+      -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
+      -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
+-     "${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini" \
+-     > "${RUN_DIR}/header_${run[$r]}"
++     "${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${grid}.ini" \
++     > "${RUN_DIR}/header_${grid}"
+     
+-    cat header_${run[$r]} > inputlist.inp
++    cat header_${grid} > inputlist.inp
+     echo "!" >> inputlist.inp
+     echo "! Variable" >> inputlist.inp
+     echo "!" >> inputlist.inp
+@@ -176,11 +176,11 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
+     ./${PROG_NAME}.exe
+ 
+     rm inputlist.inp
+-    rm header_${run[$r]}
++    rm header_${grid}
+ 
+    done #var
+   done #group
+- done #dom
++ done #domain (grid)
+ done #year
+ 
+ #----------------------------------------------------------------

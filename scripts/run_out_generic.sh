@@ -128,12 +128,12 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
 # Domain
 #
- for (( r=0; r<${#run[@]}; r++)); do
+ for grid in "${!run[@]}"; do
 
-  dom_id="${DOMAIN_ID[${run[$r]}]:?No DOMAIN_ID set for '${run[$r]}' in env.site.sh — add [${run[$r]}]=\"<CORDEX-domain-id>\" to the DOMAIN_ID array}"
-  exp="${EXPERIMENT[${run[$r]}]:?No EXPERIMENT set for '${run[$r]}' in env.site.sh — add [${run[$r]}]=\"<experiment-name>\" to the EXPERIMENT array}"
+  dom_id="${DOMAIN_ID[${grid}]:?No DOMAIN_ID set for '${grid}' in env.site.sh — add [${grid}]=\"<CORDEX-domain-id>\" to the DOMAIN_ID array}"
+  exp="${EXPERIMENT[${grid}]:?No EXPERIMENT set for '${grid}' in env.site.sh — add [${grid}]=\"<experiment-name>\" to the EXPERIMENT array}"
 
-  cp ${HEADER_INI_DIR}/${exp}_global_${dom_id}_${run[$r]}.ini  global_data.inp
+  cp ${HEADER_INI_DIR}/${exp}_global_${dom_id}_${grid}.ini  global_data.inp
 
 #
 # Variables (a varset can have more than one group — see config/varsets.sh)
@@ -151,11 +151,10 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
      -e "s|_END_YY_|$END_YY|g" \
      -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
      -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
-     -e "s|_OUT_DOM_|$OUT_DOM|g" \
-     "${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${run[$r]}.ini" \
-     > "${RUN_DIR}/header_${run[$r]}"
+     "${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${grid}.ini" \
+     > "${RUN_DIR}/header_${grid}"
     
-    cat header_${run[$r]} > inputlist.inp
+    cat header_${grid} > inputlist.inp
     echo "!" >> inputlist.inp
     echo "! Variable" >> inputlist.inp
     echo "!" >> inputlist.inp
@@ -177,11 +176,11 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     ./${PROG_NAME}.exe
 
     rm inputlist.inp
-    rm header_${run[$r]}
+    rm header_${grid}
 
    done #var
   done #group
- done #dom
+ done #domain (grid)
 done #year
 
 #----------------------------------------------------------------

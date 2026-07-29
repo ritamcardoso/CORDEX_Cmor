@@ -15,7 +15,7 @@ Every filename here follows one pattern:
   FPS-URB-RCC runs.
 - **`<DOMAIN_ID>`** — the CORDEX domain identifier, from `env.site.sh`'s
   `DOMAIN_ID[]` map (e.g. `EUR-11`, `EUR-12`, `PARIS-3`).
-- **`<grid>`** — matches an entry in the `run=(...)` array in
+- **`<grid>`** — matches a key in the `run` associative array in
   `env.site.sh` (e.g. `d01`, `d02`).
 
 There are two kinds of file `run_out_generic.sh` actually reads:
@@ -25,8 +25,16 @@ There are two kinds of file `run_out_generic.sh` actually reads:
 The `&cordex_config` namelist: raw-data paths and grid dimensions. 
 Under normal circumstances you do not need to modify these files
 
-- **`dir` / `dir2`** — `dir` points to your raw `wrfout` files; `dir2` is
-  the destination for the CMORised output.
+- **`dir` / `dir2`** — placeholders `_OUTPUT_WRF_`/`_OUTPUT_DIR_`, sed'd in
+  by `run_out_generic.sh` from `env.site.sh`'s `OUTPUT_WRF`/`OUTPUT_DIR`
+  (a trailing `/` is appended automatically, so don't include one in
+  either the `.ini` placeholder or the `env.site.sh` value). Don't
+  hardcode real paths here — edit `env.site.sh` instead. Note these are
+  **not** per-grid like `DOMAIN_ID`/`EXPERIMENT`: `OUTPUT_WRF`/`OUTPUT_DIR`
+  are single site-wide values, so if you're mixing experiments across
+  grids (e.g. `d01` on `cordex`, `d02` on `fpsurb`) you currently need to
+  point them at whichever experiment you're actively running — see the
+  commented-out "urban downscaling" block in `env.site.sh.example`.
 - **Domain & geography** — the `wrfout` domain (`nz`/`nlon`/`nlat`/
   `xoffset`/`yoffset`), and the matching `geog` name.
 - **Naming conventions** — `dom`/`outdom`, the domain and model names used
