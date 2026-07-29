@@ -237,6 +237,8 @@ status = nf90_put_att(ncid, rpVarID, "grid_north_pole_latitude", 39.25 )
 status = nf90_put_att(ncid, rpVarID, "grid_north_pole_longitude", -162. )
 call handle_err(status)
 
+call write_global_attributes
+
 status = nf90_enddef(ncid)
 
 status = nf90_put_var(ncid, LonVarId, lon )
@@ -254,7 +256,7 @@ status = nf90_close(ncid)
 call handle_err(status)
 !
 return
-end subroutine write_netcdf_2D(uvar)
+end subroutine write_netcdf_2D
 !
 !-----------------------------------------------------------------------
 !

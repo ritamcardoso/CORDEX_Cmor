@@ -15,7 +15,7 @@ call init_cordex_environment
 
 call read_geog
 
-allocate(wrfv(nlon,nlat))
+allocate(wrfv2D(nlon,nlat))
 allocate(outvar(nlon,nlat))
 
 ! Re-open the geog file to read the relevant variable
@@ -37,8 +37,6 @@ call ncerror(status,'closing file')
 outvar(:,:)=wrfv2D(:,:)*100.
 
 call write_output
-
-enddo
 
 contains
 !
@@ -81,7 +79,7 @@ creationdate=cdate(1:len_trim(cdate))
 !
 call write_netcdf_2D(outvar)
 
-deallocate(outva)
+deallocate(outvar)
 
 end subroutine write_output
 
