@@ -176,10 +176,11 @@ you include plev/zlev:
 program literally named `RCM_plev_uava` / `RCM_zlev_uava` — that's how the
 source names those programs, not a bug in this config.
 
+To extract the fixed variables `VAR`is set to `fx`
 `run_out_fx.sh` (`orog`, `sftlaf`, `sftlf`, `sfturf`, `sftgif` →
-`RCM_fx_<var>`) is intentionally **not** wired in yet — those
-`RCM_fx_*.f90` sources don't exist in `f90_src/` in this repo yet. Add an
-`[fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"` entry once they do.
+`RCM_fx_<var>`) 
+`[fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"`It is not called in Analysis since
+is independent of time. Call as a single `VARSET` see §10 (Extracting a single variable/varset). 
 
 ### Scheduling and chaining
 
