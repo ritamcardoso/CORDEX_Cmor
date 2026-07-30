@@ -5,5 +5,5 @@ lname = 'TOA Outgoing Longwave Radiation'
 stname = 'toa_outgoing_longwave_flux'
 cmethods = 'area: time: mean'
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-# 
+! 
 !

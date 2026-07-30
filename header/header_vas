@@ -6,5 +6,5 @@ stname = 'northward_wind'
 cmethods = 'area: mean time: point'
 height = 10.
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-#
+!
 !

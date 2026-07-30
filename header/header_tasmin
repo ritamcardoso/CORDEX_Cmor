@@ -6,4 +6,4 @@ stname = 'air_temperature'
 cmethods = 'area: mean time: minimum'
 height = 2.
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-#!
+!!

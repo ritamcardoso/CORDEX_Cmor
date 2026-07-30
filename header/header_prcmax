@@ -5,5 +5,5 @@ lname = 'Daily Maximum Convective Precipitation'
 stname = 'daily_maximum_convective_precipitation_flux'
 cmethods = 'time: point'
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-#
+!
 !
