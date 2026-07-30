@@ -211,7 +211,7 @@ subroutine calc_zlev_uv
 use datvar_s        
 !
 real :: alphau,alphav,u1,u2,v1,v2,u_int,v_int,logz1,logz2,norm_z
-real, parameter :: min_val = 1.0e-7, huge_val = 1.0e20
+real, parameter :: min_val = 1.0e-7
 !
 outvar=huge_val
 !

@@ -179,7 +179,7 @@ contains
 subroutine calc_zlev
 use datvar_s        
 ! Interpolates the variable to the target height 'heightl' 
-real, parameter :: huge_val = 1.0e20
+!real, parameter :: huge_val = 1.0e20
 
 outvar = huge_val
 
