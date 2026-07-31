@@ -28,6 +28,10 @@
 #
 # Normally you don't call this directly — run_out_generic.sh submits it
 # automatically after processing each varset.
+#
+# ECFS and scp transfers run up to MAX_PARALLEL_CP (default 8) at a time
+# instead of one variable at a time — override with MAX_PARALLEL_CP=<n> if
+# needed. A failed transfer is caught and turned into a nonzero exit.
 #----------------------------------------------------------------
 
 set -x
@@ -92,13 +96,48 @@ echo "$yearf"
 
 cd "${CP_RUN_DIR}" || exit 1
 
+# Both archive loops below run up to MAX_PARALLEL_CP transfers concurrently
+# instead of one variable at a time — for varsets with many variables
+# (e.g. [out] has 15) this was a lot of serial network round-trips for
+# what's an embarrassingly parallel operation. Override with
+# MAX_PARALLEL_CP=<n> if the remote/ECFS can't take that many connections
+# at once. Failures are tracked (a backgrounded transfer failing silently
+# would otherwise go unnoticed) and turned into a nonzero exit at the end.
+MAX_PARALLEL_CP="${MAX_PARALLEL_CP:-8}"
+failed=0
+
+pids=()
 for (( v=0; v<${#var[@]}; v++)); do
-  emkdir -p "${ECFS_BASE}/${var[$v]}"
-  ecp -o "${var[$v]}"_* "${ECFS_BASE}/${var[$v]}/"
+  (
+    emkdir -p "${ECFS_BASE}/${var[$v]}" &&
+    ecp -o "${var[$v]}"_* "${ECFS_BASE}/${var[$v]}/"
+  ) &
+  pids+=("$!")
+  if [ "${#pids[@]}" -ge "${MAX_PARALLEL_CP}" ]; then
+    wait "${pids[0]}" || { failed=1; echo "ERROR: an ECFS archive transfer failed for varset ${VARSET}" >&2; }
+    pids=("${pids[@]:1}")
+  fi
+done
+for pid in "${pids[@]}"; do
+  wait "${pid}" || failed=1
 done
 
+pids=()
 for (( v=0; v<${#var[@]}; v++)); do
-  scp "${var[$v]}"_*.nc "${REMOTE_HOST}:${REMOTE_BASE}/${var[$v]}/raw"
+  scp "${var[$v]}"_*.nc "${REMOTE_HOST}:${REMOTE_BASE}/${var[$v]}/raw" &
+  pids+=("$!")
+  if [ "${#pids[@]}" -ge "${MAX_PARALLEL_CP}" ]; then
+    wait "${pids[0]}" || failed=1
+    pids=("${pids[@]:1}")
+  fi
 done
+for pid in "${pids[@]}"; do
+  wait "${pid}" || failed=1
+done
+
+if [ "${failed}" -ne 0 ]; then
+  echo "ERROR: one or more archive transfers failed for varset ${VARSET} — see above." >&2
+  exit 1
+fi
 
 echo "$0 (${VARSET}) done."

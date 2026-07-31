@@ -42,6 +42,16 @@
 # config/varsets.sh:NEXT[<varset>] points to (only if year_lim hasn't been
 # reached yet) — mirroring the original scripts' self/pair-resubmission
 # pattern (e.g. out<->soil, or zlev_ta<->plev_ta).
+#
+# Compiling is cached within a single run: the shared module/subroutines
+# build once (not once per variable/year), and each PROG_NAME.exe builds
+# once even for fixed-program groups shared across many variables/levels
+# (e.g. RCM_plev_ta across all 16 pressure levels) — set FORCE_REBUILD=1 to
+# bypass the cache (e.g. after editing f90_src/).
+#
+# Per-variable, per-year output is skipped if it already exists in
+# OUTPUT_DIR — safe to rerun/resubmit without reprocessing finished years.
+# Set FORCE_REPROCESS=1 to reprocess regardless.
 #----------------------------------------------------------------
 
 set -x
@@ -119,6 +129,27 @@ RUN_DIR="${ROOT_RUN_DIR}/${VARSET}"
 mkdir -p "${RUN_DIR}"
 
 cd "${RUN_DIR}" || exit 1
+
+#----------------------------------------------------------------
+# Compile the shared module + subroutines exactly once per run — these
+# (datvar_s.f90 / shared_subs_v2.f90 by default) don't depend on
+# year/grid/variable/program at all, so recompiling them inside the loop
+# below (once per variable, per year) was pure waste. Skipped if the .o
+# already exists in RUN_DIR (e.g. a rerun in a reused scratch dir); set
+# FORCE_REBUILD=1 to force a clean recompile (e.g. after editing f90_src/).
+#----------------------------------------------------------------
+if [ "${FORCE_REBUILD:-0}" = "1" ] || [ ! -f "${MOD_NAME}.o" ]; then
+  $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
+fi
+if [ "${FORCE_REBUILD:-0}" = "1" ] || [ ! -f "${SUB_NAME}.o" ]; then
+  $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
+fi
+
+# Per-program compile cache for this run — see PROG_NAME compile step
+# below. A program's .exe is identical across every year/grid it's used
+# for, so once built it's reused rather than rebuilt on every iteration.
+declare -A COMPILED_PROGS=()
+
 #
 #  Time Loop (yeari <= yearf; it is usually =)
 #
@@ -144,6 +175,16 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 
    for (( v=0; v<${#var[@]}; v++)); do
 #
+# Skip if this variable's output for this year already exists — makes a
+# rerun/resubmit safe without reprocessing years that already succeeded.
+# Set FORCE_REPROCESS=1 to reprocess regardless (e.g. after a source fix).
+#
+    existing=( "${OUTPUT_DIR}/${var[$v]}"_*"${START_YY}"*.nc )
+    if [ "${FORCE_REPROCESS:-0}" != "1" ] && [ -e "${existing[0]}" ]; then
+      echo "Skipping ${var[$v]} ${START_YY}: output already exists (${existing[0]}). Set FORCE_REPROCESS=1 to redo it."
+      continue
+    fi
+#
 #  Create list from header_d0?.ini + header_[var]
 #
     sed \
@@ -167,11 +208,15 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
 #
     PROG_NAME="${prog_pattern/VAR/${var[$v]}}"
 #
-# Compiling
+# Compiling — cached per PROG_NAME for the lifetime of this run (see
+# COMPILED_PROGS above). A fixed-program group (e.g. RCM_plev_ta, shared
+# by all 16 pressure levels) previously recompiled the identical .exe once
+# per variable, per year; now it's built once and reused.
 #
-    $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90"
-    $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC
-    $FC $FFLAGS ${PROG_DIR}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS
+    if [ "${FORCE_REBUILD:-0}" = "1" ] || [ -z "${COMPILED_PROGS[$PROG_NAME]+x}" ]; then
+      $FC $FFLAGS ${PROG_DIR}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS
+      COMPILED_PROGS[$PROG_NAME]=1
+    fi
 
     ./${PROG_NAME}.exe
 

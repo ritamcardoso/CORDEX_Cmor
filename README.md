@@ -24,7 +24,8 @@ f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90,
 header/        <- per-variable namelist headers
 header_ini/    <- per-domain grid/global config (see header_ini/README.md)
 config/        <- varsets.sh: the single source of truth for variables/programs/scheduling (see config/README.md)
-scripts/       <- the 3 generic job scripts
+                  lint_varsets.sh: static consistency check for varsets.sh (also runs in CI)
+scripts/       <- the 3 generic job scripts, plus report_walltimes.sh (see "Notes", below)
 submit.sh, env.site.sh.example, LICENSE, README.md, MIGRATION.md
 ```
 
@@ -435,11 +436,25 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
 
 ## Notes / things to double check before first real run
 
-- The compile step (Fortran module + subs + program) still runs once per
-  variable, per year, exactly as in the original — including recompiling
-  the same fixed program (e.g. `RCM_sfc_rad.f90`, `RCM_plev_ta.f90`)
-  repeatedly for each variable/level in its group. Harmless, just matches
-  the original's per-variable compile pattern.
+- The compile step (Fortran module + subs + program) is now cached per run
+  (§6): the shared module/subroutines build once, and each program builds
+  once even for fixed-program groups shared across many variables/levels
+  (e.g. `RCM_plev_ta.f90` across all 16 pressure levels) — not once per
+  variable/year, as in the original scripts. Set `FORCE_REBUILD=1` to
+  bypass the cache (e.g. right after editing `f90_src/`).
+- Per-variable, per-year output is skipped if it already exists in
+  `OUTPUT_DIR` (checked against `<var>_*<year>*.nc`) — reruns/resubmits are
+  safe without reprocessing finished years. Set `FORCE_REPROCESS=1` to
+  redo it anyway.
+- `run_cp_generic.sh`'s ECFS and `scp` archive steps now run up to
+  `MAX_PARALLEL_CP` (default 8) transfers concurrently instead of one
+  variable at a time — override with `MAX_PARALLEL_CP=<n>` if the
+  remote/ECFS can't take that many connections at once.
+- `config/lint_varsets.sh` statically checks `config/varsets.sh` for
+  dangling `NEXT[]`/`CP_EXTRA[]` references, `VARSETS[]` entries missing
+  `TIME[]`, and programs/variables with no matching file under `f90_src/`
+  or `header/`. It runs in CI on every push (`.github/workflows/`); run it
+  yourself after editing `config/varsets.sh` (`config/lint_varsets.sh`).
 - Scripts use `#!/bin/bash` explicitly (not `#!/bin/sh`) since they rely on
   bash associative arrays — the originals already used bash-only syntax
   under a `#!/bin/sh` shebang, which only worked if `/bin/sh` happened to be
@@ -447,9 +462,14 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
 - `TIME[]` values for `out` and `plev_ta` were confirmed against the live
   scripts; the rest are carried over/estimated and worth a check — `rad`
   and `snw` especially, since what they cover just changed.
+  `scripts/report_walltimes.sh` pulls real elapsed times from `sacct` for
+  jobs this pipeline has already submitted and suggests `TIME[]`/
+  `CP_TIME[]` updates from that history, once you have some runs behind
+  you (run it on the HPC login node, not in CI).
 - `CP_TIME[]` (archive-step walltime) is only confirmed for `out`
   (`20:00:00`, from the live `run_cp_out.sh`); everything else falls back
-  to `DEFAULT_CP_TIME` (`04:00:00`) until you've checked real numbers.
+  to `DEFAULT_CP_TIME` (`04:00:00`) until you've checked real numbers (see
+  `scripts/report_walltimes.sh` above).
 - `plev_va`, `zlev_va0`, `zlev_va1` are disabled on purpose (old/superseded
   versions) — commented out at the bottom of `config/varsets.sh` rather
   than deleted, so they're easy to compare against or resurrect.
