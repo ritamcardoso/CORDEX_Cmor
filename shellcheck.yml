@@ -21,6 +21,7 @@ jobs:
         run: |
           shellcheck -S error \
             scripts/run_out_generic.sh \
+            scripts/run_out_generic_parallel.sh \
             scripts/run_cp_generic.sh \
             scripts/run_Analysis_v2.sh \
             scripts/report_walltimes.sh \

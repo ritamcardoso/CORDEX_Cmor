@@ -25,7 +25,8 @@ header/        <- per-variable namelist headers
 header_ini/    <- per-domain grid/global config (see header_ini/README.md)
 config/        <- varsets.sh: the single source of truth for variables/programs/scheduling (see config/README.md)
                   lint_varsets.sh: static consistency check for varsets.sh (also runs in CI)
-scripts/       <- the 3 generic job scripts, plus report_walltimes.sh (see "Notes", below)
+scripts/       <- the 3 generic job scripts, plus report_walltimes.sh and the
+                  optional run_out_generic_parallel.sh (see "Notes", below)
 submit.sh, env.site.sh.example, LICENSE, README.md, MIGRATION.md
 ```
 
@@ -204,23 +205,43 @@ for how to extend this file.
 
 ## 6. Submission Scripts (`scripts` folder + `submit.sh`)
 
-Only 3 job scripts now, each replacing what used to be a whole family of
-per-variable files:
+3 core job scripts, each replacing what used to be a whole family of
+per-variable files, plus one optional variant:
 
 | Script | Replaces | Role |
 |---|---|---|
 | `run_out_generic.sh` | all `run_out_*.sh` | processes one varset for a year range, then submits the archive job and (if configured) the next varset in the chain |
 | `run_cp_generic.sh` | all `run_cp_*.sh` | archives one varset's output to ECFS + remote |
 | `run_Analysis_v2.sh` | itself (orchestrator) | submits every varset in `ORDER`, 120s apart |
+| `run_out_generic_parallel.sh` *(optional)* | — | same as `run_out_generic.sh`, but runs several variables at once (see below) — only if your site allows it |
 
-**Slurm account/mail/chdir:** with only 3 scripts, there's no separate
-options file to maintain — `sbatch` has no flag to merge one in anyway
-(not supported by ECMWF's `sbatch`). Just edit the `#SBATCH --account=`,
-`--mail-type=`, `--mail-user=`, `--chdir=` lines directly at the top of
-all 3 scripts (identical in each).
+**Slurm account/mail/chdir:** with only a handful of scripts, there's no
+separate options file to maintain — `sbatch` has no flag to merge one in
+anyway (not supported by ECMWF's `sbatch`). Just edit the
+`#SBATCH --account=`, `--mail-type=`, `--mail-user=`, `--chdir=` lines
+directly at the top of each script (identical in each).
 
-Everything else in these 3 scripts is generic — you should not need to
-edit anything below their `#SBATCH` block.
+Everything else in these scripts is generic — you should not need to edit
+anything below their `#SBATCH` block.
+
+### Running variables in parallel — `run_out_generic_parallel.sh`
+
+**Not every site allows this.** Some Slurm configurations/queues don't let
+a single batch job run several processes concurrently on its allocation —
+if that's yours, skip this section and use `run_out_generic.sh` as normal.
+If you're not sure, check with your HPC's helpdesk before relying on it.
+
+Where it *is* allowed, `run_out_generic_parallel.sh` runs up to
+`MAX_PARALLEL_RUN` (default 4) variables at once instead of one at a
+time — each in its own working directory, since every RCM program reads
+fixed filenames (`inputlist.inp`, `global_data.inp`) from its current
+directory, so two variables running at once in the same directory would
+corrupt each other's input. It needs more than the default 1 CPU to
+actually run things concurrently on — see the `--cpus-per-task` line at
+the top of the script, and keep it in sync with `MAX_PARALLEL_RUN`. Same
+usage, same `FORCE_REBUILD`/`FORCE_REPROCESS` overrides, same
+archiving/chaining as `run_out_generic.sh` — see the comment header in
+`run_out_generic_parallel.sh` for the full explanation.
 
 ### `submit.sh` — how you actually submit
 
@@ -449,7 +470,15 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
 - `run_cp_generic.sh`'s ECFS and `scp` archive steps now run up to
   `MAX_PARALLEL_CP` (default 8) transfers concurrently instead of one
   variable at a time — override with `MAX_PARALLEL_CP=<n>` if the
-  remote/ECFS can't take that many connections at once.
+  remote/ECFS can't take that many connections at once. **If your site's
+  Slurm setup doesn't allow concurrent transfers/processes within a job at
+  all, set `MAX_PARALLEL_CP=1`** (in `env.site.sh`, or exported before
+  submitting) to run fully serial, one variable at a time — you still get
+  the added failure-detection (a stalled/failed `ecp`/`scp` now actually
+  fails the job; the original serial loop never checked). There's also an
+  optional `run_out_generic_parallel.sh` (§6) that parallelizes the actual
+  processing step the same way, for sites where that's allowed too — worth
+  keeping in mind even if you can't use it on this particular HPC.
 - `config/lint_varsets.sh` statically checks `config/varsets.sh` for
   dangling `NEXT[]`/`CP_EXTRA[]` references, `VARSETS[]` entries missing
   `TIME[]`, and programs/variables with no matching file under `f90_src/`
