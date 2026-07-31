@@ -29,9 +29,11 @@
 # Normally you don't call this directly — run_out_generic.sh submits it
 # automatically after processing each varset.
 #
-# ECFS and scp transfers run up to MAX_PARALLEL_CP (default 8) at a time
-# instead of one variable at a time — override with MAX_PARALLEL_CP=<n> if
-# needed. A failed transfer is caught and turned into a nonzero exit.
+# ECFS and scp transfers run one at a time by default (MAX_PARALLEL_CP=1,
+# set in env.site.sh — see env.site.sh.example). See README.md §6,
+# "Running things in parallel", for raising MAX_PARALLEL_CP if your
+# site allows concurrent transfers. A failed transfer is caught and
+# turned into a nonzero exit either way.
 #----------------------------------------------------------------
 
 set -x
@@ -97,13 +99,15 @@ echo "$yearf"
 cd "${CP_RUN_DIR}" || exit 1
 
 # Both archive loops below run up to MAX_PARALLEL_CP transfers concurrently
-# instead of one variable at a time — for varsets with many variables
-# (e.g. [out] has 15) this was a lot of serial network round-trips for
-# what's an embarrassingly parallel operation. Override with
-# MAX_PARALLEL_CP=<n> if the remote/ECFS can't take that many connections
-# at once. Failures are tracked (a backgrounded transfer failing silently
-# would otherwise go unnoticed) and turned into a nonzero exit at the end.
-MAX_PARALLEL_CP="${MAX_PARALLEL_CP:-8}"
+# instead of one at a time — for varsets with many variables (e.g. [out]
+# has 15) running them one at a time is a lot of serial network
+# round-trips for what's an embarrassingly parallel operation. Defaults to
+# 1 (fully serial) below; set MAX_PARALLEL_CP in env.site.sh (see
+# env.site.sh.example and README.md §6) to raise it if your site allows
+# concurrent transfers. Failures are tracked either way (a backgrounded
+# transfer failing silently would otherwise go unnoticed) and turned into
+# a nonzero exit at the end.
+MAX_PARALLEL_CP="${MAX_PARALLEL_CP:-1}"
 failed=0
 
 pids=()

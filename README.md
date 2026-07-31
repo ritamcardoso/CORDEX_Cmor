@@ -124,6 +124,12 @@ now in one place:
   silently keeps that variable's CORDEX-block value instead.
 * **Archive step settings** — `CP_MODULES`, `CP_RUN_DIR`, `ECFS_BASE`,
   `REMOTE_HOST`, `REMOTE_BASE` (see [§7, Archiving](#7-archiving)).
+* **Parallelism** — `MAX_PARALLEL_CP` and `MAX_PARALLEL_RUN` (see
+  [§6](#6-submission-scripts-scripts-folder), "Running variables in
+  parallel"). `MAX_PARALLEL_CP` defaults to `1` (fully serial archiving) —
+  raise it only if your site allows concurrent transfers within a job.
+  `MAX_PARALLEL_RUN` (only used by the optional
+  `run_out_generic_parallel.sh`) defaults to `4`.
 
 `env.site.sh` is gitignored — it never gets committed.
 
@@ -224,24 +230,36 @@ directly at the top of each script (identical in each).
 Everything else in these scripts is generic — you should not need to edit
 anything below their `#SBATCH` block.
 
-### Running variables in parallel — `run_out_generic_parallel.sh`
+### Running things in parallel
 
-**Not every site allows this.** Some Slurm configurations/queues don't let
-a single batch job run several processes concurrently on its allocation —
-if that's yours, skip this section and use `run_out_generic.sh` as normal.
-If you're not sure, check with your HPC's helpdesk before relying on it.
+Two independent knobs, both set in `env.site.sh` (§4) — no need to edit
+any script or export anything by hand. **Both default to serial (`1`)
+because not every site allows a batch job to run several
+processes/transfers concurrently on its allocation** — check with your
+HPC's helpdesk if you're not sure before raising either.
 
-Where it *is* allowed, `run_out_generic_parallel.sh` runs up to
-`MAX_PARALLEL_RUN` (default 4) variables at once instead of one at a
-time — each in its own working directory, since every RCM program reads
-fixed filenames (`inputlist.inp`, `global_data.inp`) from its current
-directory, so two variables running at once in the same directory would
-corrupt each other's input. It needs more than the default 1 CPU to
-actually run things concurrently on — see the `--cpus-per-task` line at
-the top of the script, and keep it in sync with `MAX_PARALLEL_RUN`. Same
-usage, same `FORCE_REBUILD`/`FORCE_REPROCESS` overrides, same
-archiving/chaining as `run_out_generic.sh` — see the comment header in
-`run_out_generic_parallel.sh` for the full explanation.
+**Archiving (`run_cp_generic.sh`):** `MAX_PARALLEL_CP` (default `1`) caps
+how many ECFS/scp transfers run at once — for varsets with many variables
+(e.g. `out` has 15) archiving one at a time is a lot of serial network
+round-trips for what's an embarrassingly parallel operation. If your site
+allows it, raise `MAX_PARALLEL_CP` in `env.site.sh` — e.g. `8` — and
+that's the whole change; nothing else to adjust. Either way, a failed
+transfer is now caught and fails the job (the original serial loop never
+checked this).
+
+**Processing (`run_out_generic_parallel.sh`, optional):** a parallel
+variant of `run_out_generic.sh` that runs up to `MAX_PARALLEL_RUN`
+(default `4`) variables at once instead of one at a time — each in its
+own working directory, since every RCM program reads fixed filenames
+(`inputlist.inp`, `global_data.inp`) from its current directory, so two
+variables running at once in the same directory would corrupt each
+other's input. Unlike `MAX_PARALLEL_CP`, this needs one more change to
+actually take effect: more than the default 1 CPU to run things
+concurrently on, so keep `MAX_PARALLEL_RUN` in sync with
+`--cpus-per-task` at the top of `run_out_generic_parallel.sh` (`4` by
+default, matching). Same usage, same `FORCE_REBUILD`/`FORCE_REPROCESS`
+overrides, same archiving/chaining as `run_out_generic.sh` — see the
+comment header in `run_out_generic_parallel.sh` for the full explanation.
 
 ### `submit.sh` — how you actually submit
 
@@ -467,18 +485,14 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
   `OUTPUT_DIR` (checked against `<var>_*<year>*.nc`) — reruns/resubmits are
   safe without reprocessing finished years. Set `FORCE_REPROCESS=1` to
   redo it anyway.
-- `run_cp_generic.sh`'s ECFS and `scp` archive steps now run up to
-  `MAX_PARALLEL_CP` (default 8) transfers concurrently instead of one
-  variable at a time — override with `MAX_PARALLEL_CP=<n>` if the
-  remote/ECFS can't take that many connections at once. **If your site's
-  Slurm setup doesn't allow concurrent transfers/processes within a job at
-  all, set `MAX_PARALLEL_CP=1`** (in `env.site.sh`, or exported before
-  submitting) to run fully serial, one variable at a time — you still get
-  the added failure-detection (a stalled/failed `ecp`/`scp` now actually
-  fails the job; the original serial loop never checked). There's also an
-  optional `run_out_generic_parallel.sh` (§6) that parallelizes the actual
-  processing step the same way, for sites where that's allowed too — worth
-  keeping in mind even if you can't use it on this particular HPC.
+- `run_cp_generic.sh`'s ECFS/`scp` archiving and the optional
+  `run_out_generic_parallel.sh` can both run several transfers/variables
+  at once — off by default (`MAX_PARALLEL_CP=1`/`MAX_PARALLEL_RUN=4`,
+  the latter only relevant if you use the parallel script at all), set in
+  `env.site.sh` — see §6, "Running things in parallel", for what to raise
+  and what else to check before you do. Independent of whether you turn
+  it on: both now catch and fail the job on a stalled/failed
+  `ecp`/`scp`/variable-run, which the original serial loop never checked.
 - `config/lint_varsets.sh` statically checks `config/varsets.sh` for
   dangling `NEXT[]`/`CP_EXTRA[]` references, `VARSETS[]` entries missing
   `TIME[]`, and programs/variables with no matching file under `f90_src/`

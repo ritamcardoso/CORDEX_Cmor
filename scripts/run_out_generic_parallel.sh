@@ -31,21 +31,23 @@
 # batch job to run several processes concurrently on its allocation (some
 # HPC configs/queues don't — see README.md, "Notes"). If you're not sure,
 # ask your HPC's helpdesk before relying on this, or just use
-# run_out_generic.sh (MAX_PARALLEL_RUN=1 here is equivalent, minus the
-# working-directory overhead).
+# run_out_generic.sh (MAX_PARALLEL_RUN=1 in env.site.sh is equivalent here,
+# minus the working-directory overhead).
 #
 # RESOURCES: this requests --cpus-per-task=4 above (vs =1 implied on
 # run_out_generic.sh) to actually have something to run concurrently on —
-# adjust this AND MAX_PARALLEL_RUN together (see below) to match your
-# node/queue's real core count and how CPU-heavy each RCM program is.
+# adjust this AND MAX_PARALLEL_RUN (in env.site.sh — see below) together to
+# match your node/queue's real core count and how CPU-heavy each RCM
+# program is.
 #
 # Usage — identical to run_out_generic.sh, same 4 positional args:
 #   $ROOT_DIR/submit.sh --job-name=wrf-<varset> --time=<hh:mm:ss> \
 #          --output=wrf-<varset>.%j.out --error=wrf-<varset>.%j.out \
 #          run_out_generic_parallel.sh <datebeg> <dateend> <year_lim> <varset>
 #
-# MAX_PARALLEL_RUN (default 4, via env.site.sh or the environment) caps how
-# many variables run at once — keep it <= --cpus-per-task above.
+# MAX_PARALLEL_RUN caps how many variables run at once — set it in
+# env.site.sh (see env.site.sh.example; default there is 4), not by editing
+# this script. Keep it <= --cpus-per-task above.
 #
 # Same FORCE_REBUILD=1 / FORCE_REPROCESS=1 overrides as run_out_generic.sh.
 #
@@ -97,7 +99,7 @@ exp="${EXPERIMENT:?No EXPERIMENT set in env.site.sh — add EXPERIMENT=\"cordex\
 
 IFS=';' read -r -a groups <<< "${VARSETS[$VARSET]}"
 
-MAX_PARALLEL_RUN="${MAX_PARALLEL_RUN:-4}"
+MAX_PARALLEL_RUN="${MAX_PARALLEL_RUN:-4}"   # set in env.site.sh — see env.site.sh.example
 
 #----------------------------------------------------------------
 #                        Processing                               |
