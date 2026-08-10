@@ -82,7 +82,7 @@ real, dimension(:,:), allocatable :: mr, mr_sat, e_sfc, esat
 
 ! Real 3D Allocatable Arrays
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
-real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v
+real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v, t
 real, dimension(:,:,:), allocatable :: qc, qi, qr, qs, smois
 real, dimension(:,:,:), allocatable :: outvar_3, outvar_6, outvar_d, outvar_m, outvar_d_max
 real, dimension(:,:,:), allocatable :: outvar_h_u, outvar_h_v
