@@ -48,7 +48,7 @@ subroutine read_cordex_config(cfg_filename)
 
     if (pres /= missing_value) then
         presl       = pres
-        pressure(1) = pres
+        pressure(1) = pres/100.
     end if
 
     wrfile = trim(adjustl(wrffile))
