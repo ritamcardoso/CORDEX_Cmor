@@ -16,8 +16,8 @@ real, parameter :: gamma             = 0.0065
 real, parameter :: pconst            = 1.0e5
 real, parameter :: cp                = 1004.0
 real, parameter :: rcp               = 0.285714
-real, parameter :: missing_value     = 1.e20         
-real, parameter :: huge_val          = 1.e20         
+real, parameter :: missing_value     = -1.00e20         
+real, parameter :: huge_val          = 1.00e20         
 
 ! --- Fixed Calendar Data Arrays & Parameters ---
 integer, dimension(tmonths) :: days
