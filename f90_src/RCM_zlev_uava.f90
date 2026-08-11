@@ -211,9 +211,9 @@ subroutine calc_zlev_uv
 use datvar_s        
 !
 real :: alphau,alphav,u1,u2,v1,v2,u_int,v_int,logz1,logz2,norm_z
-real, parameter :: min_val = 1.0e-7
 !
-outvar=huge_val
+outvar_u=huge_val
+outvar_v=huge_val
 !
 do isy=1,nlat
   do isx=1,nlon

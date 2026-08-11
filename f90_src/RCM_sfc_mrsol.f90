@@ -54,7 +54,7 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(outvar(nlon, nlat, nsoil))
+allocate(outvar_h(nlon, nlat, nsoil))
 allocate(wrfv3D(nlon, nlat, nsoil))
 
 it = 0
@@ -126,7 +126,7 @@ do year = yeari, yearf,1
         bdtime(1, issh) = ish - 6
         bdtime(2, issh) = ish
 
-        outvar_h_4d(:,:,:,issh)=outvar(:,:,:)
+        outvar_h_4d(:,:,:,issh)=outvar_h(:,:,:)
 
       enddo loop_h    ! end hour
 !
@@ -154,10 +154,10 @@ do ix=1,nlon
   do iy=1,nlat
     if(landmask(ix,iy)>0.)then
       do is=1,nsoil
-        outvar(ix,iy,is)=(sdepth(is)*wrfv3D(ix,iy,is))*1000.
+        outvar_h(ix,iy,is)=(sdepth(is)*wrfv3D(ix,iy,is))*1000.
       enddo
     else
-      outvar(ix,iy,:)=1.e+20
+      outvar_h(ix,iy,:)=huge_val
     endif
   enddo
 enddo

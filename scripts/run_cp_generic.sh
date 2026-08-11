@@ -28,12 +28,6 @@
 #
 # Normally you don't call this directly — run_out_generic.sh submits it
 # automatically after processing each varset.
-#
-# ECFS and scp transfers run one at a time by default (MAX_PARALLEL_CP=1,
-# set in env.site.sh — see env.site.sh.example). See README.md §6,
-# "Running things in parallel", for raising MAX_PARALLEL_CP if your
-# site allows concurrent transfers. A failed transfer is caught and
-# turned into a nonzero exit either way.
 #----------------------------------------------------------------
 
 set -x
@@ -98,50 +92,13 @@ echo "$yearf"
 
 cd "${CP_RUN_DIR}" || exit 1
 
-# Both archive loops below run up to MAX_PARALLEL_CP transfers concurrently
-# instead of one at a time — for varsets with many variables (e.g. [out]
-# has 15) running them one at a time is a lot of serial network
-# round-trips for what's an embarrassingly parallel operation. Defaults to
-# 1 (fully serial) below; set MAX_PARALLEL_CP in env.site.sh (see
-# env.site.sh.example and README.md §6) to raise it if your site allows
-# concurrent transfers. Failures are tracked either way (a backgrounded
-# transfer failing silently would otherwise go unnoticed) and turned into
-# a nonzero exit at the end.
-MAX_PARALLEL_CP="${MAX_PARALLEL_CP:-1}"
-failed=0
-
-pids=()
 for (( v=0; v<${#var[@]}; v++)); do
-  (
-    emkdir -p "${ECFS_BASE}/${var[$v]}" &&
-    ecp -o "${var[$v]}"_* "${ECFS_BASE}/${var[$v]}/"
-  ) &
-  pids+=("$!")
-  if [ "${#pids[@]}" -ge "${MAX_PARALLEL_CP}" ]; then
-    wait "${pids[0]}" || { failed=1; echo "ERROR: an ECFS archive transfer failed for varset ${VARSET}" >&2; }
-    pids=("${pids[@]:1}")
-  fi
-done
-for pid in "${pids[@]}"; do
-  wait "${pid}" || failed=1
+  emkdir -p "${ECFS_BASE}/${var[$v]}"
+  ecp -o "${var[$v]}"_* "${ECFS_BASE}/${var[$v]}/"
 done
 
-pids=()
 for (( v=0; v<${#var[@]}; v++)); do
-  scp "${var[$v]}"_*.nc "${REMOTE_HOST}:${REMOTE_BASE}/${var[$v]}/raw" &
-  pids+=("$!")
-  if [ "${#pids[@]}" -ge "${MAX_PARALLEL_CP}" ]; then
-    wait "${pids[0]}" || failed=1
-    pids=("${pids[@]:1}")
-  fi
+  scp "${var[$v]}"_*.nc "${REMOTE_HOST}:${REMOTE_BASE}/${var[$v]}/raw"
 done
-for pid in "${pids[@]}"; do
-  wait "${pid}" || failed=1
-done
-
-if [ "${failed}" -ne 0 ]; then
-  echo "ERROR: one or more archive transfers failed for varset ${VARSET} — see above." >&2
-  exit 1
-fi
 
 echo "$0 (${VARSET}) done."

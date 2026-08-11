@@ -16,8 +16,9 @@ real, parameter :: gamma             = 0.0065
 real, parameter :: pconst            = 1.0e5
 real, parameter :: cp                = 1004.0
 real, parameter :: rcp               = 0.285714
-real, parameter :: missing_value     = -1.00e20         
-real, parameter :: huge_val          = 1.00e20         
+real, parameter :: missing_value     = -1.0e20         
+real, parameter :: huge_val          = 1.0e20
+real, parameter :: min_val           = 1.0e-7
 
 ! --- Fixed Calendar Data Arrays & Parameters ---
 integer, dimension(tmonths) :: days
@@ -39,7 +40,7 @@ integer :: nlon, nlat, nz, nzt, nsoil
 integer :: latid, lonid, timeid, levid, timedim, latdim, londim, levdim, level
 integer :: nlon_u, nlat_v
 
-real :: rhours, factor, heightl, presl, pres
+real :: rhours, factor, heightl, presl, pres, p_top
 real, dimension(1) :: height, pressure
 real, dimension(2) :: pressure_bounds
 real, dimension(:),   allocatable :: rlon, rlat
@@ -135,7 +136,7 @@ integer :: we_dim, sn_dim, bt_dim
 ! -------------------------------------------------------------
 namelist /cordex_config/ &
     yeari, yearf, iniyear, nmonths, imonth, iday, ihour, &
-    nz, nsoil, nlon, nlat, xoffset, yoffset, &
+    nz, nsoil, nlon, nlat, xoffset, yoffset, p_top, &
     dir, dir2, geog, wrffile, wrfile, dom, outdom, &
     wrfvar, vaid, height, pres, vunits, vunts, &
     lname, stname, cmethods, factor

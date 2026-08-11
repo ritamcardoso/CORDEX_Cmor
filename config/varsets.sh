@@ -74,9 +74,9 @@ declare -A VARSETS=(
 declare -A TIME=(
   [out]="18:00:00"
   [soil]="12:00:00"
-  [rad]="12:00:00"      # was 20:00:00 for acum's two groups combined; now one group, re-check
-  [snw]="12:00:00"      # bumped from 08:00:00: snw now also carries pr/prc/sund, re-check
-  [cloud]="06:00:00"
+  [rad]="18:00:00"      
+  [snw]="12:00:00"  
+  [cloud]="14:00:00"
   [wxtrm]="08:00:00"
   [tau]="06:00:00"
   [wpth]="06:00:00"
@@ -101,7 +101,7 @@ declare -A TIME=(
 # run_cp_out.sh (20:00:00); everything else falls back to DEFAULT_CP_TIME
 # until you've checked how long each one actually takes.
 #----------------------------------------------------------------
-DEFAULT_CP_TIME="04:00:00"
+DEFAULT_CP_TIME="06:00:00"
 declare -A CP_TIME=(
   [out]="20:00:00"
 )

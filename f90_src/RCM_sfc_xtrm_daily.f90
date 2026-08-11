@@ -18,18 +18,6 @@ call read_geog
 nz = 10
 nzt = nz + 1
 nhours = 24
-!
-!  Compute depth bounds
-!
-sdepth_bounds(1,1)=0.0
-do is=1,nsoil-1
- sdepth_bounds(1,is+1)=sdepth_bounds(1,is)+sdepth(is)
-enddo
-
-sdepth_bounds(2,1)=0.1
-do is=2,nsoil
- sdepth_bounds(2,is)=sdepth_bounds(2,is-1)+sdepth(is)
-enddo
 
 ! Determine starting hour offset
 ish = 0
@@ -38,9 +26,9 @@ if (yeari /= iniyear) then
     loop_year = iniyear
     do iyl = 1, nyr, 1
         if (mod(loop_year, 4) == 0 .and. loop_year /= 2100) then
-            yhours = 366 * nhours
+            yhours = 366 
         else
-            yhours = 365 * nhours
+            yhours = 365
         endif
         ish = ish + yhours
         loop_year = loop_year + 1
@@ -54,114 +42,105 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(outvar_h(nlon, nlat, nsoil))
-allocate(wrfv3D(nlon, nlat, nsoil))
+allocate(wrfv2D(nlon,nlat))
+allocate(outvar_a(nlon,nlat))
 
 it = 0
+yearf=yeari+1
+!
 do year = yeari, yearf,1
 
   write(ayear, '(i4)') year
+ !
+  if(year == yearf)then
+    nmonths=1
+  endif
+!
+  if(it == 0)then
+    write(ayeari,'(i4)')year
+    issh=0
 
   ! Compute time length and allocate time sensitive variables
-  if (mod(year, 4) == 0 .and. year /= 2100) then
+    if (mod(year, 4) == 0 .and. year /= 2100) then
       days = days2
       mydays = 366
-  else
+    else
       days = days1
       mydays = 365
-  endif
-!  ntime = mydays * nhours
-
-!  if (ihour > 0) then
-!    nhours=nhours-ihour+1
-!    ntime = ntime - ihour + 1
-!  endif
-
-  ! Loop over months
-  do month = imonth, nmonths
-!
-    issh=0
-    ndays=days(month)
-    ntime=ndays*4
+    endif
+    ntime = mydays 
 
     allocate(ttime(ntime))
     allocate(bdtime(2, ntime))
-    allocate(outvar_h_4d(nlon, nlat, nsoil, ntime))
+    allocate(outvar_h(nlon, nlat, ntime))
+  endif
+
+  ! Loop over months
+  do month = imonth, nmonths, 1
 
     ndays = days(month)
     amonth = pad_int(month, 2)
+!
+   if(year == yearf)then
+      ndays=1
+    endif
+!
+    write(*,*)year,month
 
     ! Loop over days
-    do day = 1, ndays
+   loop_d: do day = 1, ndays, 1
       aday = pad_int(day, 2)
 
-      ! Loop over hours
-      loop_h: do hour = ihour, nhours-1,6
 
-        ahour = pad_int(hour, 2)
-
-        filename = trim(dir)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_'//ahour//'_00_00'
+        filename = trim(dir)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_00_00_00'
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening file')
 
         ! Read wrf var
-        status = nf90_inq_varid(ncid, wrfvar, varid)
+!
+        status=nf90_inq_varid(ncid,wrfvar,varid)
         call ncerror(status,'getting var id')
-        
-        status=nf90_get_var(ncid,varid,wrfv3D,(/xoffset,yoffset,1/),(/nlon,nlat,nsoil/),(/1,1,1/))
+!
+        status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
         call ncerror(status,'reading '//wrfvar)
-
-        status = nf90_close(ncid)
+!
+        status=nf90_close(ncid)
         call ncerror(status,'closing file')
 !
 ! Compute variable
 !
-        call calc_tsl
+        if(it == 0)then
+          it=it+1
+!
+          cycle loop_d
+        endif
 
-        ish = ish + 6
+        ish = ish + 1
         issh = issh + 1
-        ttime(issh) = float(ish) - 6
-        bdtime(1, issh) = ish - 6
+        ttime(issh) = float(ish) - 0.5
+        bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        outvar_h_4d(:,:,:,issh)=outvar_h(:,:,:)
+        outvar_a(:,:)=nint(10000.d0*wrfv2D(:,:))
 
-      enddo loop_h    ! end hour
+        outvar_h(:,:,issh)=float(outvar_a(:,:))/10000.d0
 !
-      ihour=0
-      nhours=24
-!
-    enddo             ! end day
-
-  ! Write monthly output using shared subroutine
-    write(ayearf, '(i4)') year
-    write(ayeari, '(i4)') year
-
-    call write_output
+    enddo  loop_d     ! end day
   enddo               ! end month
-enddo
 
-contains
-!----------------------------------------------------------------------------------------------------------------------
-!
-subroutine calc_tsl
-!
-do ix=1,nlon
-  do iy=1,nlat
-    if(landmask(ix,iy)> 0.)then
-      outvar_h(ix,iy,:)=wrfv3D(ix,iy,:)
-    else
-      outvar_h(ix,iy,:)=huge_val
-    endif
-  enddo
+  write(ayearf, '(i4)') year
+
 enddo
 !
-end subroutine calc_tsl
-        
+!  Write annual output using shared subroutine
 !
-!----------------------------------------------------------------------------------------------------
+call write_output
+!
+contains
+!
+!
 !
 subroutine write_output
 ! Logic to prepare filenames and call NetCDF writer
@@ -171,13 +150,14 @@ use netcdf
 
 amonthf = pad_int(month-1, 2)
 adayf = pad_int(day-1, 2)
-ahourf = pad_int(hour-1, 2)
 
-freq='6hr'
+freq='1day'
 frequency=trim(adjustl(freq))
+tunts='days since '//ayearini//'-01-01 00:00'
+timeunits=trim(adjustl(tunts))
 
 ! Create output filename based on metadata
-outfile=trim(dir2)//trim(vaid)//trim(outdom)//trim(freq)//'_'//ayeari//amonth//'0100-'//ayearf//amonth//adayf//ahourf//'.nc'
+outfile=trim(dir2)//trim(vaid)//trim(outdom)//'day_'//ayeari//amonthi//adayi//'00-'//ayearf//amonthf//adayf//'00.nc'
 fnameout=trim(adjustl(outfile))
 
 if (factor /= 0.) outvar_h = outvar_h * factor
@@ -200,7 +180,7 @@ creationdate=cdate(1:len_trim(cdate))
 !
 ! Call the shared NetCDF writer from shared_subs
 !
-call write_netcdf_rtime_soil(outvar_h, ntime, ttime, bdtime)
+call write_netcdf_rtime_3d(outvar_h, ntime, ttime, bdtime)
 
 deallocate(ttime)
 deallocate(bdtime)
