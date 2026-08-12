@@ -180,7 +180,7 @@ frequency=trim(adjustl(freq))
 outfile=trim(dir2)//trim(vaid)//trim(outdom)//trim(freq)//'_'//ayeari//amonth//'0100-'//ayearf//amonth//adayf//ahourf//'.nc'
 fnameout=trim(adjustl(outfile))
 
-if (factor /= 0.) outvar_h = outvar_h * factor
+if (factor /= 0.) outvar_h_4d = outvar_h_4d * factor
 
 call date_and_time(date,times,zone,values)
 !
@@ -200,11 +200,11 @@ creationdate=cdate(1:len_trim(cdate))
 !
 ! Call the shared NetCDF writer from shared_subs
 !
-call write_netcdf_rtime_soil(outvar_h, ntime, ttime, bdtime)
+call write_netcdf_rtime_soil(outvar_h_4d, ntime, ttime, bdtime)
 
 deallocate(ttime)
 deallocate(bdtime)
-deallocate(outvar_h)
+deallocate(outvar_h_4d)
 
 end subroutine write_output
 

@@ -44,6 +44,7 @@ subroutine read_cordex_config(cfg_filename)
     ! Automatically populate secondary targets if variables existed in the namelist file
     if (height(1) /= missing_value) then
         heightl = height(1)
+        write(*,*) heightl
     end if
 
     if (pres /= missing_value) then

@@ -89,7 +89,7 @@ fi
 # correct for the varset that actually runs RCM_sfc_xtrm. Every other varset
 # keeps using the plain <exp>_<dom_id>_<grid>.ini.
 ini_kind=""
-if [ "${VARSET}" = "wxtrm" ]; then
+if [ "${VARSET}" = "wxtrm" ] || [ "${VARSET}" = "testex" ]; then
   ini_kind="xtrm_"
 fi
 
@@ -206,11 +206,24 @@ fi
 # Auto-chain to the next varset in the pipeline (config/varsets.sh: NEXT[])
 #----------------------------------------------------------------
 next="${NEXT[$VARSET]}"
-if [ -n "${next}" ] && [ "$yeari" -le "$year_lim" ]; then
+if [ "${ADVANCE_YEAR[$VARSET]:-0}" = "1" ]; then
+  # This varset advances the year -- only continue if there's a next year
+  # left to run. This is the link that closes out year_lim: it runs
+  # year_lim once, then stops instead of starting year_lim+1.
+  chain_ok=0
+  [ "$yeari" -lt "$year_lim" ] && chain_ok=1
+else
+  # This varset does not advance the year -- safe to run through year_lim
+  # itself, since the advancing link (earlier or later in the cycle) is
+  # what decides whether the cycle continues.
+  chain_ok=0
+  [ "$yeari" -le "$year_lim" ] && chain_ok=1
+fi
+
+if [ -n "${next}" ] && [ "$chain_ok" = "1" ]; then
   next_datebeg="${datebeg}"
   next_dateend="${dateend}"
-#  if [ "${ADVANCE_YEAR[$VARSET]:-0}" = "1" ]; then
-  if [ "${ADVANCE_YEAR[$VARSET]:-0}" = "1" ] && [ "$yeari" -lt "$year_lim" ]; then	  
+  if [ "${ADVANCE_YEAR[$VARSET]:-0}" = "1" ]; then
     next_datebeg=$(( yeari + 1 ))
     next_dateend=$(( yearf + 1 ))
   fi
@@ -218,5 +231,4 @@ if [ -n "${next}" ] && [ "$yeari" -le "$year_lim" ]; then
          --output="wrf-${next}.%j.out" --error="wrf-${next}.%j.out" \
          "run_out_generic.sh" "${next_datebeg}" "${next_dateend}" "${year_lim}" "${next}"
 fi
-
 echo "$0 (${VARSET}) done."

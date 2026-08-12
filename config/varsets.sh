@@ -43,9 +43,11 @@ declare -A VARSETS=(
   [plev_ta]="RCM_plev_ta:ta1000,ta925,ta850,ta750,ta700,ta600,ta500,ta400,ta300,ta250,ta200,ta150,ta100,ta70,ta50,ta30"
   [zlev_hus]="RCM_zlev_hus:hus50m"
   [zlev_ta]="RCM_zlev_ta:ta50m"
-  [zlev_uava0]="RCM_zlev_uava:va50m,va150m,va100m"
+  [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
   [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"
+  [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
+  [teste]="RCM_sfc_VAR:tsl"
   #
   # Archive-only companions — NOT for processing (not in ORDER/NEXT/TIME,
   # so run_out_generic.sh never runs these as their own job). They exist
@@ -76,20 +78,22 @@ declare -A TIME=(
   [soil]="12:00:00"
   [rad]="18:00:00"      
   [snw]="12:00:00"  
-  [cloud]="14:00:00"
+  [cloud]="16:00:00"
   [wxtrm]="08:00:00"
-  [tau]="06:00:00"
-  [wpth]="06:00:00"
+  [tau]="16:00:00"
+  [wpth]="16:00:00"
   [plev_wa]="18:00:00"
   [plev_zg]="14:00:00"
   [plev_uava]="14:00:00"
   [plev_hus]="14:00:00"
   [plev_ta]="14:00:00"
-  [zlev_hus]="04:00:00"
-  [zlev_ta]="04:00:00"
-  [zlev_uava0]="06:00:00"
-  [zlev_uava1]="06:00:00"
+  [zlev_hus]="06:00:00"
+  [zlev_ta]="06:00:00"
+  [zlev_uava0]="12:00:00"
+  [zlev_uava1]="12:00:00"
   [fx]="01:00:00"
+  [testex]="08:00:00"
+  [teste]="08:00:00"
 )
 # out/plev_ta walltimes confirmed against the live scripts; the rest are
 # carried over/estimated — worth a check, especially [rad] and [snw] above
@@ -97,11 +101,9 @@ declare -A TIME=(
 
 #----------------------------------------------------------------
 # CP_TIME[name] — walltime for this varset's archive/copy job
-# (run_cp_generic.sh). Only [out] is confirmed against the live
-# run_cp_out.sh (20:00:00); everything else falls back to DEFAULT_CP_TIME
-# until you've checked how long each one actually takes.
+# (run_cp_generic.sh).
 #----------------------------------------------------------------
-DEFAULT_CP_TIME="06:00:00"
+DEFAULT_CP_TIME="20:00:00"
 declare -A CP_TIME=(
   [out]="20:00:00"
 )
@@ -134,6 +136,7 @@ declare -A ADVANCE_YEAR=(
   [plev_zg]=1     [plev_uava]=1
   [plev_hus]=1    [plev_ta]=1
   [zlev_uava0]=1  [zlev_uava1]=1
+  [testex]=1      [teste]=1
   # out, rad, cloud, tau, plev_wa, zlev_hus, zlev_ta: unset -> 0 (no advance)
 )
 
@@ -151,8 +154,10 @@ declare -A NEXT=(
   [plev_uava]="plev_uava"
   [zlev_uava0]="zlev_uava0"
   [zlev_uava1]="zlev_uava1"
-  [zlev_hus]="plev_hus" [plev_hus]="zlev_hus"   # 2-cycle
-  [zlev_ta]="plev_ta"   [plev_ta]="zlev_ta"     # 2-cycle
+  [zlev_hus]="plev_hus" [plev_hus]="zlev_hus"  
+  [zlev_ta]="plev_ta"   [plev_ta]="zlev_ta"    
+  [testex]="testex"     
+  [teste]="teste"
 )
 
 # The set (and order) run_Analysis_v2.sh submits directly.

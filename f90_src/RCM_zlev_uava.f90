@@ -167,8 +167,8 @@ do year = yeari, yearf,1
 !
         do ix=1,nlon
           do iy=1,nlat
-            u(ix,iy,:)=(ua(ix,iy,:)+ua(ix+1,iy,:))/2.
-            v(ix,iy,:)=(va(ix,iy,:)+va(ix,iy+1,:))/2.
+            u(ix,iy,:)=(ua(ix,iy,:)+ua(ix+1,iy,:))/2.0
+            v(ix,iy,:)=(va(ix,iy,:)+va(ix,iy+1,:))/2.0
           enddo
         enddo
 !
@@ -262,58 +262,14 @@ end subroutine calc_zlev_uv
 !
 !----------------------------------------------------------------------------------------------------
 !
-subroutine write_output
-! Logic to prepare filenames and call NetCDF writer
-use datvar_s
-use shared_subs
-use netcdf
-
-amonthf = pad_int(month-1, 2)
-adayf = pad_int(day-1, 2)
-ahourf = pad_int(hour-1, 2)
-
-freq='1hr'
-frequency=trim(adjustl(freq))
-
-! Create output filename based on metadata
-outfile=trim(dir2)//trim(vaid)//trim(outdom)//trim(freq)//'_'//ayeari//amonthi//adayi//ahouri//'-'//ayearf//amonthf//adayf//ahourf//'.nc'
-fnameout=trim(adjustl(outfile))
-
-if (factor /= 0.) outvar_h = outvar_h * factor
-
-call date_and_time(date,times,zone,values)
-!
-!Values    1    2    3      4       5     6      7       8
-!Meaning Year Month Day Time_zone  Hour Minute Second  Millisecond
-!                       offset(min)
-!
-write(yyyy,'(i4)')values(1)
-mm = pad_int(values(2), 2)
-dd = pad_int(values(3), 2)
-hh = pad_int(values(5), 2)
-mn = pad_int(values(6), 2)
-ss = pad_int(values(7), 2)
-
-cdate=yyyy//'-'//mm//'-'//dd//'-T'//hh//':'//mn//':'//ss//'Z'
-creationdate=cdate(1:len_trim(cdate))
-!
-! Call the shared NetCDF writer from shared_subs
-!
-call write_netcdf_rtime_3d(outvar_h, ntime, ttime, bdtime)
-
-deallocate(ttime)
-deallocate(bdtime)
-deallocate(outvar_h)
-
-end subroutine write_output
 
 subroutine write_dual_output
   use datvar_s
   use shared_subs
   use netcdf
 
-  character(len=10) :: p_str
-  integer :: p_val
+  character(len=10) :: h_str,h_istr
+  integer :: h_val
 
   amonthf = pad_int(month-1, 2)
   adayf = pad_int(day-1, 2)
@@ -322,14 +278,14 @@ subroutine write_dual_output
   freq = '1hr'
   frequency = trim(adjustl(freq))
 
-  p_val = int(heightl)
-  write(p_str, '(I0)') p_val  ! 'I0' automatically adjusts to the exact width needed
-  p_str = adjustl(p_str)//'m'
+  h_val = int(heightl)
+  write(h_istr, '(I0)') h_val  ! 'I0' automatically adjusts to the exact width needed
+  h_str = trim(h_istr)//'m'
 
   ! Build unique system output targets natively using context pressure levels
-  fnameout_u = trim(dir2)//'ua'//trim(p_str)//trim(outdom)//trim(freq)//'_'//ayeari//amonthi//adayi//ahouri//'-'//ayearf//amonthf//adayf//ahourf//'.nc'
-  fnameout_v = trim(dir2)//'va'//trim(p_str)//trim(outdom)//trim(freq)//'_'//ayeari//amonthi//adayi//ahouri//'-'//ayearf//amonthf//adayf//ahourf//'.nc'
-
+  fnameout_u = trim(dir2)//'ua'//trim(h_str)//trim(outdom)//trim(freq)//'_'//ayeari//amonthi//adayi//ahouri//'-'//ayearf//amonthf//adayf//ahourf//'.nc'
+  fnameout_v = trim(dir2)//'va'//trim(h_str)//trim(outdom)//trim(freq)//'_'//ayeari//amonthi//adayi//ahouri//'-'//ayearf//amonthf//adayf//ahourf//'.nc'
+  write(*,*) fnameout_u,fnameout_v
   if (factor /= 0.0) then
     outvar_h_u = outvar_h_u * factor
     outvar_h_v = outvar_h_v * factor
@@ -348,17 +304,19 @@ subroutine write_dual_output
 
   ! Write File 1: Eastward Wind component
   fnameout = trim(adjustl(fnameout_u))
-  varname = 'ua'//trim(p_str)
+  write(*,*)fnameout
+  varname = 'ua'//trim(h_str)
   standardname = 'eastward_wind'
-  longname = 'Eastward Wind at ' // trim(p_str) // 'm'
+  longname = 'Eastward Wind at ' // trim(h_str) 
   vunits = 'm s-1'
   call write_netcdf_rtime_3d(outvar_h_u, ntime, ttime, bdtime)
 
   ! Write File 2: Northward Wind component
   fnameout = trim(adjustl(fnameout_v))
-  varname = 'va'//trim(p_str)
+  write(*,*)fnameout
+  varname = 'va'//trim(h_str)
   standardname = 'northward_wind'
-  longname = 'Northward Wind at ' // trim(p_str) // 'm'
+  longname = 'Northward Wind at ' // trim(h_str)
   vunits = 'm s-1'
   call write_netcdf_rtime_3d(outvar_h_v, ntime, ttime, bdtime)
 

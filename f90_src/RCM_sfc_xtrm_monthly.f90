@@ -45,16 +45,11 @@ if (ihour > 0) ish = ish + ihour - 1
 allocate(outvar_a(nlon,nlat))
 
 it = 0
-yearf=yeari+1
 !
 do year = yeari, yearf,1
 
   write(ayear, '(i4)') year
  !
-  if(year == yearf)then
-    nmonths=1
-  endif
-!
   if(it == 0)then
     write(ayeari,'(i4)')year
     issh=0
@@ -81,10 +76,6 @@ do year = yeari, yearf,1
     amonth = pad_int(month, 2)
 !
    allocate(wrfv3D(nlon,nlat,ndays))
-
-   if(year == yearf)then
-      ndays=1
-    endif
 !
     write(*,*)year,month
 
@@ -111,12 +102,8 @@ do year = yeari, yearf,1
 !
 ! Compute variable
 !
-!        if(it == 0)then
-!          it=it+1
+          it=it+1
 !
-!          cycle loop_d
-!        endif
-
         ish = ish + 1
         issh = issh + 1
         ttime(issh) = float(ish) - 0.5
@@ -128,15 +115,18 @@ do year = yeari, yearf,1
         outvar_h(:,:,issh)=float(outvar_a(:,:))/10000.d0
 !
     enddo  loop_d     ! end day
+
+    deallocate(wrfv3D)
+
   enddo               ! end month
 
-  write(ayearf, '(i4)') year
-
-enddo
+  write(ayearf, '(i4)') year+1
 !
 !  Write annual output using shared subroutine
 !
-call write_output
+   call write_output
+
+enddo
 !
 contains
 !
@@ -157,7 +147,7 @@ tunts='days since '//ayearini//'-01-01 00:00'
 timeunits=trim(adjustl(tunts))
 
 ! Create output filename based on metadata
-outfile=trim(dir2)//trim(vaid)//trim(outdom)//'day_'//ayeari//amonthi//adayi//'00-'//ayearf//amonthf//adayf//'00.nc'
+outfile=trim(dir2)//trim(vaid)//trim(outdom)//'day_'//ayeari//amonthi//adayi//'00-'//ayearf//'010100.nc'
 fnameout=trim(adjustl(outfile))
 
 if (factor /= 0.) outvar_h = outvar_h * factor
