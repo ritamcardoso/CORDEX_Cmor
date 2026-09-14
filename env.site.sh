@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+# env.site.sh.example
+#
+# Copy this file to "env.site.sh" (kept out of git — see .gitignore) and
+# fill in YOUR paths, module versions and compiler flags. This is the only
+# file each user needs to touch; everything in scripts/ stays generic.
+#
+# NOTE: ROOT_DIR is NOT set here. It has to already be an exported
+# environment variable (e.g. from ~/.bashrc) before any script runs, since
+# every script needs it just to find and source *this* file in the first
+# place. See README.md: "Where the code lives".
+#
+#----------------------------------------------------------------
+#                    PATHS                                      |
+#----------------------------------------------------------------
+PROG_DIR=${ROOT_DIR}/f90_src
+HEADER_DIR=${ROOT_DIR}/header
+HEADER_INI_DIR=${ROOT_DIR}/header_ini
+#
+# For EURO_CORDEX
+#
+#EXPERIMENT="cordex"
+#ROOT_RUN_DIR=$SCRATCH/ssp370
+#OUTPUT_DIR=${ROOT_RUN_DIR}/output
+#OUTPUT_WRF=$SCRATCH/wrf_run
+#
+# For urban downscalind
+#
+EXPERIMENT="fpsurb"
+ROOT_RUN_DIR=$SCRATCH/fpsurb
+OUTPUT_DIR=${ROOT_RUN_DIR}/output
+OUTPUT_WRF=$SCRATCH/urb_wrf_run
+
+#----------------------------------------------------------------
+#                Domains                                        |
+#----------------------------------------------------------------
+# Domain(s) to process — same associative-array style as DOMAIN_ID below, so
+# enabling/disabling a grid and giving it a domain ID happen the same way.
+# Only the keys matter here; the value is unused (set to 1 by convention).
+# Comment a line out to disable that grid without deleting it. cordex only
+# ever runs d01; fpsurb runs d01 and d02 (to run together — uncomment both lines
+# and set EXPERIMENT="fpsurb" above).
+
+declare -A run=(
+  [d01]=1
+#   [d02]=1
+)
+
+# CORDEX domain ID for each grid above — selects which <EXPERIMENT>_<ID>_
+# <grid>.ini / <EXPERIMENT>_global_<ID>_<grid>.ini pair run_out_generic.sh
+# uses (see header_ini/). Every entry in "run" above needs a matching key
+# here — unlike EXPERIMENT (a single value for the whole site, set above),
+# DOMAIN_ID genuinely does vary per grid even within one experiment: fpsurb
+# is EUR-12 on d01 but PARIS-3 on d02.
+
+declare -A DOMAIN_ID=(
+  [d01]="EUR-12"
+#   [d02]="PARIS-3"
+)
+
+#----------------------------------------------------------------
+#         COPY/ARCHIVE STEP (run_cp_generic.sh)                 |
+#----------------------------------------------------------------
+# Modules for the archive step — can (and does, at ECMWF) differ from the
+# compile/run modules above.
+CP_MODULES="prgenv/intel netcdf4 hpcx-openmpi jasper/2.0.14 hdf5/1.12.2 nco/4.9.7 python3"
+
+# Where processed output files land, shared across every varset — files are
+# matched by variable-name prefix ("<var>_*.nc") directly under this dir,
+# regardless of which varset produced them.
+CP_RUN_DIR=${OUTPUT_DIR}
+
+# ECMWF ECFS archive base path (emkdir/ecp)
+#ECFS_BASE="ec:CORDEX/scenarios/ssp370/output"
+ECFS_BASE="ec:FPS_URBAN/STAGE1/eval/output_d01"
+#ECFS_BASE="ec:FPS_URBAN/STAGE1/eval/output_d02"
+
+# Remote (scp) archive destination
+REMOTE_HOST="wrf@nimbus.degge.fc.ul.pt"
+#REMOTE_BASE="/media/Synology14/CORDEX_CMIP6/scenarios/output/ssp370"
+REMOTE_BASE="/media/Synology14/FPS_URBAN/eval/output_d01"
+#REMOTE_BASE="/media/Synology14/FPS_URBAN/eval/output_d02"
+
+#----------------------------------------------------------------
+#                COMPILER / LIBRARY VERSIONS         |
+#----------------------------------------------------------------
+source ~/.bash_compile_wrf
+
+intel_v="2023.2"
+hdf5_v="1.14.3"
+netcdf_v="4.9.2"
+hpx_v="2.17"
+
+FC="ifort"
+FFLAGS="-traceback -check all"
+MOD_NAME="datvar_s"
+SUB_NAME="shared_subs_v2"
+
+NC_INC="-I/usr/local/apps/netcdf4-parallel/${netcdf_v}/INTEL/${intel_v}/HPCX/${hpx_v}/include"
+NC_LIB="-L/usr/local/apps/netcdf4-parallel/${netcdf_v}/INTEL/${intel_v}/HPCX/${hpx_v}/lib64 -lnetcdff -lnetcdf"
+HDF_LIB="-L/usr/local/apps/hdf5-parallel/${hdf5_v}/INTEL/${intel_v}/HPCX/${hpx_v}/lib64 -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5"
+OTHER_LIBS="-lm -lz"
+
+ALL_LIBS="$NC_INC $NC_LIB $HDF_LIB $OTHER_LIBS"
+

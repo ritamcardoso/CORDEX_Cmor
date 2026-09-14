@@ -15,7 +15,7 @@ call init_cordex_environment
 call read_geog
 
 ! --- Initialising grid and time counters
-nz = 10
+nz = 15
 nzt = nz + 1
 nlon_u=nlon+1
 nlat_v=nlat+1
@@ -166,8 +166,8 @@ do year = yeari, yearf,1
 !
         do ix=1,nlon
           do iy=1,nlat
-            u(ix,iy,:)=(ua(ix,iy,:)+ua(ix+1,iy,:))/2.
-            v(ix,iy,:)=(va(ix,iy,:)+va(ix,iy+1,:))/2.
+            u(ix,iy,:)=(ua(ix,iy,:)+ua(ix+1,iy,:))/2.0
+            v(ix,iy,:)=(va(ix,iy,:)+va(ix,iy+1,:))/2.0
           enddo
         enddo
 !
@@ -209,7 +209,7 @@ subroutine calc_zlev_uv
 use datvar_s        
 !
 real :: alphau,alphav,u1,u2,v1,v2,u_int,v_int,logz1,logz2,norm_z
-real, parameter :: min_val = 1.0e-7, huge_val = 1.0e20
+!real, parameter :: min_val = 1.0e-7, huge_val = 1.0e20
 !
 outvar=huge_val
 !

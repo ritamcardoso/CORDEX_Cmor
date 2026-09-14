@@ -3,10 +3,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --hint=nomultithread
-#SBATCH --account=spptcard
+#SBATCH --account=
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=rmcardoso@fc.ul.pt
-#SBATCH --chdir=/ec/res4/scratch/ptrt
+#SBATCH --mail-user=
+#SBATCH --chdir=
 #
 # scripts/run_cp_generic.sh
 #

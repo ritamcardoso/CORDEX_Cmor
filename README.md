@@ -11,8 +11,8 @@ This used to be two dozen near-duplicate submission scripts, one per
 variable group, each with its own hardcoded paths and variable list. It's
 now 3 generic scripts driven by one small config file
 (`config/varsets.sh`) plus one site-specific settings file
-(`env.site.sh`), submitted through a single wrapper (`submit.sh`) —
-everything below walks through the full setup, start to finish.
+(`env.site.sh`) — everything below walks through the full setup, start to
+finish.
 
 ## 1. Directory Setup
 
@@ -24,10 +24,8 @@ f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90,
 header/        <- per-variable namelist headers
 header_ini/    <- per-domain grid/global config (see header_ini/README.md)
 config/        <- varsets.sh: the single source of truth for variables/programs/scheduling (see config/README.md)
-                  lint_varsets.sh: static consistency check for varsets.sh (also runs in CI)
-scripts/       <- the 3 generic job scripts, plus report_walltimes.sh and the
-                  optional run_out_generic_parallel.sh (see "Notes", below)
-submit.sh, env.site.sh.example, LICENSE, README.md, MIGRATION.md
+scripts/       <- the 3 generic job scripts
+env.site.sh.example, LICENSE, README.md, MIGRATION.md
 ```
 
 This root directory is referred to as `ROOT_DIR` everywhere below — see
@@ -37,20 +35,23 @@ same directory you submit jobs from.
 
 ## 2. Configuration (`header_ini`)
 
-Update the grid characteristics in the `header_ini` files to match your
+Update the grid and global experiment characteristics in the `header_ini` files to match your
 specific simulation (see [`header_ini/README.md`](header_ini/README.md)
 for the full filename pattern):
 
-* **Directories:** now set in `env.site.sh` (§4) as `OUTPUT_WRF` (raw
-  `wrfout` location) and `OUTPUT_DIR` (CMORised-output destination), not
-  in the `.ini` files — the `.ini` files just hold the
-  `_OUTPUT_WRF_`/`_OUTPUT_DIR_` placeholders `run_out_generic.sh`
-  substitutes at run time.
 * **Domain & Geography:** in `<EXPERIMENT>_<DOMAIN_ID>_<grid>.ini` (e.g.
-  `cordex_EUR-12_d01.ini`), update the domain of the `wrfout` file (and
+  `cordex_EUR-12_d01.ini`), update the domain of the output file (and
   the matching `geog` name).
-* **Naming Conventions:** change the general domain and model names used
+
+  * **Directories:** now set in `env.site.sh` (§4) as `OUTPUT_WRF` (raw
+    `wrfout` location) and `OUTPUT_DIR` (CMORised-output destination), not
+    in the `.ini` files — the `.ini` files just hold the
+    `_OUTPUT_WRF_`/`_OUTPUT_DIR_` placeholders `run_out_generic.sh`
+    substitutes at run time. `cordex_EUR-12_d01.ini`), update the domain of the output file (and
+    the matching `geog` name).
+  * **Naming Conventions:** change the general domain and model names used
   for the CMORised variables (`dom`/`outdom`, same file).
+
 * **Global Properties:** edit `<EXPERIMENT>_global_<DOMAIN_ID>_<grid>.ini`
   (e.g. `cordex_global_EUR-12_d01.ini`) — the global characteristics of
   the variables, tailored to your experiment. `<EXPERIMENT>` and
@@ -77,15 +78,12 @@ concatenating the relevant `header_<var>` onto the `header_ini` grid config
 ## 4. Site Environment (`env.site.sh`)
 
 This is the one file that's genuinely different per user/machine, and the
-only one you need to copy and edit:
+only one you need to edit once you setup the header_ini files :
 
 ```bash
 cp env.site.sh.example env.site.sh
 # then edit it
 ```
-
-It covers everything the old per-script "TO CHANGE" sections used to hold,
-now in one place:
 
 * **Paths** — `PROG_DIR`, `HEADER_DIR`, `HEADER_INI_DIR` (all derived from
   `ROOT_DIR`, so you don't repeat yourself), and `RUN_DIR` — the scratch
@@ -124,12 +122,6 @@ now in one place:
   silently keeps that variable's CORDEX-block value instead.
 * **Archive step settings** — `CP_MODULES`, `CP_RUN_DIR`, `ECFS_BASE`,
   `REMOTE_HOST`, `REMOTE_BASE` (see [§7, Archiving](#7-archiving)).
-* **Parallelism** — `MAX_PARALLEL_CP` and `MAX_PARALLEL_RUN` (see
-  [§6](#6-submission-scripts-scripts-folder), "Running variables in
-  parallel"). `MAX_PARALLEL_CP` defaults to `1` (fully serial archiving) —
-  raise it only if your site allows concurrent transfers within a job.
-  `MAX_PARALLEL_RUN` (only used by the optional
-  `run_out_generic_parallel.sh`) defaults to `4`.
 
 `env.site.sh` is gitignored — it never gets committed.
 
@@ -138,9 +130,7 @@ now in one place:
 
 ## 5. Variable Sets (`config/varsets.sh`)
 
-This file replaces both the old "define variables in each individual
-script" step and `summary_list.txt` — it's the single place that defines
-every variable group ("varset"), what Fortran program(s) process it, how
+It's the single place that defines every variable group ("varset"), what Fortran program(s) process it, how
 long to schedule it for, and how it chains to other varsets. You will
 rarely need to touch anything else once this is set up.
 
@@ -184,14 +174,11 @@ you include plev/zlev:
 program literally named `RCM_plev_uava` / `RCM_zlev_uava` — that's how the
 source names those programs, not a bug in this config.
 
-**Fixed (time-invariant) fields** are handled the same way, just with
-their own varset: `[fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"` →
-`RCM_fx_orog.f90`, `RCM_fx_sftlaf.f90`, `RCM_fx_sftlf.f90`,
-`RCM_fx_sfturf.f90`, `RCM_fx_sftgif.f90`. `fx` is deliberately **not** in
-`ORDER`, so `run_Analysis_v2.sh` never submits it automatically — these
-fields don't vary by year, so there's nothing to chain. Submit it once, on
-its own, the same way as any other single varset (§10, "Extracting a
-single variable/varset").
+To extract the fixed variables `VAR`is set to `fx`
+`run_out_fx.sh` (`orog`, `sftlaf`, `sftlf`, `sfturf`, `sftgif` →
+`RCM_fx_<var>`) 
+`[fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"`It is not called in Analysis since
+is independent of time. Call as a single `VARSET` see §10 (Extracting a single variable/varset). 
 
 ### Scheduling and chaining
 
@@ -209,92 +196,25 @@ Alongside `VARSETS[]`, the same file holds:
 See [§11, Adding/changing a variable set](#11-addingchanging-a-variable-set)
 for how to extend this file.
 
-## 6. Submission Scripts (`scripts` folder + `submit.sh`)
+## 6. Submission Scripts (`scripts` folder)
 
-3 core job scripts, each replacing what used to be a whole family of
-per-variable files, plus one optional variant:
+Only 3 scripts now, each replacing what used to be a whole family of
+per-variable files:
 
 | Script | Replaces | Role |
 |---|---|---|
 | `run_out_generic.sh` | all `run_out_*.sh` | processes one varset for a year range, then submits the archive job and (if configured) the next varset in the chain |
 | `run_cp_generic.sh` | all `run_cp_*.sh` | archives one varset's output to ECFS + remote |
 | `run_Analysis_v2.sh` | itself (orchestrator) | submits every varset in `ORDER`, 120s apart |
-| `run_out_generic_parallel.sh` *(optional)* | — | same as `run_out_generic.sh`, but runs several variables at once (see below) — only if your site allows it |
 
-**Slurm account/mail/chdir:** with only a handful of scripts, there's no
-separate options file to maintain — `sbatch` has no flag to merge one in
-anyway (not supported by ECMWF's `sbatch`). Just edit the
-`#SBATCH --account=`, `--mail-type=`, `--mail-user=`, `--chdir=` lines
-directly at the top of each script (identical in each).
+**Slurm account/mail/chdir:** with only 3 scripts, there's no separate
+options file to maintain — `sbatch` has no flag to merge one in anyway
+(not supported by ECMWF's `sbatch`). Just edit the `#SBATCH --account=`,
+`--mail-type=`, `--mail-user=`, `--chdir=` lines directly at the top of
+all 3 scripts (identical in each).
 
-Everything else in these scripts is generic — you should not need to edit
-anything below their `#SBATCH` block.
-
-### Running things in parallel
-
-Two independent knobs, both set in `env.site.sh` (§4) — no need to edit
-any script or export anything by hand. **Both default to serial (`1`)
-because not every site allows a batch job to run several
-processes/transfers concurrently on its allocation** — check with your
-HPC's helpdesk if you're not sure before raising either.
-
-**Archiving (`run_cp_generic.sh`):** `MAX_PARALLEL_CP` (default `1`) caps
-how many ECFS/scp transfers run at once — for varsets with many variables
-(e.g. `out` has 15) archiving one at a time is a lot of serial network
-round-trips for what's an embarrassingly parallel operation. If your site
-allows it, raise `MAX_PARALLEL_CP` in `env.site.sh` — e.g. `8` — and
-that's the whole change; nothing else to adjust. Either way, a failed
-transfer is now caught and fails the job (the original serial loop never
-checked this).
-
-**Processing (`run_out_generic_parallel.sh`, optional):** a parallel
-variant of `run_out_generic.sh` that runs up to `MAX_PARALLEL_RUN`
-(default `4`) variables at once instead of one at a time — each in its
-own working directory, since every RCM program reads fixed filenames
-(`inputlist.inp`, `global_data.inp`) from its current directory, so two
-variables running at once in the same directory would corrupt each
-other's input. Unlike `MAX_PARALLEL_CP`, this needs one more change to
-actually take effect: more than the default 1 CPU to run things
-concurrently on, so keep `MAX_PARALLEL_RUN` in sync with
-`--cpus-per-task` at the top of `run_out_generic_parallel.sh` (`4` by
-default, matching). Same usage, same `FORCE_REBUILD`/`FORCE_REPROCESS`
-overrides, same archiving/chaining as `run_out_generic.sh` — see the
-comment header in `run_out_generic_parallel.sh` for the full explanation.
-
-### `submit.sh` — how you actually submit
-
-`submit.sh`, at the repo root, is the wrapper you invoke instead of calling
-`sbatch` directly. It auto-detects `ROOT_DIR` from its own location, then
-re-exports it into the job's environment for you:
-
-```bash
-./submit.sh [sbatch options...] <script-name> [script-args...]
-
-# e.g.
-./submit.sh run_Analysis_v2.sh 20010101 20011231 2005
-./submit.sh --job-name=wrf-fx --time=01:00:00 \
-       --output=wrf-fx.%j.out --error=wrf-fx.%j.out \
-       run_out_generic.sh 20010101 20011231 2000 fx
-```
-
-`<script-name>` is looked up under `$ROOT_DIR/scripts/` automatically —
-you don't type `scripts/` or the full path. Anything before it that starts
-with `-` is passed straight through to `sbatch` (`--job-name`, `--time`,
-`--output`, `--error`, ...); anything after it is passed to the target
-script as its own arguments (`<datebeg> <dateend> <year_lim> [<varset>]`).
-
-This is also how the pipeline chains itself internally —
-`run_Analysis_v2.sh` and `run_out_generic.sh` both call
-`${REPO_DIR}/submit.sh` (not `sbatch` directly) whenever they submit a
-follow-up or archive job, so `ROOT_DIR` propagates automatically through
-every hop of the chain without you needing to export it anywhere.
-
-You can still call `sbatch $ROOT_DIR/scripts/<script>.sh ...` directly if
-you'd rather — every script still validates `ROOT_DIR` and fails with a
-clear error if it isn't set — but then `ROOT_DIR` **does** need to already
-be exported in your environment (e.g. `~/.bashrc`), since that path
-skips `submit.sh`'s auto-detection. `submit.sh` is the recommended way in
-because it removes that manual step.
+Everything else in these 3 scripts is generic — you should not need to
+edit anything below their `#SBATCH` block.
 
 ## 7. Archiving
 
@@ -342,25 +262,15 @@ This repo can live anywhere (e.g. `ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis`)
 — it does **not** need to be checked out into your submission/scratch
 directory, and you don't need to `cd` into it before running `sbatch`.
 
-Every script requires `ROOT_DIR` to already be set when it runs, checked at
-startup with a clear error if it isn't. **The 3 job scripts in `scripts/`
-do not try to auto-detect their own location from `$0`/`dirname`** —
-`sbatch` copies the submitted script into a spool directory before running
-it, so `$0` at runtime often doesn't point at this repo at all, especially
-once you submit from somewhere else (e.g. `$SCRATCH/Analysis`) than where
-the code lives.
+Every script requires `ROOT_DIR` to already be set in your environment,
+checked at startup with a clear error if it isn't. **Scripts do not try to
+auto-detect their own location from `$0`/`dirname`** — `sbatch` copies the
+submitted script into a spool directory before running it, so `$0` at
+runtime often doesn't point at this repo at all, especially once you submit
+from somewhere else (e.g. `$SCRATCH/Analysis`) than where the code lives.
 
-`submit.sh`, the wrapper at the repo root (§6), sidesteps this: it *is*
-where `$0`/`dirname` still works (you run it directly, so it isn't copied
-to a spool dir), so it auto-detects `ROOT_DIR` from its own location and
-passes it into the job via `sbatch --export`. If you always submit through
-`submit.sh`, you never need to export `ROOT_DIR` yourself.
-
-If you call `sbatch $ROOT_DIR/scripts/<script>.sh ...` directly instead
-(bypassing `submit.sh`), you do need `ROOT_DIR` set in your own
-environment first. Export it once, e.g. in `~/.bashrc` so every future
-shell (and every batch job, since Slurm inherits your environment by
-default) has it:
+Export it once, e.g. in `~/.bashrc` so every future shell (and every batch
+job, since Slurm inherits your environment by default) has it:
 
 ```bash
 export ROOT_DIR=$HPCPERM/CORDEX/scenarios/Analysis
@@ -379,15 +289,14 @@ This is completely independent of:
 
 ### First-time setup checklist
 
-1. Check out this repo somewhere permanent — that's `ROOT_DIR`. If you
-   always submit via `submit.sh` (§6, recommended) it auto-detects this
-   for you; otherwise `export ROOT_DIR=/path/to/it` (add to `~/.bashrc`).
-2. Fill in `header_ini/` and confirm `header/` (§2, §3).
-3. `cp env.site.sh.example env.site.sh` and fill it in (§4).
-4. Check `config/varsets.sh` covers the variables you need (§5) —
+1. Check out this repo somewhere permanent — that's `ROOT_DIR`.
+2. `export ROOT_DIR=/path/to/it` (add to `~/.bashrc`).
+3. Fill in `header_ini/` and confirm `header/` (§2, §3).
+4. `cp env.site.sh.example env.site.sh` and fill it in (§4).
+5. Check `config/varsets.sh` covers the variables you need (§5) —
    `MIGRATION.md` maps old script names to varsets if you're coming from
    the previous per-variable-script layout.
-5. Fill in `--account`/`--mail-user`/`--chdir` at the top of all 3 scripts
+6. Fill in `--account`/`--mail-user`/`--chdir` at the top of all 3 scripts
    in `scripts/` (§6).
 
 ### Standard submission
@@ -402,15 +311,11 @@ self-resubmission at a specific year so a stuck loop doesn't run forever.
 cd $SCRATCH/Analysis   # or wherever you want to submit from — doesn't have to be ROOT_DIR
 
 # Syntax
-$ROOT_DIR/submit.sh run_Analysis_v2.sh <datebeg> <dateend> <year_lim>
+sbatch $ROOT_DIR/scripts/run_Analysis_v2.sh <datebeg> <dateend> <year_lim>
 
 # Example: process 2001, then keep chaining year by year until 2005
-$ROOT_DIR/submit.sh run_Analysis_v2.sh 20010101 20011231 2005
+sbatch $ROOT_DIR/scripts/run_Analysis_v2.sh 20010101 20011231 2005
 ```
-
-(If `ROOT_DIR` isn't exported yet, run `submit.sh` by its full or relative
-path the first time, e.g. `/path/to/repo/submit.sh ...` — it doesn't need
-`ROOT_DIR` set beforehand, since it auto-detects it from its own location.)
 
 ### Extracting a single variable/varset
 
@@ -419,18 +324,9 @@ old `run_out_<x>.sh` script went) to find which varset covers your
 variable, then submit it directly — no file to modify:
 
 ```bash
-$ROOT_DIR/submit.sh --job-name=wrf-soil --time=12:00:00 \
+sbatch --job-name=wrf-soil --time=12:00:00 \
        --output=wrf-soil.%j.out --error=wrf-soil.%j.out \
-       run_out_generic.sh 19900101 19901231 2000 soil
-```
-
-`fx` (§5) — the time-invariant fields — is submitted the same way, just
-with a short walltime and no year range that actually matters:
-
-```bash
-$ROOT_DIR/submit.sh --job-name=wrf-fx --time=01:00:00 \
-       --output=wrf-fx.%j.out --error=wrf-fx.%j.out \
-       run_out_generic.sh 19900101 19900101 1900 fx
+       $ROOT_DIR/scripts/run_out_generic.sh 19900101 19901231 2000 soil
 ```
 
 ### Extracting multiple years in a single submission
@@ -445,9 +341,9 @@ since that part is unconditional):
 
 ```bash
 # Process 2001-2005 in one job, no auto-chained follow-up job
-$ROOT_DIR/submit.sh --job-name=wrf-out --time=18:00:00 \
+sbatch --job-name=wrf-out --time=18:00:00 \
        --output=wrf-out.%j.out --error=wrf-out.%j.out \
-       run_out_generic.sh 20010101 20051231 2000 out
+       $ROOT_DIR/scripts/run_out_generic.sh 20010101 20051231 2000 out
 ```
 
 (Previously this required commenting out lines in every `run_out*.sh` file
@@ -475,29 +371,11 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
 
 ## Notes / things to double check before first real run
 
-- The compile step (Fortran module + subs + program) is now cached per run
-  (§6): the shared module/subroutines build once, and each program builds
-  once even for fixed-program groups shared across many variables/levels
-  (e.g. `RCM_plev_ta.f90` across all 16 pressure levels) — not once per
-  variable/year, as in the original scripts. Set `FORCE_REBUILD=1` to
-  bypass the cache (e.g. right after editing `f90_src/`).
-- Per-variable, per-year output is skipped if it already exists in
-  `OUTPUT_DIR` (checked against `<var>_*<year>*.nc`) — reruns/resubmits are
-  safe without reprocessing finished years. Set `FORCE_REPROCESS=1` to
-  redo it anyway.
-- `run_cp_generic.sh`'s ECFS/`scp` archiving and the optional
-  `run_out_generic_parallel.sh` can both run several transfers/variables
-  at once — off by default (`MAX_PARALLEL_CP=1`/`MAX_PARALLEL_RUN=4`,
-  the latter only relevant if you use the parallel script at all), set in
-  `env.site.sh` — see §6, "Running things in parallel", for what to raise
-  and what else to check before you do. Independent of whether you turn
-  it on: both now catch and fail the job on a stalled/failed
-  `ecp`/`scp`/variable-run, which the original serial loop never checked.
-- `config/lint_varsets.sh` statically checks `config/varsets.sh` for
-  dangling `NEXT[]`/`CP_EXTRA[]` references, `VARSETS[]` entries missing
-  `TIME[]`, and programs/variables with no matching file under `f90_src/`
-  or `header/`. It runs in CI on every push (`.github/workflows/`); run it
-  yourself after editing `config/varsets.sh` (`config/lint_varsets.sh`).
+- The compile step (Fortran module + subs + program) still runs once per
+  variable, per year, exactly as in the original — including recompiling
+  the same fixed program (e.g. `RCM_sfc_rad.f90`, `RCM_plev_ta.f90`)
+  repeatedly for each variable/level in its group. Harmless, just matches
+  the original's per-variable compile pattern.
 - Scripts use `#!/bin/bash` explicitly (not `#!/bin/sh`) since they rely on
   bash associative arrays — the originals already used bash-only syntax
   under a `#!/bin/sh` shebang, which only worked if `/bin/sh` happened to be
@@ -505,14 +383,9 @@ to `NEXT[]` if some varset should chain into (or from) it, and to
 - `TIME[]` values for `out` and `plev_ta` were confirmed against the live
   scripts; the rest are carried over/estimated and worth a check — `rad`
   and `snw` especially, since what they cover just changed.
-  `scripts/report_walltimes.sh` pulls real elapsed times from `sacct` for
-  jobs this pipeline has already submitted and suggests `TIME[]`/
-  `CP_TIME[]` updates from that history, once you have some runs behind
-  you (run it on the HPC login node, not in CI).
 - `CP_TIME[]` (archive-step walltime) is only confirmed for `out`
   (`20:00:00`, from the live `run_cp_out.sh`); everything else falls back
-  to `DEFAULT_CP_TIME` (`04:00:00`) until you've checked real numbers (see
-  `scripts/report_walltimes.sh` above).
+  to `DEFAULT_CP_TIME` (`04:00:00`) until you've checked real numbers.
 - `plev_va`, `zlev_va0`, `zlev_va1` are disabled on purpose (old/superseded
   versions) — commented out at the bottom of `config/varsets.sh` rather
   than deleted, so they're easy to compare against or resurrect.

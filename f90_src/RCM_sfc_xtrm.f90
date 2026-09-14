@@ -26,7 +26,7 @@ if (yeari /= iniyear) then
     loop_year = iniyear
     do iyl = 1, nyr, 1
         if (mod(loop_year, 4) == 0 .and. loop_year /= 2100) then
-            yhours = 366 
+            yhours = 366
         else
             yhours = 365
         endif
@@ -42,20 +42,14 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(wrfv2D(nlon,nlat))
 allocate(outvar_a(nlon,nlat))
 
 it = 0
-yearf=yeari+1
 !
 do year = yeari, yearf,1
 
   write(ayear, '(i4)') year
  !
-  if(year == yearf)then
-    nmonths=1
-  endif
-!
   if(it == 0)then
     write(ayeari,'(i4)')year
     issh=0
@@ -68,7 +62,7 @@ do year = yeari, yearf,1
       days = days1
       mydays = 365
     endif
-    ntime = mydays 
+    ntime = mydays
 
     allocate(ttime(ntime))
     allocate(bdtime(2, ntime))
@@ -81,62 +75,58 @@ do year = yeari, yearf,1
     ndays = days(month)
     amonth = pad_int(month, 2)
 !
-   if(year == yearf)then
-      ndays=1
-    endif
+   allocate(wrfv3D(nlon,nlat,ndays))
 !
     write(*,*)year,month
+
+    filename = trim(dir)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-01_00_00_00'
+    infile = trim(filename)
+
+    status = nf90_open(infile, nf90_nowrite, ncid)
+    call ncerror(status,'opening file')
+
+    ! Read wrf var
+!
+    status=nf90_inq_varid(ncid,wrfvar,varid)
+    call ncerror(status,'getting var id')
+!
+    status=nf90_get_var(ncid,varid,wrfv3D,(/xoffset,yoffset,2/),(/nlon,nlat,ndays/),(/1,1,1/))
+    call ncerror(status,'reading '//wrfvar)
+!
+    status=nf90_close(ncid)
+    call ncerror(status,'closing file')
 
     ! Loop over days
    loop_d: do day = 1, ndays, 1
       aday = pad_int(day, 2)
-
-
-        filename = trim(dir)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_00_00_00'
-        infile = trim(filename)
-
-        status = nf90_open(infile, nf90_nowrite, ncid)
-        call ncerror(status,'opening file')
-
-        ! Read wrf var
-!
-        status=nf90_inq_varid(ncid,wrfvar,varid)
-        call ncerror(status,'getting var id')
-!
-        status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading '//wrfvar)
-!
-        status=nf90_close(ncid)
-        call ncerror(status,'closing file')
 !
 ! Compute variable
 !
-        if(it == 0)then
           it=it+1
 !
-          cycle loop_d
-        endif
-
         ish = ish + 1
         issh = issh + 1
         ttime(issh) = float(ish) - 0.5
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        outvar_a(:,:)=nint(10000.d0*wrfv2D(:,:))
+        outvar_a(:,:)=nint(10000.d0*wrfv3D(:,:,day))
 
         outvar_h(:,:,issh)=float(outvar_a(:,:))/10000.d0
 !
     enddo  loop_d     ! end day
+
+    deallocate(wrfv3D)
+
   enddo               ! end month
 
-  write(ayearf, '(i4)') year
-
-enddo
+  write(ayearf, '(i4)') year+1
 !
 !  Write annual output using shared subroutine
 !
-call write_output
+   call write_output
+
+enddo
 !
 contains
 !
@@ -157,7 +147,7 @@ tunts='days since '//ayearini//'-01-01 00:00'
 timeunits=trim(adjustl(tunts))
 
 ! Create output filename based on metadata
-outfile=trim(dir2)//trim(vaid)//trim(outdom)//'day_'//ayeari//amonthi//adayi//'00-'//ayearf//amonthf//adayf//'00.nc'
+outfile=trim(dir2)//trim(vaid)//trim(outdom)//'day_'//ayeari//amonthi//adayi//'00-'//ayearf//'010100.nc'
 fnameout=trim(adjustl(outfile))
 
 if (factor /= 0.) outvar_h = outvar_h * factor

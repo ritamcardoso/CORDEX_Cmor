@@ -1,6 +1,6 @@
 wrfvar = 'V10'
 vaid = 'vas'
-vunts = 'ms-1'
+vunts = 'm s-1'
 lname = 'Northward Near-Surface Wind'
 stname = 'northward_wind'
 cmethods = 'area: mean time: point'

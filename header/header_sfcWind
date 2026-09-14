@@ -1,6 +1,6 @@
 wrfvar = 'U10'
 vaid = 'sfcWind'
-vunts = 'ms-1'
+vunts = 'm s-1'
 lname = 'Near-Surface Wind Speed'
 stname = 'wind_speed'
 cmethods = 'area: mean time: point'

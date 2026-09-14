@@ -47,7 +47,7 @@ declare -A VARSETS=(
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
   [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
-  [teste]="RCM_sfc_VAR:tsl"
+  [teste]="RCM_zlev_uava:va250m,va300m"
   #
   # Archive-only companions — NOT for processing (not in ORDER/NEXT/TIME,
   # so run_out_generic.sh never runs these as their own job). They exist

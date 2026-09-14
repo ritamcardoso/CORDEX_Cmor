@@ -1,6 +1,6 @@
 wrfvar = 'SPDUV10MAX'
 vaid = 'sfcWindmax'
-vunts = ' ms-1'
+vunts = ' m s-1'
 lname = 'Daily Maximum Near-Surface Wind Speed'
 stname = 'wind_speed'
 cmethods = 'area: mean time: maximum'

@@ -3,10 +3,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --hint=nomultithread
-#SBATCH --account=spptcard
+#SBATCH --account=
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=rmcardoso@fc.ul.pt
-#SBATCH --chdir=/ec/res4/scratch/ptrt
+#SBATCH --mail-user=
+#SBATCH --chdir=
 #
 # scripts/run_out_generic.sh
 #
@@ -88,9 +88,9 @@ fi
 # sourced from wrfxtrm rather than wrfout — see header_ini/README.md) is only
 # correct for the varset that actually runs RCM_sfc_xtrm. Every other varset
 # keeps using the plain <exp>_<dom_id>_<grid>.ini.
-ini_kind=""
+wrffile="wrfout"
 if [ "${VARSET}" = "wxtrm" ] || [ "${VARSET}" = "testex" ]; then
-  ini_kind="xtrm_"
+  wrffile="wrfxtrm"
 fi
 
 # EXPERIMENT is a single site-wide value, not per-grid — an experiment can
@@ -149,9 +149,10 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     sed \
      -e "s|_START_YY_|$START_YY|g" \
      -e "s|_END_YY_|$END_YY|g" \
+     -e "s|_WRFFILE_|${wrffile}|g" \
      -e "s|_OUTPUT_WRF_|${OUTPUT_WRF}/|g" \
      -e "s|_OUTPUT_DIR_|${OUTPUT_DIR}/|g" \
-     "${HEADER_INI_DIR}/${exp}_${ini_kind}${dom_id}_${grid}.ini" \
+     "${HEADER_INI_DIR}/${exp}_${dom_id}_${grid}.ini" \
      > "${RUN_DIR}/header_${grid}"
     
     cat header_${grid} > inputlist.inp

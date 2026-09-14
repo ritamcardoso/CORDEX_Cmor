@@ -15,7 +15,7 @@ call init_cordex_environment
 call read_geog
 
 ! --- Initialising grid and time counters
-nz = 10
+nz = 20
 nzt = nz + 1
 nhours = 24
 
