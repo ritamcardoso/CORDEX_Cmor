@@ -170,6 +170,20 @@ if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_gener
   caller_has --error  || caller_has -e || site_args+=("--error=${prefix}-${vs}.%j.out")
 fi
 
+#
+#--- --time for run_analysis.sh ---------------------------------
+# ANALYSIS_TIME from config/varsets.sh (default 00:45:00).
+#
+if [ "${script_name}" = run_analysis.sh ] && ! caller_has --time && ! caller_has -t; then
+  analysis_time="$(
+    set +eu
+    # shellcheck source=/dev/null
+    source "${ROOT_DIR}/config/varsets.sh" >/dev/null 2>&1
+    echo "${ANALYSIS_TIME:-}"
+  )"
+  site_args+=("--time=${analysis_time:-00:45:00}")
+fi
+
 if [ -z "${JOB_ACCOUNT}" ] && ! caller_has --account; then
   echo "WARNING: JOB_ACCOUNT is empty in ${env_file} — the job will use your default Slurm account." >&2
 fi

@@ -164,7 +164,15 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     #
     $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90" || fail "compiling ${MOD_NAME}.f90 failed"
     $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC || fail "compiling ${SUB_NAME}.f90 failed"
-    $FC $FFLAGS ${PROG_DIR}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS \
+    # Every -L folder in ALL_LIBS is also written into the executable
+    # (rpath), so it finds the NetCDF/HDF5 libraries it was linked with even
+    # when the loaded modules don't put them on LD_LIBRARY_PATH.
+    RPATH=""
+    for w in $ALL_LIBS; do
+      case "$w" in -L?*) RPATH+=" -Wl,-rpath,${w#-L}" ;; esac
+    done
+    # shellcheck disable=SC2086
+    $FC $FFLAGS ${PROG_DIR}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
       || fail "compiling ${PROG_NAME}.f90 failed"
 
     ./${PROG_NAME}.exe

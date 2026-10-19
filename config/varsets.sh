@@ -46,6 +46,12 @@ declare -A VARSETS=(
 )
 
 #
+#--- ANALYSIS_TIME: run_analysis.sh --time ---------------------
+# Walltime of the controller job that submits every stream in ORDER.
+#
+ANALYSIS_TIME="00:45:00"
+
+#
 #--- TIME: processing job --time (one model year) -------------
 # Walltime of the processing job, used by submit.sh as --time.
 # Values are for one model year; config/README.md gives the basis of each.
