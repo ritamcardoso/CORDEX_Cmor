@@ -396,7 +396,7 @@ root), and the two job scripts that need the experiment load it with
 |---|---|---|
 | `run_out_generic.sh` | all `run_out_*.sh` | processes one varset for a year range, then submits the archive job and (if configured) the next varset in the chain |
 | `run_cp_generic.sh` | all `run_cp_*.sh` | archives one varset's output to ECFS + remote |
-| `run_analysis.sh` | itself (orchestrator) | submits every varset in `ORDER`, 120s apart |
+| `run_analysis.sh` | itself (orchestrator; `--time` from `ANALYSIS_TIME` in `config/varsets.sh`, 45 min) | submits every varset in `ORDER`, 120s apart |
 
 **Slurm settings:** all set once in `env.site.sh` (`JOB_QOS`,
 `JOB_NODES`, `JOB_NTASKS`, `JOB_HINT`, `JOB_ACCOUNT`, `JOB_MAIL_TYPE`,
