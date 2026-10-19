@@ -34,6 +34,7 @@ jobs:
             tools/merge_soil_monthly.sh \
             tools/check_and_found_var.sh \
             tools/check_archive.sh \
+            tools/ncrepack-cordex \
             tools/lint_varsets.sh
 
       - name: Check config/varsets.sh (lint_varsets.sh)

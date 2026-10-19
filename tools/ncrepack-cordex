@@ -1,0 +1,863 @@
+#!/bin/bash
+
+# Global shellcheck disable (warning): Variable was used as an array
+# but is now assigned a string.
+
+# shellcheck disable=SC2178
+
+# ====================================================================
+#
+# ncrepack-cordex
+#
+# Original ncrepack-cordex code written by David Hassell and Ezequiel Cimadevilla.
+# 
+# Copyright 2025 License BSD 3-Clause
+# <https://opensource.org/license/bsd-3-clause>. This is free
+# software: you are free to change and redistribute it. There is NO
+# WARRANTY, to the extent permitted by law.
+#
+# Report any bugs to
+# https://github.com/WCRP-CORDEX/ncrepack-cordex/issues
+# 
+# ====================================================================
+vn=0.2
+release_date="2026-05-26"
+
+iam_path=$(which "$0")
+iam=$(basename "$iam_path")
+
+usage="USAGE: $iam [-c chunk] [-d size] [-h] [-o] [-V] [-x] [-z n] FILE [FILE ...]\nFull man page with -h"
+
+# Defaults
+gzip=1 # -z
+size=4194304 # -d
+d_option=false
+custom_chunk="" # -c
+size_MiB=4
+version=false # -V
+overwrite=false # -o
+dry_run=false # -x
+
+helpFunction()
+{
+    (
+	cat << EOF
+.TH "$iam" 1 "$release_date" "$vn"
+
+.SH NAME
+
+$iam - repack CORDEX datasets
+
+.SH SYNOPSIS
+
+\fB$iam\fR [-c \fIchunk\fR] [-d \fIsize\fR] [-h] [-o] [-V] [-x] [-z \fIn\fR] \fIFILE\fR [\fIFILE\fR ...]
+
+.SH DESCRIPTION
+
+For each CORDEX-compliant netCDF-4 \fIFILE\fR, \fB$iam\fR will
+.
+.IP "\\(em" 2
+Rechunk the time coordinate variable (assumed to be the variable
+called "time" in the root group), if it exists, to have a single
+compressed chunk.
+
+.IP "\\(em" 2
+Rechunk the time bounds variable (defined by the time coordinate
+variable's "bounds" attribute), if it exists, to have a single
+compressed chunk.
+
+.IP "\\(em" 2
+Rechunk the data variable (defined by the global attribute
+"variable_id"), if it exists, to have a given chunk size.
+
+.IP "\\(em" 2
+Collate all of the internal file metadata to a contiguous block near
+the start of the file, before all of the variables' data chunks.
+
+.IP "" 0
+
+Any of these variables that already has an appropriate chunk size will
+\fBnot\fR be rechunked. If no variables need rechunking then
+\fB$iam\fR will only collate the internal file metadata, which is very
+fast in comparison to also having to rechunk one or more variables.
+
+A rechunked variable is de-interlaced with the HDF5 shuffle filter
+(which significantly improves compression) before being compressed
+with zlib (see the \fB-z\fR option), and also has the Fletcher32 HDF5
+checksum algorithm activated.
+
+Files repacked with \fB$iam\fR are guaranteed to pass both the CMIP7
+file-layout checks tested by \fBcmip7_check_packing\fR and the CORDEX
+checks tested by \fBncrepack-cordex-check\fR.
+    
+.SH DEPENDENCIES
+
+Requires that the command-line tools \fBh5stat\fR, \fBh5dump\fR, and
+\fBh5repack\fR are available from a location given by the PATH
+environment variable.
+
+.SH METHOD
+
+Each input \fIFILE\fR is analysed using \fBh5stat\fR and \fBh5dump\fR,
+and then repacked using \fBh5repack\fR, which changes the layout for
+objects in the new output file. All file attributes and data values
+are unchanged.
+
+.SH OPTIONS
+
+.TP
+.B \-d \fIsize\fR
+Rechunk the data variable (the variable named by the "variable_id"
+global attribute) to have the given uncompressed chunk \fIsize\fR in
+bytes, overriding the default filename-based data-variable policy. The
+\fIsize\fR must be at least $size.
+
+The chunk shape will only ever be changed along the leading
+(i.e. slowest moving) dimension of the data, such that resulting chunk
+size in the new file is as large as possible without exceeding
+\fIsize\fR (note that the resulting chunk size could be smaller than
+\fIsize\fR).
+
+However, if the original uncompressed chunk size in the input file is
+already larger than \fIsize\fR, or the data in the input file only has
+one chunk, then the data variable will \fBnot\fR be rechunked.
+
+.TP
+.B \-c \fIchunk\fR
+Rechunk the data variable to exactly the given chunk shape, specified
+as dimensions separated by "x" (for example: 6x50x50). This overrides
+both the default filename-based policy and \fB-d\fR.
+
+.TP
+.B \-h
+Display this help and exit.
+
+.TP
+.B \-o
+Overwrite each input file with its repacked version, if the repacking
+was successful. By default, a new file is created for each input file,
+which has the same name with the addition of the suffix "_ncrepack".
+
+.TP
+.B \-V
+Print version number and exit.
+
+.TP
+.B \-x
+Do a dry run. Show the \fBh5repack\fR commands for repacking each
+input file, but do not run them. This allows the commands to be edited
+before being run manually.
+
+.TP
+.B \-z \fIn\fR
+Specify the zlib compression level (between 1 and 9, default $gzip)
+for all rechunked variables.
+
+. SH EXIT STATUS
+
+.IP \fB0\fR
+All input files successfully repacked.
+
+.IP \fB1\fR
+A failure occurred during the repacking of one or more input files. The
+exit only happens only after it has been attempted to repack all input
+files, some of which may have been repacked successfully. The files
+which could not be repacked may be found by looking for FAILED in the
+text output log.
+
+.IP \fB2\fR
+An incorrect command-line option.
+
+.IP \fB3\fR
+A missing HDF5 dependency.
+
+.SH EXAMPLES
+
+\fB1.\fR Repack a file with the default settings (which guarantees
+that the repacked files will pass the ESGF file-layout checks), and
+replacing the original file with its repacked version. Note that the
+data variable is rechunked to chunks of shape 37 x 144 x 192 elements.
+
+.nf
+    \fB$ ncrepack-cordex -o file.nc\fR
+    ncrepack-cordex: Version $vn at /usr/bin/ncrepack-cordex
+    ncrepack-cordex: h5repack: Version 1.14.6 at /usr/bin/h5repack
+
+    ncrepack-cordex: date-time: Wed  5 Nov 12:06:25 GMT 2025
+    ncrepack-cordex: file: 'file.nc'
+    ncrepack-cordex: rechunking variable /time with shape (1800) and original chunk shape (512)
+    ncrepack-cordex: rechunking variable time_bnds with shape (1800, 2) and original chunk shape (1, 2)
+    ncrepack-cordex: rechunking variable /pr with shape (1800, 144, 192) and original chunk shape (1, 144, 192) = 110592 B
+    ncrepack-cordex: repack command: h5repack --metadata_block_size=236570  -f /time:SHUF -f /time:GZIP=4 -f /time:FLET -l /time:CHUNK=1800 -f /time_bnds:SHUF -f /time_bnds:GZIP=4 -f /time_bnds:FLET -l /time_bnds:CHUNK=1800x2 -f /pr:SHUF -f /pr:GZIP=4 -f /pr:FLET -l /pr:CHUNK=37x144x192 'file.nc' 'file.nc_ncrepack-cordex'
+    ncrepack-cordex: running repack command ...
+    ncrepack-cordex: successfully created 'file.nc_ncrepack'
+    ncrepack-cordex: renamed 'file.nc_ncrepack' -> 'file.nc'
+    ncrepack-cordex: time taken: 5 seconds
+   
+    ncrepack-cordex: 1/1 files (134892546 B) repacked in 5 seconds (26978509 B/s) to total size 94942759 B (29% smaller than input files)
+.fi
+
+\fB2.\fR Repack a file using the non-default data variable chunk size
+of 8388608, replacing the original file with its repacked
+version. Note that the data variable is rechunked to chunks of shape
+75 x 144 x 192 elements (compare that with the rechunked data variable
+chunk shape from example 1).
+
+.nf
+    \fB$ ncrepack-cordex -d 8388608 file.nc\fR
+    ncrepack-cordex: Version $vn at /usr/bin/ncrepack-cordex
+    ncrepack-cordex: h5repack: Version 1.14.6 at /usr/bin/h5repack
+    
+    ncrepack-cordex: date-time: Wed  5 Nov 12:07:15 GMT 2025
+    ncrepack-cordex: file: 'file.nc'
+    ncrepack-cordex: rechunking variable /time with shape (1800) and original chunk shape (512)
+    ncrepack-cordex: rechunking variable time_bnds with shape (1800, 2) and original chunk shape (1, 2)
+    ncrepack-cordex: rechunking variable /pr with shape (1800, 144, 192) and original chunk shape (1, 144, 192) = 110592 B
+    ncrepack-cordex: repack command: h5repack --metadata_block_size=236570  -f /time:SHUF -f /time:GZIP=4 -f /time:FLET -l /time:CHUNK=1800 -f /time_bnds:SHUF -f /time_bnds:GZIP=4 -f /time_bnds:FLET -l /time_bnds:CHUNK=1800x2 -f /pr:SHUF -f /pr:GZIP=4 -f /pr:FLET -l /pr:CHUNK=75x144x192 'file.nc' 'file.nc_ncrepack-cordex'
+    ncrepack-cordex: running repack command ...
+    ncrepack-cordex: successfully created 'file.nc_ncrepack'
+    ncrepack-cordex: time taken: 5 seconds
+     
+    ncrepack-cordex: 1/1 files (134892546 B) repacked in 5 seconds (26978509 B/s) to total size 94856788 B (29% smaller than input files)
+.fi
+
+If the repacked file \fBfile.nc_ncrepack\fR is itself repacked,
+then since none of the variables now need rechunking, only the internal
+metadata is collated, which is very fast:
+
+.nf
+    \fB$ ncrepack-cordex -o file.nc_ncrepack\fR
+    ncrepack-cordex: Version $vn at /usr/bin/ncrepack-cordex
+    ncrepack-cordex: h5repack: Version 1.14.6 at /usr/bin/h5repack
+
+    ncrepack-cordex: date-time: Wed  5 Nov 12:07:43 GMT 2025
+    ncrepack-cordex: file: 'file.nc'
+    ncrepack-cordex: not rechunking variable /time with shape (1800) and original chunk shape (1800)
+    ncrepack-cordex: not rechunking variable time_bnds with shape (1800, 2) and original chunk shape (1800, 2)
+    ncrepack-cordex: not rechunking variable /pr with shape (1800, 144, 192) and original chunk shape (75, 144, 192) = 8294400 B
+    ncrepack-cordex: repack command: h5repack --metadata_block_size=43360 'file.nc_ncrepack' 'file.nc_ncrepack_ncrepack'
+    ncrepack-cordex: running repack command ...
+    ncrepack-cordex: successfully created 'file.nc_ncrepack_ncrepack'
+    ncrepack-cordex: renamed 'file.nc_ncrepack_ncrepack' -> 'file.nc_ncrepack'
+    ncrepack-cordex: time taken: 0 seconds
+
+    ncrepack-cordex: 1/1 files (94856788 B) repacked in 0 seconds (94856788 B/s) to total size 94856788 B (<1% smaller than input files)
+
+.fi
+
+\fB3.\fR Get the \fBh5repack\fR commands that would be used for
+repacking each input file, but do not run them.
+
+.nf
+    \fB$ ncrepack-cordex -x file.nc\fR
+    ncrepack-cordex: Version $vn at /usr/bin/ncrepack-cordex
+    ncrepack-cordex: h5repack: Version 1.14.6 at /usr/bin/h5repack
+    
+    ncrepack-cordex: date-time: Wed  5 Nov 12:08:02 GMT 2025
+    ncrepack-cordex: file: 'file.nc'
+    ncrepack-cordex: rechunking variable /time with shape (1800) and original chunk shape (512)
+    ncrepack-cordex: rechunking variable time_bnds with shape (1800, 2) and original chunk shape (1, 2)
+    ncrepack-cordex: rechunking variable /pr with shape (1800, 144, 192) and original chunk shape (1, 144, 192) = 110592 B
+    ncrepack-cordex: repack command: h5repack --metadata_block_size=236570  -f /time:SHUF -f /time:GZIP=4 -f /time:FLET -l /time:CHUNK=1800 -f /time_bnds:SHUF -f /time_bnds:GZIP=4 -f /time_bnds:FLET -l /time_bnds:CHUNK=1800x2 -f /pr:SHUF -f /pr:GZIP=4 -f /pr:FLET -l /pr:CHUNK=37x144x192 'file.nc' 'file.nc_ncrepack-cordex'
+    ncrepack-cordex: dry-run: not repacking
+.fi
+
+\fB4.\fR Repack multiple files with one command. This takes the same
+time as repacking the files with separate commands, but may be more
+convenient.
+
+.nf
+    \fB$ ncrepack-cordex -o file[12].nc\fR
+    ncrepack-cordex: Version $vn at /usr/bin/ncrepack-cordex
+    ncrepack-cordex: h5repack: Version 1.14.6 at /usr/bin/h5repack
+    
+    ncrepack-cordex: date-time: Wed  5 Nov 12:09:13 GMT 2025
+    ncrepack-cordex: file: 'file1.nc'
+    ncrepack-cordex: rechunking variable /time with shape (1800) and original chunk shape (512)
+    ncrepack-cordex: rechunking variable time_bnds with shape (1800, 2) and original chunk shape (1, 2)
+    ncrepack-cordex: rechunking variable /pr with shape (1800, 144, 192) and original chunk shape (1, 144, 192) = 110592 B
+    ncrepack-cordex: repack command: h5repack --metadata_block_size=236570  -f /time:SHUF -f /time:GZIP=4 -f /time:FLET -l /time:CHUNK=1800 -f /time_bnds:SHUF -f /time_bnds:GZIP=4 -f /time_bnds:FLET -l /time_bnds:CHUNK=1800x2 -f /pr:SHUF -f /pr:GZIP=4 -f /pr:FLET -l /pr:CHUNK=37x144x192 'file1.nc' 'file1.nc_ncrepack-cordex'
+    ncrepack-cordex: running repack command ...
+    ncrepack-cordex: successfully created 'file1.nc_ncrepack'
+    ncrepack-cordex: renamed 'file1.nc_ncrepack' -> 'file1.nc'
+    ncrepack-cordex: time taken: 5 seconds
+    
+    ncrepack-cordex: date-time: Wed  5 Nov 12:09:18 GMT 2025
+    ncrepack-cordex: file: 'file2.nc'
+    ncrepack-cordex: rechunking variable /time with shape (708) and original chunk shape (1)
+    ncrepack-cordex: rechunking variable time_bnds with shape (708, 2) and original chunk shape (1, 2)
+    ncrepack-cordex: rechunking variable /pr with shape (708, 144, 192) and original chunk shape (1, 144, 192) = 110592 B
+    ncrepack-cordex: repack command: h5repack --metadata_block_size=149185  -f /time:SHUF -f /time:GZIP=4 -f /time:FLET -l /time:CHUNK=708 -f /time_bnds:SHUF -f /time_bnds:GZIP=4 -f /time_bnds:FLET -l /time_bnds:CHUNK=708x2 -f /toz:SHUF -f /toz:GZIP=4 -f /toz:FLET -l /toz:CHUNK=37x144x192 'file2.nc' 'file2.nc_ncrepack-cordex'
+    ncrepack-cordex: running repack command ...
+    ncrepack-cordex: successfully created 'file2.nc_ncrepack'
+    ncrepack-cordex: renamed 'file2.nc_ncrepack' -> 'file2.nc'
+    ncrepack-cordex: time taken: 1 seconds
+    
+    ncrepack-cordex: 2/2 files (182714276 B) repacked in 6 seconds (30452379 B/s) to total size 140606512 B (23% smaller than input files)
+.fi
+
+.SH AUTHORS
+Written by David Hassell and Ezequiel Cimadevilla.
+
+.SH REPORTING BUGS
+Report any bugs to https://github.com/WCRP-CORDEX/ncrepack-cordex/issues
+
+.SH COPYRIGHT
+Copyright 2025 License BSD 3-Clause
+https://opensource.org/license/bsd-3-clause. This is free software:
+you are free to change and redistribute it. There is NO WARRANTY, to
+the extent permitted by law.
+
+.SH SEE ALSO
+\fBcmip7_check_packing\fR(1), \fBh5repack\fR(1), \fBh5stat\fR(1),
+\fBh5dump\fR(1), \fBncdump\fR(1)
+
+EOF
+    ) | man -r "Manual page $iam(1) ?ltline %lt?L/%L.:" -l -
+    exit 0
+}
+
+# --------------------------------------------------------------------
+# Functions
+# --------------------------------------------------------------------
+get_chunk_info()
+{
+    # -------------------------------------------------------.---------
+    # Get information about the chunks of an HDF5 variable
+    #
+    # Sets the global variables:
+    #   missing variable: "true" if the variable is not in the file
+    #   data_shape      : The data shape
+    #   ndim            : The number of data dimensions
+    #   chunk_shape     : The chunk shape
+    #   contiguous      : "true" if the data are contiguous
+    #   multiple_chunks : "true" if the data have multiple chunks
+    #
+    # Local variables start with _, global variables do not.
+    # ----------------------------------------------------------------
+    missing_variable="false"
+    data_shape="unset"
+    ndim="unset"
+    chunk_shape="unset"
+    contiguous="unset"
+    multiple_chunks="unset"
+
+    # Find the data shape (e.g. 6000 2)
+    _dataspace=$(h5dump --dataset "$variable" --header "$file" 2>/dev/null \
+		     | grep "^\s*DATASPACE\s\s*S" -m 1 )
+    if [ "$_dataspace" = "" ]; then
+        missing_variable="true"
+        return
+    fi
+
+    data_shape=""
+    if [ "$(echo "$_dataspace" | grep "DATASPACE\s\s*SIMPLE")" != "" ]; then
+	data_shape=$(echo "$_dataspace" \
+            | sed -E 's/.*\(\s*([0-9, ]+)\s*\).*/\1/; s/[[:space:]]+//g' \
+            | sed 's/,\s*/ /g' \
+            | sed 's/^\s*//g')
+    fi
+    # shellcheck disable=SC2206
+    data_shape=($data_shape)
+
+    ndim=${#data_shape[@]}
+
+    # Find the chunk shape (e.g. "1 2" or for contiguous: "")
+    chunk_shape=$(h5dump --dataset "$variable" --properties --header "$file" 2>/dev/null \
+            | grep "CHUNKED (" -m 1 \
+            | sed -n 's/.*(\(.*\)).*/\1/p' \
+            | sed 's/,\s*/ /g' \
+            | sed 's/^\s*//g')
+
+    contiguous="false"
+    if [ "$chunk_shape" = "" ]; then
+        contiguous="true"
+    fi
+
+    # shellcheck disable=SC2206
+    chunk_shape=($chunk_shape)
+
+    multiple_chunks="false"
+    if [ "$contiguous" = "false" ]; then
+        for n in "${!chunk_shape[@]}"
+        do
+            if [ "${chunk_shape[n]}" -lt "${data_shape[n]}" ]; then
+                multiple_chunks="true"
+                break
+            fi
+        done
+    fi
+}
+
+get_wordsize()
+{
+    # ----------------------------------------------------------------
+    # Return the word size in bytes of an HDF5 variable.
+    #
+    # Local variables start with _, global variables do not.
+    # ----------------------------------------------------------------
+    _wordsize="unset"
+
+    _datatype=$(h5dump --dataset "$variable" --header "$file" 2>/dev/null \
+                   | grep "DATATYPE" -m 1)
+    for bits in 32 64 16 8
+    do
+        if [ "$(echo "$_datatype" | grep "$bits")" != "" ]; then
+            _wordsize=$((bits / 8))
+            break
+        fi
+    done
+    echo $_wordsize
+}
+
+print_rechunk_info()
+{
+    # ----------------------------------------------------------------
+    # Print information about the rechunking of an HDF5 variable.
+    #
+    # Local variables start with _, global variables do not.
+    # ----------------------------------------------------------------
+    _rechunk=$1
+    _variable_type=$2
+
+    _data=${data_shape[*]}
+    _data=${_data// /, }
+
+    if [ "$contiguous" = "true" ]; then
+        _chunk="contiguous"
+    else
+       _chunk=${chunk_shape[*]}
+        _chunk="(${_chunk// /, })"
+        if [ "$_variable_type" = "data" ]; then
+            _chunk="$_chunk = $original_chunk_size B"
+        fi
+    fi
+
+    _not="not "
+    if [ "$_rechunk" = "true" ]; then
+        _not=""
+    fi
+
+    echo "$iam: ${_not}rechunking variable $variable with shape ($_data) and original chunk shape $_chunk"
+}
+
+# --------------------------------------------------------------------
+# Parse command line options
+# --------------------------------------------------------------------
+if [ $# -eq 0 ]; then
+    echo -e "$usage"
+    exit 2
+fi
+
+while getopts ":c:d:hoVxz:" opt
+do
+    case $opt in
+      c) custom_chunk=$OPTARG
+         if ! echo "$custom_chunk" | grep -Eq '^[0-9]+(x[0-9]+)*$'; then
+             echo "Option -c requires a chunk shape like 6x50x50" >&2
+             echo -e "$usage" >&2
+             exit 2
+         fi ;;
+      d) size=$OPTARG
+         if ! echo "$size" | grep -q "^[0-9][0-9]*$"; then
+             echo "Option -d requires a numerical argument" >&2
+             echo -e "$usage" >&2
+             exit 2
+         fi
+         if [ "$size" -lt 4194304 ]; then
+             echo "Option -d requires an argument of at least 4194304 (i.e. 4 MiB)" >&2
+             echo -e $"$usage" >&2
+             exit 2
+         fi
+         d_option=true ;;
+      h) helpFunction ;;
+      o) overwrite=true ;;
+      V) version=true ;;
+      x) dry_run=true ;;
+      z) gzip=$OPTARG
+         if ! echo "$gzip" | grep -q "^[1-9]$" ; then
+             echo "Option -z requires a numerical argument between 1 and 9" >&2
+             echo -e "$usage" >&2
+             exit 2
+         fi ;;
+      \?) echo -e "Invalid option: -$OPTARG\n$usage" >&2
+          exit 2 ;;
+      :) echo "Option -$OPTARG requires an argument" >&2
+         echo -e "$usage" >&2
+         exit 2 ;;
+    esac
+done
+shift $((OPTIND -1))
+
+echo "$iam: Version $vn at $iam_path"
+if [ "$version" = true ]; then
+    exit 0
+fi
+
+# --------------------------------------------------------------------
+# Check that the HDF5 commands are available
+# --------------------------------------------------------------------
+h5repack_path=$(which h5repack)
+if [ "$h5repack_path" = "" ]; then
+    echo "$iam: ERROR: Must install h5repack to use $iam"
+    exit 3
+fi
+echo "$iam: $(h5repack -V) at $h5repack_path"
+
+if ! which h5stat > /dev/null; then
+    echo "$iam: ERROR: Must install h5stat to use $iam"
+    exit 3
+fi
+
+if ! which h5dump > /dev/null; then
+    echo "$iam: ERROR: Must install h5dump to use $iam"
+    exit 3
+fi
+
+# --------------------------------------------------------------------
+# Loop over input files
+# --------------------------------------------------------------------
+start0=$(date +%s)
+totalsizein=0  # Total size of input files that are successfully repacked
+totalsizeout=0  # Total size of output files
+Nin=0  # Number of input files
+Nout=0  # Number of repacked output files
+
+for file in "$@"
+do
+    start_time=$(date +%s)
+    
+    echo ""
+    echo "$iam: date-time: $(date)"
+    echo "$iam: file: '$file'"
+
+    if [ ! -e "$file" ]; then
+        echo "iam: can't repack $file: file does not exist"
+        echo "$iam: FAILED to repack $file"
+        continue
+    fi
+
+    Nin=$(( Nin + 1 ))
+
+    # ----------------------------------------------------------------
+    # Get the h5repack --metadata_block_size option
+    #
+    # For instance:
+    #
+    #  From h5stat -S output:
+    #    '  File metadata: 40988486 bytes'
+    #  get:
+    #    --metadata_block_size=40988486
+    # ----------------------------------------------------------------
+    metadata=$(h5stat -S "$file" \
+		   | sed -n -E 's/^[[:space:]]*File metadata:[[:space:]]*([0-9]+).*/\1/p')
+    if [ "$metadata" != "" ]; then
+        metadata="--metadata_block_size=$metadata"
+    fi
+
+    # ----------------------------------------------------------------
+    # Get the time bounds variable using CF bounds attribute.
+    #
+    # For instance:
+    #
+    #   From h5dump output:
+    #       ATTRIBUTE "bounds" {
+    #          DATATYPE  H5T_STRING {
+    #             STRSIZE 10;
+    #             STRPAD H5T_STR_NULLTERM;
+    #             CSET H5T_CSET_ASCII;
+    #             CTYPE H5T_C_S1;
+    #          }
+    #          DATASPACE  SCALAR
+    #          DATA {
+    #          (0): "time_bnds"
+    #          }
+    #       }
+    #
+    #   get:
+    #     time_bnds
+    # ----------------------------------------------------------------
+    bounds=$(h5dump -A -d time "$file" | awk '$1=="ATTRIBUTE" && $2=="\"bounds\""{bnds=1}bnds && $1=="(0):"{v=$NF; gsub("\"", "", v); bnds=0}END{print v}')
+
+    # ----------------------------------------------------------------
+    # Get the h5repack -l and -f options for the time variables
+    #
+    # For instance:
+    #
+    #   From h5dump output:
+    #     '   DATASPACE  SIMPLE { ( 6000 ) / ( H5S_UNLIMITED ) }'
+    #   get:
+    #     -l /time:CHUNK=6000 -f /time:GZIP=4
+    #   
+    #   From h5dump output:
+    #     '   DATASPACE  SIMPLE { ( 6000, 2 ) / ( H5S_UNLIMITED, 2 ) }'
+    #   get:
+    #     -l /time_bounds:CHUNK=6000x2 -f /time_bounds:GZIP=4
+    # ----------------------------------------------------------------
+    time=""
+    for variable in "/time" "$bounds"
+    do
+        # Set global variables
+        get_chunk_info
+
+        if [ "$missing_variable" = "true" ]; then
+            continue
+        fi
+
+        rechunk="false"
+        if [ "$multiple_chunks" = "true" ]; then
+            # Rechunk to one chunk
+            CHUNK="${data_shape[*]}"
+            CHUNK=${CHUNK// /x}
+            time="$time -f ${variable}:SHUF"
+            time="$time -f ${variable}:GZIP=$gzip"
+            time="$time -f ${variable}:FLET"
+            time="$time -l ${variable}:CHUNK=$CHUNK"
+
+            rechunk="true"
+        fi
+
+	print_rechunk_info $rechunk
+    done
+
+    # ----------------------------------------------------------------
+    # Get the h5repack -l and -f options for the data variable.
+    #
+    # For instance:
+    #
+    #   -l /uas:CHUNK=50x143x144 -f /uas:SHUF -f /uas:GZIP=4 -f /uas:FLET
+    # ----------------------------------------------------------------
+    data=""
+    # Default filename-driven data variable policy:
+    #   *_1hr_*  -> force chunk size 6 in first (time) dimension.
+    #   *_mon_*  -> force chunk size 6 in first (time) dimension.
+    #   *_6hr_*  -> force chunk size 4 in first (time) dimension.
+    #   otherwise -> leave data variable untouched.
+    # Overrides: -d overrides filename policy, and -c overrides both.
+    target_time_chunk=""
+    case "$file" in
+        *_1hr_*) target_time_chunk=6 ;;
+        *_mon_*) target_time_chunk=6 ;;
+        *_6hr_*) target_time_chunk=4 ;;
+    esac
+
+    if [ "$custom_chunk" != "" ] || [ "$d_option" = "true" ] || [ "$target_time_chunk" != "" ]; then
+        # Find the data variable name
+        variable=$(h5dump --attribute variable_id "$file" 2>/dev/null \
+                     | grep "(0)" -m 1 \
+                     | sed -n 's/.*"\(\w*\)"/\1/p')
+
+        if [ "$variable" != "" ]; then
+            variable="/$variable"
+
+            # Set global variables
+            get_chunk_info
+
+            rechunk="false"
+
+            if [ "$custom_chunk" != "" ]; then
+                IFS='x' read -r -a new_chunk_shape <<< "$custom_chunk"
+                if [ "${#new_chunk_shape[@]}" -ne "$ndim" ]; then
+                    echo "$iam: can't repack $file: custom chunk '$custom_chunk' has ${#new_chunk_shape[@]} dimensions but variable $variable has $ndim"
+                    echo "$iam: FAILED to repack $file"
+                    if [ "$overwrite" = true ]; then
+                        echo "$iam: file '$file' is unchanged"
+                    fi
+                    continue
+                fi
+
+                for n in "${!new_chunk_shape[@]}"
+                do
+                    if [ "${new_chunk_shape[n]}" -lt 1 ] || [ "${new_chunk_shape[n]}" -gt "${data_shape[n]}" ]; then
+                        echo "$iam: can't repack $file: custom chunk '$custom_chunk' is invalid for variable $variable with shape (${data_shape[*]})"
+                        echo "$iam: FAILED to repack $file"
+                        if [ "$overwrite" = true ]; then
+                            echo "$iam: file '$file' is unchanged"
+                        fi
+                        continue 2
+                    fi
+                done
+
+                CHUNK=${new_chunk_shape[*]}
+                CHUNK=${CHUNK// /x}
+                current_chunk_shape="${chunk_shape[*]}"
+                if [ "$contiguous" = "true" ] || [ "$CHUNK" != "${current_chunk_shape// /x}" ]; then
+                    data="-f ${variable}:SHUF"
+                    data="$data -f ${variable}:GZIP=$gzip"
+                    data="$data -f ${variable}:FLET"
+                    data="$data -l ${variable}:CHUNK=$CHUNK"
+                    rechunk="true"
+                fi
+            elif [ "$d_option" = "true" ]; then
+                # Original -d behavior: change only first chunk dimension,
+                # targeting a chunk size up to -d bytes.
+                original_chunk_size=$size
+                if [ "$multiple_chunks" = "true" ]; then
+                    wordsize=$(get_wordsize)
+                    original_chunk_size=$wordsize
+                    for n in "${!chunk_shape[@]}"
+                    do
+                        original_chunk_size=$((original_chunk_size * chunk_shape[n]))
+                    done
+                fi
+
+                if [ "$original_chunk_size" -lt "$size" ]; then
+                    new_chunk_shape=("${chunk_shape[@]}")
+
+                    new_chunk_shape[0]=$((size / wordsize ))
+                    n=1
+                    while [ $n -lt "$ndim" ]
+                    do
+                        new_chunk_shape[0]=$((new_chunk_shape[0] / new_chunk_shape[n]))
+                        n=$((n + 1))
+                    done
+
+                    new_chunk_size=$wordsize
+                    for n in "${!new_chunk_shape[@]}"
+                    do
+                        new_chunk_size=$((new_chunk_size * new_chunk_shape[n] ))
+                    done
+
+                    if [ "$new_chunk_size" -gt "$original_chunk_size" ]; then
+                        for n in "${!new_chunk_shape[@]}"
+                        do
+                            if [ "${new_chunk_shape[n]}" -gt "${data_shape[n]}" ]; then
+                                new_chunk_shape[n]=${data_shape[n]}
+                            fi
+                        done
+                        CHUNK=${new_chunk_shape[*]}
+                        CHUNK=${CHUNK// /x}
+
+                        data="-f ${variable}:SHUF"
+                        data="$data -f ${variable}:GZIP=$gzip"
+                        data="$data -f ${variable}:FLET"
+                        data="$data -l ${variable}:CHUNK=$CHUNK"
+
+                        rechunk="true"
+                    fi
+                fi
+            else
+                # Filename-driven rechunking for the first dimension only.
+                # First check if the existing chunk size already meets the 4 MiB
+                # minimum; if so, leave the data variable alone.
+                original_chunk_size=0
+                if [ "$contiguous" = "false" ]; then
+                    wordsize=$(get_wordsize)
+                    original_chunk_size=$wordsize
+                    for n in "${!chunk_shape[@]}"
+                    do
+                        original_chunk_size=$((original_chunk_size * chunk_shape[n]))
+                    done
+                fi
+
+                if [ "$original_chunk_size" -lt "$size" ]; then
+                    if [ "$contiguous" = "false" ]; then
+                        new_chunk_shape=("${chunk_shape[@]}")
+                    else
+                        new_chunk_shape=("${data_shape[@]}")
+                    fi
+
+                    new_chunk_shape[0]=$target_time_chunk
+                    for n in "${!new_chunk_shape[@]}"
+                    do
+                        if [ "${new_chunk_shape[n]}" -gt "${data_shape[n]}" ]; then
+                            new_chunk_shape[n]=${data_shape[n]}
+                        fi
+                    done
+
+                    CHUNK=${new_chunk_shape[*]}
+                    CHUNK=${CHUNK// /x}
+
+                    current_chunk_shape="${chunk_shape[*]}"
+                    if [ "$contiguous" = "true" ] || [ "$CHUNK" != "${current_chunk_shape// /x}" ]; then
+                        data="-f ${variable}:SHUF"
+                        data="$data -f ${variable}:GZIP=$gzip"
+                        data="$data -f ${variable}:FLET"
+                        data="$data -l ${variable}:CHUNK=$CHUNK"
+                        rechunk="true"
+                    fi
+                fi
+            fi
+
+            print_rechunk_info $rechunk "data"
+        fi
+    fi
+    
+    if [ "$metadata$time$data" = "" ]; then
+        echo "$iam: can't repack $file: Couldn't find time, time bounds or data variables, nor the metadata block size"
+        echo "$iam: FAILED to repack $file"
+	if [ "$overwrite" = true ]; then
+            echo "$iam: file '$file' is unchanged"
+        fi
+        continue	    
+    fi
+
+    # Still here? Define the repacking command
+    repacked_file=${file}_ncrepack
+    command="h5repack $metadata $time $data '$file' '$repacked_file'"
+    echo "$iam: repack command: $command"
+    if [ "$dry_run" = true ]; then
+        echo "$iam: dry-run: not repacking"
+        continue
+    fi
+    
+    # Still here? Run the repacking command
+    echo "$iam: running repack command ..."
+    # shellcheck disable=SC2086
+    if h5repack $metadata $time $data "$file" "$repacked_file"; then
+        # Successfully repacked
+        end_time=$(date +%s)
+        Nout=$(( Nout + 1 ))
+
+        filesize=$(wc -c < "$file")
+        totalsizein=$(( totalsizein + filesize ))
+
+        echo "$iam: successfully created '$repacked_file'"
+
+        # Get the output file size
+        filesize=$(wc -c < "$repacked_file")
+        totalsizeout=$((totalsizeout + filesize))
+
+        if [ "$overwrite" = true ]; then
+            # Overwrite original file with repacked file
+            mv_output=$(mv -v "$repacked_file" "$file")
+            echo "$iam: $mv_output"
+        fi
+
+        echo "$iam: time taken: $((end_time - start_time)) seconds"
+    else
+        echo "$iam: FAILED to repack $file"
+        echo "$iam: file $file is unchanged"
+    fi
+done
+end0=$(date +%s)
+
+if [ "$dry_run" = false ]; then
+    # Get the repack rate
+    totaltime=$((end0 - start0))
+    if [ $totaltime -gt 0 ]; then
+        rate="($((totalsizein / totaltime)) B/s)"
+    else
+        rate="($totalsizein B/s)"
+    fi
+
+    pcdiff=""
+    if [ $totalsizein -gt 0 ] && [ $totalsizein -ne $totalsizeout ]; then
+        pcdiff=$(( (100 * (totalsizein - totalsizeout))/totalsizein ))
+        if [ $pcdiff -eq 0 ]; then
+            pcdiff=" (<1% smaller than input files)"
+        elif [ $pcdiff -gt 0 ]; then
+            pcdiff=" (${pcdiff}% smaller than input files)"
+        else
+            pcdiff=$((pcdiff * -1))
+            pcdiff=" (${pcdiff}% larger than input files)"
+        fi
+    fi
+
+    echo ""
+    echo "$iam: $Nout/$Nin files ($totalsizein B) repacked in $totaltime seconds $rate to total size $totalsizeout B$pcdiff"
+
+    if [ $Nout != $Nin ]; then
+        exit 1
+    fi
+fi
