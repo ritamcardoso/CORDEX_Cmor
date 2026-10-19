@@ -285,7 +285,14 @@ cp env.site.sh.example env.site.sh
   (`module avail`). The commented `source ~/.bash_compile_wrf` line is the
   IDL-FCUL alternative — a personal file other users don't have.
 * **Compiler/library versions** — `FC`, `FFLAGS`, and the NetCDF/HDF5
-  include/lib paths (built from the same version variables).
+  include/lib paths. They come from `$NETCDF` / `$HDF5` when those are
+  already set (as `~/.bash_compile_wrf` does), otherwise from
+  `/usr/local/apps/<lib>/<version>/INTEL/<intel_dir_v>/HPCX/<hpx_dir_v>`.
+  `intel_dir_v` and `hpx_dir_v` default to the module versions, but the
+  folder names can be written differently (check with
+  `ls /usr/local/apps/netcdf4-parallel/<netcdf_v>/INTEL/*/HPCX/`). If there is
+  no `netcdf.mod` in the include folder, sourcing `env.site.sh` prints a
+  warning (otherwise the compile fails with `error #7002 ... [NETCDF]`).
 * **Experiment** — `EXPERIMENT`, the name of the experiment folder to use
   (`experiments/<name>/`, §2). Everything that differs per experiment or
   per domain lives there, not here.
