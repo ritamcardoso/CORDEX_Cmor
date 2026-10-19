@@ -75,6 +75,36 @@ fail() {
 }
 
 #
+#--- Repacking (REPACK="on" in env.site.sh, the default) --------
+# Every file a program writes is repacked with ncrepack-cordex (CORDEX
+# archive layout: time and time_bnds in one chunk, data rechunked, internal
+# metadata at the start of the file). The data are not changed. Needs the
+# HDF5 tools h5repack, h5stat and h5dump (from the HDF5 module); the check
+# is done here so a missing tool stops the job before any processing.
+#
+NCREPACK="${NCREPACK:-${REPO_DIR}/tools/ncrepack-cordex}"
+if [ "${REPACK:-on}" = "on" ]; then
+  for t in h5repack h5stat h5dump; do
+    command -v "$t" >/dev/null || fail "$t not found (REPACK=on needs the HDF5 tools: load an HDF5 module, or set REPACK=\"off\" in env.site.sh)"
+  done
+  [ -x "${NCREPACK}" ] || fail "ncrepack-cordex not found at ${NCREPACK}"
+fi
+
+# repack_new <folder> <marker> <name>... : repack the <name>_*.nc files in
+# <folder> written after <marker> (this run's files only; other jobs write
+# other variables into the same folder at the same time).
+repack_new() {
+  local dir=$1 marker=$2; shift 2
+  local files=() n f
+  for n in "$@"; do
+    while IFS= read -r f; do files+=("$f"); done \
+      < <(find "$dir" -maxdepth 1 -name "${n}_*.nc" -newer "$marker")
+  done
+  [ ${#files[@]} -gt 0 ] || { echo "repack: no new files for $* in ${dir}"; return 0; }
+  "${NCREPACK}" -o "${files[@]}"
+}
+
+#
 #--- Years and working directory --------------------------------
 # First and last year from datebeg/dateend; work happens in
 # ${ROOT_RUN_DIR}/<varset>.
@@ -175,9 +205,21 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     $FC $FFLAGS ${PROG_DIR}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
       || fail "compiling ${PROG_NAME}.f90 failed"
 
+    touch repack_marker
     ./${PROG_NAME}.exe
     rc=$?
     [ "$rc" -eq 0 ] || fail "${PROG_NAME}.exe failed (exit code ${rc}) for ${var[$v]}, ${grid}, ${j}"
+
+    #
+    # Repack the files this run wrote (the uava programs also write ua<level>)
+    #
+    if [ "${REPACK:-on}" = "on" ]; then
+      names=("${var[$v]}")
+      [[ "${PROG_NAME}" == *uava* && "${var[$v]}" == va* ]] && names+=("ua${var[$v]#va}")
+      repack_new "${OUTPUT_DIR[${grid}]}" repack_marker "${names[@]}" \
+        || fail "repacking ${names[*]} failed for ${grid}, ${j} (the files are kept as written)"
+    fi
+    rm -f repack_marker
 
     rm inputlist.inp
     rm header_${grid}

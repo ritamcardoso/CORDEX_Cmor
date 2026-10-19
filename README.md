@@ -154,7 +154,8 @@ scripts/       <- the 3 generic job scripts (+ load_experiment.sh, which they so
 .github/       <- ShellCheck run on GitHub
 submit.sh      <- submits every job (§6, §9)
 tools/         <- helper scripts (§11): report_walltimes.sh, lint_varsets.sh, merge_soil_monthly.sh,
-                  check_and_found_var.sh, check_archive.sh + variables.txt
+                  check_and_found_var.sh, check_archive.sh + variables.txt;
+                  ncrepack-cordex (+ its LICENSE), run on every new file (§6)
 env.site.sh.example  <- copy to env.site.sh and fill in (§4)
 LICENSE, README.md
 ```
@@ -295,6 +296,12 @@ cp env.site.sh.example env.site.sh
   specific to the IDL-FCUL setup, so turn it on only if you use the same
   arrangement. An older `env.site.sh` without an `ARCHIVE` line keeps
   archiving on.
+* **Repacking** — `REPACK` (`"on"` by default, also when the line is
+  missing): every file is repacked with `tools/ncrepack-cordex` as soon as it
+  is written (§6), so no repacking is needed afterwards. Needs `h5repack`,
+  `h5stat` and `h5dump` on the `PATH` (from the HDF5 module in `MODULES`);
+  if one is missing the job stops at the start. `"off"` leaves the files as
+  the programs write them.
 
 * **Slurm job settings** — `JOB_QOS`, `JOB_NODES`, `JOB_NTASKS`,
   `JOB_HINT`, `JOB_ACCOUNT`, `JOB_MAIL_TYPE`, `JOB_MAIL_USER`,
@@ -450,6 +457,19 @@ The 3 scripts are fully generic — you should not need to edit them.
    and year: no archive job and no next job are submitted, and the job
    shows as FAILED, so a broken stream stops instead of carrying on with
    missing output.
+   **With `REPACK="on"`** (the default) each program's new files are then
+   repacked in place with `tools/ncrepack-cordex` — a copy of
+   [ncrepack-cordex](https://github.com/WCRP-CORDEX/ncrepack-cordex)
+   v0.2 (BSD 3-Clause, `tools/ncrepack-cordex.LICENSE`): `time` and
+   `time_bnds` in one chunk, the data variable rechunked (6 time steps for
+   `1hr`/`mon`, 4 for `6hr`), shuffle + deflate 1 + Fletcher32, and the
+   internal metadata collated at the start of the file. The values and
+   attributes are not changed. Only the files written by that run are
+   repacked (other jobs write into the same folder at the same time); a
+   failed repack stops the job like a failed program, and leaves the file
+   as written. The archive job therefore copies repacked files. Check them
+   with `ncrepack-cordex-check` (Python; `pip install pyfive packaging`, or
+   the conda install in the ncrepack-cordex README).
 3. If `ARCHIVE="on"`, submits the archive job (§7), and a second one for
    its `CP_EXTRA[]` companion.
 4. Submits the next varset of its stream (§8).
@@ -737,6 +757,18 @@ The script exits with status 1 if anything is missing or wrong.
 | `-d remote\|ecfs\|both` | archive(s) to check (default `remote`) |
 | `-t <pct>` | size tolerance against the previous year when the original is gone (default 5) |
 | `-v <file>`, `-o <dir>`, `-r <dir>` | as for `check_and_found_var.sh` |
+
+### `tools/ncrepack-cordex` — repack existing files
+
+The jobs repack new files themselves (§6). For files written before that, or
+by `merge_soil_monthly.sh`, repack them in place (needs the HDF5 tools):
+
+```bash
+module load hdf5            # or the hdf5-parallel module of MODULES
+tools/ncrepack-cordex -o $SCRATCH/output_d01/*.nc
+```
+
+Without `-o` a new `<file>_ncrepack` is written next to each file instead.
 
 ### `merge_soil_monthly.sh` — monthly soil files to one file per year
 
