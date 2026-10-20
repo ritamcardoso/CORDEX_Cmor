@@ -17,6 +17,20 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")" &>/dev/
 export ROOT_DIR="${SCRIPT_DIR}"
 
 #
+#--- Varset layout (CMOR_VARSETS, default varsets.sh) ------------
+# The file in config/ that every job reads: varsets.sh (the default), or e.g.
+# varsets_single.sh for varsets that loop on themselves (run.sh sets it).
+# It is passed on to every job, so chained jobs keep the same layout.
+#
+CMOR_VARSETS="${CMOR_VARSETS:-varsets.sh}"
+case "${CMOR_VARSETS}" in
+  */*|"") echo "CMOR_VARSETS must be a file name in config/, e.g. varsets_single.sh (got '${CMOR_VARSETS}')." >&2; exit 1 ;;
+esac
+VARSETS_FILE="${ROOT_DIR}/config/${CMOR_VARSETS}"
+[ -f "${VARSETS_FILE}" ] || { echo "No varset file ${VARSETS_FILE} (CMOR_VARSETS=${CMOR_VARSETS})." >&2; exit 1; }
+export CMOR_VARSETS
+
+#
 #--- Split sbatch options from the script name and its args ----
 # Arguments starting with - are sbatch options (write them as
 # --option=value); the first other one is the script name.
@@ -141,7 +155,7 @@ if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_gener
   vs_settings="$(
     set +eu
     # shellcheck source=/dev/null
-    source "${ROOT_DIR}/config/varsets.sh" >/dev/null 2>&1
+    source "${VARSETS_FILE}" >/dev/null 2>&1
     if [ -z "${VARSETS[$vs]+x}" ]; then echo "UNKNOWN|"; exit 0; fi
     if [ "${prefix}" = wrf ]; then
       printf '%s|\n' "${TIME[$vs]:-}" "${MEM[$vs]:-${DEFAULT_MEM:-}}"
@@ -151,7 +165,7 @@ if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_gener
   )"
   mapfile -t vs_values <<< "${vs_settings}"
   if [ "${vs_values[0]}" = "UNKNOWN|" ]; then
-    echo "Unknown varset '${vs}' — not in config/varsets.sh." >&2
+    echo "Unknown varset '${vs}' — not in config/${CMOR_VARSETS}." >&2
     exit 1
   fi
   vs_time="${vs_values[0]%|}"
@@ -162,7 +176,7 @@ if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_gener
     if [ -n "${vs_time}" ]; then
       site_args+=("--time=${vs_time}")
     else
-      echo "WARNING: no TIME[${vs}] in config/varsets.sh — the job gets the queue's default time limit." >&2
+      echo "WARNING: no TIME[${vs}] in config/${CMOR_VARSETS} — the job gets the queue's default time limit." >&2
     fi
   fi
   if [ -n "${vs_mem}" ] && ! caller_has --mem; then site_args+=("--mem=${vs_mem}"); fi
@@ -178,7 +192,7 @@ if [ "${script_name}" = run_analysis.sh ] && ! caller_has --time && ! caller_has
   analysis_time="$(
     set +eu
     # shellcheck source=/dev/null
-    source "${ROOT_DIR}/config/varsets.sh" >/dev/null 2>&1
+    source "${VARSETS_FILE}" >/dev/null 2>&1
     echo "${ANALYSIS_TIME:-}"
   )"
   site_args+=("--time=${analysis_time:-00:45:00}")
@@ -188,13 +202,13 @@ if [ -z "${JOB_ACCOUNT}" ] && ! caller_has --account; then
   echo "WARNING: JOB_ACCOUNT is empty in ${env_file} — the job will use your default Slurm account." >&2
 fi
 
-echo "ROOT_DIR=${ROOT_DIR} (auto-detected from submit.sh's location), EXPERIMENT=${CMOR_EXPERIMENT}"
+echo "ROOT_DIR=${ROOT_DIR} (auto-detected from submit.sh's location), EXPERIMENT=${CMOR_EXPERIMENT}, varsets: config/${CMOR_VARSETS}"
 
 #
 #--- Submit -----------------------------------------------------
 # Runs sbatch with these flags first and your own flags after, so yours win.
 #
-exec sbatch --export=ALL,ROOT_DIR="${ROOT_DIR}",CMOR_EXPERIMENT="${CMOR_EXPERIMENT}" \
+exec sbatch --export=ALL,ROOT_DIR="${ROOT_DIR}",CMOR_EXPERIMENT="${CMOR_EXPERIMENT}",CMOR_VARSETS="${CMOR_VARSETS}" \
      ${site_args[@]+"${site_args[@]}"} \
      ${sbatch_args[@]+"${sbatch_args[@]}"} \
      "${target_path}" "$@"

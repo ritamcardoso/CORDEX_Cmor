@@ -32,6 +32,39 @@ now 3 generic job scripts, submitted through `submit.sh` and driven by:
 4. Check `config/varsets.sh` covers the variables you need (§5), and run
    `bash tools/lint_varsets.sh` (§11) after any change to it.
 
+### Quick start: `run.sh`
+
+Once the setup above is done, start everything with one command:
+
+```bash
+cd $ROOT_DIR                         # the repo (or a symlink to run.sh)
+./run.sh fpsurb 2015 2020            # every stream, 2015 to 2020, one year per job
+./run.sh fpsurb 2015                 # 2015 only
+./run.sh fpsurb 2015 2020 soil fx    # only these varsets, each on its own
+./run.sh -n fpsurb 2015 2020         # dry run: check and show, submit nothing
+```
+
+`run.sh <experiment> <first year> [<last year>] [<varset> ...]` works out
+the dates and `year_lim`, checks the setup and calls `submit.sh` for you.
+It checks `env.site.sh`, the experiment folder and its ini files, and the
+varset names, and warns if there are no `wrfout` files for the first year.
+It lists every problem and submits nothing until they are fixed.
+
+* **Without varsets** it submits `run_analysis.sh`: every stream in
+  `ORDER`, chained year by year (as in *Standard submission* below).
+* **With varsets** each one runs on its own, using
+  `config/varsets_single.sh`: it processes a year, submits its archive job
+  and resubmits itself for the next year, up to the last year. You don't
+  need to copy anything over `config/varsets.sh`. The layout is passed to
+  every job of the loop, so queued and running jobs of other loops are not
+  affected. Add `-c` to let them hand over to their stream instead
+  (`config/varsets.sh`).
+
+The time limits, memory and other job settings still come from
+`config/varsets.sh` (or `varsets_single.sh`) and `env.site.sh`, as below.
+The rest of this section describes what `run.sh` does underneath, and how
+to submit by hand (e.g. several years in one job).
+
 ### Standard submission
 
 `run_analysis.sh` is the main controller — it submits every varset in
@@ -88,8 +121,17 @@ itself, like `zlev_uava0` and `zlev_uava1` do: it processes one year,
 submits its archive (`cp-*`) job, and resubmits itself for the next year,
 stopping after `year_lim`.
 
-The scripts only read `config/varsets.sh`, so you switch by copying a
-layout over it. `config/` holds both:
+`run.sh` does this for you (see *Quick start*). By hand, set
+`CMOR_VARSETS=varsets_single.sh` when you submit: `submit.sh` passes it to
+the job and the job passes it on to the jobs it submits, so the whole loop
+uses that file:
+
+```bash
+CMOR_VARSETS=varsets_single.sh ./submit.sh run_out_generic.sh 20010101 20011231 2005 soil
+```
+
+Without `CMOR_VARSETS` the scripts read `config/varsets.sh`, so you can
+also switch by copying a layout over it. `config/` holds both:
 
 * `varsets_chain.sh` — the normal chained streams (§8), a saved copy of
   what `varsets.sh` holds by default;
@@ -152,6 +194,7 @@ config/        <- varsets.sh: the active variables/programs/scheduling, the only
                   varsets_chain.sh: saved copy of the chained streams (§8); varsets_single.sh: every varset loops on itself (§0)
 scripts/       <- the 3 generic job scripts (+ load_experiment.sh, which they source; §6)
 .github/       <- ShellCheck run on GitHub
+run.sh         <- the simple way to start: ./run.sh <experiment> <first year> [<last year>] [<varset> ...] (§0)
 submit.sh      <- submits every job (§6, §9)
 tools/         <- helper scripts (§11): report_walltimes.sh, lint_varsets.sh, merge_soil_monthly.sh,
                   check_and_found_var.sh, check_archive.sh + variables.txt;
@@ -434,10 +477,11 @@ The 3 scripts are fully generic — you should not need to edit them.
 3. Reads `env.site.sh` in a subshell and keeps only the `JOB_*` values
    and `EXPERIMENT` — so the modules and compiler settings in
    `env.site.sh` don't leak into the job's environment.
-4. Checks the experiment folder exists, then passes `ROOT_DIR` and the
-   experiment (as `CMOR_EXPERIMENT`, §2) to the job.
+4. Checks the experiment folder exists, then passes `ROOT_DIR`, the
+   experiment (as `CMOR_EXPERIMENT`, §2) and the varset file (as
+   `CMOR_VARSETS`, default `varsets.sh`, a file in `config/`) to the job.
 5. For `run_out_generic.sh` and `run_cp_generic.sh`, looks up the varset
-   (their 4th argument) in `config/varsets.sh` and adds its per-job flags:
+   (their 4th argument) in that varset file and adds its per-job flags:
 
    | Flag | Processing job (`run_out_generic.sh`) | Archive job (`run_cp_generic.sh`) |
    |---|---|---|

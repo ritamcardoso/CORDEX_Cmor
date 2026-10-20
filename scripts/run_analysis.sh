@@ -40,7 +40,7 @@ echo "$dateend"
 #--- Varsets ----------------------------------------------------
 # Loads config/varsets.sh and stops if ORDER is empty.
 #
-source "${REPO_DIR}/config/varsets.sh"
+source "${REPO_DIR}/config/${CMOR_VARSETS:-varsets.sh}"
 
 if [ "${#ORDER[@]}" -eq 0 ]; then
   echo "ORDER in config/varsets.sh is empty — nothing to submit. (With varsets_single.sh, uncomment one of its ORDER batches first.)" >&2
