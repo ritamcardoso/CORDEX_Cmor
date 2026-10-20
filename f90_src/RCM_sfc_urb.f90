@@ -270,7 +270,7 @@ do i=1,nlon
     e_sfc(i,j)=(mr(i,j)/(epsilon+mr(i,j)))*psf(i,j)
     esat(i,j)=exp(a1*t2(i,j)**-2+a2/t2(i,j)+a3+a4*t2(i,j)+a5*t2(i,j)**2+a6*t2(i,j)**3+a7*t2(i,j)**4+a8*log(t2(i,j))) ! ITS-90 @ -100C to 100C
 !
-    if(t2(i,j) <0.)then
+    if(TK(i,j) < 0.)then              ! below 0 degC: enhancement factor over ice
       fact=exp((fi1+fi2*TK(i,j)+fi3*TK(i,j)**2+fi4*TK(i,j)**3)*(1.-(esat(i,j)/psf(i,j)))+ &
                     exp(fi5+fi6*TK(i,j)+fi7*TK(i,j)**2+fi8*TK(i,j)**3)*((esat(i,j)/psf(i,j))-1.d0))
     else
