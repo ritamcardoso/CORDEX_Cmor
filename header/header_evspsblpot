@@ -1,0 +1,8 @@
+wrfvar = 'T2'         ! not read on its own: RCM_sfc_evspsblpot reads T2, Q2, PSFC, U10, V10 and the accumulated radiation
+vaid = 'evspsblpot'
+vunts = 'kg m-2 s-1'
+lname = 'Potential Evapotranspiration'
+stname = 'water_potential_evaporation_flux'
+cmethods = 'area: mean where land time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

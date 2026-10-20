@@ -740,7 +740,7 @@ and a **warning** for every varset without its own `CP_TIME[]` (it uses
 
 ### `check_and_found_var.sh` — which variables were extracted, per year
 
-Checks the output folders for every variable in `variables.txt` (the 171
+Checks the output folders for every variable in `variables.txt` (the 172
 CORDEX variables, fixed fields excluded; one per line, `#` comments
 allowed), without reading the extraction logs. Run it **directly on a
 login node** (it only lists files); it can be a symlink, e.g. in `$SCRATCH`
