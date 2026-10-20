@@ -128,7 +128,7 @@ character(len=100) :: lname, stname, cmethods, tunts, freq, exper, dexper, cdate
 ! --- 5. File Paths and Directories ---
 ! =====================================================================
 character(len=400) :: infile, filename, outfile, outdom, fnameout, fnameout_u, fnameout_v
-character(len=400) :: dir, dir2, gfile, geofile, aexp, adexp
+character(len=400) :: dir_in, dir_out, gfile, geofile, aexp, adexp
 
 ! --- Global Metadata Strings ---
 character(len=100)  :: conventions, activity_id, contact, cordex_domain
@@ -151,7 +151,7 @@ integer :: we_dim, sn_dim, bt_dim
 namelist /cordex_config/ &
     yeari, yearf, iniyear, nmonths, imonth, iday, ihour, &
     nz, nsoil, nlon, nlat, xoffset, yoffset, p_top, &
-    dir, dir2, geog, wrffile, wrfile, dom, outdom, &
+    dir_in, dir_out, geog, wrffile, wrfile, dom, outdom, &
     wrfvar, vaid, height, pres, vunits, vunts, &
     lname, stname, cmethods, factor, &
     projection, pole_lat, pole_lon, truelat1, truelat2, stand_lon, cen_lat, &
