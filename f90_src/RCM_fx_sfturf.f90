@@ -20,7 +20,7 @@ allocate(outvar(nlon,nlat))
 outvar=0.
 
 ! Re-open the geog file to read the relevant variable
-gfile = trim(dir)//trim(geog)//'.nc'
+gfile = trim(dir_in)//trim(geog)//'.nc'
 geofile = gfile(1:len_trim(gfile))
 
 status = nf90_open(geofile, nf90_nowrite, ncid)
@@ -62,7 +62,7 @@ freq='fx'
 frequency=trim(adjustl(freq))
 
 ! Create output filename based on metadata
-outfile=trim(dir2)//trim(vaid)//trim(outdom)//'fx.nc'
+outfile=trim(dir_out)//trim(vaid)//trim(outdom)//'fx.nc'
 fnameout=trim(adjustl(outfile))
 
 call date_and_time(date,times,zone,values)

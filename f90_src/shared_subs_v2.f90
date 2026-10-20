@@ -124,7 +124,7 @@ use datvar_s
 integer :: j
 !
 ! Read geog file
-gfile = trim(dir)//trim(geog)//'.nc'
+gfile = trim(dir_in)//trim(geog)//'.nc'
 geofile = gfile(1:len_trim(gfile))
 
 status = nf90_open(geofile, nf90_nowrite, ncid)

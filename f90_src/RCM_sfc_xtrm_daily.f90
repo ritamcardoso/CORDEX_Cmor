@@ -92,7 +92,7 @@ do year = yeari, yearf,1
       aday = pad_int(day, 2)
 
 
-        filename = trim(dir)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_00_00_00'
+        filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_00_00_00'
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
@@ -157,7 +157,7 @@ tunts='days since '//ayearini//'-01-01 00:00'
 timeunits=trim(adjustl(tunts))
 
 ! Create output filename based on metadata
-outfile=trim(dir2)//trim(vaid)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
+outfile=trim(dir_out)//trim(vaid)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
 fnameout=trim(adjustl(outfile))
 
 if (factor /= 0.) outvar_h = outvar_h * factor

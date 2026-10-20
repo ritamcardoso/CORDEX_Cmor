@@ -88,7 +88,7 @@ do year = yeari, yearf, 1
       loop_h: do hour = ihour, nhours-1, 6
         ahour = pad_int(hour, 2)
 
-        filename = trim(dir)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday_pad//'_'//ahour//'_00_00'
+        filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday_pad//'_'//ahour//'_00_00'
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
@@ -262,8 +262,8 @@ subroutine write_dual_output
   p_str = adjustl(pad_int(p_val, 1))
 
   ! Build unique system output targets natively using context pressure levels
-  fnameout_u = trim(dir2)//'ua'//trim(p_str)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
-  fnameout_v = trim(dir2)//'va'//trim(p_str)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
+  fnameout_u = trim(dir_out)//'ua'//trim(p_str)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
+  fnameout_v = trim(dir_out)//'va'//trim(p_str)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
 
   if (factor /= 0.0) then
     outvar_h_u = outvar_h_u * factor

@@ -39,7 +39,7 @@ The `&cordex_config` namelist. Set:
 Leave these placeholders as they are — `run_out_generic.sh` fills them in for each job:
 
 - **`_START_YY_` / `_END_YY_`** — the year being processed.
-- **`dir` / `dir2`** — `_OUTPUT_WRF_` / `_OUTPUT_DIR_`, from that grid's `OUTPUT_WRF[<grid>]` / `OUTPUT_DIR[<grid>]` in `<name>.sh` (a trailing `/` is added automatically). Don't hardcode real paths here — edit `<name>.sh` instead. Each grid's output must go to its own directory.
+- **`dir_in` / `dir_out`** — `_OUTPUT_WRF_` / `_OUTPUT_DIR_`, from that grid's `OUTPUT_WRF[<grid>]` / `OUTPUT_DIR[<grid>]` in `<name>.sh` (a trailing `/` is added automatically). Don't hardcode real paths here — edit `<name>.sh` instead. Each grid's output must go to its own directory.
 - **`wrffile`** — `_WRFFILE_`: `wrfxtrm` for the `wxtrm` (and `testex`) varset, which runs `RCM_sfc_xtrm`; `wrfout` for every other varset.
 
 ## `<name>_global_<DOMAIN_ID>_<grid>.ini` — global attributes
