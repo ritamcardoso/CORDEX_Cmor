@@ -35,7 +35,7 @@ fi
 #
 source "${REPO_DIR}/env.site.sh"
 source "${REPO_DIR}/scripts/load_experiment.sh"
-source "${REPO_DIR}/config/varsets.sh"
+source "${REPO_DIR}/config/${CMOR_VARSETS:-varsets.sh}"
 
 if [ -z "${VARSETS[$VARSET]+x}" ]; then
   echo "Unknown varset '${VARSET}'. Known varsets:" >&2

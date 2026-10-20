@@ -30,6 +30,7 @@ jobs:
             config/varsets_single.sh \
             env.site.sh.example \
             submit.sh \
+            run.sh \
             tools/report_walltimes.sh \
             tools/merge_soil_monthly.sh \
             tools/check_and_found_var.sh \
