@@ -315,10 +315,10 @@ concatenating the relevant `header_<var>` onto the experiment's grid ini file
 (see `run_out_generic.sh`'s processing loop).
 
 `header_sftlaf`, `header_sfturf` and the land-cover fractions of
-`RCM_fx_landuse` (`treeFrac`, `urbanFrac`, …) also set `area_type`
+`RCM_fx_landuse` / `RCM_yr_landuse` (`treeFrac`, `urbanFrac`, …) also set `area_type`
 (`'lake_and_inland_sea'`, `'urban'`, `'tree'`, …): it becomes the scalar
-coordinate `type` that the CORDEX tables require for these variables. It is
-only written to fx files. Leave it
+coordinate `type` that the CORDEX tables require for these variables (in the
+fx and the yearly files). Leave it
 out for every other variable.
 
 ## 4. Site Environment (`env.site.sh`)
@@ -424,8 +424,19 @@ LUCAS), so `lsm` is not in `ORDER`; run it on its own, e.g.
 and `luindex` (`LU_INDEX`), from `LANDUSEF` of the first wrfout file of the
 job year. The grouping of the land-use categories is a weight table at the top
 of the program (MODIS/IGBP and USGS, with the LCZ urban classes); edit it there.
-Like the other fx files, an existing file is kept, so with yearly land-use
-change the fx fractions are those of the first year processed.
+Like the other fx files, an existing file is kept, so the fx fractions are
+those of the first year processed. The grouping of the land-use categories is in
+`landuse_field` (`shared_subs_v2.f90`).
+
+**Yearly land cover for land-use change runs (`landuse` varset).** For LUCAS,
+where the land-use maps change from year to year, `RCM_yr_landuse.f90` writes
+the same eight variables once per year (`frequency = yr`):
+`<var>_<...>_yr_YYYY-YYYY.nc`, from `LANDUSEF` / `LU_INDEX` of
+`wrfout_..._YYYY-01-01_00_00_00`, with time at mid-year, bounds of the whole year
+and `time: mean` added to the cell methods (the map is held through the year). If
+the map of Dec 31 23 UTC differs, the job log has a warning. It is not in `ORDER`;
+run it with `./run.sh lucas 2000 2010 landuse` (each job one year, then the next).
+The archive step picks up the `_yr_` files of its years.
 
 ### Fortran program naming
 
