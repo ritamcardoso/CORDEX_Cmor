@@ -277,6 +277,14 @@ See [`experiments/README.md`](experiments/README.md) for the full details.
   [`experiments/README.md`](experiments/README.md) and
   [WCRP-CORDEX/cordex-cmip6-cv](https://github.com/WCRP-CORDEX/cordex-cmip6-cv)
   for the valid values.
+  * **`title`** is written automatically from the entries of this file:
+    `<institution_id> <source_id> downscaling of <driving_source_id>
+    <experiment_id> for <project_id> <domain_id>`, e.g. *IDL-FCUL WRF451Q
+    downscaling of MPI-ESM1-2-HR ssp370 for CORDEX-CMIP6 EUR-12*. To use
+    your own, add a `title = '...'` line.
+  * **`references`**: the page or publication describing the simulation
+    (cordex: euro-cordex-cmip6, fpsurb: fps-urb-rcc, lucas: fps-lucas). It is
+    left out of the files if the line is missing.
 
 ### Switching or adding an experiment
 

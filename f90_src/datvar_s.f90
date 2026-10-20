@@ -139,6 +139,7 @@ character(len=100)  :: license, mip_era, product, project_id, release_year
 character(len=100)  :: source_id, source_type, version_real, sim_start_date
 character(len=500)  :: source_desc
 character(len=1000) :: driving_source
+character(len=300)  :: title, references   ! optional in the global ini (title: built if empty)
 
 ! --- Global Metadata Numerics ---
 real    :: dx_val, dy_val
@@ -163,7 +164,7 @@ namelist /global_metadata/ &
     institution_id, label, label_ext, license, mip_era, product, &
     project_id, release_year, source_desc, source_id, source_type, &
     version_real, sim_start_date, dx_val, dy_val, we_dim, sn_dim, &
-    bt_dim, driving_source
+    bt_dim, driving_source, title, references
 
 contains
 

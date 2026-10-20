@@ -101,6 +101,9 @@ subroutine read_global_metadata(meta_filename)
         stop 93
     end if
 
+    ! optional entries: empty unless the ini file sets them
+    title = ''
+    references = ''
     read(unit_id, nml=global_metadata, iostat=status_id)
     if (status_id /= 0) then
         print *, "ERROR: Failed to parse namelist &global_metadata from: ", trim(meta_filename)
@@ -756,6 +759,7 @@ subroutine write_global_attributes
     character(len=20)  :: utc_now
     character(len=49)  :: tracking
     character(len=400) :: history_str
+    character(len=300) :: title_str
 
     ! Dynamically trigger namelist reading cleanly right before writing attributes
     call init_cordex_environment
@@ -765,6 +769,16 @@ subroutine write_global_attributes
     call new_tracking_id(tracking)
     history_str = trim(utc_now)//';rewrote data to be consistent with '//trim(activity_id)// &
                   ' for variable '//trim(varname)//' found in table CORDEX-CMIP6_'//trim(frequency)//'.'
+
+    ! Title: from the global ini, or built from its entries, e.g.
+    ! "IDL-FCUL WRF451Q downscaling of MPI-ESM1-2-HR ssp370 for CORDEX-CMIP6 EUR-12"
+    if (len_trim(title) > 0) then
+        title_str = trim(title)
+    else
+        title_str = trim(institution_id)//' '//trim(source_id)//' downscaling of '// &
+                    trim(driving_source_id)//' '//trim(experiment_id)//' for '// &
+                    trim(project_id)//' '//trim(domain_id)
+    end if
 
     ! String Attributes
     status = nf90_put_att(ncid, nf90_global, "Conventions", trim(conventions))
@@ -792,11 +806,14 @@ subroutine write_global_attributes
     status = nf90_put_att(ncid, nf90_global, "license", trim(license))
     status = nf90_put_att(ncid, nf90_global, "mip_era", trim(mip_era))
     status = nf90_put_att(ncid, nf90_global, "product", trim(product))
+    if (len_trim(references) > 0) &
+        status = nf90_put_att(ncid, nf90_global, "references", trim(references))
     status = nf90_put_att(ncid, nf90_global, "project_id", trim(project_id))
     status = nf90_put_att(ncid, nf90_global, "release_year", trim(release_year))
     status = nf90_put_att(ncid, nf90_global, "source", trim(source_desc))
     status = nf90_put_att(ncid, nf90_global, "source_id", trim(source_id))
     status = nf90_put_att(ncid, nf90_global, "source_type", trim(source_type))
+    status = nf90_put_att(ncid, nf90_global, "title", trim(title_str))
     status = nf90_put_att(ncid, nf90_global, "tracking_id", trim(tracking))
     status = nf90_put_att(ncid, nf90_global, "variable_id", trim(varname))
     status = nf90_put_att(ncid, nf90_global, "version_realization", trim(version_real))
