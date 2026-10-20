@@ -9,7 +9,7 @@ program read_wrfout
 ! dominant top-soil category SCT_DOM of the geo_em file (what real.exe gives
 ! Noah-MP as ISLTYP). Layers: the 4 Noah-MP layers (sdepth, 0.1+0.3+0.6+1.0 = 2 m),
 ! as for mrso. Sea points (LANDMASK = 0) and unknown categories are missing.
-! In the soil varset (RCM_sfc_VAR), so it is rewritten (identically) every year.
+! In the soil varset (RCM_sfc_VAR): written by the first year's job, kept afterwards.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
@@ -25,6 +25,7 @@ real, dimension(19), parameter :: fc_refsmc = [0.192, 0.283, 0.312, 0.360, 0.347
                                                0.387, 0.382, 0.338, 0.404, 0.412, 0.329, &
                                                0.0, 0.17, 0.283, 0.454, 0.17, 0.192]
 integer :: fc_cat
+logical :: fc_exists
 
 ! --- Read configuration using shared_subs subroutine
 
@@ -64,7 +65,15 @@ do ix=1,nlon
   enddo
 enddo
 
-call write_output
+! fx: written once; the soil varset runs every year, so later years keep the file
+! (the NetCDF writer does not overwrite an existing fx file)
+outfile=trim(dir_out)//trim(vaid)//trim(outdom)//'fx.nc'
+inquire(file=trim(outfile), exist=fc_exists)
+if (fc_exists) then
+  print *, trim(outfile), ' already exists: kept (fixed field)'
+else
+  call write_output
+endif
 
 contains
 !
