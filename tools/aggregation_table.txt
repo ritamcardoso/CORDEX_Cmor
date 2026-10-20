@@ -1,0 +1,395 @@
+# tools/aggregation_table.txt — daily and monthly aggregation of every variable,
+# from the CORDEX-CMIP6 CMOR tables (WCRP-CORDEX/cordex-cmip6-cmor-tables, table_date 07 September 2026).
+# Columns (separated by |): variable | source variable | day method | day cell_methods | day long_name
+#                          | mon method | mon cell_methods | mon long_name
+# method: mean, max, min or sum; '-' = not in that table. day: from the sub-daily (1hr, 3hr or 6hr)
+# files of the source variable; mon: from the daily values. Regenerate with the tables when they change.
+abs1000aer|abs1000aer|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 1000 nm
+abs1000bc|abs1000bc|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 1000 nm
+abs1000dust|abs1000dust|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 1000 nm
+abs1000nh4|abs1000nh4|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 1000 nm
+abs1000no3|abs1000no3|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 1000 nm
+abs1000oa|abs1000oa|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 1000 nm
+abs1000so4|abs1000so4|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 1000 nm
+abs1000ss|abs1000ss|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 1000 nm|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 1000 nm
+abs350aer|abs350aer|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 350 nm
+abs350bc|abs350bc|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 350 nm
+abs350dust|abs350dust|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 350 nm
+abs350nh4|abs350nh4|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 350 nm
+abs350no3|abs350no3|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 350 nm
+abs350oa|abs350oa|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 350 nm
+abs350so4|abs350so4|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 350 nm
+abs350ss|abs350ss|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 350 nm|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 350 nm
+abs440aer|abs440aer|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 440 nm
+abs440bc|abs440bc|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 440 nm
+abs440dust|abs440dust|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 440 nm
+abs440nh4|abs440nh4|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 440 nm
+abs440no3|abs440no3|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 440 nm
+abs440oa|abs440oa|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 440 nm
+abs440so4|abs440so4|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 440 nm
+abs440ss|abs440ss|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 440 nm|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 440 nm
+abs550aer|abs550aer|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 550 nm
+abs550bc|abs550bc|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 550 nm
+abs550dust|abs550dust|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 550 nm
+abs550nh4|abs550nh4|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 550 nm
+abs550no3|abs550no3|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 550 nm
+abs550oa|abs550oa|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 550 nm
+abs550so4|abs550so4|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 550 nm
+abs550ss|abs550ss|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 550 nm|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 550 nm
+abs870aer|abs870aer|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Ambient Aerosol Absorption Optical Thickness at 870 nm
+abs870bc|abs870bc|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Black Carbon Aerosol Absorption Optical Thickness at 870 nm
+abs870dust|abs870dust|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Dust Aerosol Absorption Optical Thickness at 870 nm
+abs870nh4|abs870nh4|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Ammonium Aerosol Absorption Optical Thickness at 870 nm
+abs870no3|abs870no3|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Nitrate Aerosol Absorption Optical Thickness at 870 nm
+abs870oa|abs870oa|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Organic Matter Aerosol Absorption Optical Thickness at 870 nm
+abs870so4|abs870so4|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Sulfate Aerosol Absorption Optical Thickness at 870 nm
+abs870ss|abs870ss|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 870 nm|mean|area: time: mean|Sea-salt Aerosol Absorption Optical Thickness at 870 nm
+asy1000aer|asy1000aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 1000 nm|mean|area: time: mean|Aerosol Asymmetry Parameter at 1000 nm
+asy350aer|asy350aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 350 nm|mean|area: time: mean|Aerosol Asymmetry Parameter at 350 nm
+asy440aer|asy440aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 440 nm|mean|area: time: mean|Aerosol Asymmetry Parameter at 440 nm
+asy550aer|asy550aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 550 nm|mean|area: time: mean|Aerosol Asymmetry Parameter at 550 nm
+asy870aer|asy870aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 870 nm|mean|area: time: mean|Aerosol Asymmetry Parameter at 870 nm
+cape|cape|mean|area: time: mean|Convective Available Potential Energy|mean|area: time: mean|Convective Available Potential Energy
+capemax|capemax|max|area: mean time: maximum|Daily Maximum Convective Available Potential Energy|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Convective Available Potential Energy
+cdnc|cdnc|mean|area: time: mean|Cloud Liquid Droplet Number Concentration|mean|area: time: mean|Cloud Liquid Droplet Number Concentration
+cheaqpso4|cheaqpso4|mean|area: time: mean|Aqueous-Phase Production Rate of SO4|mean|area: time: mean|Aqueous-Phase Production Rate of SO4
+chegpso4|chegpso4|mean|area: time: mean|Gas-Phase Production Rate of SO4|mean|area: time: mean|Gas-Phase Production Rate of SO4
+chepnh4|chepnh4|mean|area: time: mean|Chemical Production of Dry Ammonium Aerosol|mean|area: time: mean|Chemical Production of Dry Ammonium Aerosol
+chepno3|chepno3|mean|area: time: mean|Chemical Production of Dry Nitrate Aerosol|mean|area: time: mean|Chemical Production of Dry Nitrate Aerosol
+chepsoa|chepsoa|mean|area: time: mean|Chemical Production of Dry Aerosol Secondary Organic Matter|mean|area: time: mean|Chemical Production of Dry Aerosol Secondary Organic Matter
+cin|cin|mean|area: time: mean|Convective Inhibition|mean|area: time: mean|Convective Inhibition
+cinmax|cinmax|max|area: mean time: maximum|Daily Maximum Convective Inhibition|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Convective Inhibition
+clh|clh|mean|area: time: mean|High Level Cloud Fraction|mean|area: time: mean|High Level Cloud Fraction
+clivi|clivi|mean|area: time: mean|Ice Water Path|mean|area: time: mean|Ice Water Path
+cll|cll|mean|area: time: mean|Low Level Cloud Fraction|mean|area: time: mean|Low Level Cloud Fraction
+clm|clm|mean|area: time: mean|Mid Level Cloud Fraction|mean|area: time: mean|Mid Level Cloud Fraction
+clt|clt|mean|area: time: mean|Total Cloud Cover Percentage|mean|area: time: mean|Total Cloud Cover Percentage
+clwvi|clwvi|mean|area: time: mean|Condensed Water Path|mean|area: time: mean|Condensed Water Path
+concbc|concbc|mean|area: time: mean|Concentration of Black Carbon|mean|area: time: mean|Concentration of Black Carbon
+concdust|concdust|mean|area: time: mean|Concentration of Dust|mean|area: time: mean|Concentration of Dust
+concnh4|concnh4|mean|area: time: mean|Concentration of Ammonium|mean|area: time: mean|Concentration of Ammonium
+concno3|concno3|mean|area: time: mean|Concentration of Nitrate|mean|area: time: mean|Concentration of Nitrate
+concoa|concoa|mean|area: time: mean|Concentration of Organic Matter|mean|area: time: mean|Concentration of Organic Matter
+concso4|concso4|mean|area: time: mean|Concentration of SO4|mean|area: time: mean|Concentration of SO4
+concss|concss|mean|area: time: mean|Concentration of Sea-Salt Aerosol|mean|area: time: mean|Concentration of Sea-Salt Aerosol
+difvho|difvho|mean|area: mean where sea time: mean|Vertical Eddy Diffusivity|-|-|-
+drybc|drybc|mean|area: time: mean|Dry Deposition Rate of Black Carbon|mean|area: time: mean|Dry Deposition Rate of Black Carbon
+drydust|drydust|mean|area: time: mean|Dry Deposition Rate of Dust|mean|area: time: mean|Dry Deposition Rate of Dust
+drynh4|drynh4|mean|area: time: mean|Dry Deposition Rate of Ammonium|mean|area: time: mean|Dry Deposition Rate of Ammonium
+dryno3|dryno3|mean|area: time: mean|Dry Deposition Rate of Nitrate|mean|area: time: mean|Dry Deposition Rate of Nitrate
+dryoa|dryoa|mean|area: time: mean|Dry Deposition Rate of Organic Matter|mean|area: time: mean|Dry Deposition Rate of Organic Matter
+dryso4|dryso4|mean|area: time: mean|Dry Deposition Rate of Sulfate|mean|area: time: mean|Dry Deposition Rate of Sulfate
+dryss|dryss|mean|area: time: mean|Dry Deposition Rate of Sea-Salt|mean|area: time: mean|Dry Deposition Rate of Sea-Salt
+emibc|emibc|mean|area: time: mean|Total Emission Rate of Black Carbon|mean|area: time: mean|Total Emission Rate of Black Carbon
+emidust|emidust|mean|area: time: mean|Total Emission Rate of Dust|mean|area: time: mean|Total Emission Rate of Dust
+eminh3|eminh3|min|area: mean time: minimum|Total Emission Rate of Ammonia|min|area: mean time: minimum|Total Emission Rate of Ammonia
+eminox|eminox|min|area: mean time: minimum|Total Emission Rate of NOx|min|area: mean time: minimum|Total Emission Rate of NOx
+emioa|emioa|mean|area: time: mean|Total Emission Rate of Organic Matter|mean|area: time: mean|Total Emission Rate of Organic Matter
+emiso2|emiso2|mean|area: time: mean|Total Emission Rate of Sulfure Dioxide|mean|area: time: mean|Total Emission Rate of Sulfure Dioxide
+emiso4|emiso4|mean|area: time: mean|Total Emission Rate of Sulfate|mean|area: time: mean|Total Emission Rate of Sulfate
+emiss|emiss|mean|area: time: mean|Total Emission Rate of Sea-Salt|mean|area: time: mean|Total Emission Rate of Sea-Salt
+emivoc|emivoc|mean|area: time: mean|Total Emission Rate of NMVOC|mean|area: time: mean|Total Emission Rate of NMVOC
+evspsbl|evspsbl|mean|area: time: mean|Evaporation Including Sublimation and Transpiration|mean|area: time: mean|Evaporation Including Sublimation and Transpiration
+evspsblpot|evspsblpot|mean|area: mean where land time: mean|Potential Evapotranspiration|mean|area: mean where land time: mean|Potential Evapotranspiration
+ext550aer|ext550aer|mean|area: time: mean|Aerosol Extinction Coefficient|mean|area: time: mean|Aerosol Extinction Coefficient
+ext550bc|ext550bc|mean|area: time: mean|Black Carbon Aerosol Extinction Coefficient|mean|area: time: mean|Black Carbon Aerosol Extinction Coefficient
+ext550dust|ext550dust|mean|area: time: mean|Dust Aerosol Extinction Coefficient|mean|area: time: mean|Dust Aerosol Extinction Coefficient
+ext550nh4|ext550nh4|mean|area: time: mean|Ammonium Aerosol Extinction Coefficient|mean|area: time: mean|Ammonium Aerosol Extinction Coefficient
+ext550no3|ext550no3|mean|area: time: mean|Nitrate Aerosol Extinction Coefficient|mean|area: time: mean|Nitrate Aerosol Extinction Coefficient
+ext550oa|ext550oa|mean|area: time: mean|Organic Matter Aerosol Extinction Coefficient|mean|area: time: mean|Organic Matter Aerosol Extinction Coefficient
+ext550so4|ext550so4|mean|area: time: mean|Sulfate Aerosol Extinction Coefficient|mean|area: time: mean|Sulfate Aerosol Extinction Coefficient
+ext550ss|ext550ss|mean|area: time: mean|Sea-salt Aerosol Extinction Coefficient|mean|area: time: mean|Sea-salt Aerosol Extinction Coefficient
+friver|friver|mean|area: mean where sea time: mean|Water Flux into Sea Water from Rivers|mean|area: mean where sea time: mean|Water Flux into Sea Water from Rivers
+hfcorr|hfcorr|mean|area: mean where sea time: mean|Heat Flux Correction|mean|area: mean where sea time: mean|Heat Flux Correction
+hfds|hfds|mean|area: mean where sea time: mean|Downward Heat Flux at Sea Water Surface|mean|area: mean where sea time: mean|Downward Heat Flux at Sea Water Surface
+hfls|hfls|mean|area: time: mean|Surface Upward Latent Heat Flux|mean|area: time: mean|Surface Upward Latent Heat Flux
+hfso|hfso|mean|area: time: mean|Ground Heat Flux|mean|area: time: mean|Ground Heat Flux
+hfss|hfss|mean|area: time: mean|Surface Upward Sensible Heat Flux|mean|area: time: mean|Surface Upward Sensible Heat Flux
+hurs|hurs|mean|area: time: mean|Near-Surface Relative Humidity|mean|area: time: mean|Near-Surface Relative Humidity
+hus10|hus10|mean|area: time: mean|Specific Humidity at 10hPa|mean|area: time: mean|Specific Humidity at 10hPa
+hus100|hus100|mean|area: time: mean|Specific Humidity at 100hPa|mean|area: time: mean|Specific Humidity at 100hPa
+hus1000|hus1000|mean|area: time: mean|Specific Humidity at 1000hPa|mean|area: time: mean|Specific Humidity at 1000hPa
+hus150|hus150|mean|area: time: mean|Specific Humidity at 150hPa|mean|area: time: mean|Specific Humidity at 150hPa
+hus20|hus20|mean|area: time: mean|Specific Humidity at 20hPa|mean|area: time: mean|Specific Humidity at 20hPa
+hus200|hus200|mean|area: time: mean|Specific Humidity at 200hPa|mean|area: time: mean|Specific Humidity at 200hPa
+hus250|hus250|mean|area: time: mean|Specific Humidity at 250hPa|mean|area: time: mean|Specific Humidity at 250hPa
+hus30|hus30|mean|area: time: mean|Specific Humidity at 30hPa|mean|area: time: mean|Specific Humidity at 30hPa
+hus300|hus300|mean|area: time: mean|Specific Humidity at 300hPa|mean|area: time: mean|Specific Humidity at 300hPa
+hus400|hus400|mean|area: time: mean|Specific Humidity at 400hPa|mean|area: time: mean|Specific Humidity at 400hPa
+hus50|hus50|mean|area: time: mean|Specific Humidity at 50hPa|mean|area: time: mean|Specific Humidity at 50hPa
+hus500|hus500|mean|area: time: mean|Specific Humidity at 500hPa|mean|area: time: mean|Specific Humidity at 500hPa
+hus50m|hus50m|mean|area: time: mean|Specific Humidity at 50m|mean|area: time: mean|Specific Humidity at 50m
+hus600|hus600|mean|area: time: mean|Specific Humidity at 600hPa|mean|area: time: mean|Specific Humidity at 600hPa
+hus70|hus70|mean|area: time: mean|Specific Humidity at 70hPa|mean|area: time: mean|Specific Humidity at 70hPa
+hus700|hus700|mean|area: time: mean|Specific Humidity at 700hPa|mean|area: time: mean|Specific Humidity at 700hPa
+hus750|hus750|mean|area: time: mean|Specific Humidity at 750hPa|mean|area: time: mean|Specific Humidity at 750hPa
+hus850|hus850|mean|area: time: mean|Specific Humidity at 850hPa|mean|area: time: mean|Specific Humidity at 850hPa
+hus925|hus925|mean|area: time: mean|Specific Humidity at 925hPa|mean|area: time: mean|Specific Humidity at 925hPa
+huss|huss|mean|area: time: mean|Near-Surface Specific Humidity|mean|area: time: mean|Near-Surface Specific Humidity
+li|li|mean|area: time: mean|Lifted Index|mean|area: time: mean|Lifted Index
+limax|limax|max|area: mean time: maximum|Daily Maximum Lifted Index|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Lifted Index
+mlotst|mlotst|mean|area: mean where sea time: mean|Ocean Mixed Layer Thickness Defined by Sigma T|mean|area: mean where sea time: mean|Ocean Mixed Layer Thickness Defined by Sigma T
+mrfso|mrfso|mean|area: mean where land time: mean|Soil Frozen Water Content|mean|area: mean where land time: mean|Soil Frozen Water Content
+mrfsos|mrfsos|mean|area: mean where land time: mean|Frozen Water Content in Upper Portion of Soil Column|mean|area: mean where land time: mean|Frozen Water Content in Upper Portion of Soil Column
+mrro|mrro|mean|area: mean where land time: mean|Total Runoff|mean|area: mean where land time: mean|Total Runoff
+mrros|mrros|mean|area: mean where land time: mean|Surface Runoff|mean|area: mean where land time: mean|Surface Runoff
+mrsfl|mrsfl|mean|area: mean where land time: mean|Frozen Water Content of Soil Layer|mean|area: mean where land time: mean|Frozen Water Content of Soil Layer
+mrso|mrso|mean|area: mean where land time: mean|Total Soil Moisture Content|mean|area: mean where land time: mean|Total Soil Moisture Content
+mrsol|mrsol|mean|area: mean where land time: mean|Total Water Content of Soil Layer|mean|area: mean where land time: mean|Total Water Content of Soil Layer
+mrsos|mrsos|mean|area: mean where land time: mean|Moisture in Upper Portion of Soil Column|mean|area: mean where land time: mean|Moisture in Upper Portion of Soil Column
+od1000aer|od1000aer|mean|area: time: mean|Ambient Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Ambient Aerosol Optical Thickness at 1000nm
+od1000bc|od1000bc|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 1000nm
+od1000dust|od1000dust|mean|area: time: mean|Dust Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Dust Aerosol Optical Thickness at 1000nm
+od1000nh4|od1000nh4|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 1000nm
+od1000no3|od1000no3|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 1000nm
+od1000oa|od1000oa|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 1000nm
+od1000so4|od1000so4|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 1000nm
+od1000ss|od1000ss|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 1000nm|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 1000nm
+od350aer|od350aer|mean|area: time: mean|Ambient Aerosol Optical Thickness at 350nm|mean|area: time: mean|Ambient Aerosol Optical Thickness at 350nm
+od350bc|od350bc|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 350nm|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 350nm
+od350dust|od350dust|mean|area: time: mean|Dust Aerosol Optical Thickness at 350nm|mean|area: time: mean|Dust Aerosol Optical Thickness at 350nm
+od350nh4|od350nh4|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 350nm|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 350nm
+od350no3|od350no3|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 350nm|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 350nm
+od350oa|od350oa|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 350nm|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 350nm
+od350so4|od350so4|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 350nm|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 350nm
+od350ss|od350ss|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 350nm|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 350nm
+od440aer|od440aer|mean|area: time: mean|Ambient Aerosol Optical Thickness at 440nm|mean|area: time: mean|Ambient Aerosol Optical Thickness at 440nm
+od440bc|od440bc|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 440nm|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 440nm
+od440dust|od440dust|mean|area: time: mean|Dust Aerosol Optical Thickness at 440nm|mean|area: time: mean|Dust Aerosol Optical Thickness at 440nm
+od440nh4|od440nh4|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 440nm|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 440nm
+od440no3|od440no3|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 440nm|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 440nm
+od440oa|od440oa|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 440nm|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 440nm
+od440so4|od440so4|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 440nm|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 440nm
+od440ss|od440ss|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 440nm|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 440nm
+od550aer|od550aer|mean|area: time: mean|Ambient Aerosol Optical Thickness at 550nm|mean|area: time: mean|Ambient Aerosol Optical Thickness at 550nm
+od550bc|od550bc|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 550nm|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 550nm
+od550dust|od550dust|mean|area: time: mean|Dust Aerosol Optical Thickness at 550nm|mean|area: time: mean|Dust Aerosol Optical Thickness at 550nm
+od550lt1aer|od550lt1aer|mean|area: time: mean|Ambient Fine Aerosol Optical Thickness at 550nm|mean|area: time: mean|Ambient Fine Aerosol Optical Thickness at 550nm
+od550nh4|od550nh4|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 550nm|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 550nm
+od550no3|od550no3|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 550nm|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 550nm
+od550oa|od550oa|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 550nm|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 550nm
+od550so4|od550so4|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 550nm|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 550nm
+od550soa|od550soa|mean|area: time: mean|Secondary Organic Aerosol Optical Thickness at 550nm|mean|area: time: mean|Secondary Organic Aerosol Optical Thickness at 550nm
+od550ss|od550ss|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 550nm|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 550nm
+od870aer|od870aer|mean|area: time: mean|Ambient Aerosol Optical Thickness at 870nm|mean|area: time: mean|Ambient Aerosol Optical Thickness at 870nm
+od870bc|od870bc|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 870nm|mean|area: time: mean|Black Carbon Aerosol Optical Thickness at 870nm
+od870dust|od870dust|mean|area: time: mean|Dust Aerosol Optical Thickness at 870nm|mean|area: time: mean|Dust Aerosol Optical Thickness at 870nm
+od870nh4|od870nh4|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 870nm|mean|area: time: mean|Ammonium Aerosol Optical Thickness at 870nm
+od870no3|od870no3|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 870nm|mean|area: time: mean|Nitrate Aerosol Optical Thickness at 870nm
+od870oa|od870oa|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 870nm|mean|area: time: mean|Organic Matter Aerosol Optical Thickness at 870nm
+od870so4|od870so4|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 870nm|mean|area: time: mean|Sulfate Aerosol Optical Thickness at 870nm
+od870ss|od870ss|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 870nm|mean|area: time: mean|Sea-Salt Aerosol Optical Thickness at 870nm
+pr|pr|mean|area: time: mean|Precipitation|mean|area: time: mean|Precipitation
+prc|prc|mean|area: time: mean|Convective Precipitation|mean|area: time: mean|Convective Precipitation
+prhmax|pr|max|area: mean time: mean within hours time: maximum over hours|Daily Maximum Hourly Precipitation Rate|-|-|-
+prsn|prsn|mean|area: time: mean|Snowfall Flux|mean|area: time: mean|Snowfall Flux
+prw|prw|mean|area: time: mean|Water Vapor Path|mean|area: time: mean|Water Vapor Path
+ps|ps|mean|area: time: mean|Surface Air Pressure|mean|area: time: mean|Surface Air Pressure
+psl|psl|mean|area: time: mean|Sea Level Pressure|mean|area: time: mean|Sea Level Pressure
+rhop|rhop|mean|area: mean where sea time: mean|Sea Water Potential Density|mean|area: mean where sea time: mean|Sea Water Potential Density
+rivo|rivo|mean|area: mean where land time: mean|River Discharge|mean|area: mean where land time: mean|River Discharge
+rlds|rlds|mean|area: time: mean|Surface Downwelling Longwave Radiation|mean|area: time: mean|Surface Downwelling Longwave Radiation
+rldsaf|rldsaf|mean|area: time: mean|Surface Downwelling Aerosol-Free Longwave Radiation|mean|area: time: mean|Surface Downwelling Aerosol-Free Longwave Radiation
+rldscs|rldscs|mean|area: time: mean|Surface Downwelling Clear-Sky Longwave Radiation|mean|area: time: mean|Surface Downwelling Clear-Sky Longwave Radiation
+rldscsaf|rldscsaf|mean|area: time: mean|Surface Downwelling Clear-Sky, Aerosol-Free Longwave Radiation|mean|area: time: mean|Surface Downwelling Clear-Sky, Aerosol-Free Longwave Radiation
+rlus|rlus|mean|area: time: mean|Surface Upwelling Longwave Radiation|mean|area: time: mean|Surface Upwelling Longwave Radiation
+rlusaf|rlusaf|mean|area: time: mean|Surface Upwelling Aerosol-Free Longwave Radiation|mean|area: time: mean|Surface Upwelling Aerosol-Free Longwave Radiation
+rluscs|rluscs|mean|area: time: mean|Surface Upwelling Clear-Sky Longwave Radiation|mean|area: time: mean|Surface Upwelling Clear-Sky Longwave Radiation
+rluscsaf|rluscsaf|mean|area: time: mean|Surface Upwelling Clear-Sky, Aerosol-Free Longwave Radiation|mean|area: time: mean|Surface Upwelling Clear-Sky, Aerosol-Free Longwave Radiation
+rlut|rlut|mean|area: time: mean|TOA Outgoing Longwave Radiation|mean|area: time: mean|TOA Outgoing Longwave Radiation
+rlutaf|rlutaf|mean|area: time: mean|TOA Outgoing Aerosol-Free Longwave Radiation|mean|area: time: mean|TOA Outgoing Aerosol-Free Longwave Radiation
+rlutcs|rlutcs|mean|area: time: mean|TOA Outgoing Clear-Sky Longwave Radiation|mean|area: time: mean|TOA Outgoing Clear-Sky Longwave Radiation
+rlutcsaf|rlutcsaf|mean|area: time: mean|TOA Outgoing Clear-Sky, Aerosol-Free Longwave Radiation|mean|area: time: mean|TOA Outgoing Clear-Sky, Aerosol-Free Longwave Radiation
+rsds|rsds|mean|area: time: mean|Surface Downwelling Shortwave Radiation|mean|area: time: mean|Surface Downwelling Shortwave Radiation
+rsdsaf|rsdsaf|mean|area: time: mean|Surface Downwelling Aerosol-Free Shortwave Radiation|mean|area: time: mean|Surface Downwelling Aerosol-Free Shortwave Radiation
+rsdscs|rsdscs|mean|area: time: mean|Surface Downwelling Clear-Sky Shortwave Radiation|mean|area: time: mean|Surface Downwelling Clear-Sky Shortwave Radiation
+rsdscsaf|rsdscsaf|mean|area: time: mean|Surface Downwelling Clear-Sky, Aerosol-Free Shortwave Radiation|mean|area: time: mean|Surface Downwelling Clear-Sky, Aerosol-Free Shortwave Radiation
+rsdsdir|rsdsdir|mean|area: time: mean|Surface Direct Downwelling Shortwave Radiation|mean|area: time: mean|Surface Direct Downwelling Shortwave Radiation
+rsdt|rsdt|mean|area: time: mean|TOA Incident Shortwave Radiation|mean|area: time: mean|TOA Incident Shortwave Radiation
+rsntds|rsntds|mean|area: mean where sea time: mean|Net Downward Shortwave Radiation at Sea Water Surface|mean|area: mean where sea time: mean|Net Downward Shortwave Radiation at Sea Water Surface
+rsus|rsus|mean|area: time: mean|Surface Upwelling Shortwave Radiation|mean|area: time: mean|Surface Upwelling Shortwave Radiation
+rsusaf|rsusaf|mean|area: time: mean|Surface Upwelling Aerosol-Free Shortwave Radiation|mean|area: time: mean|Surface Upwelling Aerosol-Free Shortwave Radiation
+rsuscs|rsuscs|mean|area: time: mean|Surface Upwelling Clear-Sky Shortwave Radiation|mean|area: time: mean|Surface Upwelling Clear-Sky Shortwave Radiation
+rsuscsaf|rsuscsaf|mean|area: time: mean|Surface Upwelling Clear-Sky, Aerosol-Free Shortwave Radiation|mean|area: time: mean|Surface Upwelling Clear-Sky, Aerosol-Free Shortwave Radiation
+rsut|rsut|mean|area: time: mean|TOA Outgoing Shortwave Radiation|mean|area: time: mean|TOA Outgoing Shortwave Radiation
+rsutaf|rsutaf|mean|area: time: mean|TOA Outgoing Aerosol-Free Shortwave Radiation|mean|area: time: mean|TOA Outgoing Aerosol-Free Shortwave Radiation
+rsutcs|rsutcs|mean|area: time: mean|TOA Outgoing Clear-Sky Shortwave Radiation|mean|area: time: mean|TOA Outgoing Clear-Sky Shortwave Radiation
+rsutcsaf|rsutcsaf|mean|area: time: mean|TOA Outgoing Clear-Sky, Aerosol-Free Shortwave Radiation|mean|area: time: mean|TOA Outgoing Clear-Sky, Aerosol-Free Shortwave Radiation
+scat550aer|scat550aer|mean|area: time: mean|Aerosol Scattering Coefficient|mean|area: time: mean|Aerosol Scattering Coefficient
+scat550bc|scat550bc|mean|area: time: mean|Black Carbon Aerosol Scattering Coefficient|mean|area: time: mean|Black Carbon Aerosol Scattering Coefficient
+scat550dust|scat550dust|mean|area: time: mean|Dust Aerosol Scattering Coefficient|mean|area: time: mean|Dust Aerosol Scattering Coefficient
+scat550nh4|scat550nh4|mean|area: time: mean|Ammonium Aerosol Scattering Coefficient|mean|area: time: mean|Ammonium Aerosol Scattering Coefficient
+scat550no3|scat550no3|mean|area: time: mean|Nitrate Aerosol Scattering Coefficient|mean|area: time: mean|Nitrate Aerosol Scattering Coefficient
+scat550oa|scat550oa|mean|area: time: mean|Organic Matter Aerosol Scattering Coefficient|mean|area: time: mean|Organic Matter Aerosol Scattering Coefficient
+scat550so4|scat550so4|mean|area: time: mean|Sulfate Aerosol Scattering Coefficient|mean|area: time: mean|Sulfate Aerosol Scattering Coefficient
+scat550ss|scat550ss|mean|area: time: mean|Sea-salt Aerosol Scattering Coefficient|mean|area: time: mean|Sea-salt Aerosol Scattering Coefficient
+sconcbc|sconcbc|mean|area: time: mean|Surface Concentration of Black Carbon|mean|area: time: mean|Surface Concentration of Black Carbon
+sconcdust|sconcdust|mean|area: time: mean|Surface Concentration of Dust|mean|area: time: mean|Surface Concentration of Dust
+sconcnh4|sconcnh4|mean|area: time: mean|Surface Concentration of Ammonium|mean|area: time: mean|Surface Concentration of Ammonium
+sconcno3|sconcno3|mean|area: time: mean|Surface Concentration of Nitrate|mean|area: time: mean|Surface Concentration of Nitrate
+sconcoa|sconcoa|mean|area: time: mean|Surface Concentration of Organic Matter Aerosol|mean|area: time: mean|Surface Concentration of Organic Matter Aerosol
+sconcso4|sconcso4|mean|area: time: mean|Surface Concentration of Sulfate|mean|area: time: mean|Surface Concentration of Sulfate
+sconcsoa|sconcsoa|mean|area: time: mean|Surface Concentration of Secondary Organic Aerosol|mean|area: time: mean|Surface Concentration of Secondary Organic Aerosol
+sconcss|sconcss|mean|area: time: mean|Surface Concentration of Sea-Salt Aerosol|mean|area: time: mean|Surface Concentration of Sea-Salt Aerosol
+sedbc|sedbc|mean|area: time: mean|Sedimentation Rate of Black Carbon|mean|area: time: mean|Sedimentation Rate of Black Carbon
+seddust|seddust|mean|area: time: mean|Sedimentation Rate of Dust|mean|area: time: mean|Sedimentation Rate of Dust
+sednh4|sednh4|mean|area: time: mean|Sedimentation Rate of Ammonium|mean|area: time: mean|Sedimentation Rate of Ammonium
+sedno3|sedno3|mean|area: time: mean|Sedimentation Rate of Nitrate|mean|area: time: mean|Sedimentation Rate of Nitrate
+sedoa|sedoa|mean|area: time: mean|Sedimentation Rate of Organic Matter|mean|area: time: mean|Sedimentation Rate of Organic Matter
+sedso4|sedso4|mean|area: time: mean|Sedimentation Rate of Sulfate|mean|area: time: mean|Sedimentation Rate of Sulfate
+sedss|sedss|mean|area: time: mean|Sedimentation Rate of Sea-Salt|mean|area: time: mean|Sedimentation Rate of Sea-Salt
+sfcWind|sfcWind|mean|area: time: mean|Near-Surface Wind Speed|mean|area: time: mean|Near-Surface Wind Speed
+sfcWindmax|sfcWindmax|max|area: mean time: maximum|Daily Maximum Near-Surface Wind Speed|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Near-Surface Wind Speed
+sfturf|sfturf|-|-|-|mean|area: time: mean|Percentage of the Grid Cell Occupied by Urban Area
+siconc|siconc|mean|area: mean where sea time: mean|Sea-Ice Area Percentage (Ocean Grid)|mean|area: mean where sea time: mean|Sea-Ice Area Percentage (Ocean Grid)
+siconca|siconca|mean|area: time: mean|Sea-Ice Area Percentage (Atmospheric Grid)|mean|area: time: mean|Sea-Ice Area Percentage (Atmospheric Grid)
+sitemptop|sitemptop|mean|area: time: mean where sea_ice (comment: mask=siconc)|Surface Temperature of Sea Ice|mean|area: time: mean where sea_ice (comment: mask=siconc)|Surface Temperature of Sea Ice
+sithick|sithick|mean|area: time: mean where sea_ice (comment: mask=siconc)|Sea Ice Thickness|mean|area: time: mean where sea_ice (comment: mask=siconc)|Sea Ice Thickness
+snc|snc|mean|area: time: mean|Snow Area Percentage|mean|area: time: mean|Snow Area Percentage
+snd|snd|mean|area: mean where land time: mean|Snow Depth|mean|area: mean where land time: mean|Snow Depth
+snm|snm|mean|area: mean where land time: mean|Surface Snow Melt|mean|area: mean where land time: mean|Surface Snow Melt
+snw|snw|mean|area: mean where land time: mean|Surface Snow Amount|mean|area: mean where land time: mean|Surface Snow Amount
+so|so|mean|area: mean where sea time: mean|Sea Water Salinity|mean|area: mean where sea time: mean|Sea Water Salinity
+sos|sos|mean|area: mean where sea time: mean|Sea Surface Salinity|mean|area: mean where sea time: mean|Sea Surface Salinity
+ssa1000aer|ssa1000aer|mean|area: time: mean|Aerosol Single Scattering Albedo at 1000 nm|mean|area: time: mean|Aerosol Single Scattering Albedo at 1000 nm
+ssa350aer|ssa350aer|mean|area: time: mean|Aerosol Single Scattering Albedo at 350 nm|mean|area: time: mean|Aerosol Single Scattering Albedo at 350 nm
+ssa440aer|ssa440aer|mean|area: time: mean|Aerosol Single Scattering Albedo at 440 nm|mean|area: time: mean|Aerosol Single Scattering Albedo at 440 nm
+ssa550aer|ssa550aer|mean|area: time: mean|Aerosol Single Scattering Albedo at 550 nm|mean|area: time: mean|Aerosol Single Scattering Albedo at 550 nm
+ssa870aer|ssa870aer|mean|area: time: mean|Aerosol Single Scattering Albedo at 870 nm|mean|area: time: mean|Aerosol Single Scattering Albedo at 870 nm
+sund|sund|sum|time: sum|Daily Duration of Sunshine|mean|time: sum within days time: mean over days|Daily Duration of Sunshine
+ta10|ta10|mean|area: time: mean|Air Temperature at 10hPa|mean|area: time: mean|Air Temperature at 10hPa
+ta100|ta100|mean|area: time: mean|Air Temperature at 100hPa|mean|area: time: mean|Air Temperature at 100hPa
+ta1000|ta1000|mean|area: time: mean|Air Temperature at 1000hPa|mean|area: time: mean|Air Temperature at 1000hPa
+ta150|ta150|mean|area: time: mean|Air Temperature at 150hPa|mean|area: time: mean|Air Temperature at 150hPa
+ta20|ta20|mean|area: time: mean|Air Temperature at 20hPa|mean|area: time: mean|Air Temperature at 20hPa
+ta200|ta200|mean|area: time: mean|Air Temperature at 200hPa|mean|area: time: mean|Air Temperature at 200hPa
+ta250|ta250|mean|area: time: mean|Air Temperature at 250hPa|mean|area: time: mean|Air Temperature at 250hPa
+ta30|ta30|mean|area: time: mean|Air Temperature at 30hPa|mean|area: time: mean|Air Temperature at 30hPa
+ta300|ta300|mean|area: time: mean|Air Temperature at 300hPa|mean|area: time: mean|Air Temperature at 300hPa
+ta400|ta400|mean|area: time: mean|Air Temperature at 400hPa|mean|area: time: mean|Air Temperature at 400hPa
+ta50|ta50|mean|area: time: mean|Air Temperature at 50hPa|mean|area: time: mean|Air Temperature at 50hPa
+ta500|ta500|mean|area: time: mean|Air Temperature at 500hPa|mean|area: time: mean|Air Temperature at 500hPa
+ta50m|ta50m|mean|area: time: mean|Air Temperature at 50m|mean|area: time: mean|Air Temperature at 50m
+ta600|ta600|mean|area: time: mean|Air Temperature at 600hPa|mean|area: time: mean|Air Temperature at 600hPa
+ta70|ta70|mean|area: time: mean|Air Temperature at 70hPa|mean|area: time: mean|Air Temperature at 70hPa
+ta700|ta700|mean|area: time: mean|Air Temperature at 700hPa|mean|area: time: mean|Air Temperature at 700hPa
+ta750|ta750|mean|area: time: mean|Air Temperature at 750hPa|mean|area: time: mean|Air Temperature at 750hPa
+ta850|ta850|mean|area: time: mean|Air Temperature at 850hPa|mean|area: time: mean|Air Temperature at 850hPa
+ta925|ta925|mean|area: time: mean|Air Temperature at 925hPa|mean|area: time: mean|Air Temperature at 925hPa
+tas|tas|mean|area: time: mean|Near-Surface Air Temperature|mean|area: time: mean|Near-Surface Air Temperature
+tasmax|tasmax|max|area: mean time: maximum|Daily Maximum Near-Surface Air Temperature|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Near-Surface Air Temperature
+tasmin|tasmin|min|area: mean time: minimum|Daily Minimum Near-Surface Air Temperature|mean|area: mean time: minimum within days time: mean over days|Daily Minimum Near-Surface Air Temperature
+tauu|tauu|mean|area: time: mean|Surface Downward Eastward Wind Stress|mean|area: time: mean|Surface Downward Eastward Wind Stress
+tauuo|tauuo|mean|area: mean where sea time: mean|Sea Water Surface Downward X Stress|mean|area: mean where sea time: mean|Sea Water Surface Downward X Stress
+tauv|tauv|mean|area: time: mean|Surface Downward Northward Wind Stress|mean|area: time: mean|Surface Downward Northward Wind Stress
+tauvo|tauvo|mean|area: mean where sea time: mean|Sea Water Surface Downward Y Stress|mean|area: mean where sea time: mean|Sea Water Surface Downward Y Stress
+thetao|thetao|mean|area: mean where sea time: mean|Sea Water Potential Temperature|mean|area: mean where sea time: mean|Sea Water Potential Temperature
+tob|tob|mean|area: mean where sea time: mean|Sea Water Potential Temperature at Sea Floor|mean|area: mean where sea time: mean|Sea Water Potential Temperature at Sea Floor
+tos|tos|mean|area: mean where sea time: mean|Sea Surface Temperature|mean|area: mean where sea time: mean|Sea Surface Temperature
+toz|toz|mean|area: time: mean|Total Column Ozone|mean|area: time: mean|Total Column Ozone
+ts|ts|mean|area: time: mean|Surface Temperature|mean|area: time: mean|Surface Temperature
+tsl|tsl|mean|area: mean where land time: mean|Temperature of Soil|mean|area: mean where land time: mean|Temperature of Soil
+ua10|ua10|mean|area: time: mean|Eastward Wind at 10hPa|mean|area: time: mean|Eastward Wind at 10hPa
+ua100|ua100|mean|area: time: mean|Eastward Wind at 100hPa|mean|area: time: mean|Eastward Wind at 100hPa
+ua1000|ua1000|mean|area: time: mean|Eastward Wind at 1000hPa|mean|area: time: mean|Eastward Wind at 1000hPa
+ua100m|ua100m|mean|area: time: mean|Eastward Wind at 100m|mean|area: time: mean|Eastward Wind at 100m
+ua150|ua150|mean|area: time: mean|Eastward Wind at 150hPa|mean|area: time: mean|Eastward Wind at 150hPa
+ua150m|ua150m|mean|area: time: mean|Eastward Wind at 150m|mean|area: time: mean|Eastward Wind at 150m
+ua20|ua20|mean|area: time: mean|Eastward Wind at 20hPa|mean|area: time: mean|Eastward Wind at 20hPa
+ua200|ua200|mean|area: time: mean|Eastward Wind at 200hPa|mean|area: time: mean|Eastward Wind at 200hPa
+ua200m|ua200m|mean|area: time: mean|Eastward Wind at 200m|mean|area: time: mean|Eastward Wind at 200m
+ua250|ua250|mean|area: time: mean|Eastward Wind at 250hPa|mean|area: time: mean|Eastward Wind at 250hPa
+ua250m|ua250m|mean|area: time: mean|Eastward Wind at 250m|mean|area: time: mean|Eastward Wind at 250m
+ua30|ua30|mean|area: time: mean|Eastward Wind at 30hPa|mean|area: time: mean|Eastward Wind at 30hPa
+ua300|ua300|mean|area: time: mean|Eastward Wind at 300hPa|mean|area: time: mean|Eastward Wind at 300hPa
+ua300m|ua300m|mean|area: time: mean|Eastward Wind at 300m|mean|area: time: mean|Eastward Wind at 300m
+ua400|ua400|mean|area: time: mean|Eastward Wind at 400hPa|mean|area: time: mean|Eastward Wind at 400hPa
+ua50|ua50|mean|area: time: mean|Eastward Wind at 50hPa|mean|area: time: mean|Eastward Wind at 50hPa
+ua500|ua500|mean|area: time: mean|Eastward Wind at 500hPa|mean|area: time: mean|Eastward Wind at 500hPa
+ua50m|ua50m|mean|area: time: mean|Eastward Wind at 50m|mean|area: time: mean|Eastward Wind at 50m
+ua600|ua600|mean|area: time: mean|Eastward Wind at 600hPa|mean|area: time: mean|Eastward Wind at 600hPa
+ua70|ua70|mean|area: time: mean|Eastward Wind at 70hPa|mean|area: time: mean|Eastward Wind at 70hPa
+ua700|ua700|mean|area: time: mean|Eastward Wind at 700hPa|mean|area: time: mean|Eastward Wind at 700hPa
+ua750|ua750|mean|area: time: mean|Eastward Wind at 750hPa|mean|area: time: mean|Eastward Wind at 750hPa
+ua850|ua850|mean|area: time: mean|Eastward Wind at 850hPa|mean|area: time: mean|Eastward Wind at 850hPa
+ua925|ua925|mean|area: time: mean|Eastward Wind at 925hPa|mean|area: time: mean|Eastward Wind at 925hPa
+uas|uas|mean|area: time: mean|Eastward Near-Surface Wind|mean|area: time: mean|Eastward Near-Surface Wind
+uo|uo|mean|area: mean where sea time: mean|Sea Water X Velocity|mean|time: mean|Sea Water X Velocity
+uos|uos|mean|area: mean where sea time: mean|Surface X Velocity|-|-|-
+va10|va10|mean|area: time: mean|Northward Wind at 10hPa|mean|area: time: mean|Northward Wind at 10hPa
+va100|va100|mean|area: time: mean|Northward Wind at 100hPa|mean|area: time: mean|Northward Wind at 100hPa
+va1000|va1000|mean|area: time: mean|Northward Wind at 1000hPa|mean|area: time: mean|Northward Wind at 1000hPa
+va100m|va100m|mean|area: time: mean|Northward Wind at 100m|mean|area: time: mean|Northward Wind at 100m
+va150|va150|mean|area: time: mean|Northward Wind at 150hPa|mean|area: time: mean|Northward Wind at 150hPa
+va150m|va150m|mean|area: time: mean|Northward Wind at 150m|mean|area: time: mean|Northward Wind at 150m
+va20|va20|mean|area: time: mean|Northward Wind at 20hPa|mean|area: time: mean|Northward Wind at 20hPa
+va200|va200|mean|area: time: mean|Northward Wind at 200hPa|mean|area: time: mean|Northward Wind at 200hPa
+va200m|va200m|mean|area: time: mean|Northward Wind at 200m|mean|area: time: mean|Northward Wind at 200m
+va250|va250|mean|area: time: mean|Northward Wind at 250hPa|mean|area: time: mean|Northward Wind at 250hPa
+va250m|va250m|mean|area: time: mean|Northward Wind at 250m|mean|area: time: mean|Northward Wind at 250m
+va30|va30|mean|area: time: mean|Northward Wind at 30hPa|mean|area: time: mean|Northward Wind at 30hPa
+va300|va300|mean|area: time: mean|Northward Wind at 300hPa|mean|area: time: mean|Northward Wind at 300hPa
+va300m|va300m|mean|area: time: mean|Northward Wind at 300m|mean|area: time: mean|Northward Wind at 300m
+va400|va400|mean|area: time: mean|Northward Wind at 400hPa|mean|area: time: mean|Northward Wind at 400hPa
+va50|va50|mean|area: time: mean|Northward Wind at 50hPa|mean|area: time: mean|Northward Wind at 50hPa
+va500|va500|mean|area: time: mean|Northward Wind at 500hPa|mean|area: time: mean|Northward Wind at 500hPa
+va50m|va50m|mean|area: time: mean|Northward Wind at 50m|mean|area: time: mean|Northward Wind at 50m
+va600|va600|mean|area: time: mean|Northward Wind at 600hPa|mean|area: time: mean|Northward Wind at 600hPa
+va70|va70|mean|area: time: mean|Northward Wind at 70hPa|mean|area: time: mean|Northward Wind at 70hPa
+va700|va700|mean|area: time: mean|Northward Wind at 700hPa|mean|area: time: mean|Northward Wind at 700hPa
+va750|va750|mean|area: time: mean|Northward Wind at 750hPa|mean|area: time: mean|Northward Wind at 750hPa
+va850|va850|mean|area: time: mean|Northward Wind at 850hPa|mean|area: time: mean|Northward Wind at 850hPa
+va925|va925|mean|area: time: mean|Northward Wind at 925hPa|mean|area: time: mean|Northward Wind at 925hPa
+vas|vas|mean|area: time: mean|Northward Near-Surface Wind|mean|area: time: mean|Northward Near-Surface Wind
+vo|vo|mean|area: mean where sea time: mean|Sea Water Y Velocity|mean|time: mean|Sea Water Y Velocity
+vos|vos|mean|area: mean where sea time: mean|Surface Y Velocity|-|-|-
+wa10|wa10|mean|area: time: mean|Upward Air Velocity at 10hPa|mean|area: time: mean|Upward Air Velocity at 10hPa
+wa100|wa100|mean|area: time: mean|Upward Air Velocity at 100hPa|mean|area: time: mean|Upward Air Velocity at 100hPa
+wa1000|wa1000|mean|area: time: mean|Upward Air Velocity at 1000hPa|mean|area: time: mean|Upward Air Velocity at 1000hPa
+wa150|wa150|mean|area: time: mean|Upward Air Velocity at 150hPa|mean|area: time: mean|Upward Air Velocity at 150hPa
+wa20|wa20|mean|area: time: mean|Upward Air Velocity at 20hPa|mean|area: time: mean|Upward Air Velocity at 20hPa
+wa200|wa200|mean|area: time: mean|Upward Air Velocity at 200hPa|mean|area: time: mean|Upward Air Velocity at 200hPa
+wa250|wa250|mean|area: time: mean|Upward Air Velocity at 250hPa|mean|area: time: mean|Upward Air Velocity at 250hPa
+wa30|wa30|mean|area: time: mean|Upward Air Velocity at 30hPa|mean|area: time: mean|Upward Air Velocity at 30hPa
+wa300|wa300|mean|area: time: mean|Upward Air Velocity at 300hPa|mean|area: time: mean|Upward Air Velocity at 300hPa
+wa400|wa400|mean|area: time: mean|Upward Air Velocity at 400hPa|mean|area: time: mean|Upward Air Velocity at 400hPa
+wa50|wa50|mean|area: time: mean|Upward Air Velocity at 50hPa|mean|area: time: mean|Upward Air Velocity at 50hPa
+wa500|wa500|mean|area: time: mean|Upward Air Velocity at 500hPa|mean|area: time: mean|Upward Air Velocity at 500hPa
+wa600|wa600|mean|area: time: mean|Upward Air Velocity at 600hPa|mean|area: time: mean|Upward Air Velocity at 600hPa
+wa70|wa70|mean|area: time: mean|Upward Air Velocity at 70hPa|mean|area: time: mean|Upward Air Velocity at 70hPa
+wa700|wa700|mean|area: time: mean|Upward Air Velocity at 700hPa|mean|area: time: mean|Upward Air Velocity at 700hPa
+wa750|wa750|mean|area: time: mean|Upward Air Velocity at 750hPa|mean|area: time: mean|Upward Air Velocity at 750hPa
+wa850|wa850|mean|area: time: mean|Upward Air Velocity at 850hPa|mean|area: time: mean|Upward Air Velocity at 850hPa
+wa925|wa925|mean|area: time: mean|Upward Air Velocity at 925hPa|mean|area: time: mean|Upward Air Velocity at 925hPa
+wetbc|wetbc|mean|area: time: mean|Wet Deposition Rate of Black Carbon|mean|area: time: mean|Wet Deposition Rate of Black Carbon
+wetdust|wetdust|mean|area: time: mean|Wet Deposition Rate of Dust|mean|area: time: mean|Wet Deposition Rate of Dust
+wetnh4|wetnh4|mean|area: time: mean|Wet Deposition Rate of Ammonium|mean|area: time: mean|Wet Deposition Rate of Ammonium
+wetno3|wetno3|mean|area: time: mean|Wet Deposition Rate of Nitrate|mean|area: time: mean|Wet Deposition Rate of Nitrate
+wetoa|wetoa|mean|area: time: mean|Wet Deposition Rate of Organic Matter|mean|area: time: mean|Wet Deposition Rate of Organic Matter
+wetso4|wetso4|mean|area: time: mean|Wet Deposition Rate of Sulfate|mean|area: time: mean|Wet Deposition Rate of Sulfate
+wetss|wetss|mean|area: time: mean|Wet Deposition Rate of Sea-Salt|mean|area: time: mean|Wet Deposition Rate of Sea-Salt
+wfo|wfo|mean|area: mean where sea time: mean|Water Flux into Sea Water|mean|area: mean where sea time: mean|Water Flux into Sea Water
+wfonocorr|wfonocorr|mean|area: mean where sea time: mean|Water Flux into Sea Water Without Flux Correction|mean|area: mean where sea time: mean|Water Flux into Sea Water Without Flux Correction
+wo|wo|mean|area: mean where sea time: mean|Sea Water Upward Velocity|mean|area: mean where sea time: mean|Sea Water Upward Velocity
+wsgsmax|wsgsmax|max|area: mean time: maximum|Daily Maximum Near-Surface Wind Speed of Gust|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Near-Surface Wind Speed of Gust
+z0|z0|mean|area: time: mean|Surface Roughness Length|mean|area: time: mean|Surface Roughness Length
+zg10|zg10|mean|area: time: mean|Geopotential Height at 10hPa|mean|area: time: mean|Geopotential Height at 10hPa
+zg100|zg100|mean|area: time: mean|Geopotential Height at 100hPa|mean|area: time: mean|Geopotential Height at 100hPa
+zg1000|zg1000|mean|area: time: mean|Geopotential Height at 1000hPa|mean|area: time: mean|Geopotential Height at 1000hPa
+zg150|zg150|mean|area: time: mean|Geopotential Height at 150hPa|mean|area: time: mean|Geopotential Height at 150hPa
+zg20|zg20|mean|area: time: mean|Geopotential Height at 20hPa|mean|area: time: mean|Geopotential Height at 20hPa
+zg200|zg200|mean|area: time: mean|Geopotential Height at 200hPa|mean|area: time: mean|Geopotential Height at 200hPa
+zg250|zg250|mean|area: time: mean|Geopotential Height at 250hPa|mean|area: time: mean|Geopotential Height at 250hPa
+zg30|zg30|mean|area: time: mean|Geopotential Height at 30hPa|mean|area: time: mean|Geopotential Height at 30hPa
+zg300|zg300|mean|area: time: mean|Geopotential Height at 300hPa|mean|area: time: mean|Geopotential Height at 300hPa
+zg400|zg400|mean|area: time: mean|Geopotential Height at 400hPa|mean|area: time: mean|Geopotential Height at 400hPa
+zg50|zg50|mean|area: time: mean|Geopotential Height at 50hPa|mean|area: time: mean|Geopotential Height at 50hPa
+zg500|zg500|mean|area: time: mean|Geopotential Height at 500hPa|mean|area: time: mean|Geopotential Height at 500hPa
+zg600|zg600|mean|area: time: mean|Geopotential Height at 600hPa|mean|area: time: mean|Geopotential Height at 600hPa
+zg70|zg70|mean|area: time: mean|Geopotential Height at 70hPa|mean|area: time: mean|Geopotential Height at 70hPa
+zg700|zg700|mean|area: time: mean|Geopotential Height at 700hPa|mean|area: time: mean|Geopotential Height at 700hPa
+zg750|zg750|mean|area: time: mean|Geopotential Height at 750hPa|mean|area: time: mean|Geopotential Height at 750hPa
+zg850|zg850|mean|area: time: mean|Geopotential Height at 850hPa|mean|area: time: mean|Geopotential Height at 850hPa
+zg925|zg925|mean|area: time: mean|Geopotential Height at 925hPa|mean|area: time: mean|Geopotential Height at 925hPa
+zmla|zmla|mean|area: time: mean|Height of Boundary Layer|mean|area: time: mean|Height of Boundary Layer
+zos|zos|mean|area: mean where sea time: mean|Sea Surface Height Above Geoid|mean|area: mean where sea time: mean|Sea Surface Height Above Geoid

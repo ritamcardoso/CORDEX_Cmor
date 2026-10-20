@@ -198,6 +198,25 @@ if [ "${script_name}" = run_analysis.sh ] && ! caller_has --time && ! caller_has
   site_args+=("--time=${analysis_time:-00:45:00}")
 fi
 
+#
+#--- run_aggregate.sh: --time (AGGREGATE_TIME), job name, log -------
+# AGGREGATE_TIME from config/varsets.sh (default 24:00:00).
+#
+if [ "${script_name}" = run_aggregate.sh ]; then
+  if ! caller_has --time && ! caller_has -t; then
+    agg_time="$(
+      set +eu
+      # shellcheck source=/dev/null
+      source "${VARSETS_FILE}" >/dev/null 2>&1
+      echo "${AGGREGATE_TIME:-}"
+    )"
+    site_args+=("--time=${agg_time:-24:00:00}")
+  fi
+  caller_has --job-name || caller_has -J || site_args+=("--job-name=aggregate")
+  caller_has --output || caller_has -o || site_args+=("--output=aggregate.%j.out")
+  caller_has --error  || caller_has -e || site_args+=("--error=aggregate.%j.out")
+fi
+
 if [ -z "${JOB_ACCOUNT}" ] && ! caller_has --account; then
   echo "WARNING: JOB_ACCOUNT is empty in ${env_file} — the job will use your default Slurm account." >&2
 fi

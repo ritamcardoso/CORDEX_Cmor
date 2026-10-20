@@ -52,6 +52,12 @@ declare -A VARSETS=(
 ANALYSIS_TIME="00:45:00"
 
 #
+#--- AGGREGATE_TIME: run_aggregate.sh --time ---------------------
+# Walltime of the daily/monthly aggregation job (tools/aggregate.sh).
+#
+AGGREGATE_TIME="24:00:00"
+
+#
 #--- TIME: processing job --time (one model year) -------------
 # Walltime of the processing job, used by submit.sh as --time.
 # Values are for one model year; config/README.md gives the basis of each.

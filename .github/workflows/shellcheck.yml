@@ -36,6 +36,8 @@ jobs:
             tools/check_and_found_var.sh \
             tools/check_archive.sh \
             tools/ncrepack-cordex \
+            tools/aggregate.sh \
+            scripts/run_aggregate.sh \
             tools/lint_varsets.sh
 
       - name: Check config/varsets.sh (lint_varsets.sh)
