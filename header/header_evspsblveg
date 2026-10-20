@@ -1,4 +1,4 @@
-wrfvar = 'ACECAN'       ! RCM_sfc_lsmacc: ACECAN (ECAN on resets)
+wrfvar = 'ECAN'         ! RCM_sfc_lsmflx: hourly mean of the rate ECAN (mm s-1)
 vaid = 'evspsblveg'
 vunts = 'kg m-2 s-1'
 lname = 'Evaporation from Canopy'

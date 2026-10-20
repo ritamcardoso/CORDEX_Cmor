@@ -1,4 +1,4 @@
-wrfvar = 'ACEDIR'       ! RCM_sfc_lsmacc: ACEDIR (EDIR on resets)
+wrfvar = 'EDIR'         ! RCM_sfc_lsmflx: hourly mean of the rate EDIR (mm s-1)
 vaid = 'evspsblsoi'
 vunts = 'kg m-2 s-1'
 lname = 'Water Evaporation from Soil'

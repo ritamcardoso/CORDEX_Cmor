@@ -1,16 +1,14 @@
 program read_wrfout
 !
-! RCM_sfc_lsmacc — Noah-MP water fluxes (1hr, hourly means, kg m-2 s-1) from the
-! accumulated fields of wrfout (mm = kg m-2), as RCM_sfc_pr:
+! RCM_sfc_lsmflx — Noah-MP water fluxes (1hr, hourly means, kg m-2 s-1) from the
+! instantaneous rates of wrfout (mm s-1 = kg m-2 s-1):
 !
-!   evspsblsoi  ACEDIR   water evaporation from soil (ground surface)
-!   evspsblveg  ACECAN   evaporation of the water intercepted by the canopy
-!   tran        ACETRAN  transpiration
+!   evspsblsoi  EDIR    water evaporation from soil (ground surface)
+!   evspsblveg  ECAN    evaporation of the water intercepted by the canopy
+!   tran        ETRAN   transpiration
 !
-! value of hour h = (accumulation at the end - at the start of the hour) / 3600 s,
-! written at hh:30 with bounds hh:00-hh+1:00. If the accumulation went back (it was
-! reset, e.g. at a restart), the mean of the instantaneous rates (EDIR, ECAN, ETRAN,
-! mm s-1) at the start and end of the hour is used for that hour instead.
+! value of hour h = mean of the rates at the start and at the end of the hour,
+! written at hh:30 with bounds hh:00-hh+1:00, as the other hourly means.
 ! Sea points (LANDMASK = 0) are missing ("area: mean where land").
 !
 ! Use external modules for variables and shared subroutines
@@ -19,9 +17,8 @@ use shared_subs
 use netcdf
 !implicit none
 
-real, dimension(:,:), allocatable :: la_acc, la_accp, la_rate, la_ratep
-character(len=20) :: la_accv, la_ratev
-integer :: la_reset
+real, dimension(:,:), allocatable :: la_rate, la_ratep
+character(len=20) :: la_ratev
 
 ! --- Read configuration using shared_subs subroutine
 
@@ -32,14 +29,14 @@ call init_cordex_environment
 call read_geog
 
 select case (trim(vaid))
-  case ('evspsblsoi'); la_accv = 'ACEDIR';  la_ratev = 'EDIR'
-  case ('evspsblveg'); la_accv = 'ACECAN';  la_ratev = 'ECAN'
-  case ('tran');       la_accv = 'ACETRAN'; la_ratev = 'ETRAN'
+  case ('evspsblsoi'); la_ratev = 'EDIR'
+  case ('evspsblveg'); la_ratev = 'ECAN'
+  case ('tran');       la_ratev = 'ETRAN'
   case default
-    print *, 'ERROR: RCM_sfc_lsmacc does not know the variable ', trim(vaid)
+    print *, 'ERROR: RCM_sfc_lsmflx does not know the variable ', trim(vaid)
     stop 95
 end select
-write(*,*) trim(vaid), ' from ', trim(la_accv), ' (resets: ', trim(la_ratev), ')'
+write(*,*) trim(vaid), ' from ', trim(la_ratev)
 
 ! --- Initialising grid and time counters
 nz = 10
@@ -69,8 +66,7 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(la_acc(nlon,nlat), la_accp(nlon,nlat), la_rate(nlon,nlat), la_ratep(nlon,nlat))
-la_reset = 0
+allocate(la_rate(nlon,nlat), la_ratep(nlon,nlat))
 
 it = 0
 yearf=yeari+1
@@ -135,7 +131,6 @@ do year = yeari, yearf,1
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening file')
 
-        call read_field(la_accv, la_acc)
         call read_field(la_ratev, la_rate)
 
         status = nf90_close(ncid)
@@ -143,7 +138,7 @@ do year = yeari, yearf,1
 !
         if(it == 0)then
           it=it+1
-          la_accp = la_acc; la_ratep = la_rate
+          la_ratep = la_rate
           cycle loop_h
         endif
 
@@ -155,7 +150,7 @@ do year = yeari, yearf,1
 
         call calc_flux
 
-        la_accp = la_acc; la_ratep = la_rate
+        la_ratep = la_rate
 
       enddo loop_h    ! end hour
 !
@@ -168,8 +163,6 @@ do year = yeari, yearf,1
   write(ayearf, '(i4)') year
 
 enddo
-!
-if (la_reset > 0) write(*,*) la_reset, ' grid point-hours with a reset accumulation: mean rate used'
 !
 !  Write annual output using shared subroutine
 !
@@ -199,12 +192,7 @@ subroutine calc_flux
 do ix=1,nlon
   do iy=1,nlat
     if (landmask(ix,iy) > 0.) then
-      if (la_acc(ix,iy) >= la_accp(ix,iy) - 1.e-6) then
-        outvar_h(ix,iy,issh) = (la_acc(ix,iy) - la_accp(ix,iy)) / 3600.
-      else
-        outvar_h(ix,iy,issh) = 0.5 * (la_rate(ix,iy) + la_ratep(ix,iy))
-        la_reset = la_reset + 1
-      endif
+      outvar_h(ix,iy,issh) = 0.5 * (la_rate(ix,iy) + la_ratep(ix,iy))
     else
       outvar_h(ix,iy,issh) = 1.e+20
     endif
