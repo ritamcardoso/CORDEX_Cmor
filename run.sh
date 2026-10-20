@@ -2,10 +2,12 @@
 #
 # run.sh — the simple way to start the processing.
 # Usage: ./run.sh [-n] [-c] <experiment> <first year> [<last year>] [<varset> ...]
+#        ./run.sh -a [-n] <experiment> <first year> [<last year>] [<variable> ...]
 #   ./run.sh fpsurb 2015 2020            every stream, 2015 to 2020, one year per job
 #   ./run.sh fpsurb 2015                 every stream, 2015 only
 #   ./run.sh fpsurb 2015 2020 soil fx    only the varsets soil and fx
 #   ./run.sh -n fpsurb 2015 2020         dry run: checks and shows what would be submitted
+#   ./run.sh -a fpsurb 2015 2020         daily and monthly files from the output (tools/aggregate.sh)
 # It works out the dates and year_lim, checks the setup, and calls submit.sh
 # (README.md §0). The job settings still come from env.site.sh and config/.
 #----------------------------------------------------------------
@@ -26,6 +28,9 @@ Usage: $0 [-n] [-c] <experiment> <first year> [<last year>] [<varset> ...]
                 through run_analysis.sh.
   -c            with varsets: let them hand over to the next varset of their
                 stream (config/varsets.sh) instead of running on their own
+  -a            aggregation job instead (scripts/run_aggregate.sh): daily and
+                monthly files from the files already written; the names after
+                the years are then variables (e.g. tas pr), not varsets
   -n            dry run: do the checks and show the commands, submit nothing
 
 Examples:
@@ -36,11 +41,12 @@ EOF
   exit 1
 }
 
-DRY=0; CHAIN=0
-while getopts "nch" opt; do
+DRY=0; CHAIN=0; AGG=0
+while getopts "ncah" opt; do
   case "$opt" in
     n) DRY=1 ;;
     c) CHAIN=1 ;;
+    a) AGG=1 ;;
     *) usage ;;
   esac
 done
@@ -73,7 +79,7 @@ if [ ! -f "${ROOT_DIR}/experiments/${EXP}/${EXP}.sh" ]; then
 fi
 
 # layout: every stream (varsets.sh), or the given varsets on their own (varsets_single.sh)
-if [ ${#VSETS[@]} -gt 0 ] && [ "$CHAIN" = 0 ]; then LAYOUT=varsets_single.sh; else LAYOUT=varsets.sh; fi
+if [ ${#VSETS[@]} -gt 0 ] && [ "$CHAIN" = 0 ] && [ "$AGG" = 0 ]; then LAYOUT=varsets_single.sh; else LAYOUT=varsets.sh; fi
 [ -f "${ROOT_DIR}/config/${LAYOUT}" ] || { echo "No config/${LAYOUT}." >&2; exit 1; }
 
 # experiment: grids and WRF input folders (in a subshell; load_experiment.sh checks the ini files)
@@ -94,10 +100,10 @@ vs_info="$(
   echo "ALL ${!VARSETS[*]}"
 )"
 order=$(sed -n 's/^ORDER //p' <<< "$vs_info"); known=" $(sed -n 's/^ALL //p' <<< "$vs_info") "
-for vs in ${VSETS[@]+"${VSETS[@]}"}; do
+[ "$AGG" = 1 ] || for vs in ${VSETS[@]+"${VSETS[@]}"}; do
   [[ "$known" == *" $vs "* ]] || err "unknown varset '$vs' (not in config/${LAYOUT}); known: $(tr ' ' '\n' <<< "$known" | sed '/^$/d' | sort | tr '\n' ' ')"
 done
-if [ ${#VSETS[@]} -eq 0 ] && [ -z "$order" ]; then
+if [ "$AGG" = 0 ] && [ ${#VSETS[@]} -eq 0 ] && [ -z "$order" ]; then
   err "ORDER in config/${LAYOUT} is empty — nothing would be submitted"
 fi
 if [ ${#VSETS[@]} -gt 10 ] && [ "$CHAIN" = 0 ]; then
@@ -105,7 +111,7 @@ if [ ${#VSETS[@]} -gt 10 ] && [ "$CHAIN" = 0 ]; then
 fi
 
 # WRF input of the first year, per grid (a warning: the folder may only be visible on the compute nodes)
-while read -r g dom wrf out; do
+[ "$AGG" = 1 ] || while read -r g dom wrf out; do
   if [ ! -d "$wrf" ]; then
     warn "grid $g: the WRF output folder $wrf does not exist"
   elif ! compgen -G "${wrf}/wrfout_${g}_${Y1}-*" >/dev/null; then
@@ -121,13 +127,17 @@ done <<< "$exp_info"
 # up to the last year (year_lim).
 #
 datebeg="${Y1}0101"; dateend="${Y1}1231"
-echo "Experiment ${EXP}, years ${Y1}-${Y2}, one year per job, varsets from config/${LAYOUT}"
+if [ "$AGG" = 1 ]; then echo "Experiment ${EXP}, years ${Y1}-${Y2}, one aggregation job"
+else echo "Experiment ${EXP}, years ${Y1}-${Y2}, one year per job, varsets from config/${LAYOUT}"; fi
 while read -r g dom wrf out; do
   echo "  grid ${g} (${dom}): WRF output ${wrf} -> ${out}"
 done <<< "$exp_info"
 
 cmds=()
-if [ ${#VSETS[@]} -eq 0 ]; then
+if [ "$AGG" = 1 ]; then
+  echo "  aggregation (daily and monthly files) of ${VSETS[*]:-every variable with files}"
+  cmds+=("run_aggregate.sh ${Y1} ${Y2} ${VSETS[*]}")
+elif [ ${#VSETS[@]} -eq 0 ]; then
   echo "  every stream in ORDER: ${order}"
   cmds+=("run_analysis.sh ${datebeg} ${dateend} ${Y2}")
 else

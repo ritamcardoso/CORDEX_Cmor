@@ -42,6 +42,7 @@ cd $ROOT_DIR                         # the repo (or a symlink to run.sh)
 ./run.sh fpsurb 2015                 # 2015 only
 ./run.sh fpsurb 2015 2020 soil fx    # only these varsets, each on its own
 ./run.sh -n fpsurb 2015 2020         # dry run: check and show, submit nothing
+./run.sh -a fpsurb 2015 2020         # afterwards: daily and monthly files (§11)
 ```
 
 `run.sh <experiment> <first year> [<last year>] [<varset> ...]` works out
@@ -198,7 +199,8 @@ run.sh         <- the simple way to start: ./run.sh <experiment> <first year> [<
 submit.sh      <- submits every job (§6, §9)
 tools/         <- helper scripts (§11): report_walltimes.sh, lint_varsets.sh, merge_soil_monthly.sh,
                   check_and_found_var.sh, check_archive.sh + variables.txt;
-                  ncrepack-cordex (+ its LICENSE), run on every new file (§6)
+                  ncrepack-cordex (+ its LICENSE), run on every new file (§6);
+                  aggregate.sh + aggregation_table.txt: daily and monthly files (§11)
 env.site.sh.example  <- copy to env.site.sh and fill in (§4)
 LICENSE, README.md
 ```
@@ -816,6 +818,59 @@ The script exits with status 1 if anything is missing or wrong.
 | `-d remote\|ecfs\|both` | archive(s) to check (default `remote`) |
 | `-t <pct>` | size tolerance against the previous year when the original is gone (default 5) |
 | `-v <file>`, `-o <dir>`, `-r <dir>` | as for `check_and_found_var.sh` |
+
+### `tools/aggregate.sh` — daily and monthly files
+
+Makes the **daily** files from the sub-daily ones (1hr, 3hr or 6hr) and the
+**monthly** files from the daily values, for every variable of the CORDEX-CMIP6
+`day` and `mon` tables. It writes them next to the other files of each grid
+(`OUTPUT_DIR`). Run it as a job:
+
+```bash
+./run.sh -a fpsurb 2015 2020                    # every variable that has files
+./run.sh -a fpsurb 2015 2020 tas pr             # only these variables
+./submit.sh --ntasks=8 --mem=32G run_aggregate.sh 2015 2020   # 8 variables at a time
+```
+
+or directly on a login node for a few variables:
+`tools/aggregate.sh [-f day|mon|both] [-j <n>] [-n] <first year> [<last year>] [<variable> ...]`
+(`-n`: dry run, shows the sources and files).
+
+* **How:** with NCO (`ncra`), which keeps the file exactly as the programs
+  write it (grid mapping, cell corners, axis bounds, `type`, global
+  attributes). The method of each variable is taken from the CMOR tables
+  (`tools/aggregation_table.txt`):
+  * **Daily:** the mean, maximum, minimum or sum of the 24 (1hr), 8 (3hr) or 4
+    (6hr) values of each day. `prhmax` is the daily maximum of the hourly `pr`.
+    Variables already written as daily files (e.g. `tasmax`, `tasmin`,
+    `sfcWindmax` from `wrfxtrm`) are taken from those files; `-s` recomputes
+    them from the sub-daily files instead.
+  * **Monthly:** the mean of the daily values. A plain `time: minimum` /
+    `maximum` in the `mon` table means the minimum / maximum of the days.
+    Incomplete months (e.g. the last days missing) are left out.
+* **Time:** set to the archive specifications, whatever the time stamps of the
+  input (instantaneous at 00:00, or interval data at hh:30). Daily values are at
+  12:00, with `time_bnds` from 00:00 to 00:00. Monthly values are in the middle
+  of the month (e.g. 16 Jan 12:00, 15 Feb 00:00), with bounds at 00:00 of the
+  first day of the month and of the next month.
+* **Files:** daily files hold **5 years** (years ending in 1–5 and 6–0), and
+  monthly files **10 years** (1–0); the first and last files are shorter. The
+  file covering a year asked for is (re)built whole, from every year of that
+  period that has data. The daily or monthly files it replaces (e.g. the yearly
+  `tasmax` files) are moved to `<OUTPUT_DIR>/superseded/`, never deleted.
+* **Metadata:** `frequency`, `cell_methods` and `long_name` from the `day`/`mon`
+  table, new `tracking_id` and `creation_date`, and a new first `history` line
+  (`...found in table CORDEX-CMIP6_day.`) above the lines of the input. Files
+  are NetCDF-4 classic, deflate 1 with shuffle, repacked with
+  `tools/ncrepack-cordex` (unless `REPACK="off"`).
+* **Job settings:** `AGGREGATE_TIME` in `config/varsets.sh` (24 h). NCO comes
+  from `MODULES`, else `AGG_MODULES` in `env.site.sh` (default `nco`).
+  Temporary files go to the node's `$TMPDIR`. A year of hourly EUR-12 data takes
+  about 2 minutes per variable, with little memory.
+* The daily and monthly files are not archived automatically: resubmit the
+  archive jobs (`run_cp_generic.sh`) of the varsets afterwards. The archive
+  job picks files by their **first** year, so include the first year of each
+  5- or 10-year file (e.g. 2011 for `..._day_20110101-20151231.nc`).
 
 ### `tools/ncrepack-cordex` — repack existing files
 
