@@ -1,0 +1,8 @@
+wrfvar = 'TCAN_URB2D'   ! RCM_sfc_urb also reads QCAN_URB2D and PSFC
+vaid = 'hurscan'
+vunts = '%'
+lname = 'Near-Surface Relative Humidity within canyon'
+stname = 'relative_humidity_canyon'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

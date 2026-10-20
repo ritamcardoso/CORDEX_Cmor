@@ -1,0 +1,8 @@
+wrfvar = 'TROOF_URB2D'
+vaid = 'tsroof'
+vunts = 'K'
+lname = 'Surface temperature roof'
+stname = 'roof_surface_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

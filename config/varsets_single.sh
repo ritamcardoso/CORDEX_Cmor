@@ -12,7 +12,7 @@
 declare -A VARSETS=(
   [out1]="RCM_sfc_VAR:tas,ts,th,hurs,huss,hfls,hfss,evspsbl,psl,zmla,od550aer,uas,vas"
   [out2]="RCM_sfc_VAR:ps,sfcWind,z0,tauu,tauv,evspsblpot"
-  [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol"
+  [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol,mrsofc"
   [rad]="RCM_sfc_rad:rsds,rlds,rsus,rlus,rldscs,rluscs,rlut,rlutcs,rsdscs,rsdsdir,rsdt,rsuscs,rsut,rsutcs"
   [snw]="RCM_sfc_VAR:prsn,snm,snc,snw,snd,siconca,pr,prc,sund"
   [cloud1]="RCM_sfc_cloud:clh,clm"
@@ -42,6 +42,9 @@ declare -A VARSETS=(
   [plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30"
   [zlev_ua0]="RCM_zlev_ua:ua100m,ua150m,ua50m"
   [zlev_ua1]="RCM_zlev_ua:ua300m,ua250m,ua200m"
+  # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
+  # run with ./run.sh fpsurb <first year> <last year> urban
+  [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tasblue,tascan,hurscan,husscan,sfcWindcan,tsskin,tspav,tsroof,tsgree,tsblue"
 )
 
 #
@@ -78,6 +81,7 @@ declare -A TIME=(
   [tau]="16:00:00"
   [zlev_va0]="19:00:00"
   [zlev_va1]="19:00:00"
+  [urban]="14:00:00"
 )
 
 #
@@ -140,6 +144,7 @@ declare -A ADVANCE_YEAR=(
   [plev_hus]=1
   [soil]=1
   [out2]=1
+  [urban]=1
 )
 #
 #--- NEXT: varset submitted when this one finishes ------------
@@ -167,6 +172,7 @@ declare -A NEXT=(
   [plev_hus]="plev_hus"
   [soil]="soil"
   [out2]="out2"
+  [urban]="urban"
 )
 
 #

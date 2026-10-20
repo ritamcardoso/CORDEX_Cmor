@@ -1,0 +1,8 @@
+wrfvar = 'TSK'
+vaid = 'tsblue'
+vunts = 'K'
+lname = 'Surface temperature blue spaces'
+stname = 'bluespaces_surface_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

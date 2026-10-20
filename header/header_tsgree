@@ -1,0 +1,8 @@
+wrfvar = 'TSK_RURAL'
+vaid = 'tsgree'
+vunts = 'K'
+lname = 'Surface temperature green spaces'
+stname = 'greenspaces_surface_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

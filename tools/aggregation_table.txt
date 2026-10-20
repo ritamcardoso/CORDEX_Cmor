@@ -393,3 +393,17 @@ zg850|zg850|mean|area: time: mean|Geopotential Height at 850hPa|mean|area: time:
 zg925|zg925|mean|area: time: mean|Geopotential Height at 925hPa|mean|area: time: mean|Geopotential Height at 925hPa
 zmla|zmla|mean|area: time: mean|Height of Boundary Layer|mean|area: time: mean|Height of Boundary Layer
 zos|zos|mean|area: mean where sea time: mean|Sea Surface Height Above Geoid|mean|area: mean where sea time: mean|Sea Surface Height Above Geoid
+# FPS-URB-RCC urban variables, from the impetus4change/T32-CPRCM CMOR tables (day and mon):
+tasroof|tasroof|mean|area: time: mean|Near-surface temperature roof|mean|area: time: mean|Near-surface temperature roof
+taspav|taspav|mean|area: time: mean|Near-surface temperature pavements|mean|area: time: mean|Near-surface temperature pavements
+tasgree|tasgree|mean|area: time: mean|Near-surface temperature green spaces|mean|area: time: mean|Near-surface temperature green spaces
+tasblue|tasblue|mean|area: time: mean|Near-surface temperature blue spaces|mean|area: time: mean|Near-surface temperature blue spaces
+tascan|tascan|mean|area: time: mean|Near-surface temperature within canyon|mean|area: time: mean|Near-surface temperature within canyon
+hurscan|hurscan|mean|area: time: mean|Near-Surface Relative Humidity within canyon|mean|area: time: mean|Near-Surface Relative Humidity within canyon
+husscan|husscan|mean|area: time: mean|Near-Surface Specific Humidity within canyon|mean|area: time: mean|Near-Surface Specific Humidity within canyon
+sfcWindcan|sfcWindcan|mean|area: time: mean|Near-Surface Wind Speed within canyon|mean|area: time: mean|Near-Surface Wind Speed within canyon
+tsskin|tsskin|mean|area: time: mean|Skin temperature|mean|area: time: mean|Skin temperature
+tspav|tspav|mean|area: time: mean|Surface temperature pavements|mean|area: time: mean|Surface temperature pavements
+tsroof|tsroof|mean|area: time: mean|Surface temperature roof|mean|area: time: mean|Surface temperature roof
+tsgree|tsgree|mean|area: time: mean|Surface temperature green spaces|mean|area: time: mean|Surface temperature green spaces
+tsblue|tsblue|mean|area: time: mean|Surface temperature blue spaces|mean|area: time: mean|Surface temperature blue spaces

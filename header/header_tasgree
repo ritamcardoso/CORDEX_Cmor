@@ -1,0 +1,8 @@
+wrfvar = 'T2VEG_URB2D'
+vaid = 'tasgree'
+vunts = 'K'
+lname = 'Near-surface temperature green spaces'
+stname = 'greenspaces_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
