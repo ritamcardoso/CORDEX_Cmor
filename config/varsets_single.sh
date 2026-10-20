@@ -11,7 +11,7 @@
 #
 declare -A VARSETS=(
   [out1]="RCM_sfc_VAR:tas,ts,th,hurs,huss,hfls,hfss,evspsbl,psl,zmla,od550aer,uas,vas"
-  [out2]="RCM_sfc_VAR:ps,sfcWind,z0,tauu,tauv"
+  [out2]="RCM_sfc_VAR:ps,sfcWind,z0,tauu,tauv,evspsblpot"
   [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol"
   [rad]="RCM_sfc_rad:rsds,rlds,rsus,rlus,rldscs,rluscs,rlut,rlutcs,rsdscs,rsdsdir,rsdt,rsuscs,rsut,rsutcs"
   [snw]="RCM_sfc_VAR:prsn,snm,snc,snw,snd,siconca,pr,prc,sund"

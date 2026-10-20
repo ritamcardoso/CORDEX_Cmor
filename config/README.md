@@ -107,7 +107,7 @@ hour.
 | Varset | `TIME[]` | Basis |
 |---|---|---|
 | `out1` | 14:00 | est ~9h12 (13 variables) |
-| `out2` | 10:00 | est ~5h12 (ps, sfcWind, z0 + tau's 3h05) |
+| `out2` | 10:00 | est ~5h12 (ps, sfcWind, z0 + tau's 3h05), + ~2h for evspsblpot (13 fields per hour; to be confirmed with report_walltimes.sh) |
 | `soil` | 12:00 | max 5h05 |
 | `rad` | 18:00 | max 11h39 |
 | `snw` | 12:00 | max 6h06 |
