@@ -407,3 +407,10 @@ tspav|tspav|mean|area: time: mean|Surface temperature pavements|mean|area: time:
 tsroof|tsroof|mean|area: time: mean|Surface temperature roof|mean|area: time: mean|Surface temperature roof
 tsgree|tsgree|mean|area: time: mean|Surface temperature green spaces|mean|area: time: mean|Surface temperature green spaces
 tsblue|tsblue|mean|area: time: mean|Surface temperature blue spaces|mean|area: time: mean|Surface temperature blue spaces
+# Noah-MP land-surface variables (lsm varset; LUCAS)
+evspsblsoi|evspsblsoi|mean|area: mean where land time: mean|Water Evaporation from Soil|mean|area: mean where land time: mean|Water Evaporation from Soil
+evspsblveg|evspsblveg|mean|area: mean where land time: mean|Evaporation from Canopy|mean|area: mean where land time: mean|Evaporation from Canopy
+tran|tran|mean|area: mean where land time: mean|Transpiration|mean|area: mean where land time: mean|Transpiration
+lai|lai|mean|area: mean where land time: mean|Leaf Area Index|mean|area: mean where land time: mean|Leaf Area Index
+vegFrac|vegFrac|mean|area: mean where land time: mean|Total Vegetated Percentage Cover|mean|area: mean where land time: mean|Total Vegetated Percentage Cover
+alb|alb|mean|area: time: mean|Albedo|mean|area: time: mean|Albedo

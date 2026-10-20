@@ -1,0 +1,9 @@
+wrfvar = 'LANDUSEF'     ! RCM_fx_landuse: categories grouped by the tables in the program
+vaid = 'baresoilFrac'
+vunts = '%'
+lname = 'Bare Soil Percentage Area Coverage'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+area_type = 'bare_ground'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -1,0 +1,8 @@
+wrfvar = 'ACECAN'       ! RCM_sfc_lsmacc: ACECAN (ECAN on resets)
+vaid = 'evspsblveg'
+vunts = 'kg m-2 s-1'
+lname = 'Evaporation from Canopy'
+stname = 'water_evaporation_flux_from_canopy'
+cmethods = 'area: mean where land time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

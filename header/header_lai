@@ -1,0 +1,8 @@
+wrfvar = 'LAI'
+vaid = 'lai'
+vunts = '1'
+lname = 'Leaf Area Index'
+stname = 'leaf_area_index'
+cmethods = 'area: mean where land time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

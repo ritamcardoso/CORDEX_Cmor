@@ -452,7 +452,7 @@ call def_horizontal_dims(ncid, LonDimID, LatDimID, BDimID, VDimID)
 
 call def_horizontal_vars(ncid, LonDimID, LatDimID, BDimID, VDimID, LonVarID, LatVarID, rlonVarID, rlatVarID, rpVarID)
 
-! sftlaf/sfturf: scalar coordinate "type" (area_type from the header)
+! sftlaf/sfturf/land-cover fractions: scalar coordinate "type" (area_type from the header)
 if (len_trim(area_type) > 0) then
     status = nf90_def_dim(ncid, "strlen", len_trim(area_type), TypeDimID)
     status = nf90_def_var(ncid, "type", nf90_char, (/ TypeDimID /), TypeVarID)
@@ -462,6 +462,18 @@ if (len_trim(area_type) > 0) then
         status = nf90_put_att(ncid, TypeVarID, "long_name", "Lake and Inland Sea area type")
     case ('urban')
         status = nf90_put_att(ncid, TypeVarID, "long_name", "Urban area type")
+    case ('tree')
+        status = nf90_put_att(ncid, TypeVarID, "long_name", "Tree area type")
+    case ('shrubs')
+        status = nf90_put_att(ncid, TypeVarID, "long_name", "Shrub area type")
+    case ('natural_grasses')
+        status = nf90_put_att(ncid, TypeVarID, "long_name", "Natural grass area type")
+    case ('crops')
+        status = nf90_put_att(ncid, TypeVarID, "long_name", "Crop area type")
+    case ('bare_ground')
+        status = nf90_put_att(ncid, TypeVarID, "long_name", "Bare ground area type")
+    case ('vegetation')
+        status = nf90_put_att(ncid, TypeVarID, "long_name", "Vegetation area type")
     case default
         status = nf90_put_att(ncid, TypeVarID, "long_name", "area type")
     end select
@@ -480,7 +492,7 @@ call handle_err(status)
 status = nf90_def_var_deflate(ncid, uVarId, shuffle = 1, deflate = 1, deflate_level = 1)
 call handle_err(status)                 
 
-status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
+if (len_trim(standardname) > 0) status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
 status = nf90_put_att(ncid, uVarID, "long_name",longname)
 status = nf90_put_att(ncid, uVarID, "units",vunits)
 if (trim(vunits) == 'K') status = nf90_put_att(ncid, uVarID, "units_metadata","temperature: on_scale")

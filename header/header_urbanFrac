@@ -1,0 +1,9 @@
+wrfvar = 'LANDUSEF'     ! RCM_fx_landuse: categories grouped by the tables in the program
+vaid = 'urbanFrac'
+vunts = '%'
+lname = 'Percentage of the Grid Cell Occupied by Urban Area'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+area_type = 'urban'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

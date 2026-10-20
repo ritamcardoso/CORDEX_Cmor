@@ -314,9 +314,11 @@ modify these files — the scripts assemble a full namelist per run by
 concatenating the relevant `header_<var>` onto the experiment's grid ini file
 (see `run_out_generic.sh`'s processing loop).
 
-`header_sftlaf` and `header_sfturf` also set `area_type`
-(`'lake_and_inland_sea'`, `'urban'`): it becomes the scalar coordinate
-`type` that the CORDEX tables require for these two variables. Leave it
+`header_sftlaf`, `header_sfturf` and the land-cover fractions of
+`RCM_fx_landuse` (`treeFrac`, `urbanFrac`, …) also set `area_type`
+(`'lake_and_inland_sea'`, `'urban'`, `'tree'`, …): it becomes the scalar
+coordinate `type` that the CORDEX tables require for these variables. It is
+only written to fx files. Leave it
 out for every other variable.
 
 ## 4. Site Environment (`env.site.sh`)
@@ -408,6 +410,23 @@ these fields, so `urban` is not in `ORDER`; run it on its own, e.g.
 `tools/aggregation_table.txt`. The field capacity `mrsofc` (fx) is written by
 the `soil` varset (`RCM_sfc_mrsofc.f90`), from the dominant soil category of the
 geo_em file and the STAS field capacities of `SOILPARM.TBL`.
+
+**Noah-MP land-surface variables (`lsm` varset) and land cover (`fx`).**
+`RCM_sfc_lsmacc.f90` writes the hourly means `evspsblsoi`, `evspsblveg` and
+`tran` (kg m-2 s-1) from the accumulated `ACEDIR`, `ACECAN` and `ACETRAN`
+(when an accumulation goes back — a reset — that hour uses the mean of the rates
+`EDIR`, `ECAN`, `ETRAN`). `RCM_sfc_lsm.f90` writes the instantaneous `lai`
+(`LAI`), `vegFrac` (`FVEG` in %) and `alb` (`ALBEDO`). Sea points are missing,
+except for `alb`. These fields must be in the wrfout files (Noah-MP output, as in
+LUCAS), so `lsm` is not in `ORDER`; run it on its own, e.g.
+`./run.sh lucas 2000 2010 lsm`. The `fx` varset now also writes, with
+`RCM_fx_landuse.f90`, `treeFrac`, `shrubFrac`, `grassFrac`, `cropFrac`,
+`baresoilFrac`, `urbanFrac`, `cnc` (their vegetated sum, % of the grid cell)
+and `luindex` (`LU_INDEX`), from `LANDUSEF` of the first wrfout file of the
+job year. The grouping of the land-use categories is a weight table at the top
+of the program (MODIS/IGBP and USGS, with the LCZ urban classes); edit it there.
+Like the other fx files, an existing file is kept, so with yearly land-use
+change the fx fractions are those of the first year processed.
 
 ### Fortran program naming
 

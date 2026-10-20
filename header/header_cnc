@@ -1,0 +1,9 @@
+wrfvar = 'LANDUSEF'     ! RCM_fx_landuse: categories grouped by the tables in the program
+vaid = 'cnc'
+vunts = '%'
+lname = 'Canopy Covered Area Percentage'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+area_type = 'vegetation'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
