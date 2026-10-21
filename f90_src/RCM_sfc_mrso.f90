@@ -91,17 +91,17 @@ do year = yeari, yearf,1
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
-        call ncerror(status,'opening file')
+        call ncerror(status,'opening '//trim(infile))
 
         ! Read wrf var
         status = nf90_inq_varid(ncid, wrfvar, varid)
-        call ncerror(status,'getting var id')
+        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
         
         status=nf90_get_var(ncid,varid,wrfv3D,(/xoffset,yoffset,1/),(/nlon,nlat,nsoil/),(/1,1,1/))
-        call ncerror(status,'reading '//wrfvar)
+        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         status = nf90_close(ncid)
-        call ncerror(status,'closing file')
+        call ncerror(status,'closing '//trim(infile))
 !
 ! Compute variable
 !

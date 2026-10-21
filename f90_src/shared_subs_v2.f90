@@ -157,11 +157,11 @@ allocate(rlon(nlon), rlat(nlat))
 
 status=nf90_inq_varid(ncid,'CLONG',varid)
 status=nf90_get_var(ncid,varid,tlon,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//'CLONG')
+call ncerror(status,'reading CLONG from '//trim(geofile))
 !
 status=nf90_inq_varid(ncid,'CLAT',varid)
 status=nf90_get_var(ncid,varid,tlat,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//'CLAT')
+call ncerror(status,'reading CLAT from '//trim(geofile))
 !
 do i=1,nlon
  rlon(i)=tlon(i,1)
@@ -180,20 +180,20 @@ status = nf90_get_var(ncid, varid, lon, (/xoffset, yoffset/), (/nlon, nlat/), (/
 
 status = nf90_inq_varid(ncid, 'XLAT_M', varid)
 status = nf90_get_var(ncid, varid, lat, (/xoffset, yoffset/), (/nlon, nlat/), (/1, 1/))
-call ncerror(status,'reading '//'XLAT_M')
+call ncerror(status,'reading XLAT_M from '//trim(geofile))
 
 status=nf90_inq_varid(ncid,'LANDMASK',varid)
 call ncerror(status,'getting var id LANDMASK in '//trim(geofile))
 
 status=nf90_get_var(ncid,varid,landmask,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//'LANDMASK')
+call ncerror(status,'reading LANDMASK from '//trim(geofile))
 
 ! Dominant land-use category (required, as in WRF) and its table (MMINLU attribute:
 ! MODIFIED_IGBP_MODIS_NOAH or USGS), used by urban_cell
 status=nf90_inq_varid(ncid,'LU_INDEX',varid)
 call ncerror(status,'getting var id LU_INDEX in '//trim(geofile))
 status=nf90_get_var(ncid,varid,luindex,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//'LU_INDEX')
+call ncerror(status,'reading LU_INDEX from '//trim(geofile))
 
 lu_table = ''
 status = nf90_get_att(ncid, nf90_global, 'MMINLU', lu_table)
@@ -205,7 +205,7 @@ lu_usgs = (index(lu_table, 'USGS') > 0)
 status = nf90_inq_varid(ncid, 'FRC_URB2D', varid)
 if (status == nf90_noerr) then
   status = nf90_get_var(ncid, varid, urb_frac, (/xoffset,yoffset/), (/nlon,nlat/), (/1,1/))
-  call ncerror(status, 'reading FRC_URB2D')
+  call ncerror(status,'reading FRC_URB2D from '//trim(geofile))
 else
   urb_frac = 0.
   print *, 'Note: no FRC_URB2D in '//trim(geofile)//' (set to 0: no urban cells)'
@@ -217,7 +217,7 @@ endif
 call read_corners(ncid)
 
 status = nf90_close(ncid)
-call ncerror(status,'closing file')
+call ncerror(status,'closing '//trim(geofile))
 
 end subroutine read_geog
 !
@@ -233,9 +233,9 @@ allocate(clon(nlon+1,nlat+1), clat(nlon+1,nlat+1))
 if (nf90_inq_varid(ncid, 'XLONG_C', idlon) == nf90_noerr .and. &
     nf90_inq_varid(ncid, 'XLAT_C',  idlat) == nf90_noerr) then
     status = nf90_get_var(ncid, idlon, clon, (/xoffset, yoffset/), (/nlon+1, nlat+1/))
-    call ncerror(status, 'reading XLONG_C')
+    call ncerror(status,'reading XLONG_C from '//trim(geofile))
     status = nf90_get_var(ncid, idlat, clat, (/xoffset, yoffset/), (/nlon+1, nlat+1/))
-    call ncerror(status, 'reading XLAT_C')
+    call ncerror(status,'reading XLAT_C from '//trim(geofile))
 else
     if (xoffset < 2 .or. yoffset < 2) then
         print *, "ERROR: no XLONG_C/XLAT_C in the geo_em file and xoffset/yoffset < 2: cannot compute cell corners"
@@ -244,10 +244,10 @@ else
     allocate(mlon(nlon+2,nlat+2), mlat(nlon+2,nlat+2))
     status = nf90_inq_varid(ncid, 'XLONG_M', idlon)
     status = nf90_get_var(ncid, idlon, mlon, (/xoffset-1, yoffset-1/), (/nlon+2, nlat+2/))
-    call ncerror(status, 'reading XLONG_M for the cell corners')
+    call ncerror(status,'reading XLONG_M for the cell corners from '//trim(geofile))
     status = nf90_inq_varid(ncid, 'XLAT_M', idlat)
     status = nf90_get_var(ncid, idlat, mlat, (/xoffset-1, yoffset-1/), (/nlon+2, nlat+2/))
-    call ncerror(status, 'reading XLAT_M for the cell corners')
+    call ncerror(status,'reading XLAT_M for the cell corners from '//trim(geofile))
     do j = 1, nlat+1
         do i = 1, nlon+1
             clon(i,j) = 0.25*(mlon(i,j) + mlon(i+1,j) + mlon(i,j+1) + mlon(i+1,j+1))
@@ -1076,9 +1076,9 @@ call ncerror(lu_st,'opening '//trim(fname))
 !
 if (trim(vaid) == 'luindex') then
   lu_st=nf90_inq_varid(lu_ncid,'LU_INDEX',lu_varid)
-  call ncerror(lu_st,'getting var id LU_INDEX')
+  call ncerror(lu_st,'getting var id LU_INDEX in '//trim(fname))
   lu_st=nf90_get_var(lu_ncid,lu_varid,lu_out,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
-  call ncerror(lu_st,'reading LU_INDEX')
+  call ncerror(lu_st,'reading LU_INDEX from '//trim(fname))
   lu_out = real(nint(lu_out))
 else
   lu_scheme = ''
@@ -1087,12 +1087,12 @@ else
   if (lu_st /= nf90_noerr) lu_scheme = 'MODIFIED_IGBP_MODIS_NOAH (no MMINLU attribute: assumed)'
 !
   lu_st=nf90_inq_varid(lu_ncid,'LANDUSEF',lu_varid)
-  call ncerror(lu_st,'getting var id LANDUSEF')
+  call ncerror(lu_st,'getting var id LANDUSEF in '//trim(fname))
   lu_st=nf90_inq_dimid(lu_ncid,'land_cat_stag',lu_dimid)
   if (lu_st /= nf90_noerr) lu_st=nf90_inq_dimid(lu_ncid,'land_cat',lu_dimid)
-  call ncerror(lu_st,'getting the land_cat dimension')
+  call ncerror(lu_st,'getting the land_cat dimension in '//trim(fname))
   lu_st=nf90_inquire_dimension(lu_ncid,lu_dimid,len=lu_ncat)
-  call ncerror(lu_st,'reading the land_cat dimension')
+  call ncerror(lu_st,'reading the land_cat dimension from '//trim(fname))
 !
 ! weights lu_w(k) of the category k for the group of vaid
   lu_w = 0.
@@ -1137,7 +1137,7 @@ else
     if (lu_w(k) > 0.) then
       ! only the categories of this group are read (one 2-D slice each)
       lu_st=nf90_get_var(lu_ncid,lu_varid,lu_f,(/xoffset,yoffset,k,1/),(/nlon,nlat,1,1/),(/1,1,1,1/))
-      call ncerror(lu_st,'reading LANDUSEF')
+      call ncerror(lu_st,'reading LANDUSEF from '//trim(fname))
       lu_out = lu_out + lu_w(k) * lu_f
     endif
   enddo

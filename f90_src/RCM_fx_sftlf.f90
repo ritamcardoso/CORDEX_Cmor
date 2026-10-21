@@ -26,13 +26,13 @@ status = nf90_open(geofile, nf90_nowrite, ncid)
 call ncerror(status, 'opening ' // trim(geofile)) 
 
 status=nf90_inq_varid(ncid,wrfvar,varid)
-call ncerror(status,'getting var id')
+call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(geofile))
 !
 status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//wrfvar)
+call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(geofile))
 !
 status=nf90_close(ncid)
-call ncerror(status,'closing file')
+call ncerror(status,'closing '//trim(geofile))
 !
 outvar(:,:)=wrfv2D(:,:)*100.
 

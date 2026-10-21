@@ -129,12 +129,12 @@ do year = yeari, yearf,1
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
-        call ncerror(status,'opening file')
+        call ncerror(status,'opening '//trim(infile))
 
         call read_field(la_ratev, la_rate)
 
         status = nf90_close(ncid)
-        call ncerror(status,'closing file')
+        call ncerror(status,'closing '//trim(infile))
 !
         if(it == 0)then
           it=it+1
@@ -178,9 +178,9 @@ character(len=*), intent(in) :: vname
 real, dimension(:,:), intent(out) :: field
 !
 status=nf90_inq_varid(ncid,trim(vname),varid)
-call ncerror(status,'getting var id '//trim(vname))
+call ncerror(status,'getting var id '//trim(vname)//' in '//trim(infile))
 status=nf90_get_var(ncid,varid,field,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//trim(vname))
+call ncerror(status,'reading '//trim(vname)//' from '//trim(infile))
 !
 end subroutine read_field
 !
