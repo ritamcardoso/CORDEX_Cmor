@@ -48,6 +48,9 @@ real, dimension(1) :: height, pressure
 real, dimension(2) :: pressure_bounds
 real, dimension(:),   allocatable :: rlon, rlat
 real, dimension(:,:), allocatable :: lon, lat, tlon, tlat, cosalp, sinalp, landmask, urb_frac, luindex
+! land-use table of the geo_em file (MMINLU) and whether it is USGS (else MODIS), from read_geog
+character(len=80) :: lu_table
+logical :: lu_usgs
 ! cell corners (4 per cell, counterclockwise), from the geo_em corner points
 real(kind=8), dimension(:,:,:), allocatable :: vlon, vlat
 

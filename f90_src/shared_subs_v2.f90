@@ -188,17 +188,19 @@ call ncerror(status,'getting var id LANDMASK in '//trim(geofile))
 status=nf90_get_var(ncid,varid,landmask,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
 call ncerror(status,'reading '//'LANDMASK')
 
-! Dominant land-use category and urban fraction (urban variables, e.g. RCM_sfc_tasroof).
-! Optional: if the geo_em file has no LU_INDEX / FRC_URB2D they are set to 0 (no urban
-! cells), so that the programs that do not need them still run.
+! Dominant land-use category (required, as in WRF) and its table (MMINLU attribute:
+! MODIFIED_IGBP_MODIS_NOAH or USGS), used by urban_cell
 status=nf90_inq_varid(ncid,'LU_INDEX',varid)
-if (status == nf90_noerr) then
-  status=nf90_get_var(ncid,varid,luindex,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-  call ncerror(status,'reading '//'LU_INDEX')
-else
-  luindex = 0.
-  print *, 'Note: no LU_INDEX in '//trim(geofile)//' (set to 0)'
-endif
+call ncerror(status,'getting var id LU_INDEX in '//trim(geofile))
+status=nf90_get_var(ncid,varid,luindex,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+call ncerror(status,'reading '//'LU_INDEX')
+
+lu_table = ''
+status = nf90_get_att(ncid, nf90_global, 'MMINLU', lu_table)
+if (status /= nf90_noerr) lu_table = 'MODIFIED_IGBP_MODIS_NOAH'
+lu_usgs = (index(lu_table, 'USGS') > 0)
+
+! Urban fraction (urban variables). Optional: without it there are no urban cells.
 
 status = nf90_inq_varid(ncid, 'FRC_URB2D', varid)
 if (status == nf90_noerr) then
@@ -1001,6 +1003,23 @@ subroutine new_tracking_id(tid)
     end if
     tid = 'hdl:21.14103/'//uuid
 end subroutine new_tracking_id
+!
+!-------------------------------------------------------------------------------------
+!
+logical elemental function urban_cell(frc, lu)
+! .true. where WRF runs the urban scheme: urban fraction > 0 and the dominant land-use
+! category (LU_INDEX) urban, for the land-use table of the geo_em file (read_geog):
+!   MODIFIED_IGBP_MODIS_NOAH: 13, or the LCZ classes 51-61
+!   USGS:                      1, or the LCZ classes 31-41
+real, intent(in) :: frc, lu
+integer :: k
+k = nint(lu)
+if (lu_usgs) then
+  urban_cell = frc > 0. .and. (k == 1 .or. (k >= 31 .and. k <= 41))
+else
+  urban_cell = frc > 0. .and. (k == 13 .or. (k >= 51 .and. k <= 61))
+endif
+end function urban_cell
 !
 !-------------------------------------------------------------------------------------
 !

@@ -45,7 +45,7 @@ declare -A VARSETS=(
   [zlev_ua1]="RCM_zlev_ua:ua300m,ua250m,ua200m"
   # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
   # run with ./run.sh fpsurb <first year> <last year> urban
-  [urban]="RCM_sfc_VAR:tasroof;RCM_sfc_urb:taspav,tasgree,tasblue,tascan,hurscan,husscan,sfcWindcan,tsskin,tspav,tsroof,tsgree,tsblue"
+  [urban]="RCM_sfc_urban:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_urb:hurscan,husscan,sfcWindcan,tsskin,tasblue,tsblue"
   # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
   # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
   [lsm]="RCM_sfc_lsmflx:evspsblsoi,evspsblveg,tran;RCM_sfc_lsm:lai,vegFrac,alb"

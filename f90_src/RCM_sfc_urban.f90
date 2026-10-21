@@ -1,11 +1,20 @@
 program read_wrfout
+!
+! RCM_sfc_urban — urban temperatures (1hr, instantaneous), from the urban scheme
+! output of WRF: the WRF field is wrfvar of the header (e.g. tasroof T2R_URB2D,
+! taspav T2G_URB2D, tasgree T2VEG_URB2D, tascan TCAN_URB2D, tsroof TROOF_URB2D,
+! tspav TGROUND_URB2D, tsgree TSK_RURAL). Kept only at urban cells (urban_cell in
+! shared_subs_v2.f90: FRC_URB2D > 0 and LU_INDEX an urban category of the MODIS or
+! USGS table of the geo_em file, LCZ classes included); missing elsewhere.
+! Rounded to 0.01 K.
+!
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
 use netcdf
 !implicit none
 
-!cp=(7/2)*Rd
+logical, dimension(:,:), allocatable :: ub_keep
 
 ! --- Read configuration using shared_subs subroutine
 
@@ -14,6 +23,11 @@ call init_cordex_environment
 ! --- Read Grid Information (Latitude, Longitude) ---
 
 call read_geog
+
+allocate(ub_keep(nlon,nlat))
+ub_keep = urban_cell(urb_frac, luindex)
+write(*,*) trim(vaid), ' from ', trim(wrfvar), ', land-use table ', trim(lu_table), ': ', &
+           count(ub_keep), ' urban cells of ', nlon*nlat
 
 ! --- Initialising grid and time counters
 nzt = nz + 1
@@ -107,18 +121,12 @@ do year = yeari, yearf,1
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        ! urban cells only: urban fraction > 0 and dominant category urban
-        ! (13 = MODIS urban, 51-61 = LCZ urban classes); rounded to 0.01 K
-        do ix=1,nlon
-          do iy=1,nlat
-            if (urb_frac(ix,iy) > 0. .and. (nint(luindex(ix,iy)) == 13 .or. &
-                nint(luindex(ix,iy)) >= 51)) then
-              outvar_h(ix,iy,issh) = float(nint(100.d0*wrfv2D(ix,iy)))/100.
-            else
-              outvar_h(ix,iy,issh) = huge_val
-            endif
-          enddo
-        enddo
+        ! urban cells only (ub_keep); rounded to 0.01 K
+        where (ub_keep)
+          outvar_h(:,:,issh) = real(nint(100.d0*wrfv2D, 8))/100.
+        elsewhere
+          outvar_h(:,:,issh) = huge_val
+        endwhere
       enddo loop_h    ! end hour
 !
       ihour=0
