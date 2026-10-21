@@ -93,23 +93,23 @@ do year = yeari, yearf,1
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
-        call ncerror(status,'opening file')
+        call ncerror(status,'opening '//trim(infile))
 !
         if(it == 0)then
           allocate(cosalp(nlon,nlat))
           allocate(sinalp(nlon,nlat))
 !
           status=nf90_inq_varid(ncid,'COSALPHA',varid)
-          call ncerror(status,'getting var id')
+          call ncerror(status,'getting var id COSALPHA in '//trim(infile))
 !
           status=nf90_get_var(ncid,varid,cosalp,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-          call ncerror(status,'reading '//'COSALPHA')
+          call ncerror(status,'reading COSALPHA from '//trim(infile))
 !
           status=nf90_inq_varid(ncid,'SINALPHA',varid)
-          call ncerror(status,'getting var id')
+          call ncerror(status,'getting var id SINALPHA in '//trim(infile))
 !
           status=nf90_get_var(ncid,varid,sinalp,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-          call ncerror(status,'reading '//'SINALPHA')
+          call ncerror(status,'reading SINALPHA from '//trim(infile))
           it=it+1
 !
         endif
@@ -117,25 +117,25 @@ do year = yeari, yearf,1
         ! Read wrf var
 !
         status=nf90_inq_varid(ncid,'U10',varid)
-        call ncerror(status,'getting var id')
+        call ncerror(status,'getting var id U10 in '//trim(infile))
 
         status=nf90_get_var(ncid,varid,u_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading '//'U10')
+        call ncerror(status,'reading U10 from '//trim(infile))
 !
         status=nf90_inq_varid(ncid,'V10',varid)
-        call ncerror(status,'getting var id')
+        call ncerror(status,'getting var id V10 in '//trim(infile))
 
         status=nf90_get_var(ncid,varid,v_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading '//'V10')
+        call ncerror(status,'reading V10 from '//trim(infile))
 !
         status=nf90_inq_varid(ncid,'UST',varid)
-        call ncerror(status,'getting var id')
+        call ncerror(status,'getting var id UST in '//trim(infile))
 
         status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading '//'UST')
+        call ncerror(status,'reading UST from '//trim(infile))
 !
         status=nf90_close(ncid)
-        call ncerror(status,'closing file')
+        call ncerror(status,'closing '//trim(infile))
 !
         wind10(:,:)=sqrt(u_s(:,:)**2+v_s(:,:)**2)
         wrfv2D(:,:)=10./exp(0.4*wind10(:,:)/ust(:,:))

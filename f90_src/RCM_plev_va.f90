@@ -100,40 +100,40 @@ do year = yeari, yearf, 1
         if (it == 0) then
           it = it + 1
           status = nf90_inq_varid(ncid, 'COSALPHA', varid)
-          call ncerror(status, 'getting var id COSALPHA')
+          call ncerror(status,'getting var id COSALPHA in '//trim(infile))
           status = nf90_get_var(ncid, varid, cosalp, (/xoffset, yoffset/), (/nlon, nlat/))
-          call ncerror(status, 'reading COSALPHA')
+          call ncerror(status,'reading COSALPHA from '//trim(infile))
 
           status = nf90_inq_varid(ncid, 'SINALPHA', varid)
-          call ncerror(status, 'getting var id SINALPHA')
+          call ncerror(status,'getting var id SINALPHA in '//trim(infile))
           status = nf90_get_var(ncid, varid, sinalp, (/xoffset, yoffset/), (/nlon, nlat/))
-          call ncerror(status, 'reading SINALPHA')
+          call ncerror(status,'reading SINALPHA from '//trim(infile))
         endif
 
         ! Read Pressures
         status = nf90_inq_varid(ncid, 'P', varid)
-        call ncerror(status, 'getting var id P')
+        call ncerror(status,'getting var id P in '//trim(infile))
         status = nf90_get_var(ncid, varid, p, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
-        call ncerror(status, 'reading P')
+        call ncerror(status,'reading P from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'PB', varid)
-        call ncerror(status, 'getting var id PB')
+        call ncerror(status,'getting var id PB in '//trim(infile))
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
-        call ncerror(status, 'reading PB')
+        call ncerror(status,'reading PB from '//trim(infile))
 
         ! Explicitly query and fetch staggered metrics simultaneously
         status = nf90_inq_varid(ncid, 'U', varid)
-        call ncerror(status, 'getting var id U')
+        call ncerror(status,'getting var id U in '//trim(infile))
         status = nf90_get_var(ncid, varid, ua, (/xoffset, yoffset, 1/), (/nlon_u, nlat, nz/))
-        call ncerror(status, 'reading U')
+        call ncerror(status,'reading U from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'V', varid)
-        call ncerror(status, 'getting var id V')
+        call ncerror(status,'getting var id V in '//trim(infile))
         status = nf90_get_var(ncid, varid, va, (/xoffset, yoffset, 1/), (/nlon, nlat_v, nz/))
-        call ncerror(status, 'reading V')
+        call ncerror(status,'reading V from '//trim(infile))
 
         status = nf90_close(ncid)
-        call ncerror(status, 'closing file')
+        call ncerror(status,'closing '//trim(infile))
 
         press = p + pb
 

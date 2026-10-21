@@ -153,14 +153,14 @@ do year = yeari, yearf,1
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
-        call ncerror(status,'opening file')
+        call ncerror(status,'opening '//trim(infile))
 
         call read_field(ub_v1, ub_f1)
         if (len_trim(ub_v2) > 0) call read_field(ub_v2, ub_f2)
         if (len_trim(ub_v3) > 0) call read_field(ub_v3, ub_f3)
 
         status = nf90_close(ncid)
-        call ncerror(status,'closing file')
+        call ncerror(status,'closing '//trim(infile))
 
         ish = ish + 1
         issh = issh + 1
@@ -198,9 +198,9 @@ character(len=*), intent(in) :: vname
 real, dimension(:,:), intent(out) :: field
 !
 status=nf90_inq_varid(ncid,trim(vname),varid)
-call ncerror(status,'getting var id '//trim(vname))
+call ncerror(status,'getting var id '//trim(vname)//' in '//trim(infile))
 status=nf90_get_var(ncid,varid,field,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//trim(vname))
+call ncerror(status,'reading '//trim(vname)//' from '//trim(infile))
 !
 end subroutine read_field
 !

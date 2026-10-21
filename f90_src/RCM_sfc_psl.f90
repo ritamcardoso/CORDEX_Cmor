@@ -96,53 +96,53 @@ do year = yeari, yearf,1
         infile = trim(filename)
 
         status = nf90_open(infile, nf90_nowrite, ncid)
-        call ncerror(status,'opening file')
+        call ncerror(status,'opening '//trim(infile))
 
         ! Read wrf var
           status=nf90_inq_varid(ncid,'P',varid)
-          call ncerror(status,'getting var id')
+          call ncerror(status,'getting var id P in '//trim(infile))
 
           status=nf90_get_var(ncid,varid,p,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
-          call ncerror(status,'reading '//'P')
+          call ncerror(status,'reading P from '//trim(infile))
 
           status=nf90_inq_varid(ncid,'PB',varid)
-          call ncerror(status,'getting var id')
+          call ncerror(status,'getting var id PB in '//trim(infile))
 
           status=nf90_get_var(ncid,varid,pb,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
-          call ncerror(status,'reading '//'PB')
+          call ncerror(status,'reading PB from '//trim(infile))
 !
           pres_s(:,:)=p(:,:,1)+pb(:,:,1)
 !
           status=nf90_inq_varid(ncid,'PH',varid)
-          call ncerror(status,'getting var id')
+          call ncerror(status,'getting var id PH in '//trim(infile))
 
           status=nf90_get_var(ncid,varid,p,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
-          call ncerror(status,'reading '//'PH')
+          call ncerror(status,'reading PH from '//trim(infile))
 
           status=nf90_inq_varid(ncid,'PHB',varid)
-          call ncerror(status,'getting var id')
+          call ncerror(status,'getting var id PHB in '//trim(infile))
 
           status=nf90_get_var(ncid,varid,pb,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
-          call ncerror(status,'reading '//'PHB')
+          call ncerror(status,'reading PHB from '//trim(infile))
 !
           phi_s(:,:)=p(:,:,1)+pb(:,:,1)
 !
           status=nf90_inq_varid(ncid,'T',varid)
-          call ncerror(status,'getting var id')
+          call ncerror(status,'getting var id T in '//trim(infile))
 
           status=nf90_get_var(ncid,varid,t,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
-          call ncerror(status,'reading '//'T')
+          call ncerror(status,'reading T from '//trim(infile))
 !
           t_l(:,:)=(t(:,:,1)+300.)*(pres_s(:,:)/pconst)**rcp
 !
         status=nf90_inq_varid(ncid,wrfvar,varid)
-        call ncerror(status,'getting var id')
+        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
 !
         status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading '//wrfvar)
+        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 !
         status=nf90_close(ncid)
-        call ncerror(status,'closing file')
+        call ncerror(status,'closing '//trim(infile))
 !
 ! Compute variable
 !
