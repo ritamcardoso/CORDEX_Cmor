@@ -18,7 +18,8 @@ program read_wrfout
 !   tsblue     TSK            skin temperature                      water cells
 !   tasblue    T2             2 m temperature                       water cells
 !
-! Urban cells: FRC_URB2D > 0 in the geo_em file; water cells: LANDMASK = 0.
+! Urban cells: urban_cell (FRC_URB2D > 0 and LU_INDEX urban, MODIS or USGS table);
+! water cells: LANDMASK = 0.
 ! Other cells are missing (1.e20). Temperatures are rounded to 0.01 K, as tas.
 !
 ! Use external modules for variables and shared subroutines
@@ -27,7 +28,7 @@ use shared_subs
 use netcdf
 !implicit none
 
-real, dimension(:,:), allocatable :: ub_frc, ub_f1, ub_f2, ub_f3
+real, dimension(:,:), allocatable :: ub_f1, ub_f2, ub_f3
 logical, dimension(:,:), allocatable :: ub_keep
 character(len=20) :: ub_v1, ub_v2, ub_v3, ub_where
 logical :: ub_temp
@@ -62,21 +63,11 @@ select case (trim(vaid))
 end select
 write(*,*) trim(vaid), ' from ', trim(ub_v1), ' ', trim(ub_v2), ' ', trim(ub_v3), ', cells: ', trim(ub_where)
 
-! cells kept: urban (FRC_URB2D > 0, from the geo_em file), water (LANDMASK = 0) or all
-allocate(ub_keep(nlon,nlat), ub_frc(nlon,nlat))
+! cells kept: urban (urban_cell: FRC_URB2D > 0 and urban LU_INDEX), water (LANDMASK = 0) or all
+allocate(ub_keep(nlon,nlat))
 select case (trim(ub_where))
   case ('urban')
-    gfile = trim(dir_in)//trim(geog)//'.nc'
-    geofile = gfile(1:len_trim(gfile))
-    status = nf90_open(geofile, nf90_nowrite, ncid)
-    call ncerror(status, 'opening ' // trim(geofile))
-    status = nf90_inq_varid(ncid, 'FRC_URB2D', varid)
-    call ncerror(status, 'getting var id FRC_URB2D (urban fraction) in '//trim(geofile))
-    status = nf90_get_var(ncid, varid, ub_frc, (/xoffset,yoffset/), (/nlon,nlat/), (/1,1/))
-    call ncerror(status, 'reading FRC_URB2D')
-    status = nf90_close(ncid)
-    call ncerror(status, 'closing file')
-    ub_keep = ub_frc > 0.
+    ub_keep = urban_cell(urb_frac, luindex)      ! same urban cells as RCM_sfc_urban
   case ('water')
     ub_keep = landmask < 0.5
   case default
