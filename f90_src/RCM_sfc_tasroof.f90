@@ -42,7 +42,6 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(outvar_a(nlon, nlat))
 allocate(wrfv2D(nlon, nlat))
 
 it = 0
@@ -108,16 +107,18 @@ do year = yeari, yearf,1
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        outvar_a(:,:)=nint(100.d0*wrfv2D(:,:))
+        ! urban cells only: urban fraction > 0 and dominant category urban
+        ! (13 = MODIS urban, 51-61 = LCZ urban classes); rounded to 0.01 K
         do ix=1,nlon
-          do iy=1,nlat 
-            if(urb_frac(ix,iy) > 0. .and. nint(luindex(ix,iy)) == 13) then
-              outvar_h(ix,iy,issh)=float(outvar_a(ix,iy))/100.d0
+          do iy=1,nlat
+            if (urb_frac(ix,iy) > 0. .and. (nint(luindex(ix,iy)) == 13 .or. &
+                nint(luindex(ix,iy)) >= 51)) then
+              outvar_h(ix,iy,issh) = float(nint(100.d0*wrfv2D(ix,iy)))/100.
             else
-              outvar_h(ix,iy,:)=huge_val
+              outvar_h(ix,iy,issh) = huge_val
             endif
           enddo
-          enddo  
+        enddo
       enddo loop_h    ! end hour
 !
       ihour=0

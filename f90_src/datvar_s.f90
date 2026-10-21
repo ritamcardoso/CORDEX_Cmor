@@ -85,7 +85,7 @@ integer, dimension(:,:), allocatable :: bdtime, outvar_a
 
 ! Real Scalars 
 real :: tc, slope
-real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, slope, gam, ET0
+real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, es_kPa, gam, ET0   ! RCM_sfc_evspsblpot (slope above)
 
 ! Real 1D Allocatable Arrays
 real, dimension(:), allocatable :: ttime, ttime3, ttime6, ttimed, ttimem, ttimes
@@ -127,7 +127,7 @@ character(len=5) :: zone
 character(len=8) :: date
 character(len=10) :: times
 
-character(len=10)  :: vaid, varname, vunts, vunits
+character(len=20)  :: vaid, varname, vunts, vunits
 character(len=25)  :: wrfile, wrffile, geo, geog, wrfvar, wrfvarname, subrname, subname, fname, iwrfvar
 character(len=100) :: longname, standardname, cellmethods, timeunits, frequency, experiment, dexperiment, creationdate
 character(len=100) :: lname, stname, cmethods, tunts, freq, exper, dexper, cdate, experiment_id, experi
