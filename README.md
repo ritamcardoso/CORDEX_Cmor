@@ -401,9 +401,10 @@ program for yet.
 [FPS-URB-RCC data request](https://github.com/impetus4change/T32-CPRCM/blob/main/data-request-fpsurbrcc.csv)
 come from the BEP+BEM output of WRF (`sf_urban_physics = 3`). `RCM_sfc_urban.f90`
 writes the urban temperatures `tasroof`, `taspav`, `tasgree`, `tascan`, `tsroof`,
-`tspav` and `tsgree` (the WRF field is `wrfvar` of the header); `RCM_sfc_urb.f90`
-writes `husscan`, `hurscan` and `sfcWindcan`, `tasblue` and `tsblue` over water
-cells (`LANDMASK = 0`), and `tsskin` everywhere. Urban cells are those where WRF
+`tspav` and `tsgree` (the WRF field is `wrfvar` of the header);
+`RCM_sfc_hurscan.f90`, `RCM_sfc_husscan.f90` and `RCM_sfc_sfcWindcan.f90` the
+canyon humidities and wind; `RCM_sfc_urb.f90` writes `tasblue` and `tsblue` over
+water cells (`LANDMASK = 0`), and `tsskin` everywhere. Urban cells are those where WRF
 runs the urban scheme (`urban_cell` in `shared_subs_v2.f90`): `FRC_URB2D > 0` and
 `LU_INDEX` an urban category of the land-use table of the geo_em file (`MMINLU`):
 13 or the LCZ classes 51–61 for MODIS, 1 or 31–41 for USGS. All are

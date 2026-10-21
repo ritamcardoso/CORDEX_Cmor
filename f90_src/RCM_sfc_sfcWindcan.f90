@@ -1,12 +1,11 @@
 program read_wrfout
 !
-! RCM_sfc_urban — urban temperatures (1hr, instantaneous), from the urban scheme
-! output of WRF: the WRF field is wrfvar of the header (e.g. tasroof T2R_URB2D,
-! taspav T2G_URB2D, tasgree T2VEG_URB2D, tascan TCAN_URB2D, tsroof TROOF_URB2D,
-! tspav TGROUND_URB2D, tsgree TSK_RURAL). Kept only at urban cells (urban_cell in
-! shared_subs_v2.f90: FRC_URB2D > 0 and LU_INDEX an urban category of the MODIS or
-! USGS table of the geo_em file, LCZ classes included); missing elsewhere.
-! Rounded to 0.01 K.
+! RCM_sfc_sfcWindcan — near-surface wind speed within the canyon (sfcWindcan, 1hr,
+! instantaneous, m s-1) from the urban scheme (UCAN_URB2D, wrfvar of the header).
+! Kept only at urban cells (urban_cell in shared_subs_v2.f90: FRC_URB2D > 0 and
+! LU_INDEX an urban category of the MODIS or USGS table of the geo_em file, LCZ
+! classes included); missing elsewhere.
+! Rounded to 0.01 m s-1.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
@@ -121,7 +120,7 @@ do year = yeari, yearf,1
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        ! urban cells only (ub_keep); rounded to 0.01 K
+        ! urban cells only (ub_keep); rounded to 0.01 m s-1
         where (ub_keep)
           outvar_h(:,:,issh) = real(nint(100.d0*wrfv2D, 8))/100.
         elsewhere

@@ -1,12 +1,11 @@
 program read_wrfout
 !
-! RCM_sfc_urban — urban temperatures (1hr, instantaneous), from the urban scheme
-! output of WRF: the WRF field is wrfvar of the header (e.g. tasroof T2R_URB2D,
-! taspav T2G_URB2D, tasgree T2VEG_URB2D, tascan TCAN_URB2D, tsroof TROOF_URB2D,
-! tspav TGROUND_URB2D, tsgree TSK_RURAL). Kept only at urban cells (urban_cell in
-! shared_subs_v2.f90: FRC_URB2D > 0 and LU_INDEX an urban category of the MODIS or
-! USGS table of the geo_em file, LCZ classes included); missing elsewhere.
-! Rounded to 0.01 K.
+! RCM_sfc_husscan — near-surface specific humidity within the canyon (husscan, 1hr,
+! instantaneous, kg kg-1) from the canyon mixing ratio of the urban scheme
+! (QCAN_URB2D, wrfvar of the header): q = r / (1 + r).
+! Kept only at urban cells (urban_cell in shared_subs_v2.f90: FRC_URB2D > 0 and
+! LU_INDEX an urban category of the MODIS or USGS table of the geo_em file, LCZ
+! classes included); missing elsewhere.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
@@ -57,6 +56,7 @@ if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
 allocate(wrfv2D(nlon, nlat))
+allocate(outvar(nlon, nlat))
 
 it = 0
 do year = yeari, yearf,1
@@ -150,7 +150,7 @@ subroutine calc_q
 !
 do i=1,nlon
   do j=1,nlat
-! urban cells only (ub_keep); rounded to 0.01 K
+! urban cells only (ub_keep)
     if (.not. ub_keep(i,j)) then
       outvar(i,j)=huge_val
       cycle
