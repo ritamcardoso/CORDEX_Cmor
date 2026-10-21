@@ -16,8 +16,6 @@ program read_wrfout
 !   D    slope of the saturation vapour pressure curve: 4098 es / (T + 237.3)^2 (eq. 13)
 !   gam  psychrometric constant: 0.665e-3 p (kPa degC-1) (eq. 8), with the model surface pressure p (PSFC)
 !
-! The instantaneous fields are averaged over each hour (start and end of the hour),
-! as for the other hourly means; the value is written at hh:30 with bounds hh:00-hh+1:00.
 ! ET0 (mm h-1 = kg m-2 h-1) / 3600 -> kg m-2 s-1. Sea points (LANDMASK = 0) are missing
 ! ("area: mean where land"). Negative values (condensation, mostly at night) are kept.
 !
@@ -26,16 +24,6 @@ use datvar_s
 use shared_subs
 use netcdf
 !implicit none
-
-! Fields of the previous and the current hour
-real, dimension(:,:), allocatable :: pe_t, pe_q, pe_p, pe_w, pe_tp, pe_qp, pe_pp, pe_wp
-real(kind=8), dimension(:,:), allocatable :: pe_rn, pe_rnp
-real, dimension(:,:), allocatable :: pe_u, pe_v
-real :: pe_tc, pe_qm, pe_pk, pe_u2, pe_rnmj, pe_g, pe_es, pe_ea, pe_dl, pe_gm, pe_et
-character(len=8), dimension(4), parameter :: pe_rad = ['ACSWDNB ', 'ACSWUPB ', 'ACLWDNB ', 'ACLWUPB ']
-real, dimension(4), parameter :: pe_sign = [1., -1., 1., -1.]
-integer :: ir
-
 
 ! --- Read configuration using shared_subs subroutine
 
@@ -74,9 +62,9 @@ if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
 allocate(wrfv2D(nlon,nlat), i_wrfv2D(nlon,nlat))
-allocate(pe_t(nlon,nlat), pe_q(nlon,nlat), pe_p(nlon,nlat), pe_w(nlon,nlat))
-allocate(pe_tp(nlon,nlat), pe_qp(nlon,nlat), pe_pp(nlon,nlat), pe_wp(nlon,nlat))
-allocate(pe_rn(nlon,nlat), pe_rnp(nlon,nlat), pe_u(nlon,nlat), pe_v(nlon,nlat))
+allocate(t2(nlon,nlat), q2(nlon,nlat), psf(nlon,nlat), wind10(nlon,nlat))
+allocate(t2_i(nlon,nlat), q2_i(nlon,nlat), psf_i(nlon,nlat), wind10_i(nlon,nlat))
+allocate(Rn(nlon,nlat), Rn_i(nlon,nlat), u_s(nlon,nlat), v_s(nlon,nlat))
 
 it = 0
 yearf=yeari+1
@@ -141,19 +129,19 @@ do year = yeari, yearf,1
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening file')
 !
-        call read_field('T2', pe_t)
-        call read_field('Q2', pe_q)
-        call read_field('PSFC', pe_p)
-        call read_field('U10', pe_u)
-        call read_field('V10', pe_v)
-        pe_w = sqrt(pe_u**2 + pe_v**2)
+        call read_var('T2', t2)
+        call read_var('Q2', q2)
+        call read_var('PSFC', psf)
+        call read_var('U10', u_s)
+        call read_var('V10', v_s)
+        wind10 = sqrt(u_s**2 + v_s**2)
 !
         ! accumulated net radiation (J m-2): SW down - SW up + LW down - LW up, with the buckets
-        pe_rn = 0.d0
+        Rn = 0.d0
         do ir = 1, 4
-          call read_field(trim(pe_rad(ir)), wrfv2D)
-          call read_field('I_'//trim(pe_rad(ir)), i_wrfv2D)
-          pe_rn = pe_rn + pe_sign(ir) * (real(wrfv2D, 8) + real(i_wrfv2D, 8) * 1.d9)
+          call read_var(trim(rad_Jm(ir)), wrfv2D)
+          call read_var('I_'//trim(rad_Jm(ir)), i_wrfv2D)
+          Rn = Rn + rad_sign(ir) * (real(wrfv2D, 8) + real(i_wrfv2D, 8) * 1.d9)
         enddo
 !
         status=nf90_close(ncid)
@@ -191,7 +179,7 @@ do year = yeari, yearf,1
 
 enddo
 !
-!  Write annual output using shared subroutine
+!  Write annual output
 !
 call write_output
 !
@@ -199,7 +187,7 @@ contains
 !
 !----------------------------------------------------------------------------------------------------
 !
-subroutine read_field(vname, field)
+subroutine read_var(vname, field)
 ! one 2-D field of the open wrfout file (ncid), cut to the output grid
 character(len=*), intent(in) :: vname
 real, dimension(:,:), intent(out) :: field
@@ -209,41 +197,40 @@ call ncerror(status,'getting var id '//vname)
 status=nf90_get_var(ncid,varid,field,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
 call ncerror(status,'reading '//vname)
 !
-end subroutine read_field
+end subroutine read_var
 !
 !----------------------------------------------------------------------------------------------------
 !
 subroutine keep_previous
 ! fields at the start of the next hour
-pe_tp = pe_t; pe_qp = pe_q; pe_pp = pe_p; pe_wp = pe_w; pe_rnp = pe_rn
+t2_i = t2; q2_i = q2; psf_i = psf; wind10_i = wind10; Rn_i = Rn
 end subroutine keep_previous
 !
 !----------------------------------------------------------------------------------------------------
 !
 subroutine calc_evspsblpot
-! FAO-56 Penman-Monteith, hourly (see the header of this file), for hour issh
 !
 do ix=1,nlon
   do iy=1,nlat
     if (landmask(ix,iy) > 0.) then
-      pe_tc   = 0.5 * (pe_t(ix,iy) + pe_tp(ix,iy)) - 273.15               ! degC
-      pe_qm   = 0.5 * (pe_q(ix,iy) + pe_qp(ix,iy))                        ! kg kg-1
-      pe_pk   = 0.5 * (pe_p(ix,iy) + pe_pp(ix,iy)) / 1000.                ! kPa
-      pe_u2   = 0.748 * 0.5 * (pe_w(ix,iy) + pe_wp(ix,iy))                ! m s-1 at 2 m
-      pe_rnmj = real((pe_rn(ix,iy) - pe_rnp(ix,iy)) * 1.d-6)              ! MJ m-2 h-1
-      if (pe_rnmj > 0.) then
-        pe_g = 0.1 * pe_rnmj
+      t2_C   = 0.5 * (t2(ix,iy) + t2_i(ix,iy)) - 273.15                        ! degC
+      q2_m   = 0.5 * (q2(ix,iy) + q2_i(ix,iy))                                 ! kg kg-1
+      psf_kPa = 0.5 * (psf(ix,iy) + psf_i(ix,iy)) / 1000.                      ! kPa
+      wind2   = 0.748 * 0.5 * (wind10(ix,iy) + wind10_i(ix,iy))                ! m s-1 at 2 m
+      Rn_MJ   = real((Rn(ix,iy) - Rn_i(ix,iy)) * 1.d-6)                        ! MJ m-2 h-1
+      if (Rn_MJ > 0.) then
+        ghf = 0.1 * Rn_MJ
       else
-        pe_g = 0.5 * pe_rnmj
+        ghf = 0.5 * Rn_MJ
       endif
-      pe_es = 0.6108 * exp(17.27 * pe_tc / (pe_tc + 237.3))               ! kPa
-      pe_ea = pe_qm * pe_pk / (0.622 + 0.378 * pe_qm)                     ! kPa
-      pe_dl = 4098. * pe_es / (pe_tc + 237.3)**2                          ! kPa degC-1
-      pe_gm = 0.665e-3 * pe_pk                                            ! kPa degC-1
-      pe_et = (0.408 * pe_dl * (pe_rnmj - pe_g) &
-               + pe_gm * (37. / (pe_tc + 273.)) * pe_u2 * (pe_es - pe_ea)) &
-              / (pe_dl + pe_gm * (1. + 0.34 * pe_u2))                     ! mm h-1
-      outvar_h(ix,iy,issh) = pe_et / 3600.                                ! kg m-2 s-1
+      esat = 0.6108 * exp(17.27 * t2_C / (t2_C + 237.3))                       ! kPa
+      vpres = q2_m * psf_kPa / (0.622 + 0.378 * q2_m)                          ! kPa
+      slope = 4098. * esat / (t2_C + 237.3)**2                                 ! kPa degC-1
+      gam = 0.665e-3 * psf_kPa                                                 ! kPa degC-1
+      ET0 = (0.408 * slope * (Rn_MJ - ghf) &
+               + gam * (37. / (t2_C + 273.)) * wind2 * (esat - vpres)) &
+              / (slope + gam * (1. + 0.34 * wind2))                            ! mm h-1
+      outvar_h(ix,iy,issh) = ET0 / 3600.                                       ! kg m-2 s-1
     else
       outvar_h(ix,iy,issh) = 1.e+20
     endif
