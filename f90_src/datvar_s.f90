@@ -119,7 +119,7 @@ character(len=5) :: zone
 character(len=8) :: date
 character(len=10) :: times
 
-character(len=10)  :: vaid, varname, vunts, vunits
+character(len=20)  :: vaid, varname, vunts, vunits
 character(len=25)  :: wrfile, wrffile, geo, geog, wrfvar, wrfvarname, subrname, subname, fname, iwrfvar
 character(len=100) :: longname, standardname, cellmethods, timeunits, frequency, experiment, dexperiment, creationdate
 character(len=100) :: lname, stname, cmethods, tunts, freq, exper, dexper, cdate, experiment_id, experi

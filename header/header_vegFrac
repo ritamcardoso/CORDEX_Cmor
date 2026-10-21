@@ -1,0 +1,8 @@
+wrfvar = 'FVEG'
+vaid = 'vegFrac'
+vunts = '%'
+lname = 'Total Vegetated Percentage Cover'
+stname = 'area_fraction'
+cmethods = 'area: mean where land time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

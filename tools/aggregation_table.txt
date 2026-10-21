@@ -407,3 +407,18 @@ tspav|tspav|mean|area: time: mean|Surface temperature pavements|mean|area: time:
 tsroof|tsroof|mean|area: time: mean|Surface temperature roof|mean|area: time: mean|Surface temperature roof
 tsgree|tsgree|mean|area: time: mean|Surface temperature green spaces|mean|area: time: mean|Surface temperature green spaces
 tsblue|tsblue|mean|area: time: mean|Surface temperature blue spaces|mean|area: time: mean|Surface temperature blue spaces
+# Noah-MP land-surface variables (lsm varset; LUCAS)
+evspsblsoi|evspsblsoi|mean|area: mean where land time: mean|Water Evaporation from Soil|mean|area: mean where land time: mean|Water Evaporation from Soil
+evspsblveg|evspsblveg|mean|area: mean where land time: mean|Evaporation from Canopy|mean|area: mean where land time: mean|Evaporation from Canopy
+tran|tran|mean|area: mean where land time: mean|Transpiration|mean|area: mean where land time: mean|Transpiration
+lai|lai|mean|area: mean where land time: mean|Leaf Area Index|mean|area: mean where land time: mean|Leaf Area Index
+vegFrac|vegFrac|mean|area: mean where land time: mean|Total Vegetated Percentage Cover|mean|area: mean where land time: mean|Total Vegetated Percentage Cover
+alb|alb|mean|area: time: mean|Albedo|mean|area: time: mean|Albedo
+# Land-cover fractions (landuse varset; LUCAS, hourly instantaneous)
+treeFrac|treeFrac|mean|area: mean time: mean|Tree Cover Percentage|mean|area: mean time: mean|Tree Cover Percentage
+shrubFrac|shrubFrac|mean|area: mean time: mean|Percentage Cover by Shrub|mean|area: mean time: mean|Percentage Cover by Shrub
+grassFrac|grassFrac|mean|area: mean time: mean|Natural Grass Area Percentage|mean|area: mean time: mean|Natural Grass Area Percentage
+cropFrac|cropFrac|mean|area: mean time: mean|Percentage Crop Cover|mean|area: mean time: mean|Percentage Crop Cover
+baresoilFrac|baresoilFrac|mean|area: mean time: mean|Bare Soil Percentage Area Coverage|mean|area: mean time: mean|Bare Soil Percentage Area Coverage
+urbanFrac|urbanFrac|mean|area: mean time: mean|Percentage of the Grid Cell Occupied by Urban Area|mean|area: mean time: mean|Percentage of the Grid Cell Occupied by Urban Area
+cnc|cnc|mean|area: mean time: mean|Canopy Covered Area Percentage|mean|area: mean time: mean|Canopy Covered Area Percentage

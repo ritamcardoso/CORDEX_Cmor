@@ -436,6 +436,42 @@ end subroutine lambert_xy
 !
 !-----------------------------------------------------------------------
 !
+subroutine def_area_type(ncid, TypeVarID)
+! scalar coordinate "type" (standard_name area_type) of the header's area_type, if set
+use netcdf
+integer, intent(in) :: ncid
+integer, intent(out) :: TypeVarID
+integer :: TypeDimID, status
+TypeVarID = -1
+if (len_trim(area_type) == 0) return
+status = nf90_def_dim(ncid, "strlen", len_trim(area_type), TypeDimID)
+status = nf90_def_var(ncid, "type", nf90_char, (/ TypeDimID /), TypeVarID)
+status = nf90_put_att(ncid, TypeVarID, "standard_name", "area_type")
+select case (trim(area_type))
+case ('lake_and_inland_sea')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Lake and Inland Sea area type")
+case ('urban')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Urban area type")
+case ('tree')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Tree area type")
+case ('shrubs')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Shrub area type")
+case ('natural_grasses')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Natural grass area type")
+case ('crops')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Crop area type")
+case ('bare_ground')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Bare ground area type")
+case ('vegetation')
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "Vegetation area type")
+case default
+    status = nf90_put_att(ncid, TypeVarID, "long_name", "area type")
+end select
+call handle_err(status)
+end subroutine def_area_type
+!
+!-----------------------------------------------------------------------
+!
 subroutine write_netcdf_2D(uvar)
 use netcdf
 use datvar_s
@@ -452,21 +488,8 @@ call def_horizontal_dims(ncid, LonDimID, LatDimID, BDimID, VDimID)
 
 call def_horizontal_vars(ncid, LonDimID, LatDimID, BDimID, VDimID, LonVarID, LatVarID, rlonVarID, rlatVarID, rpVarID)
 
-! sftlaf/sfturf: scalar coordinate "type" (area_type from the header)
-if (len_trim(area_type) > 0) then
-    status = nf90_def_dim(ncid, "strlen", len_trim(area_type), TypeDimID)
-    status = nf90_def_var(ncid, "type", nf90_char, (/ TypeDimID /), TypeVarID)
-    status = nf90_put_att(ncid, TypeVarID, "standard_name", "area_type")
-    select case (trim(area_type))
-    case ('lake_and_inland_sea')
-        status = nf90_put_att(ncid, TypeVarID, "long_name", "Lake and Inland Sea area type")
-    case ('urban')
-        status = nf90_put_att(ncid, TypeVarID, "long_name", "Urban area type")
-    case default
-        status = nf90_put_att(ncid, TypeVarID, "long_name", "area type")
-    end select
-    call handle_err(status)
-end if
+! sftlaf/sfturf/land-cover fractions: scalar coordinate "type" (area_type from the header)
+call def_area_type(ncid, TypeVarID)
 
 status = nf90_def_var(ncid, varname, nf90_float, &
                             (/ LonDimId, LatDimID /), uVarId)
@@ -480,7 +503,7 @@ call handle_err(status)
 status = nf90_def_var_deflate(ncid, uVarId, shuffle = 1, deflate = 1, deflate_level = 1)
 call handle_err(status)                 
 
-status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
+if (len_trim(standardname) > 0) status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
 status = nf90_put_att(ncid, uVarID, "long_name",longname)
 status = nf90_put_att(ncid, uVarID, "units",vunits)
 if (trim(vunits) == 'K') status = nf90_put_att(ncid, uVarID, "units_metadata","temperature: on_scale")
@@ -523,7 +546,7 @@ use datvar_s
 !
 integer :: LatDimID,LonDimID,BDimID,HDimID,VDimID
 integer :: LonVarID,LatVarID,TBVarID,TVarID,rlatVarId,rlonVarID,uVarID,rpVarID
-integer :: HVarID
+integer :: HVarID, TypeVarID
 integer :: mtime
 integer, dimension(2,mtime) :: btime
 real, dimension(mtime) :: utime
@@ -551,6 +574,7 @@ status = nf90_def_var(ncid, "time", nf90_double, (/ HDimID /), TVarId)
 if (.not. point) status = nf90_def_var(ncid, "time_bnds", nf90_double, (/ BDimID, HDimID /), TBVarId)
 
 call def_horizontal_vars(ncid, LonDimID, LatDimID, BDimID, VDimID, LonVarID, LatVarID, rlonVarID, rlatVarID, rpVarID)
+call def_area_type(ncid, TypeVarID)     ! hourly land-cover fractions (RCM_sfc_landuse)
 
 ! Check for optional Z coordinate conditions
 if (height(1) > 0.0) then
@@ -589,6 +613,8 @@ if (height(1) > 0.0) then
     status = nf90_put_att(ncid, uVarID, "coordinates","lat lon time height")
 elseif (pressure(1) > 0.0) then
     status = nf90_put_att(ncid, uVarID, "coordinates","lat lon time plev")
+elseif (len_trim(area_type) > 0) then
+    status = nf90_put_att(ncid, uVarID, "coordinates","lat lon time type")
 else
     status = nf90_put_att(ncid, uVarID, "coordinates","lat lon time")
 end if
@@ -626,6 +652,10 @@ if (.not. point) then
 end if
 call put_horizontal_vars(ncid, LonVarID, LatVarID, rlonVarID, rlatVarID)
 call handle_err(status)
+if (len_trim(area_type) > 0) then
+    status = nf90_put_var(ncid, TypeVarID, trim(area_type))
+    call handle_err(status)
+end if
 
 ! Write the values to the variable array if initialized
 if (height(1) > 0.0) then
@@ -950,6 +980,140 @@ subroutine new_tracking_id(tid)
     end if
     tid = 'hdl:21.14103/'//uuid
 end subroutine new_tracking_id
+!
+!-------------------------------------------------------------------------------------
+!
+subroutine landuse_field(fname, lu_out)
+! Land-cover fraction (% of the grid cell) or dominant category of the variable vaid,
+! from LANDUSEF / LU_INDEX of the wrfout file fname (RCM_fx_landuse, RCM_sfc_landuse):
+!   treeFrac, shrubFrac, grassFrac, cropFrac, baresoilFrac, urbanFrac: 100 * sum over
+!   the categories k of w(k) LANDUSEF(k), with the weight tables below (edit them to
+!   change the grouping; a mosaic class may be split); cnc: tree+shrub+grass+crop;
+!   luindex: LU_INDEX. Water, snow/ice and ungrouped wetland count in none of them.
+! The table follows the MMINLU attribute of the file: MODIFIED_IGBP_MODIS_NOAH
+! (LCZ urban classes 51-61) or USGS (LCZ 31-41). No sea mask.
+use netcdf
+character(len=*), intent(in) :: fname
+real, dimension(nlon,nlat), intent(out) :: lu_out
+integer, parameter :: lu_max = 61
+real, dimension(:,:), allocatable :: lu_f
+real, dimension(lu_max) :: lu_w
+real, dimension(24) :: g
+integer :: lu_ncat, lu_dimid, k, lu_ncid, lu_varid, lu_st, lcz1
+character(len=80) :: lu_scheme
+logical :: lu_modis
+logical, save :: lu_told = .false.
+!
+! weights per category, MODIFIED_IGBP_MODIS_NOAH:
+!  1 evergreen needleleaf  2 evergreen broadleaf  3 deciduous needleleaf  4 deciduous broadleaf
+!  5 mixed forest  6 closed shrubland  7 open shrubland  8 woody savanna  9 savanna  10 grassland
+! 11 permanent wetland  12 cropland  13 urban  14 cropland/natural vegetation mosaic  15 snow and ice
+! 16 barren  17 water  18 wooded tundra  19 mixed tundra  20 barren tundra  21 lakes  51-61 LCZ (urban)
+integer, dimension(21), parameter :: &
+  md_tree  = [1,1,1,1,1, 0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
+  md_shrub = [0,0,0,0,0, 1,1,0,0,0, 0,0,0,0,0, 0,0,1,0,0, 0], &
+  md_grass = [0,0,0,0,0, 0,0,0,1,1, 1,0,0,0,0, 0,0,0,1,0, 0], &
+  md_crop  = [0,0,0,0,0, 0,0,0,0,0, 0,1,0,1,0, 0,0,0,0,0, 0], &
+  md_bare  = [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 1,0,0,0,1, 0], &
+  md_urban = [0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,0,0, 0]
+!
+! weights per category, USGS:
+!  1 urban  2 dryland crop  3 irrigated crop  4 mixed dry/irrigated crop  5 crop/grassland mosaic
+!  6 crop/woodland mosaic  7 grassland  8 shrubland  9 mixed shrub/grassland  10 savanna
+! 11-14 forests  15 mixed forest  16 water  17 herbaceous wetland  18 wooded wetland  19 barren
+! 20 herbaceous tundra  21 wooded tundra  22 mixed tundra  23 bare ground tundra  24 snow or ice
+! 31-41 LCZ (urban)
+real, dimension(24), parameter :: &
+  us_tree  = [0.,0.,0.,0.,0., .5,0.,0.,0.,0., 1.,1.,1.,1.,1., 0.,0.,1.,0.,0., 0.,0.,0.,0.], &
+  us_shrub = [0.,0.,0.,0.,0., 0.,0.,1.,.5,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 1.,1.,0.,0.], &
+  us_grass = [0.,0.,0.,0.,.5, 0.,1.,0.,.5,1., 0.,0.,0.,0.,0., 0.,1.,0.,0.,1., 0.,0.,0.,0.], &
+  us_crop  = [0.,1.,1.,1.,.5, .5,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
+  us_bare  = [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,1.,0., 0.,0.,1.,0.], &
+  us_urban = [1.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.]
+!
+lu_st = nf90_open(trim(fname), nf90_nowrite, lu_ncid)
+call ncerror(lu_st,'opening '//trim(fname))
+!
+if (trim(vaid) == 'luindex') then
+  lu_st=nf90_inq_varid(lu_ncid,'LU_INDEX',lu_varid)
+  call ncerror(lu_st,'getting var id LU_INDEX')
+  lu_st=nf90_get_var(lu_ncid,lu_varid,lu_out,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
+  call ncerror(lu_st,'reading LU_INDEX')
+  lu_out = real(nint(lu_out))
+else
+  lu_scheme = ''
+  lu_st = nf90_get_att(lu_ncid, nf90_global, 'MMINLU', lu_scheme)
+  lu_modis = (index(lu_scheme, 'USGS') == 0)
+  if (lu_st /= nf90_noerr) lu_scheme = 'MODIFIED_IGBP_MODIS_NOAH (no MMINLU attribute: assumed)'
+!
+  lu_st=nf90_inq_varid(lu_ncid,'LANDUSEF',lu_varid)
+  call ncerror(lu_st,'getting var id LANDUSEF')
+  lu_st=nf90_inq_dimid(lu_ncid,'land_cat_stag',lu_dimid)
+  if (lu_st /= nf90_noerr) lu_st=nf90_inq_dimid(lu_ncid,'land_cat',lu_dimid)
+  call ncerror(lu_st,'getting the land_cat dimension')
+  lu_st=nf90_inquire_dimension(lu_ncid,lu_dimid,len=lu_ncat)
+  call ncerror(lu_st,'reading the land_cat dimension')
+!
+! weights lu_w(k) of the category k for the group of vaid
+  lu_w = 0.
+  g = 0.
+  if (lu_modis) then
+    lcz1 = 51
+    select case (trim(vaid))
+      case ('treeFrac');     g(1:21) = md_tree
+      case ('shrubFrac');    g(1:21) = md_shrub
+      case ('grassFrac');    g(1:21) = md_grass
+      case ('cropFrac');     g(1:21) = md_crop
+      case ('baresoilFrac'); g(1:21) = md_bare
+      case ('urbanFrac');    g(1:21) = md_urban
+      case ('cnc');          g(1:21) = md_tree + md_shrub + md_grass + md_crop
+      case default
+        print *, 'ERROR: landuse_field does not know the variable ', trim(vaid)
+        stop 95
+    end select
+    lu_w(1:21) = g(1:21)
+  else
+    lcz1 = 31
+    select case (trim(vaid))
+      case ('treeFrac');     g = us_tree
+      case ('shrubFrac');    g = us_shrub
+      case ('grassFrac');    g = us_grass
+      case ('cropFrac');     g = us_crop
+      case ('baresoilFrac'); g = us_bare
+      case ('urbanFrac');    g = us_urban
+      case ('cnc');          g = us_tree + us_shrub + us_grass + us_crop
+      case default
+        print *, 'ERROR: landuse_field does not know the variable ', trim(vaid)
+        stop 95
+    end select
+    lu_w(1:24) = g
+  endif
+  ! LCZ urban classes (11 of them), when the file has them
+  if (trim(vaid) == 'urbanFrac') lu_w(lcz1:lcz1+10) = 1.
+!
+  allocate(lu_f(nlon,nlat))
+  lu_out = 0.
+  do k = 1, min(lu_ncat, lu_max)
+    if (lu_w(k) > 0.) then
+      ! only the categories of this group are read (one 2-D slice each)
+      lu_st=nf90_get_var(lu_ncid,lu_varid,lu_f,(/xoffset,yoffset,k,1/),(/nlon,nlat,1,1/),(/1,1,1,1/))
+      call ncerror(lu_st,'reading LANDUSEF')
+      lu_out = lu_out + lu_w(k) * lu_f
+    endif
+  enddo
+  lu_out = 100. * lu_out
+  where (lu_out > 100.) lu_out = 100.
+  where (lu_out < 1.e-4) lu_out = 0.
+  lu_out = real(nint(1.d4 * lu_out, 8)) / 1.e4
+  deallocate(lu_f)
+  if (.not. lu_told) write(*,*) trim(vaid), ' from LANDUSEF, land-use table ', trim(lu_scheme)
+  lu_told = .true.
+endif
+!
+lu_st = nf90_close(lu_ncid)
+call ncerror(lu_st,'closing '//trim(fname))
+!
+end subroutine landuse_field
 !
 !-------------------------------------------------------------------------------------
 !

@@ -31,7 +31,7 @@ declare -A VARSETS=(
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
-  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif"
+  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,luindex"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
   [teste]="RCM_sfc_rad:rsds"
   # Manual runs only (not in any stream)
@@ -46,6 +46,12 @@ declare -A VARSETS=(
   # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
   # run with ./run.sh fpsurb <first year> <last year> urban
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tasblue,tascan,hurscan,husscan,sfcWindcan,tsskin,tspav,tsroof,tsgree,tsblue"
+  # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
+  # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
+  [lsm]="RCM_sfc_lsmflx:evspsblsoi,evspsblveg,tran;RCM_sfc_lsm:lai,vegFrac,alb"
+  # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
+  # run with ./run.sh lucas <first year> <last year> landuse
+  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,luindex"
 )
 
 #
@@ -95,6 +101,8 @@ declare -A TIME=(
   [zlev_va0]="19:00:00"
   [zlev_va1]="19:00:00"
   [urban]="14:00:00"
+  [lsm]="08:00:00"
+  [landuse]="10:00:00"
 )
 
 #
@@ -143,6 +151,8 @@ declare -A ADVANCE_YEAR=(
   [out2]=1
   [testex]=1       [teste]=1
   [urban]=1
+  [lsm]=1
+  [landuse]=1
 )
 
 #
@@ -164,6 +174,8 @@ declare -A NEXT=(
 #  [testex]="testex"
   [teste]="teste"
   [urban]="urban"
+  [lsm]="lsm"
+  [landuse]="landuse"
 )
 
 #

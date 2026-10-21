@@ -1,0 +1,9 @@
+wrfvar = 'LANDUSEF'     ! RCM_fx_landuse: categories grouped by the tables in the program
+vaid = 'grassFrac'
+vunts = '%'
+lname = 'Natural Grass Area Percentage'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+area_type = 'natural_grasses'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

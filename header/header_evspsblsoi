@@ -1,0 +1,8 @@
+wrfvar = 'EDIR'         ! RCM_sfc_lsmflx: hourly mean of the rate EDIR (mm s-1)
+vaid = 'evspsblsoi'
+vunts = 'kg m-2 s-1'
+lname = 'Water Evaporation from Soil'
+stname = 'water_evaporation_flux_from_soil'
+cmethods = 'area: mean where land time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
