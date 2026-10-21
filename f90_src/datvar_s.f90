@@ -33,6 +33,9 @@ integer, dimension(nseason)            :: sedays2_var  ! Renamed slightly to avo
 character(len=3), dimension(nseason), parameter :: snames = ['Win','Spr','Sum','Aut']
 character(len=3), dimension(tmonths), parameter :: aname  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
+character(len=8), dimension(4), parameter :: rad_Jm = ['ACSWDNB ', 'ACSWUPB ', 'ACLWDNB ', 'ACLWUPB ']
+real, dimension(4), parameter :: rad_sign = [1., -1., 1., -1.]
+
 ! =====================================================================
 ! --- 1. Dimensions and Grid Arrays ---
 ! =====================================================================
@@ -44,7 +47,7 @@ real :: rhours, factor, heightl, presl, pres, p_top
 real, dimension(1) :: height, pressure
 real, dimension(2) :: pressure_bounds
 real, dimension(:),   allocatable :: rlon, rlat
-real, dimension(:,:), allocatable :: lon, lat, tlon, tlat, cosalp, sinalp, landmask
+real, dimension(:,:), allocatable :: lon, lat, tlon, tlat, cosalp, sinalp, landmask, urb_frac, luindex
 ! cell corners (4 per cell, counterclockwise), from the geo_em corner points
 real(kind=8), dimension(:,:,:), allocatable :: vlon, vlat
 
@@ -76,11 +79,13 @@ integer :: ntime, ntime3, ntime6
 ! --- 3. Scientific Data Arrays ---
 ! =====================================================================
 ! Integer Arrays
+integer :: ir
 integer, dimension(8) :: values
 integer, dimension(:,:), allocatable :: bdtime, outvar_a
 
 ! Real Scalars 
 real :: tc, slope
+real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, slope, gam, ET0
 
 ! Real 1D Allocatable Arrays
 real, dimension(:), allocatable :: ttime, ttime3, ttime6, ttimed, ttimem, ttimes
@@ -89,10 +94,13 @@ real, dimension(:), allocatable :: ttime, ttime3, ttime6, ttimed, ttimem, ttimes
 real, dimension(:,:), allocatable :: sftlf, hgt, runsf
 real, dimension(:,:), allocatable :: wrfv2D, i_wrfv2D, outvar, outvar_i
 real, dimension(:,:), allocatable :: u_s, v_s, wind10, ust, t2, q2, uas, vas, ro, psf
+real, dimension(:,:), allocatable :: t2_i, q2_i, psf_i, wind10_i
 real, dimension(:,:), allocatable :: rainc, rainnc, i_rainc, i_rainnc, rainsh
 real, dimension(:,:), allocatable :: outvar_u, outvar_v
 real, dimension(:,:), allocatable :: t_l, pres_s, phi_s  
 real, dimension(:,:), allocatable :: mr, mr_sat, e_sfc, esat
+
+real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 
 ! Real 3D Allocatable Arrays
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
@@ -119,7 +127,7 @@ character(len=5) :: zone
 character(len=8) :: date
 character(len=10) :: times
 
-character(len=20)  :: vaid, varname, vunts, vunits
+character(len=10)  :: vaid, varname, vunts, vunits
 character(len=25)  :: wrfile, wrffile, geo, geog, wrfvar, wrfvarname, subrname, subname, fname, iwrfvar
 character(len=100) :: longname, standardname, cellmethods, timeunits, frequency, experiment, dexperiment, creationdate
 character(len=100) :: lname, stname, cmethods, tunts, freq, exper, dexper, cdate, experiment_id, experi

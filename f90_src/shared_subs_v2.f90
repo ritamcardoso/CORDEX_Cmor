@@ -173,7 +173,7 @@ deallocate(tlon, tlat)
 !
 ! Get geographical coordinates
 !
-allocate(lon(nlon,nlat), lat(nlon,nlat), landmask(nlon,nlat))
+allocate(lon(nlon,nlat), lat(nlon,nlat), landmask(nlon,nlat), urb_frac(nlon,nlat), luindex(nlon,nlat))
 
 status = nf90_inq_varid(ncid, 'XLONG_M', varid)
 status = nf90_get_var(ncid, varid, lon, (/xoffset, yoffset/), (/nlon, nlat/), (/1, 1/))
@@ -183,10 +183,22 @@ status = nf90_get_var(ncid, varid, lat, (/xoffset, yoffset/), (/nlon, nlat/), (/
 call ncerror(status,'reading '//'XLAT_M')
 
 status=nf90_inq_varid(ncid,'LANDMASK',varid)
-call ncerror(status,'getting var id')
+call ncerror(status,'getting var id LANDMASK in')//trim(geofile)
 
 status=nf90_get_var(ncid,varid,landmask,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
 call ncerror(status,'reading '//'LANDMASK')
+
+status=nf90_inq_varid(ncid,'LU_INDEX',varid)
+call ncerror(status,'getting var id LU_INDEX in')//trim(geofile)
+
+status=nf90_get_var(ncid,varid,luindex,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+call ncerror(status,'reading '//'LU_INDEX')
+
+status = nf90_inq_varid(ncid, 'FRC_URB2D', varid)
+call ncerror(status, 'getting var id FRC_URB2D (urban fraction) in '//trim(geofile))
+
+status = nf90_get_var(ncid, varid, urb_frac, (/xoffset,yoffset/), (/nlon,nlat/), (/1,1/))
+call ncerror(status, 'reading FRC_URB2D')
 !
 ! Cell corners for vertices_lon/vertices_lat: WRF's corner points XLONG_C/XLAT_C
 ! (one more than the mass points in each direction); if the geo_em file has

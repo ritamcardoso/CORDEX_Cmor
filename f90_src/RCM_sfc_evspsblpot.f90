@@ -1,23 +1,8 @@
 program read_wrfout
 !
-! RCM_sfc_evspsblpot — potential evapotranspiration (evspsblpot, 1hr, kg m-2 s-1),
+! Hourly potential evapotranspiration (evspsblpot, 1hr, kg m-2 s-1), following
 ! FAO-56 Penman-Monteith reference evapotranspiration, hourly form (Allen et al.
 ! 1998, FAO Irrigation and Drainage Paper 56, eq. 53):
-!
-!   ET0 = [0.408 D (Rn - G) + gam 37/(T+273) u2 (es - ea)] / [D + gam (1 + 0.34 u2)]   (mm h-1)
-!
-!   Rn   net radiation (MJ m-2 h-1): hourly mean of SW down - SW up + LW down - LW up,
-!        from the accumulated WRF fields (ACSWDNB, ACSWUPB, ACLWDNB, ACLWUPB + I_ buckets)
-!   G    soil heat flux (MJ m-2 h-1): 0.1 Rn when Rn > 0 (day), 0.5 Rn otherwise (night) (eq. 45-46)
-!   T    2 m air temperature (degC), mean of the hour (T2)
-!   u2   2 m wind speed: 0.748 x 10 m wind speed (eq. 47), mean of the hour (U10, V10)
-!   es   saturation vapour pressure at T (kPa): 0.6108 exp(17.27 T / (T + 237.3)) (eq. 11)
-!   ea   actual vapour pressure (kPa) from the specific humidity: q p / (0.622 + 0.378 q) (Q2, PSFC)
-!   D    slope of the saturation vapour pressure curve: 4098 es / (T + 237.3)^2 (eq. 13)
-!   gam  psychrometric constant: 0.665e-3 p (kPa degC-1) (eq. 8), with the model surface pressure p (PSFC)
-!
-! ET0 (mm h-1 = kg m-2 h-1) / 3600 -> kg m-2 s-1. Sea points (LANDMASK = 0) are missing
-! ("area: mean where land"). Negative values (condensation, mostly at night) are kept.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
@@ -129,18 +114,61 @@ do year = yeari, yearf,1
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening file')
 !
-        call read_var('T2', t2)
-        call read_var('Q2', q2)
-        call read_var('PSFC', psf)
-        call read_var('U10', u_s)
-        call read_var('V10', v_s)
+        ! Read wrf var
+        status=nf90_inq_varid(ncid,'T2',varid)
+        call ncerror(status,'getting var id')
+
+        status=nf90_get_var(ncid,varid,t2,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//'T2')
+!
+        status=nf90_inq_varid(ncid,'Q2',varid)
+        call ncerror(status,'getting var id')
+
+        status=nf90_get_var(ncid,varid,q2,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//'Q2')
+!
+        status=nf90_inq_varid(ncid,'PSFC',varid)
+        call ncerror(status,'getting var id')
+
+        status=nf90_get_var(ncid,varid,psf,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//'PSFC')         
+!
+        status=nf90_inq_varid(ncid,'U10',varid)
+        call ncerror(status,'getting var id')
+
+        status=nf90_get_var(ncid,varid,u_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//'U10')
+!
+        status=nf90_inq_varid(ncid,'V10',varid)
+        call ncerror(status,'getting var id')
+
+        status=nf90_get_var(ncid,varid,v_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//'V10')   
+
         wind10 = sqrt(u_s**2 + v_s**2)
 !
         ! accumulated net radiation (J m-2): SW down - SW up + LW down - LW up, with the buckets
         Rn = 0.d0
         do ir = 1, 4
-          call read_var(trim(rad_Jm(ir)), wrfv2D)
-          call read_var('I_'//trim(rad_Jm(ir)), i_wrfv2D)
+
+          fname=trim(rad_Jm(ir))
+          wrfvar=trim(fname)
+
+          status=nf90_inq_varid(ncid,wrfvar,varid)
+          call ncerror(status,'getting var id')
+!
+          status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading '//wrfvar)
+!
+          fname='I_'//trim(wrfvar)
+          iwrfvar=trim(fname)
+
+          status=nf90_inq_varid(ncid,iwrfvar,varid)
+          call ncerror(status,'getting var id')
+!
+          status=nf90_get_var(ncid,varid,i_wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading '//iwrfvar)           
+
           Rn = Rn + rad_sign(ir) * (real(wrfv2D, 8) + real(i_wrfv2D, 8) * 1.d9)
         enddo
 !
@@ -187,28 +215,40 @@ contains
 !
 !----------------------------------------------------------------------------------------------------
 !
-subroutine read_var(vname, field)
-! one 2-D field of the open wrfout file (ncid), cut to the output grid
-character(len=*), intent(in) :: vname
-real, dimension(:,:), intent(out) :: field
-!
-status=nf90_inq_varid(ncid,vname,varid)
-call ncerror(status,'getting var id '//vname)
-status=nf90_get_var(ncid,varid,field,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//vname)
-!
-end subroutine read_var
-!
-!----------------------------------------------------------------------------------------------------
-!
 subroutine keep_previous
-! fields at the start of the next hour
-t2_i = t2; q2_i = q2; psf_i = psf; wind10_i = wind10; Rn_i = Rn
+!        
+! fields from the previous hour
+!
+t2_i = t2 
+q2_i = q2 
+psf_i = psf
+wind10_i = wind10
+Rn_i = Rn
+!
 end subroutine keep_previous
 !
 !----------------------------------------------------------------------------------------------------
 !
 subroutine calc_evspsblpot
+!
+! Potential evapotranspiration (evspsblpot, 1hr, kg m-2 s-1),
+! FAO-56 Penman-Monteith reference evapotranspiration, hourly form (Allen et al.
+! 1998, FAO Irrigation and Drainage Paper 56, eq. 53):
+!
+!   ET0 = [0.408 D (Rn - G) + gam 37/(T+273) u2 (es - ea)] / [D + gam (1 + 0.34 u2)]   (mm h-1)
+!
+!   Rn   net radiation (MJ m-2 h-1): hourly mean of SW down - SW up + LW down - LW up,
+!        from the accumulated WRF fields (ACSWDNB, ACSWUPB, ACLWDNB, ACLWUPB + I_ buckets)
+!   G    soil heat flux (MJ m-2 h-1): 0.1 Rn when Rn > 0 (day), 0.5 Rn otherwise (night) (eq. 45-46)
+!   T    2 m air temperature (degC), mean of the hour (T2)
+!   u2   2 m wind speed: 0.748 x 10 m wind speed (eq. 47), mean of the hour (U10, V10)
+!   es   saturation vapour pressure at T (kPa): 0.6108 exp(17.27 T / (T + 237.3)) (eq. 11)
+!   ea   actual vapour pressure (kPa) from the specific humidity: q p / (0.622 + 0.378 q) (Q2, PSFC)
+!   D    slope of the saturation vapour pressure curve: 4098 es / (T + 237.3)^2 (eq. 13)
+!   gam  psychrometric constant: 0.665e-3 p (kPa degC-1) (eq. 8), with the model surface pressure p (PSFC)
+!
+! ET0 (mm h-1 = kg m-2 h-1) / 3600 -> kg m-2 s-1. Sea points (LANDMASK = 0) are missing
+! ("area: mean where land"). Negative values (condensation, mostly at night) are kept.
 !
 do ix=1,nlon
   do iy=1,nlat

@@ -5,8 +5,6 @@ use shared_subs
 use netcdf
 !implicit none
 
-!cp=(7/2)*Rd
-
 ! --- Read configuration using shared_subs subroutine
 
 call init_cordex_environment

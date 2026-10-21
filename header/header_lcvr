@@ -1,0 +1,8 @@
+wrfvar = 'LU_INDEX'
+vaid = 'lcvr'
+vunts = '1'
+lname = 'Land Cover Dominant Class'
+stname = 'land_cover_dominant_class'
+cmethods = 'area: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
