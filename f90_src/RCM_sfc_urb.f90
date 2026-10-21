@@ -1,26 +1,12 @@
 program read_wrfout
 !
-! RCM_sfc_urb — urban variables of FPS-URB-RCC (1hr, instantaneous: time: point),
-! from the urban scheme output of WRF (BEP+BEM, sf_urban_physics = 3).
-! The variable (vaid in its header) selects the WRF field and the cells kept:
-!
-!   tasroof    T2R_URB2D      2 m temperature over roofs            urban cells
-!   taspav     T2G_URB2D      2 m temperature over roads/pavements  urban cells
-!   tasgree    T2VEG_URB2D    2 m temperature over vegetation       urban cells
-!   tascan     TCAN_URB2D     canyon air temperature                urban cells
-!   sfcWindcan UCAN_URB2D     canyon wind speed                     urban cells
-!   husscan    QCAN_URB2D     canyon specific humidity: q = r/(1+r) urban cells
-!   hurscan    TCAN_URB2D, QCAN_URB2D, PSFC  canyon relative humidity (as hurs) urban cells
-!   tsroof     TROOF_URB2D    roof surface temperature              urban cells
-!   tspav      TGROUND_URB2D  road surface temperature              urban cells
-!   tsgree     TSK_RURAL      skin temperature of the natural part  urban cells
-!   tsskin     TSK            skin temperature                      every cell
-!   tsblue     TSK            skin temperature                      water cells
-!   tasblue    T2             2 m temperature                       water cells
-!
-! Urban cells: urban_cell (FRC_URB2D > 0 and LU_INDEX urban, MODIS or USGS table);
-! water cells: LANDMASK = 0.
-! Other cells are missing (1.e20). Temperatures are rounded to 0.01 K, as tas.
+! RCM_sfc_urb — urban temperatures (1hr, instantaneous), from the urban scheme
+! output of WRF: the WRF field is wrfvar of the header (e.g. tasroof T2R_URB2D,
+! taspav T2G_URB2D, tasgree T2VEG_URB2D, tascan TCAN_URB2D, tsroof TROOF_URB2D,
+! tspav TGROUND_URB2D, tsgree TSK_RURAL). Kept only at urban cells (urban_cell in
+! shared_subs_v2.f90: FRC_URB2D > 0 and LU_INDEX an urban category of the MODIS or
+! USGS table of the geo_em file, LCZ classes included); missing elsewhere.
+! Rounded to 0.01 K.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
@@ -28,52 +14,20 @@ use shared_subs
 use netcdf
 !implicit none
 
-real, dimension(:,:), allocatable :: ub_f1, ub_f2, ub_f3
 logical, dimension(:,:), allocatable :: ub_keep
-character(len=20) :: ub_v1, ub_v2, ub_v3, ub_where
-logical :: ub_temp
 
 ! --- Read configuration using shared_subs subroutine
 
 call init_cordex_environment
 
-! --- Read Grid Information (Latitude, Longitude, LANDMASK) ---
+! --- Read Grid Information (Latitude, Longitude) ---
 
 call read_geog
 
-! --- The variable: WRF fields, cells kept, rounding
-ub_v2 = ''; ub_v3 = ''; ub_where = 'urban'; ub_temp = .true.
-select case (trim(vaid))
-  case ('tasroof');    ub_v1 = 'T2R_URB2D'
-  case ('taspav');     ub_v1 = 'T2G_URB2D'
-  case ('tasgree');    ub_v1 = 'T2VEG_URB2D'
-  case ('tascan');     ub_v1 = 'TCAN_URB2D'
-  case ('sfcWindcan'); ub_v1 = 'UCAN_URB2D';    ub_temp = .false.
-  case ('husscan');    ub_v1 = 'QCAN_URB2D';    ub_temp = .false.
-  case ('hurscan');    ub_v1 = 'TCAN_URB2D';    ub_v2 = 'QCAN_URB2D'; ub_v3 = 'PSFC'; ub_temp = .false.
-  case ('tsroof');     ub_v1 = 'TROOF_URB2D'
-  case ('tspav');      ub_v1 = 'TGROUND_URB2D'
-  case ('tsgree');     ub_v1 = 'TSK_RURAL'
-  case ('tsskin');     ub_v1 = 'TSK';           ub_where = 'all'
-  case ('tsblue');     ub_v1 = 'TSK';           ub_where = 'water'
-  case ('tasblue');    ub_v1 = 'T2';            ub_where = 'water'
-  case default
-    print *, 'ERROR: RCM_sfc_urb does not know the variable ', trim(vaid)
-    stop 95
-end select
-write(*,*) trim(vaid), ' from ', trim(ub_v1), ' ', trim(ub_v2), ' ', trim(ub_v3), ', cells: ', trim(ub_where)
-
-! cells kept: urban (urban_cell: FRC_URB2D > 0 and urban LU_INDEX), water (LANDMASK = 0) or all
 allocate(ub_keep(nlon,nlat))
-select case (trim(ub_where))
-  case ('urban')
-    ub_keep = urban_cell(urb_frac, luindex)      ! same urban cells as RCM_sfc_urban
-  case ('water')
-    ub_keep = landmask < 0.5
-  case default
-    ub_keep = .true.
-end select
-write(*,*) count(ub_keep), ' of ', nlon*nlat, ' cells kept'
+ub_keep = urban_cell(urb_frac, luindex)
+write(*,*) trim(vaid), ' from ', trim(wrfvar), ', land-use table ', trim(lu_table), ': ', &
+           count(ub_keep), ' urban cells of ', nlon*nlat
 
 ! --- Initialising grid and time counters
 nzt = nz + 1
@@ -102,12 +56,7 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(outvar(nlon,nlat))
-allocate(ub_f1(nlon,nlat), ub_f2(nlon,nlat), ub_f3(nlon,nlat))
-if (trim(vaid) == 'hurscan') then
-  allocate(t2(nlon,nlat), mr(nlon,nlat), psf(nlon,nlat))
-  allocate(mr_sat(nlon,nlat), e_sfc(nlon,nlat), esat(nlon,nlat))
-endif
+allocate(wrfv2D(nlon, nlat))
 
 it = 0
 do year = yeari, yearf,1
@@ -155,12 +104,16 @@ do year = yeari, yearf,1
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening '//trim(infile))
 
-        call read_field(ub_v1, ub_f1)
-        if (len_trim(ub_v2) > 0) call read_field(ub_v2, ub_f2)
-        if (len_trim(ub_v3) > 0) call read_field(ub_v3, ub_f3)
+        ! Read wrf var
+        status = nf90_inq_varid(ncid, wrfvar, varid)
+        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
+        
+        status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
+
 
         ish = ish + 1
         issh = issh + 1
@@ -168,10 +121,12 @@ do year = yeari, yearf,1
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        call calc_urb
-
-        outvar_h(:,:,issh) = outvar(:,:)
-
+        ! urban cells only (ub_keep); rounded to 0.01 K
+        where (ub_keep)
+          outvar_h(:,:,issh) = real(nint(100.d0*wrfv2D, 8))/100.
+        elsewhere
+          outvar_h(:,:,issh) = huge_val
+        endwhere
       enddo loop_h    ! end hour
 !
       ihour=0
@@ -189,93 +144,6 @@ do year = yeari, yearf,1
 enddo
 
 contains
-!
-!----------------------------------------------------------------------------------------------------
-!
-subroutine read_field(vname, field)
-! one 2-D field of the open wrfout file (ncid), cut to the output grid
-character(len=*), intent(in) :: vname
-real, dimension(:,:), intent(out) :: field
-!
-status=nf90_inq_varid(ncid,trim(vname),varid)
-call ncerror(status,'getting var id '//trim(vname)//' in '//trim(infile))
-status=nf90_get_var(ncid,varid,field,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//trim(vname)//' from '//trim(infile))
-!
-end subroutine read_field
-!
-!----------------------------------------------------------------------------------------------------
-!
-subroutine calc_urb
-! the variable from the fields read, missing outside the cells kept
-!
-select case (trim(vaid))
-  case ('husscan')
-    outvar = ub_f1 / (1. + ub_f1)                      ! mixing ratio -> specific humidity
-  case ('hurscan')
-    t2 = ub_f1; mr = ub_f2; psf = ub_f3
-    call calc_rh
-  case default
-    outvar = ub_f1
-end select
-where (.not. ub_keep) outvar = 1.e+20
-! temperatures to 0.01 K, as tas (only the cells kept: no overflow on fill values)
-if (ub_temp) then
-  where (ub_keep) outvar = float(nint(100.d0 * outvar)) / 100.
-endif
-!
-end subroutine calc_urb
-!
-!----------------------------------------------------------------------------------------------------
-!
-subroutine calc_rh
-!
-! Relative humidity, as in RCM_sfc_hurs (canyon temperature, humidity and surface pressure).
-! Following WMO, supercooled water is assumed for temperatures below 0ºC and esat is always calculated in reference to water.
-! Enhancement factor is used calculate the effective esat in the presence of other gases
-!
-! REFERENCES
-! Wexler, A., Vapor Pressure Formulation for Water in Range 0 to 100°C. A Revision, Journal of Research of the National Bureau of Standards - A. Physics and Chemistry, September - December 1976, Vol. 80A, Nos.5 and 6, 775-785
-!
-! Wexler, A., Vapor Pressure Formulation for Ice, Journal of Research of the National Bureau of Standards - A. Physics and Chemistry, January - February 1977, Vol. 81A, No. 1, 5-19
-!
-! Goff, J. A., Standardization of Thermodynamic Properties of Moist Air, Heating, Piping, and Air Conditioning, 1949, Vol. 21, 118.
-!
-real(kind=8) :: fact
-real, dimension(nlon,nlat) :: TK
-real(kind=8), parameter :: a1=-2.8365744e3,a2=-6.028076559e3,a3=19.54263612,a4=-2.737830188e-2
-real(kind=8), parameter :: a5=1.6261698e-5,a6=7.0229056e-10,a7=-1.8680009e-13,a8=2.7150305
-real(kind=8), parameter :: fi1=3.62183e-4,fi2=2.6061244e-5,fi3=3.8667770e-7,fi4=3.8268958e-9,fi5=-10.7604,fi6=6.3987441e-2, &
-                           fi7=-2.6351566e-4,fi8=1.6725084e-6
-real(kind=8), parameter :: fw1=3.536240e-4,fw2=2.932836e-5,fw3=2.616898e-7,fw4=8.581361e-9,fw5=-10.75880,fw6=6.326813e-2, &
-                           fw7=-2.536893e-4,fw8=6.340529e-7
-!
-TK=t2-273.15
-!
-do i=1,nlon
-  do j=1,nlat
-    if (.not. ub_keep(i,j)) then
-      outvar(i,j)=1.e+20
-      cycle
-    endif
-    e_sfc(i,j)=(mr(i,j)/(epsilon+mr(i,j)))*psf(i,j)
-    esat(i,j)=exp(a1*t2(i,j)**-2+a2/t2(i,j)+a3+a4*t2(i,j)+a5*t2(i,j)**2+a6*t2(i,j)**3+a7*t2(i,j)**4+a8*log(t2(i,j))) ! ITS-90 @ -100C to 100C
-!
-    if(TK(i,j) < 0.)then              ! below 0 degC: enhancement factor over ice
-      fact=exp((fi1+fi2*TK(i,j)+fi3*TK(i,j)**2+fi4*TK(i,j)**3)*(1.-(esat(i,j)/psf(i,j)))+ &
-                    exp(fi5+fi6*TK(i,j)+fi7*TK(i,j)**2+fi8*TK(i,j)**3)*((esat(i,j)/psf(i,j))-1.d0))
-    else
-      fact=exp((fw1+fw2*TK(i,j)+fw3*TK(i,j)**2+fw4*TK(i,j)**3)*(1.-(esat(i,j)/psf(i,j)))+ &
-                    exp(fw5+fw6*TK(i,j)+fw7*TK(i,j)**2+fw8*TK(i,j)**3)*((esat(i,j)/psf(i,j))-1.d0))
-    endif
-!
-    mr_sat(i,j)=epsilon*(esat(i,j)*fact)/(psf(i,j)-(esat(i,j)*fact))
-!
-    outvar(i,j)=max(min(mr(i,j)/mr_sat(i,j),1.),0.0)*100.
-  enddo
-enddo
-!
-end subroutine calc_rh
 !
 !----------------------------------------------------------------------------------------------------
 !
