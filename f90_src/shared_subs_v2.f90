@@ -17,8 +17,9 @@ subroutine init_cordex_environment
         is_initialized = .true.
     end if
 end subroutine init_cordex_environment
-
-
+!
+!-----------------------------------------------------------------------
+!
 subroutine read_cordex_config(cfg_filename)
     character(len=*), intent(in) :: cfg_filename
     integer :: unit_id, status_id
@@ -89,8 +90,9 @@ subroutine read_cordex_config(cfg_filename)
     timeunits=trim(adjustl(tunts))                    
 
 end subroutine read_cordex_config
-
-
+!
+!-----------------------------------------------------------------------
+!
 subroutine read_global_metadata(meta_filename)
     character(len=*), intent(in) :: meta_filename
     integer :: unit_id, status_id
@@ -151,34 +153,45 @@ if (trim(projection) == 'lambert_conformal_conic') then
   end if
 end if
 !
-! Get rotated coordinates
-allocate(tlon(nlon, nlat), tlat(nlon, nlat))
+! Computational coordinates (CLONG/CLAT of the geo_em file): for the rotated pole grid
+! these are the rotated longitudes/latitudes, the 1-D rlon/rlat axes of the output.
+! Not needed for lambert_conformal_conic, whose x/y axes come from lambert_xy.
 allocate(rlon(nlon), rlat(nlat))
+if (trim(projection) /= 'lambert_conformal_conic') then
+  allocate(tlon(nlon, nlat), tlat(nlon, nlat))
 
-status=nf90_inq_varid(ncid,'CLONG',varid)
-status=nf90_get_var(ncid,varid,tlon,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading CLONG from '//trim(geofile))
+  status=nf90_inq_varid(ncid,'CLONG',varid)
+  call ncerror(status,'getting var id CLONG in '//trim(geofile))
+  status=nf90_get_var(ncid,varid,tlon,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+  call ncerror(status,'reading CLONG from '//trim(geofile))
 !
-status=nf90_inq_varid(ncid,'CLAT',varid)
-status=nf90_get_var(ncid,varid,tlat,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading CLAT from '//trim(geofile))
+  status=nf90_inq_varid(ncid,'CLAT',varid)
+  call ncerror(status,'getting var id CLAT in '//trim(geofile))
+  status=nf90_get_var(ncid,varid,tlat,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+  call ncerror(status,'reading CLAT from '//trim(geofile))
 !
-do i=1,nlon
- rlon(i)=tlon(i,1)
-enddo
-do j=1,nlat
- rlat(j)=tlat(1,j)
-enddo
-deallocate(tlon, tlat)
+  do i=1,nlon
+   rlon(i)=tlon(i,1)
+  enddo
+  do j=1,nlat
+   rlat(j)=tlat(1,j)
+  enddo
+  deallocate(tlon, tlat)
+else
+  rlon = 0.; rlat = 0.        ! not used (x/y axes)
+endif
 !
 ! Get geographical coordinates
 !
 allocate(lon(nlon,nlat), lat(nlon,nlat), landmask(nlon,nlat), urb_frac(nlon,nlat), luindex(nlon,nlat))
 
 status = nf90_inq_varid(ncid, 'XLONG_M', varid)
+call ncerror(status,'getting var id XLONG_M in '//trim(geofile))
 status = nf90_get_var(ncid, varid, lon, (/xoffset, yoffset/), (/nlon, nlat/), (/1, 1/))
+call ncerror(status,'reading XLONG_M from '//trim(geofile))
 
 status = nf90_inq_varid(ncid, 'XLAT_M', varid)
+call ncerror(status,'getting var id XLAT_M in '//trim(geofile))
 status = nf90_get_var(ncid, varid, lat, (/xoffset, yoffset/), (/nlon, nlat/), (/1, 1/))
 call ncerror(status,'reading XLAT_M from '//trim(geofile))
 
@@ -243,9 +256,11 @@ else
     end if
     allocate(mlon(nlon+2,nlat+2), mlat(nlon+2,nlat+2))
     status = nf90_inq_varid(ncid, 'XLONG_M', idlon)
+    call ncerror(status,'getting var id XLONG_M in '//trim(geofile))
     status = nf90_get_var(ncid, idlon, mlon, (/xoffset-1, yoffset-1/), (/nlon+2, nlat+2/))
     call ncerror(status,'reading XLONG_M for the cell corners from '//trim(geofile))
     status = nf90_inq_varid(ncid, 'XLAT_M', idlat)
+    call ncerror(status,'getting var id XLAT_M in '//trim(geofile))
     status = nf90_get_var(ncid, idlat, mlat, (/xoffset-1, yoffset-1/), (/nlon+2, nlat+2/))
     call ncerror(status,'reading XLAT_M for the cell corners from '//trim(geofile))
     do j = 1, nlat+1
@@ -306,7 +321,9 @@ else
 end if
 call handle_err(status)
 end subroutine def_horizontal_dims
-
+!
+!-----------------------------------------------------------------------
+!
 subroutine def_horizontal_vars(ncid, XDimID, YDimID, BDimID, VDimID, LonVarID, LatVarID, XVarID, YVarID, gmVarID)
 use netcdf
 integer, intent(in)  :: ncid, XDimID, YDimID, BDimID, VDimID
@@ -384,7 +401,9 @@ status = nf90_def_var(ncid, trim(xn)//'_bnds', nf90_double, (/ BDimID, XDimID /)
 status = nf90_def_var(ncid, trim(yn)//'_bnds', nf90_double, (/ BDimID, YDimID /), ybndID)
 call handle_err(status)
 end subroutine def_horizontal_vars
-
+!
+!-----------------------------------------------------------------------
+!
 subroutine put_horizontal_vars(ncid, LonVarID, LatVarID, XVarID, YVarID)
 use netcdf
 integer, intent(in) :: ncid, LonVarID, LatVarID, XVarID, YVarID
@@ -412,7 +431,9 @@ call handle_err(status)
 status = nf90_put_var(ncid, vlatID, vlat)
 call handle_err(status)
 end subroutine put_horizontal_vars
-
+!
+!-----------------------------------------------------------------------
+!
 ! bounds of a regular 1-D axis: half-way to the neighbours (edges extrapolated)
 function axis_bounds(c, n) result(b)
 integer, intent(in) :: n
@@ -426,7 +447,9 @@ end do
 b(1,1) = c(1) - (b(2,1) - c(1))
 b(2,n) = c(n) + (c(n) - b(1,n))
 end function axis_bounds
-
+!
+!-----------------------------------------------------------------------
+!
 ! x/y (m) of the grid columns/rows: lon/lat of the middle row/column projected
 ! with the Lambert conformal conic formulas (sphere of radius earth_radius).
 subroutine lambert_xy(xc, yc)
@@ -803,7 +826,7 @@ call handle_err(status)
 return
 end subroutine write_netcdf_rtime_soil
 !
-!
+!-----------------------------------------------------------------------
 !
 subroutine write_global_attributes
     use netcdf
@@ -881,7 +904,7 @@ subroutine write_global_attributes
 
 end subroutine write_global_attributes
 !
-!-------------------------------------------------------------------------------------
+!-----------------------------------------------------------------------
 !
 ! File-name time range "<first>-<last>" from the first and last time values
 ! (in timeunits since <iniyear>-01-01): YYYYMMDDhhmm for sub-daily files,
@@ -892,7 +915,9 @@ function time_label(t1, t2) result(label)
     character(len=25) :: label
     label = trim(time_stamp(t1))//'-'//trim(time_stamp(t2))
 end function time_label
-
+!
+!-----------------------------------------------------------------------
+!
 function time_stamp(t) result(stamp)
     real, intent(in) :: t
     character(len=12) :: stamp
@@ -916,7 +941,9 @@ function time_stamp(t) result(stamp)
         write(stamp,'(i4.4,4i2.2)') y, m, d, int(mins/60), int(mod(mins,60_8))
     end select
 end function time_stamp
-
+!
+!-----------------------------------------------------------------------
+!
 ! Days since 1970-01-01 of a (proleptic Gregorian) date, and back.
 pure function days_from_civil(yy, m, d) result(days)
     integer, intent(in) :: yy, m, d
@@ -929,7 +956,9 @@ pure function days_from_civil(yy, m, d) result(days)
     doe = yoe*365 + yoe/4 - yoe/100 + doy
     days = era*146097 + doe - 719468
 end function days_from_civil
-
+!
+!-----------------------------------------------------------------------
+!
 pure subroutine civil_from_days(days_in, y, m, d)
     integer, intent(in)  :: days_in
     integer, intent(out) :: y, m, d
@@ -945,6 +974,8 @@ pure subroutine civil_from_days(days_in, y, m, d)
     m   = merge(mp + 3, mp - 9, mp < 10)
     if (m <= 2) y = y + 1
 end subroutine civil_from_days
+!
+!-----------------------------------------------------------------------
 !
 ! Current time in UTC as YYYY-MM-DDThh:mm:ssZ (date_and_time gives local
 ! time plus its offset from UTC, which is removed here).
@@ -963,7 +994,7 @@ subroutine utc_timestamp(stamp)
           y, m, d, mins/60, mod(mins,60), v(7)
 end subroutine utc_timestamp
 !
-!-------------------------------------------------------------------------------------
+!-----------------------------------------------------------------------
 !
 ! tracking_id = "hdl:21.14103/" + a new random UUID (version 4) for every file.
 ! Uses the Linux kernel's UUID generator; falls back to random_number.
@@ -1004,7 +1035,7 @@ subroutine new_tracking_id(tid)
     tid = 'hdl:21.14103/'//uuid
 end subroutine new_tracking_id
 !
-!-------------------------------------------------------------------------------------
+!-----------------------------------------------------------------------
 !
 logical elemental function urban_cell(frc, lu)
 ! .true. where WRF runs the urban scheme: urban fraction > 0 and the dominant land-use
@@ -1021,7 +1052,7 @@ else
 endif
 end function urban_cell
 !
-!-------------------------------------------------------------------------------------
+!-----------------------------------------------------------------------
 !
 subroutine landuse_field(fname, lu_out)
 ! Land-cover fraction (% of the grid cell) or dominant category of the variable vaid,
@@ -1155,7 +1186,7 @@ call ncerror(lu_st,'closing '//trim(fname))
 !
 end subroutine landuse_field
 !
-!-------------------------------------------------------------------------------------
+!-----------------------------------------------------------------------
 !
 subroutine handle_err(status)
 use netcdf
@@ -1166,5 +1197,7 @@ if(status /= nf90_noerr) then
   stop 98
 end if
 end subroutine handle_err
+!
+!-----------------------------------------------------------------------
 !
 end module shared_subs
