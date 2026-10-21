@@ -13,7 +13,7 @@ program read_wrfout
 !   baresoilFrac  % bare soil            (area_type bare_ground)
 !   urbanFrac     % urban                (area_type urban)
 !   cnc           % vegetation = tree + shrub + grass + crop
-!   luindex       LU_INDEX, dominant land-use category (1)
+!   lcvr          LU_INDEX, dominant land-use category (1)
 !
 ! The grouping of the land-use categories (weight tables) is in landuse_field
 ! (shared_subs_v2.f90); only the categories of the group are read. No sea mask.

@@ -1029,7 +1029,7 @@ subroutine landuse_field(fname, lu_out)
 !   treeFrac, shrubFrac, grassFrac, cropFrac, baresoilFrac, urbanFrac: 100 * sum over
 !   the categories k of w(k) LANDUSEF(k), with the weight tables below (edit them to
 !   change the grouping; a mosaic class may be split); cnc: tree+shrub+grass+crop;
-!   luindex: LU_INDEX. Water, snow/ice and ungrouped wetland count in none of them.
+!   lcvr: LU_INDEX. Water, snow/ice and ungrouped wetland count in none of them.
 ! The table follows the MMINLU attribute of the file: MODIFIED_IGBP_MODIS_NOAH
 ! (LCZ urban classes 51-61) or USGS (LCZ 31-41). No sea mask.
 use netcdf
@@ -1074,7 +1074,7 @@ real, dimension(24), parameter :: &
 lu_st = nf90_open(trim(fname), nf90_nowrite, lu_ncid)
 call ncerror(lu_st,'opening '//trim(fname))
 !
-if (trim(vaid) == 'luindex') then
+if (trim(vaid) == 'lcvr') then
   lu_st=nf90_inq_varid(lu_ncid,'LU_INDEX',lu_varid)
   call ncerror(lu_st,'getting var id LU_INDEX')
   lu_st=nf90_get_var(lu_ncid,lu_varid,lu_out,(/xoffset,yoffset,1/),(/nlon,nlat,1/),(/1,1,1/))
