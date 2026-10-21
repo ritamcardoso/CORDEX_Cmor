@@ -1,4 +1,4 @@
-wrfvar = 'TCAN_URB2D'   ! RCM_sfc_urb also reads QCAN_URB2D and PSFC
+wrfvar = 'TCAN_URB2D'   ! RCM_sfc_hurscan reads TCAN_URB2D, QCAN_URB2D and PSFC
 vaid = 'hurscan'
 vunts = '%'
 lname = 'Near-Surface Relative Humidity within canyon'
