@@ -183,22 +183,31 @@ status = nf90_get_var(ncid, varid, lat, (/xoffset, yoffset/), (/nlon, nlat/), (/
 call ncerror(status,'reading '//'XLAT_M')
 
 status=nf90_inq_varid(ncid,'LANDMASK',varid)
-call ncerror(status,'getting var id LANDMASK in')//trim(geofile)
+call ncerror(status,'getting var id LANDMASK in '//trim(geofile))
 
 status=nf90_get_var(ncid,varid,landmask,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
 call ncerror(status,'reading '//'LANDMASK')
 
+! Dominant land-use category and urban fraction (urban variables, e.g. RCM_sfc_tasroof).
+! Optional: if the geo_em file has no LU_INDEX / FRC_URB2D they are set to 0 (no urban
+! cells), so that the programs that do not need them still run.
 status=nf90_inq_varid(ncid,'LU_INDEX',varid)
-call ncerror(status,'getting var id LU_INDEX in')//trim(geofile)
-
-status=nf90_get_var(ncid,varid,luindex,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//'LU_INDEX')
+if (status == nf90_noerr) then
+  status=nf90_get_var(ncid,varid,luindex,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+  call ncerror(status,'reading '//'LU_INDEX')
+else
+  luindex = 0.
+  print *, 'Note: no LU_INDEX in '//trim(geofile)//' (set to 0)'
+endif
 
 status = nf90_inq_varid(ncid, 'FRC_URB2D', varid)
-call ncerror(status, 'getting var id FRC_URB2D (urban fraction) in '//trim(geofile))
-
-status = nf90_get_var(ncid, varid, urb_frac, (/xoffset,yoffset/), (/nlon,nlat/), (/1,1/))
-call ncerror(status, 'reading FRC_URB2D')
+if (status == nf90_noerr) then
+  status = nf90_get_var(ncid, varid, urb_frac, (/xoffset,yoffset/), (/nlon,nlat/), (/1,1/))
+  call ncerror(status, 'reading FRC_URB2D')
+else
+  urb_frac = 0.
+  print *, 'Note: no FRC_URB2D in '//trim(geofile)//' (set to 0: no urban cells)'
+endif
 !
 ! Cell corners for vertices_lon/vertices_lat: WRF's corner points XLONG_C/XLAT_C
 ! (one more than the mass points in each direction); if the geo_em file has

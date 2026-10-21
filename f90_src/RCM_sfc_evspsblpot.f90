@@ -263,12 +263,12 @@ do ix=1,nlon
       else
         ghf = 0.5 * Rn_MJ
       endif
-      esat = 0.6108 * exp(17.27 * t2_C / (t2_C + 237.3))                       ! kPa
+      es_kPa = 0.6108 * exp(17.27 * t2_C / (t2_C + 237.3))                     ! kPa
       vpres = q2_m * psf_kPa / (0.622 + 0.378 * q2_m)                          ! kPa
-      slope = 4098. * esat / (t2_C + 237.3)**2                                 ! kPa degC-1
+      slope = 4098. * es_kPa / (t2_C + 237.3)**2                                 ! kPa degC-1
       gam = 0.665e-3 * psf_kPa                                                 ! kPa degC-1
       ET0 = (0.408 * slope * (Rn_MJ - ghf) &
-               + gam * (37. / (t2_C + 273.)) * wind2 * (esat - vpres)) &
+               + gam * (37. / (t2_C + 273.)) * wind2 * (es_kPa - vpres)) &
               / (slope + gam * (1. + 0.34 * wind2))                            ! mm h-1
       outvar_h(ix,iy,issh) = ET0 / 3600.                                       ! kg m-2 s-1
     else
