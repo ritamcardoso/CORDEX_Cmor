@@ -1,8 +1,8 @@
-wrfvar = 'ISLTYP'
+wrfvar = 'SCT_DOM'      ! dominant soil category (geo_em); REFSMC from SOILPARM.TBL, in RCM_sfc_mrsofc
 vaid = 'mrsofc'
 vunts = 'kg m-2'
-lname = 'Capacity of Soil to Store Water'
+lname = 'Capacity of Soil to Store Water  (Field Capacity)'
 stname = 'soil_moisture_content_at_field_capacity'
-cmethods = 'time: fx'
+cmethods = 'area: mean where land'
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

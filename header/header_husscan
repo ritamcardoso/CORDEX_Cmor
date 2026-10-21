@@ -1,0 +1,9 @@
+wrfvar = 'QCAN_URB2D'
+vaid = 'husscan'
+vunts = '1'
+lname = 'Near-Surface Specific Humidity within canyon'
+stname = 'specific_humidity_canyon'
+cmethods = 'area: mean time: point'
+height = 2.
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

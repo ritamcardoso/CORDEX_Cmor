@@ -1,0 +1,8 @@
+wrfvar = 'T2G_URB2D'
+vaid = 'taspav'
+vunts = 'K'
+lname = 'Near-surface temperature pavements'
+stname = 'pavement_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -395,6 +395,20 @@ and the Fortran programs referenced in each entry correspond to
 see `config/README.md` before adding a variable this repo doesn't have a
 program for yet.
 
+**FPS-URB-RCC urban variables (`urban` varset).** `RCM_sfc_urb.f90` writes the
+13 hourly urban variables of the
+[FPS-URB-RCC data request](https://github.com/impetus4change/T32-CPRCM/blob/main/data-request-fpsurbrcc.csv)
+from the BEP+BEM output of WRF (`sf_urban_physics = 3`): `tasroof`, `taspav`,
+`tasgree`, `tascan`, `husscan`, `hurscan`, `sfcWindcan`, `tsroof`, `tspav` and
+`tsgree` over urban cells (`FRC_URB2D > 0` in the geo_em file), `tasblue` and
+`tsblue` over water cells (`LANDMASK = 0`), and `tsskin` everywhere. All are
+instantaneous (`time: point`), as in the T32 CMOR tables. Only the fpsurb run has
+these fields, so `urban` is not in `ORDER`; run it on its own, e.g.
+`./run.sh fpsurb 2000 2010 urban`. Its daily and monthly means are in
+`tools/aggregation_table.txt`. The field capacity `mrsofc` (fx) is written by
+the `soil` varset (`RCM_sfc_mrsofc.f90`), from the dominant soil category of the
+geo_em file and the STAS field capacities of `SOILPARM.TBL`.
+
 ### Fortran program naming
 
 Each varset maps to one or more variable "groups", each with its own

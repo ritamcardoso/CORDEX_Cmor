@@ -1,0 +1,9 @@
+wrfvar = 'TCAN_URB2D'
+vaid = 'tascan'
+vunts = 'K'
+lname = 'Near-surface temperature within canyon'
+stname = 'temperature_canyon'
+cmethods = 'area: mean time: point'
+height = 2.
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

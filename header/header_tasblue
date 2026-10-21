@@ -1,0 +1,8 @@
+wrfvar = 'T2'
+vaid = 'tasblue'
+vunts = 'K'
+lname = 'Near-surface temperature blue spaces'
+stname = 'bluespaces_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
