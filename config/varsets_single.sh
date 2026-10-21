@@ -48,9 +48,9 @@ declare -A VARSETS=(
   # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
   # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
   [lsm]="RCM_sfc_lsmflx:evspsblsoi,evspsblveg,tran;RCM_sfc_lsm:lai,vegFrac,alb"
-  # Yearly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
+  # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
   # run with ./run.sh lucas <first year> <last year> landuse
-  [landuse]="RCM_yr_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,luindex"
+  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,luindex"
 )
 
 #
@@ -89,7 +89,7 @@ declare -A TIME=(
   [zlev_va1]="19:00:00"
   [urban]="14:00:00"
   [lsm]="08:00:00"
-  [landuse]="01:00:00"
+  [landuse]="10:00:00"
 )
 
 #

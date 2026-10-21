@@ -2,8 +2,8 @@ program read_wrfout
 !
 ! RCM_fx_landuse — land-cover fractions (fx, % of the grid cell) and the dominant
 ! land-use category, from LANDUSEF and LU_INDEX of the first wrfout file of the job
-! year. For land-use change experiments (LUCAS) use RCM_yr_landuse (varset landuse),
-! which writes one value per year. The variable (vaid in its header):
+! year. For land-use change experiments (LUCAS) use RCM_sfc_landuse (varset landuse),
+! which writes them every hour. The variable (vaid in its header):
 !
 !   treeFrac      % tree cover           (area_type tree)
 !   shrubFrac     % shrub cover          (area_type shrubs)

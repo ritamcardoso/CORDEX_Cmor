@@ -93,11 +93,10 @@ for grid in "${GRIDS[@]}"; do
   cd "${OUTPUT_DIR[$grid]}" || exit 1
 
   for (( v=0; v<${#var[@]}; v++)); do
-    # This job's years only (<var>_..._<yyyymmdd...>, yearly <var>_..._yr_<yyyy>-<yyyy>.nc), plus fixed fields (<var>_..._fx.nc)
+    # This job's years only (<var>_..._<yyyymmdd...>), plus fixed fields (<var>_..._fx.nc)
     files=()
     for (( y=yeari; y<=yearf; y++ )); do
       files+=( "${var[$v]}"_*_"${y}"[0-9][0-9][0-9][0-9]* )
-      files+=( "${var[$v]}"_*_yr_"${y}"-[0-9][0-9][0-9][0-9].nc )
     done
     files+=( "${var[$v]}"_*fx.nc )
     if [ "${#files[@]}" -eq 0 ]; then

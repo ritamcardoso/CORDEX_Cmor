@@ -574,7 +574,7 @@ status = nf90_def_var(ncid, "time", nf90_double, (/ HDimID /), TVarId)
 if (.not. point) status = nf90_def_var(ncid, "time_bnds", nf90_double, (/ BDimID, HDimID /), TBVarId)
 
 call def_horizontal_vars(ncid, LonDimID, LatDimID, BDimID, VDimID, LonVarID, LatVarID, rlonVarID, rlatVarID, rpVarID)
-call def_area_type(ncid, TypeVarID)     ! yearly land-cover fractions (RCM_yr_landuse)
+call def_area_type(ncid, TypeVarID)     ! hourly land-cover fractions (RCM_sfc_landuse)
 
 ! Check for optional Z coordinate conditions
 if (height(1) > 0.0) then
@@ -889,8 +889,6 @@ function time_stamp(t) result(stamp)
         write(stamp,'(i4.4,2i2.2)') y, m, d
     case ('mon')
         write(stamp,'(i4.4,i2.2)') y, m
-    case ('yr')
-        write(stamp,'(i4.4)') y
     case default
         write(stamp,'(i4.4,4i2.2)') y, m, d, int(mins/60), int(mod(mins,60_8))
     end select
@@ -987,7 +985,7 @@ end subroutine new_tracking_id
 !
 subroutine landuse_field(fname, lu_out)
 ! Land-cover fraction (% of the grid cell) or dominant category of the variable vaid,
-! from LANDUSEF / LU_INDEX of the wrfout file fname (RCM_fx_landuse, RCM_yr_landuse):
+! from LANDUSEF / LU_INDEX of the wrfout file fname (RCM_fx_landuse, RCM_sfc_landuse):
 !   treeFrac, shrubFrac, grassFrac, cropFrac, baresoilFrac, urbanFrac: 100 * sum over
 !   the categories k of w(k) LANDUSEF(k), with the weight tables below (edit them to
 !   change the grouping; a mosaic class may be split); cnc: tree+shrub+grass+crop;
@@ -998,12 +996,13 @@ use netcdf
 character(len=*), intent(in) :: fname
 real, dimension(nlon,nlat), intent(out) :: lu_out
 integer, parameter :: lu_max = 61
-real, dimension(:,:,:), allocatable :: lu_f
+real, dimension(:,:), allocatable :: lu_f
 real, dimension(lu_max) :: lu_w
 real, dimension(24) :: g
 integer :: lu_ncat, lu_dimid, k, lu_ncid, lu_varid, lu_st, lcz1
 character(len=80) :: lu_scheme
 logical :: lu_modis
+logical, save :: lu_told = .false.
 !
 ! weights per category, MODIFIED_IGBP_MODIS_NOAH:
 !  1 evergreen needleleaf  2 evergreen broadleaf  3 deciduous needleleaf  4 deciduous broadleaf
@@ -1054,9 +1053,6 @@ else
   call ncerror(lu_st,'getting the land_cat dimension')
   lu_st=nf90_inquire_dimension(lu_ncid,lu_dimid,len=lu_ncat)
   call ncerror(lu_st,'reading the land_cat dimension')
-  allocate(lu_f(nlon,nlat,lu_ncat))
-  lu_st=nf90_get_var(lu_ncid,lu_varid,lu_f,(/xoffset,yoffset,1,1/),(/nlon,nlat,lu_ncat,1/),(/1,1,1,1/))
-  call ncerror(lu_st,'reading LANDUSEF')
 !
 ! weights lu_w(k) of the category k for the group of vaid
   lu_w = 0.
@@ -1095,16 +1091,23 @@ else
   ! LCZ urban classes (11 of them), when the file has them
   if (trim(vaid) == 'urbanFrac') lu_w(lcz1:lcz1+10) = 1.
 !
+  allocate(lu_f(nlon,nlat))
   lu_out = 0.
   do k = 1, min(lu_ncat, lu_max)
-    if (lu_w(k) > 0.) lu_out = lu_out + lu_w(k) * lu_f(:,:,k)
+    if (lu_w(k) > 0.) then
+      ! only the categories of this group are read (one 2-D slice each)
+      lu_st=nf90_get_var(lu_ncid,lu_varid,lu_f,(/xoffset,yoffset,k,1/),(/nlon,nlat,1,1/),(/1,1,1,1/))
+      call ncerror(lu_st,'reading LANDUSEF')
+      lu_out = lu_out + lu_w(k) * lu_f
+    endif
   enddo
   lu_out = 100. * lu_out
   where (lu_out > 100.) lu_out = 100.
   where (lu_out < 1.e-4) lu_out = 0.
   lu_out = real(nint(1.d4 * lu_out, 8)) / 1.e4
   deallocate(lu_f)
-  write(*,*) trim(vaid), ' from LANDUSEF of ', trim(fname), ', table ', trim(lu_scheme)
+  if (.not. lu_told) write(*,*) trim(vaid), ' from LANDUSEF, land-use table ', trim(lu_scheme)
+  lu_told = .true.
 endif
 !
 lu_st = nf90_close(lu_ncid)
