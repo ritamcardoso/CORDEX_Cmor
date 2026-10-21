@@ -423,17 +423,17 @@ except for `alb`. These fields must be in the wrfout files (Noah-MP output, as i
 LUCAS), so `lsm` is not in `ORDER`; run it on its own, e.g.
 `./run.sh lucas 2000 2010 lsm`. The `fx` varset now also writes, with
 `RCM_fx_landuse.f90`, `treeFrac`, `shrubFrac`, `grassFrac`, `cropFrac`,
-`baresoilFrac`, `urbanFrac`, `cnc` (their vegetated sum, % of the grid cell)
-and `luindex` (`LU_INDEX`), from `LANDUSEF` of the first wrfout file of the
-job year. The grouping of the land-use categories is a weight table at the top
-of the program (MODIS/IGBP and USGS, with the LCZ urban classes); edit it there.
-Like the other fx files, an existing file is kept, so the fx fractions are
-those of the first year processed. The grouping of the land-use categories is in
-`landuse_field` (`shared_subs_v2.f90`).
+`baresoilFrac`, `urbanFrac` and `cnc` (their vegetated sum, % of the grid cell),
+from `LANDUSEF` of the first wrfout file of the job year, and with
+`RCM_fx_lcvr.f90` the dominant land-cover class `lcvr` (`LU_INDEX` of the geo_em
+file, the LUCAS name). The grouping of the land-use categories (MODIS/IGBP and
+USGS weight tables, with the LCZ urban classes) is in `landuse_field`
+(`shared_subs_v2.f90`); edit it there. Like the other fx files, an existing file
+is kept, so the fx fractions are those of the first year processed.
 
 **Hourly land cover for land-use change runs (`landuse` varset).** For LUCAS,
 where the land-use maps change during the run, `RCM_sfc_landuse.f90` writes the
-same eight variables every hour (instantaneous, `time: point`), from `LANDUSEF` /
+seven fractions and `lcvr` every hour (instantaneous, `time: point`), from `LANDUSEF` /
 `LU_INDEX` of each wrfout file, so they follow the maps whenever they change and
 can be used as a mask at any time step. It is not in `ORDER`; run it with
 `./run.sh lucas 2000 2010 landuse`. Daily and monthly means of the fractions are in

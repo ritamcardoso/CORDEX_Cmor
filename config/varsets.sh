@@ -31,7 +31,7 @@ declare -A VARSETS=(
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
-  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,luindex"
+  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
   [teste]="RCM_sfc_rad:rsds"
   # Manual runs only (not in any stream)
@@ -51,7 +51,7 @@ declare -A VARSETS=(
   [lsm]="RCM_sfc_lsmflx:evspsblsoi,evspsblveg,tran;RCM_sfc_lsm:lai,vegFrac,alb"
   # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
   # run with ./run.sh lucas <first year> <last year> landuse
-  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,luindex"
+  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr"
 )
 
 #

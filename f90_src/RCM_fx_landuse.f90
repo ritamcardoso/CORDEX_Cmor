@@ -1,8 +1,7 @@
 program read_wrfout
 !
-! RCM_fx_landuse — land-cover fractions (fx, % of the grid cell) and the dominant
-! land-use category, from LANDUSEF and LU_INDEX of the first wrfout file of the job
-! year. For land-use change experiments (LUCAS) use RCM_sfc_landuse (varset landuse),
+! RCM_fx_landuse — land-cover fractions (fx, % of the grid cell), from LANDUSEF of
+! the first wrfout file of the job year. For land-use change experiments (LUCAS) use RCM_sfc_landuse (varset landuse),
 ! which writes them every hour. The variable (vaid in its header):
 !
 !   treeFrac      % tree cover           (area_type tree)
@@ -12,7 +11,7 @@ program read_wrfout
 !   baresoilFrac  % bare soil            (area_type bare_ground)
 !   urbanFrac     % urban                (area_type urban)
 !   cnc           % vegetation = tree + shrub + grass + crop
-!   luindex       LU_INDEX, dominant land-use category (1)
+!   (the dominant land-use category, lcvr, is written by RCM_fx_lcvr from the geo_em file)
 !
 ! The grouping of the land-use categories (weight tables) is in landuse_field
 ! (shared_subs_v2.f90). An existing fx file is kept (fixed field).

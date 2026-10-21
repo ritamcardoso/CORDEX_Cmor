@@ -1,8 +1,0 @@
-wrfvar = 'LU_INDEX'
-vaid = 'luindex'
-vunts = '1'
-lname = 'Dominant Land Use Category'
-stname = ''
-cmethods = 'area: point'
-factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-!
