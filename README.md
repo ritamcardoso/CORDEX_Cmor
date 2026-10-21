@@ -383,6 +383,13 @@ values are used instead.
 
 ## 5. Variable Sets (`config/varsets.sh`)
 
+**Variable list.** [`CORDEX_Cmor_variables.csv`](CORDEX_Cmor_variables.csv) lists the
+requested variables of CORDEX-CMIP6 (as in WRF-CMORizer's `CORDEX_CMIP6_variables.csv`),
+FPS-URB-RCC (the urban variables of its data request) and FPS-LUCAS (phase 2 workbook),
+one row per variable and project: priority, units, `ag` (`i` instantaneous, `a`
+average), metadata, requested frequencies, all the WRF fields the variable needs
+(space-separated), the project, and which program of this repo writes it.
+
 It's the single place that defines every variable group ("varset"), what Fortran program(s) process it, how
 long to schedule it for, and how it chains to other varsets. You will
 rarely need to touch anything else once this is set up.
