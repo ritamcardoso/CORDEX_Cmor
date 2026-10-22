@@ -1,0 +1,9 @@
+! hfso: no CORDEX_Cmor program yet; GRDFLX (check the sign: downward positive)
+wrfvar = 'GRDFLX'
+vaid = 'hfso'
+vunts = 'W m-2'
+lname = 'Ground Heat Flux'
+stname = 'downward_heat_flux_in_soil'
+cmethods = 'area: time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

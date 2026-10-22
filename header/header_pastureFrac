@@ -1,0 +1,9 @@
+! pastureFrac: no CORDEX_Cmor program yet; no pasture class in the WRF land-use tables
+wrfvar = ''
+vaid = 'pastureFrac'
+vunts = '%'
+lname = 'Percentage of Land Which Is Anthropogenic Pasture'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

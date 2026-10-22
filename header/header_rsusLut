@@ -1,0 +1,9 @@
+! rsusLut: no CORDEX_Cmor program yet; as rsus (ACSWUPB I_ACSWUPB); no land-use tiles in WRF: grid-cell value
+wrfvar = 'ACSWUPB'
+vaid = 'rsusLut'
+vunts = 'W m-2'
+lname = 'Surface Upwelling Shortwave on Land-Use Tile'
+stname = 'surface_upwelling_shortwave_flux_in_air'
+cmethods = 'area: time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

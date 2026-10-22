@@ -1,0 +1,10 @@
+! va10: written by RCM_plev_uava (also writes ua10), in the commented varset lines with all the pressure levels; needs U V COSALPHA SINALPHA P PB; missing (1e20) unless the model levels reach above 10 hPa (p_top < 10 hPa)
+wrfvar = 'V'
+vaid = 'va10'
+pres = 1000.
+vunts = 'm s-1'
+lname = 'Northward Wind at 10hPa'
+stname = 'northward_wind'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

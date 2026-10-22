@@ -1,0 +1,9 @@
+! dtb: no CORDEX_Cmor program yet; not available from WRF (external dataset)
+wrfvar = ''
+vaid = 'dtb'
+vunts = 'm'
+lname = 'Depth to Bedrock'
+stname = 'bedrock_depth_below_ground_level'
+cmethods = 'area: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

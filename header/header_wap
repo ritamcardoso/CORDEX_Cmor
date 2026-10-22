@@ -1,0 +1,9 @@
+! wap: no CORDEX_Cmor program yet; needs W P PB T QVAPOR (omega = -rho g w); pressure level: set pres (Pa)
+wrfvar = 'W'
+vaid = 'wap'
+vunts = 'Pa s-1'
+lname = 'Omega (=dp/dt)'
+stname = 'lagrangian_tendency_of_air_pressure'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

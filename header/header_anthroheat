@@ -1,0 +1,9 @@
+! anthroheat: no CORDEX_Cmor program yet; not in the WRF history output; grid-cell average
+wrfvar = ''
+vaid = 'anthroheat'
+vunts = 'W m-2'
+lname = 'Anthropogenic heat flux'
+stname = 'anthropogenic_heatflux'
+cmethods = 'area: mean time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

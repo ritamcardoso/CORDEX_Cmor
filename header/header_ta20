@@ -1,0 +1,10 @@
+! ta20: written by RCM_plev_ta, in the commented varset lines with all the pressure levels; needs T P PB; missing (1e20) unless the model levels reach above 20 hPa (p_top < 20 hPa)
+wrfvar = 'T'
+vaid = 'ta20'
+pres = 2000.
+vunts = 'K'
+lname = 'Air Temperature at 20hPa'
+stname = 'air_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

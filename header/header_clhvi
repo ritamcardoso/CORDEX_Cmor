@@ -1,0 +1,9 @@
+! clhvi: no CORDEX_Cmor program yet; needs QHAIL P PB PSFC (vertical integral; microphysics with hail)
+wrfvar = 'QHAIL'
+vaid = 'clhvi'
+vunts = 'kg m-2'
+lname = 'Vertical integral of mass content of hail'
+stname = 'atmosphere_mass_content_of_hail'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

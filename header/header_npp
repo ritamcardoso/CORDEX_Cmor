@@ -1,0 +1,9 @@
+! npp: no CORDEX_Cmor program yet; NPP (Noah-MP, g m-2 s-1: factor 0.001); dynamic vegetation only
+wrfvar = 'NPP'
+vaid = 'npp'
+vunts = 'kg m-2 s-1'
+lname = 'Net Primary Production on Land as Carbon Mass Flux'
+stname = 'net_primary_productivity_of_biomass_expressed_as_carbon'
+cmethods = 'area: mean where land time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

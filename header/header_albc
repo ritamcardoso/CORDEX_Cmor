@@ -1,0 +1,9 @@
+! albc: no CORDEX_Cmor program yet; no canopy albedo in the WRF output
+wrfvar = ''
+vaid = 'albc'
+vunts = '1'
+lname = 'Canopy Albedo'
+stname = 'canopy_albedo'
+cmethods = 'area: mean where land time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

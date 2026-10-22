@@ -1,0 +1,9 @@
+! hfssLut: no CORDEX_Cmor program yet; no land-use tiles in WRF: grid-cell value
+wrfvar = 'HFX'
+vaid = 'hfssLut'
+vunts = 'W m-2'
+lname = 'Sensible Heat Flux on Land-Use Tile'
+stname = 'surface_upward_sensible_heat_flux'
+cmethods = 'area: time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

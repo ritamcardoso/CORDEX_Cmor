@@ -1,0 +1,9 @@
+! hu: no CORDEX_Cmor program yet; QVAPOR on the model levels (LUCAS units m3/m3)
+wrfvar = 'QVAPOR'
+vaid = 'hu'
+vunts = 'm3/m3'
+lname = 'Atmospheric humidity at model levels'
+stname = 'specific_humidity'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

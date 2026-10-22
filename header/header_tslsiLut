@@ -1,0 +1,9 @@
+! tslsiLut: no CORDEX_Cmor program yet; no land-use tiles in WRF: grid-cell value
+wrfvar = 'TSK'
+vaid = 'tslsiLut'
+vunts = 'K'
+lname = 'Surface Temperature on Land-Use Tile'
+stname = 'surface_temperature'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -1,0 +1,9 @@
+! laiLut: no CORDEX_Cmor program yet; no land-use tiles in WRF: grid-cell value
+wrfvar = 'LAI'
+vaid = 'laiLut'
+vunts = '1'
+lname = 'Leaf Area Index on Land-Use Tile'
+stname = 'leaf_area_index'
+cmethods = 'area: mean where land time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

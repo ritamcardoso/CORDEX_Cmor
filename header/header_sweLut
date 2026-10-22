@@ -1,0 +1,9 @@
+! sweLut: no CORDEX_Cmor program yet; SNOW (kg m-2) / 1000; no land-use tiles in WRF: grid-cell value
+wrfvar = 'SNOW'
+vaid = 'sweLut'
+vunts = 'm'
+lname = 'Snow Water Equivalent on Land-Use Tile'
+stname = 'lwe_thickness_of_surface_snow_amount'
+cmethods = 'area: mean where land time: point'
+factor = 0.001           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -1,0 +1,9 @@
+! mrroLut: no CORDEX_Cmor program yet; needs RUNSF RUNSB (as mrro); no land-use tiles in WRF: grid-cell value
+wrfvar = 'RUNSF'
+vaid = 'mrroLut'
+vunts = 'kg m-2 s-1'
+lname = 'Total Runoff on Land-Use Tile'
+stname = 'runoff_flux'
+cmethods = 'area: time: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

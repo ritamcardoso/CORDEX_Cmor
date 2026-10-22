@@ -22,7 +22,7 @@ va300m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,Northward Wind at 300m,northward_wind
 ts,CORDEX-CMIP6,TIER 1,K,i,x,,,x,x,Surface Temperature,surface_temperature,TSK,CORDEX_Cmor: RCM_sfc_ts (out1 varset)
 tsl,CORDEX-CMIP6,TIER 1,K,i,x,,x,x,x,Temperature of Soil,soil_temperature,TSLB,CORDEX_Cmor: RCM_sfc_tsl (soil varset)
 prc,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,,,x,x,Convective Precipitation,convective_precipitation_flux,RAINC I_RAINC,CORDEX_Cmor: RCM_sfc_prc (snw varset)
-prhmax,CORDEX-CMIP6,TIER 1,kg m-2 s-1,,x,,,x,x,Daily Maximum Hourly Precipitation Rate,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC,not produced by CORDEX_Cmor; daily maximum of the hourly precipitation
+prhmax,CORDEX-CMIP6,TIER 1,kg m-2 s-1,,x,,,x,x,Daily Maximum Hourly Precipitation Rate,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC,not produced by CORDEX_Cmor; header ready; daily maximum of the hourly precipitation
 prsn,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,,,x,x,Snowfall Flux,snowfall_flux,SNOWNC,CORDEX_Cmor: RCM_sfc_prsn (snw varset)
 mrros,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,,x,x,x,Surface Runoff,surface_runoff_flux,RUNSF,CORDEX_Cmor: RCM_sfc_mrros (soil varset)
 mrro,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,,x,x,x,Total Runoff,runoff_flux,RUNSB RUNSF,CORDEX_Cmor: RCM_sfc_mrro (soil varset)
@@ -53,8 +53,8 @@ zmla,CORDEX-CMIP6,TIER 1,m,i,x,,,x,x,Height of Boundary Layer,atmosphere_boundar
 prw,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,Water Vapor Path,atmosphere_mass_content_of_water_vapor,QVAPOR P PB PSFC,CORDEX_Cmor: RCM_sfc_prw (wpth2 varset)
 clwvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,Condensed Water Path,atmosphere_mass_content_of_cloud_condensed_water,QCLOUD P PB PSFC QICE QRAIN QSNOW,CORDEX_Cmor: RCM_sfc_clwvi (wpth3 varset)
 clivi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,Ice Water Path,atmosphere_mass_content_of_cloud_ice,P PB PSFC QICE QSNOW,CORDEX_Cmor: RCM_sfc_clivi (wpth1 varset)
-clgvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,Vertical integral of mass content of graupel,atmosphere_mass_content_of_graupel,QGRAUP P PB PSFC,not produced by CORDEX_Cmor; vertical integral
-clhvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,Vertical integral of mass content of hail,atmosphere_mass_content_of_hail,QHAIL P PB PSFC,not produced by CORDEX_Cmor; vertical integral (2-moment microphysics with hail)
+clgvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,Vertical integral of mass content of graupel,atmosphere_mass_content_of_graupel,QGRAUP P PB PSFC,not produced by CORDEX_Cmor; header ready; vertical integral
+clhvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,Vertical integral of mass content of hail,atmosphere_mass_content_of_hail,QHAIL P PB PSFC,not produced by CORDEX_Cmor; header ready; vertical integral (2-moment microphysics with hail)
 ua1000,CORDEX-CMIP6,TIER 1,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
 ua925,CORDEX-CMIP6,TIER 1,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
 ua850,CORDEX-CMIP6,TIER 1,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
@@ -124,7 +124,7 @@ va150m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,Northward Wind at 150m,northward_wind
 ta50m,CORDEX-CMIP6,TIER 1,K,i,x,,,x,x,Air Temperature at 50m,air_temperature,T HGT PH PHB P PB,CORDEX_Cmor: RCM_zlev_ta (zlev_ta varset)
 hus50m,CORDEX-CMIP6,TIER 1,1,i,x,,,x,x,Specific Humidity at 50m,specific_humidity,QVAPOR HGT PH PHB,CORDEX_Cmor: RCM_zlev_hus (zlev_hus varset)
 evspsblpot,CORDEX-CMIP6,TIER 2,kg m-2 s-1,a,x,,,x,x,Potential Evapotranspiration,water_potential_evaporation_flux,T2 Q2 PSFC U10 V10 ACSWDNB I_ACSWDNB ACSWUPB I_ACSWUPB ACLWDNB I_ACLWDNB ACLWUPB I_ACLWUPB,CORDEX_Cmor: RCM_sfc_evspsblpot (out2 varset); FAO-56 Penman-Monteith hourly; net radiation from the accumulated radiation
-wsgsmax,CORDEX-CMIP6,TIER 2,m s-1,,,,,x,x,Daily Maximum Near-Surface Wind Speed of Gust,wind_speed_of_gust,-,not produced by CORDEX_Cmor; no gust diagnostic in the WRF output
+wsgsmax,CORDEX-CMIP6,TIER 2,m s-1,,,,,x,x,Daily Maximum Near-Surface Wind Speed of Gust,wind_speed_of_gust,-,not produced by CORDEX_Cmor; header ready; no gust diagnostic in the WRF output
 clh,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,High Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud1 varset)
 clm,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,Mid Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud1 varset)
 cll,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,Low Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset)
@@ -135,55 +135,55 @@ rluscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,Surface Upwelling Clear-Sky Longwave 
 rsutcs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,TOA Outgoing Clear-Sky Shortwave Radiation,toa_outgoing_shortwave_flux_assuming_clear_sky,ACSWUPTC I_ACSWUPTC,CORDEX_Cmor: RCM_sfc_rad (rad varset)
 rlutcs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,TOA Outgoing Clear-Sky Longwave Radiation,toa_outgoing_longwave_flux_assuming_clear_sky,ACLWUPTC I_ACLWUPTC,CORDEX_Cmor: RCM_sfc_rad (rad varset)
 z0,CORDEX-CMIP6,TIER 2,m,i,,,,x,x,Surface Roughness Length,surface_roughness_length,COSALPHA SINALPHA U10 V10 UST,"CORDEX_Cmor: RCM_sfc_z0 (out2 varset); z0 = 10 exp(-k U10/UST), from the 10 m wind and UST (not ZNT)"
-cape,CORDEX-CMIP6,TIER 2,J kg-1,i,x,,,x,x,Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; derived (e.g. wrf-python cape_2d)
-li,CORDEX-CMIP6,TIER 2,K,i,x,,,x,x,Lifted Index,temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface,P PB T QVAPOR T2 Q2 PSFC,not produced by CORDEX_Cmor; derived (lifted index at 500 hPa)
-cin,CORDEX-CMIP6,TIER 2,J kg-1,i,x,,,x,x,Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; derived (e.g. wrf-python cape_2d)
-capemax,CORDEX-CMIP6,TIER 2,J kg-1,,,,,x,x,Daily Maximum Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; daily maximum of cape
-limax,CORDEX-CMIP6,TIER 2,K,,,,,x,x,Daily Maximum Lifted Index,temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface,P PB T QVAPOR T2 Q2 PSFC,not produced by CORDEX_Cmor; daily maximum of li
-cinmax,CORDEX-CMIP6,TIER 2,J kg-1,,,,,x,x,Daily Maximum Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; daily maximum of cin
+cape,CORDEX-CMIP6,TIER 2,J kg-1,i,x,,,x,x,Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; derived (e.g. wrf-python cape_2d)
+li,CORDEX-CMIP6,TIER 2,K,i,x,,,x,x,Lifted Index,temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface,P PB T QVAPOR T2 Q2 PSFC,not produced by CORDEX_Cmor; header ready; derived (lifted index at 500 hPa)
+cin,CORDEX-CMIP6,TIER 2,J kg-1,i,x,,,x,x,Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; derived (e.g. wrf-python cape_2d)
+capemax,CORDEX-CMIP6,TIER 2,J kg-1,,,,,x,x,Daily Maximum Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; daily maximum of cape
+limax,CORDEX-CMIP6,TIER 2,K,,,,,x,x,Daily Maximum Lifted Index,temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface,P PB T QVAPOR T2 Q2 PSFC,not produced by CORDEX_Cmor; header ready; daily maximum of li
+cinmax,CORDEX-CMIP6,TIER 2,J kg-1,,,,,x,x,Daily Maximum Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; daily maximum of cin
 od550aer,CORDEX-CMIP6,TIER 2,1,,,,,,x,Ambient Aerosol Optical Thickness at 550nm,atmosphere_optical_thickness_due_to_ambient_aerosol_particles,AOD5502D,CORDEX_Cmor: RCM_sfc_od550aer (out1 varset)
 ua150,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
 ua100,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
 ua70,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
 ua50,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
 ua30,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua20,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor
-ua10,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; above the model top with p_top = 2000 Pa
+ua20,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
+ua10,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
 va150,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
 va100,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
 va70,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
 va50,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
 va30,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va20,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor
-va10,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; above the model top with p_top = 2000 Pa
+va20,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
+va10,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
 ta150,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
 ta100,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
 ta70,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
 ta50,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
 ta30,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta20,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,not produced by CORDEX_Cmor
-ta10,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,not produced by CORDEX_Cmor; above the model top with p_top = 2000 Pa
+ta20,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
+ta10,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
 hus150,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
 hus100,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
 hus70,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
 hus50,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
 hus30,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus20,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,not produced by CORDEX_Cmor
-hus10,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,not produced by CORDEX_Cmor; above the model top with p_top = 2000 Pa
+hus20,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
+hus10,CORDEX-CMIP6,TIER 2,1,i,x,,x,x,x,Specific Humidity,specific_humidity,QVAPOR P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
 zg150,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
 zg100,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
 zg70,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
 zg50,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
 zg30,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg20,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,PH PHB P PB,not produced by CORDEX_Cmor
-zg10,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,PH PHB P PB,not produced by CORDEX_Cmor; above the model top with p_top = 2000 Pa
+zg20,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,PH PHB P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
+zg10,CORDEX-CMIP6,TIER 2,m,i,x,,x,x,x,Geopotential Height,geopotential_height,PH PHB P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
 wa150,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
 wa100,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
 wa70,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
 wa50,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
 wa30,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa20,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,not produced by CORDEX_Cmor
-wa10,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,not produced by CORDEX_Cmor; above the model top with p_top = 2000 Pa
+wa20,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
+wa10,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Upward Air Velocity,upward_air_velocity,W P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
 ua750,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
 va750,CORDEX-CMIP6,TIER 2,m s-1,i,x,,x,x,x,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
 ta750,CORDEX-CMIP6,TIER 2,K,i,x,,x,x,x,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
@@ -195,17 +195,17 @@ ua250m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,Eastward Wind at 250m,eastward_wind,C
 ua300m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,Eastward Wind at 300m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset)
 sftgif,CORDEX-CMIP6,TIER 2,%,,,,,,,Percentage of the Grid Cell Covered by Glacier,land_ice_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sftgif (fx varset); geo_em LU_INDEX = 15 (MODIS snow and ice)
 mrsofc,CORDEX-CMIP6,TIER 2,kg m-2,,,,,,,Capacity of Soil to Store Water  (Field Capacity),soil_moisture_content_at_field_capacity,SCT_DOM,CORDEX_Cmor: RCM_sfc_mrsofc (soil varset); SCT_DOM of geo_em with REFSMC of SOILPARM.TBL (STAS) over the 4 Noah-MP layers
-rootd,CORDEX-CMIP6,TIER 2,m,,,,,,,Maximum Root Depth,root_depth,LU_INDEX ZS DZS,not produced by CORDEX_Cmor; root layers per vegetation class (NROOT of VEGPARM.TBL)
+rootd,CORDEX-CMIP6,TIER 2,m,,,,,,,Maximum Root Depth,root_depth,LU_INDEX ZS DZS,not produced by CORDEX_Cmor; header ready; root layers per vegetation class (NROOT of VEGPARM.TBL)
 sftlaf,CORDEX-CMIP6,TIER 2,%,,,,,,,Percentage of the Grid Cell Occupied by Lake,lake_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sftlaf (fx varset); geo_em LU_INDEX = 21 (MODIS lakes)
 sfturf,CORDEX-CMIP6,TIER 2,%,,,,,,,Percentage of the Grid Cell Occupied by City,urban_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sfturf (fx varset); geo_em LU_INDEX = 13 (MODIS urban)
-dtb,CORDEX-CMIP6,TIER 2,m,,,,,,,Depth to Bedrock,bedrock_depth,-,not produced by CORDEX_Cmor; not available from WRF (external dataset)
-areacella,CORDEX-CMIP6,TIER 2,m2,,,,,,,Atmosphere Grid-Cell Area,cell_area,MAPFAC_MX MAPFAC_MY,not produced by CORDEX_Cmor; geo_em; DX*DY/(MAPFAC_MX*MAPFAC_MY) with the DX/DY attributes
-hfso,CORDEX-CMIP6,TIER 2,W m-2,a,x,,,x,x,Surface Downward Ground Heat Flux,surface_downward_ground_heat_flux,GRDFLX,not produced by CORDEX_Cmor
+dtb,CORDEX-CMIP6,TIER 2,m,,,,,,,Depth to Bedrock,bedrock_depth,-,not produced by CORDEX_Cmor; header ready; not available from WRF (external dataset)
+areacella,CORDEX-CMIP6,TIER 2,m2,,,,,,,Atmosphere Grid-Cell Area,cell_area,MAPFAC_MX MAPFAC_MY,not produced by CORDEX_Cmor; header ready; geo_em; DX*DY/(MAPFAC_MX*MAPFAC_MY) with the DX/DY attributes
+hfso,CORDEX-CMIP6,TIER 2,W m-2,a,x,,,x,x,Surface Downward Ground Heat Flux,surface_downward_ground_heat_flux,GRDFLX,not produced by CORDEX_Cmor; header ready
 taspav,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Near-surface temperature pavements,pavement_temperature,T2G_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 tasroof,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Near-surface temperature roof,roof_temperature,T2R_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 tasgree,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Near-surface temperature green spaces,greenspaces_temperature,T2VEG_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 tasblue,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Near-surface temperature blue spaces,bluespaces_temperature,T2,CORDEX_Cmor: RCM_sfc_tasblue (urban varset); water cells only (LANDMASK = 0)
-anthroheat,FPS-URB-RCC,URB-RCC,W m-2,,x,,,x,x,Anthropogenic heat flux,anthropogenic_heatflux,-,not produced by CORDEX_Cmor; not in the WRF history output
+anthroheat,FPS-URB-RCC,URB-RCC,W m-2,,x,,,x,x,Anthropogenic heat flux,anthropogenic_heatflux,-,not produced by CORDEX_Cmor; header ready; not in the WRF history output
 tsskin,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Skin temperature,skin_temperature,TSK,CORDEX_Cmor: RCM_sfc_ts (urban varset); all cells (RCM_sfc_ts with header_tsskin)
 tspav,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Surface temperature pavements,pavement_surface_temperature,TGROUND_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 tsroof,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Surface temperature roof,roof_surface_temperature,TROOF_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
@@ -215,7 +215,7 @@ tascan,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,Near-surface temperature within canyon,te
 hurscan,FPS-URB-RCC,URB-RCC,%,i,x,,,x,x,Near-Surface Relative Humidity within canyon,relative_humidity_canyon,TCAN_URB2D PSFC QCAN_URB2D,CORDEX_Cmor: RCM_sfc_hurscan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 husscan,FPS-URB-RCC,URB-RCC,1,i,x,,,x,x,Near-Surface Specific Humidity within canyon,specific_humidity_canyon,QCAN_URB2D,CORDEX_Cmor: RCM_sfc_husscan (urban varset); q = r/(1+r); urban cells only
 sfcWindcan,FPS-URB-RCC,URB-RCC,m s-1,i,x,,,x,x,Near-Surface Wind Speed within canyon,wind_speed_canyon,UCAN_URB2D,CORDEX_Cmor: RCM_sfc_sfcWindcan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-areacella,FPS-LUCAS,CORE,m2,,,,,,,Atmosphere Grid-Cell Area,cell_area,MAPFAC_MX MAPFAC_MY,not produced by CORDEX_Cmor; geo_em; DX*DY/(MAPFAC_MX*MAPFAC_MY) with the DX/DY attributes
+areacella,FPS-LUCAS,CORE,m2,,,,,,,Atmosphere Grid-Cell Area,cell_area,MAPFAC_MX MAPFAC_MY,not produced by CORDEX_Cmor; header ready; geo_em; DX*DY/(MAPFAC_MX*MAPFAC_MY) with the DX/DY attributes
 clivi,FPS-LUCAS,CORE,kg m-2,i,x,,,,,Ice Water Path,atmosphere_mass_content_of_cloud_ice,P PB PSFC QICE QSNOW,CORDEX_Cmor: RCM_sfc_clivi (wpth1 varset)
 clt,FPS-LUCAS,CORE,%,a,x,,,,,Total Cloud Cover Percentage,cloud_area_fraction,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset)
 clwvi,FPS-LUCAS,CORE,kg m-2,i,x,,,,,Condensed Water Path,atmosphere_mass_content_of_cloud_condensed_water,QCLOUD P PB PSFC QICE QRAIN QSNOW,CORDEX_Cmor: RCM_sfc_clwvi (wpth3 varset)
@@ -223,7 +223,7 @@ evspsbl,FPS-LUCAS,CORE,kg m-2 s-1,a,x,,,,,Evaporation Including Sublimation and 
 evspsblpot,FPS-LUCAS,CORE,kg m-2 s-1,a,x,,,,,Potential Evapotranspiration,water_potential_evaporation_flux,T2 Q2 PSFC U10 V10 ACSWDNB I_ACSWDNB ACSWUPB I_ACSWUPB ACLWDNB I_ACLWDNB ACLWUPB I_ACLWUPB,CORDEX_Cmor: RCM_sfc_evspsblpot (out2 varset); FAO-56 Penman-Monteith hourly; net radiation from the accumulated radiation
 hfls,FPS-LUCAS,CORE,W m-2,a,x,,,,,Surface Upward Latent Heat Flux,surface_upward_latent_heat_flux,LH,CORDEX_Cmor: RCM_sfc_hfls (out1 varset)
 hfss,FPS-LUCAS,CORE,W m-2,a,x,,,,,Surface Upward Sensible Heat Flux,surface_upward_sensible_heat_flux,HFX,CORDEX_Cmor: RCM_sfc_hfss (out1 varset)
-hu,FPS-LUCAS,CORE,m3/m3,i,x,,,,,Atmospheric humidity at model levels,specific_humidity,QVAPOR,not produced by CORDEX_Cmor; model levels
+hu,FPS-LUCAS,CORE,m3/m3,i,x,,,,,Atmospheric humidity at model levels,specific_humidity,QVAPOR,not produced by CORDEX_Cmor; header ready; model levels
 hurs,FPS-LUCAS,CORE,%,i,x,,,,,Near-Surface Relative Humidity,relative_humidity,Q2 T2 PSFC,CORDEX_Cmor: RCM_sfc_hurs (out1 varset)
 hus200,FPS-LUCAS,CORE,1,i,,x,,,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
 hus500,FPS-LUCAS,CORE,1,i,,x,,,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
@@ -274,47 +274,47 @@ zg500,FPS-LUCAS,CORE,m,i,,x,,,,Geopotential Height,geopotential_height,P PB PH P
 zg850,FPS-LUCAS,CORE,m,i,,x,,,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
 zmla,FPS-LUCAS,CORE,m,i,,x,,,,Height of Boundary Layer,atmosphere_boundary_layer_thickness,PBLH,CORDEX_Cmor: RCM_sfc_zmla (out1 varset)
 alb,FPS-LUCAS,TIER 1,1,i,,,,x,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_lsm (lsm varset)
-albc,FPS-LUCAS,TIER 1,1,i,,,,x,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,-,not produced by CORDEX_Cmor; no canopy albedo in the WRF output
+albc,FPS-LUCAS,TIER 1,1,i,,,,x,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,-,not produced by CORDEX_Cmor; header ready; no canopy albedo in the WRF output
 baresoilFrac,FPS-LUCAS,TIER 1,%,,,,,,,Bare Soil Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 cnc,FPS-LUCAS,TIER 1,%,,,,,,,Percentage of area covered by vegetation.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF tree+shrub+grass+crop (landuse_field in shared_subs_v2.f90)
 cropFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage Crop Cover,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
-cVeg,FPS-LUCAS,TIER 1,kg m-2,i,,,,x,,Carbon mass per unit area in vegetation.,vegetation_carbon_content,LFMASS STMASS WOOD,not produced by CORDEX_Cmor; Noah-MP with dynamic vegetation (opt_dveg)
+cVeg,FPS-LUCAS,TIER 1,kg m-2,i,,,,x,,Carbon mass per unit area in vegetation.,vegetation_carbon_content,LFMASS STMASS WOOD,not produced by CORDEX_Cmor; header ready; Noah-MP with dynamic vegetation (opt_dveg)
 evspsblsoi,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,Water evaporation from soil (including sublimation).,water_evaporation_flux_from_soil,EDIR,CORDEX_Cmor: RCM_sfc_lsmflx (lsm varset)
 evspsblveg,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,The canopy evaporation and sublimation (if present in model); may include dew formation as a negative flux.,water_evaporation_flux_from_canopy,ECAN,CORDEX_Cmor: RCM_sfc_lsmflx (lsm varset)
 grassFrac,FPS-LUCAS,TIER 1,%,,,,,,,Natural Grass Area Percentage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
-hflsLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Latent Heat Flux on Land-Use Tile,surface_upward_latent_heat_flux,LH,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
-hfssLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Sensible Heat Flux on Land-Use Tile,surface_upward_sensible_heat_flux,HFX,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
-hussLut,FPS-LUCAS,TIER 1,1,i,x,,,,,"Normally, the specific humidity should be reported at the 2 meter height",specific_humidity,Q2,not produced by CORDEX_Cmor; no land-use tiles in WRF (Noah-MP Q2MV/Q2MB: vegetated/bare parts)
-interception,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,water intercepted,canopy_water_amount,CANLIQ CANICE,not produced by CORDEX_Cmor; Noah-MP canopy water
-irrLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,surface_downward_mass_flux_of_water_due_to_irrigation,surface_downward_mass_flux_of_water_due_to_irrigation,IRWATSI IRWATMI IRWATFI,not produced by CORDEX_Cmor; Noah-MP irrigation (opt_irr); no land-use tiles
-laiLut,FPS-LUCAS,TIER 1,1,i,,,,x,,Leaf Area Index on Land-Use Tile,leaf_area_index,LAI,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
-landCoverFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage of Area by Vegetation or Land-Cover Category,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; one value per land-use class (needs a 3-D fx writer)
-mrroLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,Total Runoff on Land-Use Tile,runoff_flux,SFROFF UDROFF,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
-mrsoLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,Total Soil Moisture on Land-Use Tile,mass_content_of_water_in_soil,SMOIS,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
-mrsosLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,the mass of water in all phases in a thin surface layer; integrate over uppermost 10cm,mass_content_of_water_in_soil_layer,SMOIS,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
-npp,FPS-LUCAS,TIER 1,kg m-2 s-1,a,,,,x,,Net Primary Production on Land as Carbon Mass Flux,net_primary_productivity_of_biomass_expressed_as_carbon,NPP,not produced by CORDEX_Cmor; Noah-MP with dynamic vegetation (opt_dveg)
-pastureFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage of Land Which Is Anthropogenic Pasture,area_fraction,-,not produced by CORDEX_Cmor; no pasture class in the WRF land-use tables
-residualFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; urban + land ice classes; LUCAS name resdiualFrac
-rlusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Surface Upwelling Longwave on Land-Use Tile,surface_upwelling_longwave_flux_in_air,ACLWUPB I_ACLWUPB,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
-rough,FPS-LUCAS,TIER 1,m,i,,,,x,,Roughness Length,roughness_length,ZNT,not produced by CORDEX_Cmor
-rsusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Surface Upwelling Shortwave on Land-Use Tile,surface_upwelling_shortwave_flux_in_air,ACSWUPB I_ACSWUPB,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
+hflsLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Latent Heat Flux on Land-Use Tile,surface_upward_latent_heat_flux,LH,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
+hfssLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Sensible Heat Flux on Land-Use Tile,surface_upward_sensible_heat_flux,HFX,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
+hussLut,FPS-LUCAS,TIER 1,1,i,x,,,,,"Normally, the specific humidity should be reported at the 2 meter height",specific_humidity,Q2,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF (Noah-MP Q2MV/Q2MB: vegetated/bare parts)
+interception,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,water intercepted,canopy_water_amount,CANLIQ CANICE,not produced by CORDEX_Cmor; header ready; Noah-MP canopy water
+irrLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,surface_downward_mass_flux_of_water_due_to_irrigation,surface_downward_mass_flux_of_water_due_to_irrigation,IRWATSI IRWATMI IRWATFI,not produced by CORDEX_Cmor; header ready; Noah-MP irrigation (opt_irr); no land-use tiles
+laiLut,FPS-LUCAS,TIER 1,1,i,,,,x,,Leaf Area Index on Land-Use Tile,leaf_area_index,LAI,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
+landCoverFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage of Area by Vegetation or Land-Cover Category,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; header ready; one value per land-use class (needs a 3-D fx writer)
+mrroLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,Total Runoff on Land-Use Tile,runoff_flux,RUNSF RUNSB,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
+mrsoLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,Total Soil Moisture on Land-Use Tile,mass_content_of_water_in_soil,SMOIS,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
+mrsosLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,the mass of water in all phases in a thin surface layer; integrate over uppermost 10cm,mass_content_of_water_in_soil_layer,SMOIS,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
+npp,FPS-LUCAS,TIER 1,kg m-2 s-1,a,,,,x,,Net Primary Production on Land as Carbon Mass Flux,net_primary_productivity_of_biomass_expressed_as_carbon,NPP,not produced by CORDEX_Cmor; header ready; Noah-MP with dynamic vegetation (opt_dveg)
+pastureFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage of Land Which Is Anthropogenic Pasture,area_fraction,-,not produced by CORDEX_Cmor; header ready; no pasture class in the WRF land-use tables
+residualFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; header ready; urban + land ice classes; LUCAS name resdiualFrac
+rlusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Surface Upwelling Longwave on Land-Use Tile,surface_upwelling_longwave_flux_in_air,ACLWUPB I_ACLWUPB,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
+rough,FPS-LUCAS,TIER 1,m,i,,,,x,,Roughness Length,roughness_length,ZNT,not produced by CORDEX_Cmor; header ready
+rsusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,Surface Upwelling Shortwave on Land-Use Tile,surface_upwelling_shortwave_flux_in_air,ACSWUPB I_ACSWUPB,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
 shrubFrac,FPS-LUCAS,TIER 1,%,,,,,,,Percentage Cover by Shrub,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
-sweLut,FPS-LUCAS,TIER 1,m,i,x,,,,,Snow Water Equivalent on Land-Use Tile,lwe_thickness_of_surface_snow_amount,SNOW,not produced by CORDEX_Cmor; SNOW/1000; no land-use tiles in WRF
-tasLut,FPS-LUCAS,TIER 1,K,i,x,,,,,"Air temperature is the bulk temperature of the air, not the surface (skin) temperature.",air_temperature,T2,not produced by CORDEX_Cmor; no land-use tiles in WRF (Noah-MP T2MV/T2MB: vegetated/bare parts)
-tcs,FPS-LUCAS,TIER 1,K,i,x,,,,,"Vegetation temperature, averaged over all vegetation types",canopy_temperature,TV,not produced by CORDEX_Cmor; Noah-MP vegetation temperature
-tgs,FPS-LUCAS,TIER 1,K,i,x,,,,,Surface bare soil temperature,surface_temperature,TGB,not produced by CORDEX_Cmor; Noah-MP bare ground temperature
+sweLut,FPS-LUCAS,TIER 1,m,i,x,,,,,Snow Water Equivalent on Land-Use Tile,lwe_thickness_of_surface_snow_amount,SNOW,not produced by CORDEX_Cmor; header ready; SNOW/1000; no land-use tiles in WRF
+tasLut,FPS-LUCAS,TIER 1,K,i,x,,,,,"Air temperature is the bulk temperature of the air, not the surface (skin) temperature.",air_temperature,T2,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF (Noah-MP T2MV/T2MB: vegetated/bare parts)
+tcs,FPS-LUCAS,TIER 1,K,i,x,,,,,"Vegetation temperature, averaged over all vegetation types",canopy_temperature,TV,not produced by CORDEX_Cmor; header ready; Noah-MP vegetation temperature
+tgs,FPS-LUCAS,TIER 1,K,i,x,,,,,Surface bare soil temperature,surface_temperature,TGB,not produced by CORDEX_Cmor; header ready; Noah-MP bare ground temperature
 tran,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,Transpiration (may include dew formation as a negative flux).,transpiration_flux,ETRAN,CORDEX_Cmor: RCM_sfc_lsmflx (lsm varset)
 treeFrac,FPS-LUCAS,TIER 1,%,,,,,,,Tree Cover Percentage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
-treeFracBdlDcd,FPS-LUCAS,TIER 1,%,,,,,,,This is the percentage of the entire grid cell that is covered by broadleaf deciduous trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; MODIS class 4 (deciduous broadleaf forest)
-treeFracBdlEvg,FPS-LUCAS,TIER 1,%,,,,,,,This is the percentage of the entire grid cell that is covered by broadleaf evergreen trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; MODIS class 2 (evergreen broadleaf forest)
-treeFracNdlDcd,FPS-LUCAS,TIER 1,%,,,,,,,This is the percentage of the entire grid cell that is covered by needleleaf deciduous trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; MODIS class 3 (deciduous needleleaf forest)
+treeFracBdlDcd,FPS-LUCAS,TIER 1,%,,,,,,,This is the percentage of the entire grid cell that is covered by broadleaf deciduous trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; header ready; MODIS class 4 (deciduous broadleaf forest)
+treeFracBdlEvg,FPS-LUCAS,TIER 1,%,,,,,,,This is the percentage of the entire grid cell that is covered by broadleaf evergreen trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; header ready; MODIS class 2 (evergreen broadleaf forest)
+treeFracNdlDcd,FPS-LUCAS,TIER 1,%,,,,,,,This is the percentage of the entire grid cell that is covered by needleleaf deciduous trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; header ready; MODIS class 3 (deciduous needleleaf forest)
 tsl,FPS-LUCAS,TIER 1,K,i,x,,,,,Temperature of Soil,soil_temperature,TSLB,CORDEX_Cmor: RCM_sfc_tsl (soil varset)
-tslsiLut,FPS-LUCAS,TIER 1,K,i,x,,,,,Surface temperature (i.e. temperature at which long-wave radiation emitted),surface_temperature,TSK,not produced by CORDEX_Cmor; no land-use tiles in WRF: grid-cell value only
+tslsiLut,FPS-LUCAS,TIER 1,K,i,x,,,,,Surface temperature (i.e. temperature at which long-wave radiation emitted),surface_temperature,TSK,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
 urbanFrac,FPS-LUCAS,TIER 1,%,,,,,,,Urban Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF urban classes incl. LCZ (landuse_field in shared_subs_v2.f90)
-cape,FPS-LUCAS,TIER 1,J kg-1,i,x,,,,,Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; derived (e.g. wrf-python cape_2d); LUCAS name CAPE
-cin,FPS-LUCAS,TIER 1,J kg-1,i,x,,,,,Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; derived (e.g. wrf-python cape_2d); LUCAS name CIN
-vortmen,FPS-LUCAS,TIER 1,s-1,i,,x,,,,relative vorticity,atmosphere_relative_vorticity,U V MAPFAC_U MAPFAC_V MAPFAC_M P PB,not produced by CORDEX_Cmor; relative vorticity on pressure levels
-wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,omega,lagrangian_tendency_of_air_pressure,W P PB T QVAPOR,not produced by CORDEX_Cmor; omega = -rho g w on pressure levels
-slthick,FPS-LUCAS,TIER 1,m,,,,,,,Thickness of Soil Layers,cell_thickness,DZS,not produced by CORDEX_Cmor; Noah-MP soil layer thickness
+cape,FPS-LUCAS,TIER 1,J kg-1,i,x,,,,,Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; derived (e.g. wrf-python cape_2d); LUCAS name CAPE
+cin,FPS-LUCAS,TIER 1,J kg-1,i,x,,,,,Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; derived (e.g. wrf-python cape_2d); LUCAS name CIN
+vortmen,FPS-LUCAS,TIER 1,s-1,i,,x,,,,relative vorticity,atmosphere_relative_vorticity,U V MAPFAC_U MAPFAC_V MAPFAC_M P PB,not produced by CORDEX_Cmor; header ready; relative vorticity on pressure levels
+wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,omega,lagrangian_tendency_of_air_pressure,W P PB T QVAPOR,not produced by CORDEX_Cmor; header ready; omega = -rho g w on pressure levels
+slthick,FPS-LUCAS,TIER 1,m,,,,,,,Thickness of Soil Layers,cell_thickness,DZS,not produced by CORDEX_Cmor; header ready; Noah-MP soil layer thickness
 prsn,FPS-LUCAS,TIER 1,kg m-2 s-1,a,,,,x,,Snowfall Flux,snowfall_flux,SNOWNC,CORDEX_Cmor: RCM_sfc_prsn (snw varset)
 lcvr,FPS-LUCAS,,1,,x,,,,,Land Cover Dominant Class,,LU_INDEX,"CORDEX_Cmor: RCM_fx_lcvr (fx varset, from geo_em) and RCM_sfc_landuse (landuse varset); LU_INDEX (dominant land-use class); hourly from wrfout; not in the phase 2 workbook list"

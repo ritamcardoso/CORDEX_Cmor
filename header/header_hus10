@@ -1,0 +1,10 @@
+! hus10: written by RCM_plev_hus, in the commented varset lines with all the pressure levels; needs QVAPOR P PB; missing (1e20) unless the model levels reach above 10 hPa (p_top < 10 hPa)
+wrfvar = 'QVAPOR'
+vaid = 'hus10'
+pres = 1000.
+vunts = '1'
+lname = 'Specific Humidity at 10hPa'
+stname = 'specific_humidity'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -1,0 +1,9 @@
+! tcs: no CORDEX_Cmor program yet; TV (Noah-MP)
+wrfvar = 'TV'
+vaid = 'tcs'
+vunts = 'K'
+lname = 'Vegetation Canopy Temperature'
+stname = 'canopy_temperature'
+cmethods = 'area: mean where land time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
