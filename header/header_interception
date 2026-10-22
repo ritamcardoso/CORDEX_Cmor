@@ -1,0 +1,9 @@
+! interception: no CORDEX_Cmor program yet; needs CANLIQ CANICE (Noah-MP canopy liquid and ice)
+wrfvar = 'CANLIQ'
+vaid = 'interception'
+vunts = 'kg m-2'
+lname = 'Canopy Water Amount'
+stname = 'canopy_water_amount'
+cmethods = 'area: mean where land time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

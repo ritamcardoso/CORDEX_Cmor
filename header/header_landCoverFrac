@@ -1,0 +1,9 @@
+! landCoverFrac: no CORDEX_Cmor program yet; one field per land-use class (needs a 3-D fx writer)
+wrfvar = 'LANDUSEF'
+vaid = 'landCoverFrac'
+vunts = '%'
+lname = 'Percentage of Area by Vegetation or Land-Cover Category'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

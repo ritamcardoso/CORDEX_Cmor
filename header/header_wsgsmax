@@ -1,0 +1,10 @@
+! wsgsmax: no CORDEX_Cmor program yet; no gust diagnostic in the WRF output
+wrfvar = ''
+vaid = 'wsgsmax'
+vunts = 'm s-1'
+lname = 'Daily Maximum Near-Surface Wind Speed of Gust'
+stname = 'wind_speed_of_gust'
+cmethods = 'area: mean time: maximum'
+height = 10.
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

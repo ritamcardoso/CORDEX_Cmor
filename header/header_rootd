@@ -1,0 +1,9 @@
+! rootd: no CORDEX_Cmor program yet; needs LU_INDEX ZS DZS (NROOT of VEGPARM.TBL)
+wrfvar = 'LU_INDEX'
+vaid = 'rootd'
+vunts = 'm'
+lname = 'Maximum Root Depth'
+stname = 'root_depth'
+cmethods = 'area: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -1,0 +1,9 @@
+! treeFracBdlEvg: no CORDEX_Cmor program yet; LANDUSEF MODIS class 2
+wrfvar = 'LANDUSEF'
+vaid = 'treeFracBdlEvg'
+vunts = '%'
+lname = 'Percentage of Entire Grid Cell Covered by Broadleaf Evergreen Trees'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

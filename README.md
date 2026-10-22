@@ -314,6 +314,13 @@ modify these files — the scripts assemble a full namelist per run by
 concatenating the relevant `header_<var>` onto the experiment's grid ini file
 (see `run_out_generic.sh`'s processing loop).
 
+Headers also exist for the requested variables that no program writes yet (the red
+rows of `CORDEX_Cmor_variables.xlsx`); their first line says so and lists the WRF
+fields a program would need. The 20 and 10 hPa levels (`ua20` … `wa10`) are written
+by the existing `RCM_plev_*` programs: the varsets with all the CORDEX-CMIP6 pressure
+levels are commented out in `config/varsets*.sh`, next to the active ones, because
+the levels above the model top are missing (1e20) unless `p_top` is below 20 hPa.
+
 `header_sftlaf`, `header_sfturf` and the land-cover fractions of
 `RCM_fx_landuse` / `RCM_sfc_landuse` (`treeFrac`, `urbanFrac`, …) also set `area_type`
 (`'lake_and_inland_sea'`, `'urban'`, `'tree'`, …): it becomes the scalar

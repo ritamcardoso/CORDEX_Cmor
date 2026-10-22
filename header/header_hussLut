@@ -1,0 +1,10 @@
+! hussLut: no CORDEX_Cmor program yet; no land-use tiles in WRF: grid-cell value (Noah-MP Q2MV/Q2MB: vegetated/bare parts)
+wrfvar = 'Q2'
+vaid = 'hussLut'
+vunts = '1'
+lname = 'Near-Surface Specific Humidity on Land-Use Tile'
+stname = 'specific_humidity'
+cmethods = 'area: mean time: point'
+height = 2.
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

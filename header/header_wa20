@@ -1,0 +1,10 @@
+! wa20: written by RCM_plev_wa, in the commented varset lines with all the pressure levels; needs W P PB; missing (1e20) unless the model levels reach above 20 hPa (p_top < 20 hPa)
+wrfvar = 'W'
+vaid = 'wa20'
+pres = 2000.
+vunts = 'm s-1'
+lname = 'Upward Air Velocity at 20hPa'
+stname = 'upward_air_velocity'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

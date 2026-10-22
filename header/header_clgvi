@@ -1,0 +1,9 @@
+! clgvi: no CORDEX_Cmor program yet; needs QGRAUP P PB PSFC (vertical integral, as clivi)
+wrfvar = 'QGRAUP'
+vaid = 'clgvi'
+vunts = 'kg m-2'
+lname = 'Vertical integral of mass content of graupel'
+stname = 'atmosphere_mass_content_of_graupel'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

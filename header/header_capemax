@@ -1,0 +1,9 @@
+! capemax: no CORDEX_Cmor program yet; needs P PB T QVAPOR PH PHB HGT PSFC (daily maximum of the hourly cape)
+wrfvar = 'T'
+vaid = 'capemax'
+vunts = 'J kg-1'
+lname = 'Daily Maximum Convective Available Potential Energy'
+stname = 'atmosphere_convective_available_potential_energy_wrt_surface'
+cmethods = 'area: mean time: maximum'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -1,0 +1,9 @@
+! slthick: no CORDEX_Cmor program yet; DZS (Noah-MP soil layers)
+wrfvar = 'DZS'
+vaid = 'slthick'
+vunts = 'm'
+lname = 'Thickness of Soil Layers'
+stname = 'cell_thickness'
+cmethods = 'area: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

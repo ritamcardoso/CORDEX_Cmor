@@ -1,0 +1,9 @@
+! residualFrac: no CORDEX_Cmor program yet; LANDUSEF urban + land ice classes (as landuse_field); LUCAS name resdiualFrac
+wrfvar = 'LANDUSEF'
+vaid = 'residualFrac'
+vunts = '%'
+lname = 'Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil'
+stname = 'area_fraction'
+cmethods = 'area: mean'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

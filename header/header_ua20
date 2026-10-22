@@ -1,0 +1,10 @@
+! ua20: written by RCM_plev_uava with va20 (RCM_plev_ua on its own), in the commented varset lines with all the pressure levels; needs U V COSALPHA SINALPHA P PB; missing (1e20) unless the model levels reach above 20 hPa (p_top < 20 hPa)
+wrfvar = 'U'
+vaid = 'ua20'
+pres = 2000.
+vunts = 'm s-1'
+lname = 'Eastward Wind at 20hPa'
+stname = 'eastward_wind'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

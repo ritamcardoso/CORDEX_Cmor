@@ -1,0 +1,9 @@
+! prhmax: no CORDEX_Cmor program yet; needs RAINC I_RAINC RAINNC I_RAINNC (hourly precipitation, then the daily maximum)
+wrfvar = 'RAINNC'
+vaid = 'prhmax'
+vunts = 'kg m-2 s-1'
+lname = 'Daily Maximum Hourly Precipitation Rate'
+stname = 'precipitation_flux'
+cmethods = 'area: mean time: mean within hours time: maximum over hours'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

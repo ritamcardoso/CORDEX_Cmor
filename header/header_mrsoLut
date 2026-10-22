@@ -1,0 +1,9 @@
+! mrsoLut: no CORDEX_Cmor program yet; as mrso; no land-use tiles in WRF: grid-cell value
+wrfvar = 'SMOIS'
+vaid = 'mrsoLut'
+vunts = 'kg m-2'
+lname = 'Total Soil Moisture on Land-Use Tile'
+stname = 'mass_content_of_water_in_soil'
+cmethods = 'area: mean where land time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

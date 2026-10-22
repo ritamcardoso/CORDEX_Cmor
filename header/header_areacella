@@ -1,0 +1,9 @@
+! areacella: no CORDEX_Cmor program yet; needs MAPFAC_MX MAPFAC_MY of geo_em: DX*DY/(MAPFAC_MX*MAPFAC_MY)
+wrfvar = 'MAPFAC_MX'
+vaid = 'areacella'
+vunts = 'm2'
+lname = 'Atmosphere Grid-Cell Area'
+stname = 'cell_area'
+cmethods = 'area: sum'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

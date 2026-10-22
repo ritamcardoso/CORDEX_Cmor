@@ -1,0 +1,10 @@
+! tasLut: no CORDEX_Cmor program yet; no land-use tiles in WRF: grid-cell value (Noah-MP T2MV/T2MB: vegetated/bare parts)
+wrfvar = 'T2'
+vaid = 'tasLut'
+vunts = 'K'
+lname = 'Near-Surface Air Temperature on Land-Use Tile'
+stname = 'air_temperature'
+cmethods = 'area: mean time: point'
+height = 2.
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

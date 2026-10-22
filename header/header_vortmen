@@ -1,0 +1,9 @@
+! vortmen: no CORDEX_Cmor program yet; needs U V MAPFAC_U MAPFAC_V MAPFAC_M P PB; pressure level: set pres (Pa)
+wrfvar = 'U'
+vaid = 'vortmen'
+vunts = 's-1'
+lname = 'Relative Vorticity'
+stname = 'atmosphere_relative_vorticity'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

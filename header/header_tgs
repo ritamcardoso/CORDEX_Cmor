@@ -1,0 +1,9 @@
+! tgs: no CORDEX_Cmor program yet; TGB (Noah-MP bare ground)
+wrfvar = 'TGB'
+vaid = 'tgs'
+vunts = 'K'
+lname = 'Surface Bare Soil Temperature'
+stname = 'surface_temperature'
+cmethods = 'area: mean where land time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

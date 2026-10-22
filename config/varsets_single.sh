@@ -22,10 +22,20 @@ declare -A VARSETS=(
   [wpth2]="RCM_sfc_VAR:prw"
   [wpth3]="RCM_sfc_VAR:clwvi"
   [plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30"
+  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
+  #[plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30,wa20,wa10"
   [plev_zg]="RCM_plev_zg:zg1000,zg925,zg850,zg750,zg700,zg600,zg500,zg400,zg300,zg250,zg200,zg150,zg100,zg70,zg50,zg30"
+  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
+  #[plev_zg]="RCM_plev_zg:zg1000,zg925,zg850,zg750,zg700,zg600,zg500,zg400,zg300,zg250,zg200,zg150,zg100,zg70,zg50,zg30,zg20,zg10"
   [plev_uava]="RCM_plev_uava:va1000,va925,va850,va750,va700,va600,va500,va400,va300,va250,va200,va150,va100,va70,va50,va30"
+  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
+  #[plev_uava]="RCM_plev_uava:va1000,va925,va850,va750,va700,va600,va500,va400,va300,va250,va200,va150,va100,va70,va50,va30,va20,va10"
   [plev_hus]="RCM_plev_hus:hus1000,hus925,hus850,hus750,hus700,hus600,hus500,hus400,hus300,hus250,hus200,hus150,hus100,hus70,hus50,hus30"
+  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
+  #[plev_hus]="RCM_plev_hus:hus1000,hus925,hus850,hus750,hus700,hus600,hus500,hus400,hus300,hus250,hus200,hus150,hus100,hus70,hus50,hus30,hus20,hus10"
   [plev_ta]="RCM_plev_ta:ta1000,ta925,ta850,ta750,ta700,ta600,ta500,ta400,ta300,ta250,ta200,ta150,ta100,ta70,ta50,ta30"
+  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
+  #[plev_ta]="RCM_plev_ta:ta1000,ta925,ta850,ta750,ta700,ta600,ta500,ta400,ta300,ta250,ta200,ta150,ta100,ta70,ta50,ta30,ta20,ta10"
   [zlev_hus]="RCM_zlev_hus:hus50m"
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
@@ -40,6 +50,8 @@ declare -A VARSETS=(
   [zlev_va1]="RCM_zlev_va:va200m,va250m,va300m"
   # Archive-only (CP_EXTRA companions, never processed)
   [plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30"
+  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
+  #[plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30,ua20,ua10"
   [zlev_ua0]="RCM_zlev_ua:ua100m,ua150m,ua50m"
   [zlev_ua1]="RCM_zlev_ua:ua300m,ua250m,ua200m"
   # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
