@@ -314,7 +314,7 @@ urbanFrac,FPS-LUCAS,TIER 1,%,,,,,,,Urban Percentage Area Coverage,area_fraction,
 cape,FPS-LUCAS,TIER 1,J kg-1,i,x,,,,,Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; derived (e.g. wrf-python cape_2d); LUCAS name CAPE
 cin,FPS-LUCAS,TIER 1,J kg-1,i,x,,,,,Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB HGT PSFC,not produced by CORDEX_Cmor; header ready; derived (e.g. wrf-python cape_2d); LUCAS name CIN
 vortmen,FPS-LUCAS,TIER 1,s-1,i,,x,,,,relative vorticity,atmosphere_relative_vorticity,U V MAPFAC_U MAPFAC_V MAPFAC_M P PB,not produced by CORDEX_Cmor; header ready; relative vorticity on pressure levels
-wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,omega,lagrangian_tendency_of_air_pressure,W P PB T QVAPOR,not produced by CORDEX_Cmor; header ready; omega = -rho g w on pressure levels
+wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,omega,lagrangian_tendency_of_air_pressure,W T QVAPOR P PB,"CORDEX_Cmor: RCM_plev_wap (plev_wap varset), as wap<p> on each pressure level (1000 to 30 hPa); omega = -rho g w; written every 6 h"
 slthick,FPS-LUCAS,TIER 1,m,,,,,,,Thickness of Soil Layers,cell_thickness,DZS,not produced by CORDEX_Cmor; header ready; Noah-MP soil layer thickness
 prsn,FPS-LUCAS,TIER 1,kg m-2 s-1,a,,,,x,,Snowfall Flux,snowfall_flux,SNOWNC,CORDEX_Cmor: RCM_sfc_prsn (snw varset)
 lcvr,FPS-LUCAS,,1,,x,,,,,Land Cover Dominant Class,,LU_INDEX,"CORDEX_Cmor: RCM_fx_lcvr (fx varset, from geo_em) and RCM_sfc_landuse (landuse varset); LU_INDEX (dominant land-use class); hourly from wrfout; not in the phase 2 workbook list"

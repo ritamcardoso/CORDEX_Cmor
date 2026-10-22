@@ -1,0 +1,10 @@
+! wap400: written by RCM_plev_wap (plev_wap varset); omega = -rho g w from W, T, QVAPOR, P, PB
+wrfvar = 'W'
+vaid = 'wap400'
+pres = 40000.
+vunts = 'Pa s-1'
+lname = 'Omega (=dp/dt) at 400hPa'
+stname = 'lagrangian_tendency_of_air_pressure'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
