@@ -84,8 +84,7 @@ do year = yeari, yearf,1
 !
     issh=0
     ndays=days(month)
-    ntime=ndays*4
-
+    ntime = n_time_steps(year, month, month, ihour, wp_step)
     allocate(ttime(ntime))
     allocate(bdtime(2, ntime))
     allocate(outvar_h_4d(nlon, nlat, nsoil, ntime))
@@ -98,8 +97,7 @@ do year = yeari, yearf,1
       aday = pad_int(day, 2)
 
       ! Loop over hours
-      loop_h: do hour = ihour, nhours-1,6
-
+      loop_h: do hour = ihour, 23, wp_step
         ahour = pad_int(hour, 2)
 
         filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_'//ahour//'_00_00'
@@ -122,11 +120,13 @@ do year = yeari, yearf,1
 !
         call calc_mrsol
 
-        ish = ish + 6
         issh = issh + 1
-        ttime(issh) = float(ish) - 6
-        bdtime(1, issh) = ish - 6
-        bdtime(2, issh) = ish
+
+        bdtime(1, issh) = hours_since_ini(year, month, day, hour)
+
+        bdtime(2, issh) = bdtime(1, issh) + wp_step
+
+        ttime(issh) = float(bdtime(1, issh))
 
         outvar_h_4d(:,:,:,issh)=outvar_h(:,:,:)
 
@@ -178,7 +178,7 @@ amonthf = pad_int(month-1, 2)
 adayf = pad_int(day-1, 2)
 ahourf = pad_int(hour-1, 2)
 
-freq='6hr'
+write(freq,'(i0,a)') wp_step, 'hr'
 frequency=trim(adjustl(freq))
 
 ! Create output filename based on metadata

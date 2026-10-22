@@ -39,12 +39,19 @@ subroutine read_cordex_config(cfg_filename)
     truelat1 = missing_value;  truelat2 = missing_value
     stand_lon = missing_value; cen_lat = missing_value
     false_easting = 0.;        false_northing = 0.
+    wp_step = 6
 
     read(unit_id, nml=cordex_config, iostat=status_id)
     if (status_id /= 0) then
         print *, "ERROR: Failed to parse namelist &cordex_config from: ", trim(cfg_filename)
         close(unit_id)
         stop 92
+    end if
+
+    ! Step of the sub-daily (3hr/6hr) programs: a divisor of 24 hours
+    if (wp_step < 1 .or. mod(24, wp_step) /= 0) then
+        print *, "ERROR: wp_step = ", wp_step, " in ", trim(cfg_filename), ": it must divide 24 (e.g. 3 or 6)"
+        stop 95
     end if
 
     ! The projection must be set in the grid's ini (see experiments/README.md)
@@ -941,6 +948,27 @@ function time_stamp(t) result(stamp)
         write(stamp,'(i4.4,4i2.2)') y, m, d, int(mins/60), int(mod(mins,60_8))
     end select
 end function time_stamp
+!
+!-----------------------------------------------------------------------
+!
+! Number of output times of a sub-daily program in the months m1..m2 of year y, with an
+! output every step hours from h0 UTC on the first day and from 00 UTC on the others
+! (the loops "do hour = ihour, 23, wp_step" of the 3hr/6hr programs).
+function n_time_steps(y, m1, m2, h0, step) result(n)
+    integer, intent(in) :: y, m1, m2, h0, step
+    integer :: n, nd
+    nd = days_from_civil(merge(y + 1, y, m2 == 12), merge(1, m2 + 1, m2 == 12), 1) - days_from_civil(y, m1, 1)
+    n = (nd - 1) * (24 / step) + (23 - h0) / step + 1
+end function n_time_steps
+!
+!-----------------------------------------------------------------------
+!
+! Hours since <iniyear>-01-01 00 UTC of the date y-m-d h UTC (the time axis of the programs)
+function hours_since_ini(y, m, d, h) result(hrs)
+    integer, intent(in) :: y, m, d, h
+    integer :: hrs
+    hrs = 24 * (days_from_civil(y, m, d) - days_from_civil(iniyear, 1, 1)) + h
+end function hours_since_ini
 !
 !-----------------------------------------------------------------------
 !

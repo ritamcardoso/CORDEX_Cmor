@@ -1,9 +1,16 @@
 program read_wrfout
+!
+! RCM_plev_wa — upward air velocity (wa<p>, m s-1, instantaneous) on the pressure level
+! pres (Pa) of the header: W (wrfvar), averaged from its nz+1 staggered levels to the
+! mass levels, interpolated linearly in log(p = P + PB); every wp_step hours.
+!
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
 use netcdf
 !implicit none
+
+real, dimension(:,:,:), allocatable :: wa_ws     ! W on the staggered levels (nz+1)
 
 
 ! --- Read configuration using shared_subs subroutine
@@ -44,6 +51,7 @@ if (ihour > 0) ish = ish + ihour - 1
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
 allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
 allocate(wrfv3D(nlon, nlat, nz))
+allocate(wa_ws(nlon, nlat, nz+1))
 
 it = 0
 !
@@ -60,12 +68,7 @@ do year = yeari, yearf,1
     days = days1
     mydays = 365
   endif
-  ntime = mydays * 4
-
-  if (ihour > 0) then
-    nhours=nhours-ihour+1
-    ntime = ntime - ihour + 1
-   endif
+  ntime = n_time_steps(year, imonth, nmonths, ihour, wp_step)
 
   allocate(ttime(ntime))
   allocate(bdtime(2, ntime))
@@ -84,8 +87,7 @@ do year = yeari, yearf,1
       aday = pad_int(day, 2)
 
       ! Loop over hours
-      loop_h: do hour = ihour, nhours-1,6
-
+      loop_h: do hour = ihour, 23, wp_step
         ahour = pad_int(hour, 2)
 
         filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_'//ahour//'_00_00'
@@ -112,8 +114,11 @@ do year = yeari, yearf,1
         status = nf90_inq_varid(ncid, wrfvar, varid)
         call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
 
-        status = nf90_get_var(ncid, varid, wrfv3D, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, wa_ws, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
         call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
+
+        ! destagger: mean of the faces below and above each mass level
+        wrfv3D = 0.5 * (wa_ws(:,:,1:nz) + wa_ws(:,:,2:nz+1))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
@@ -128,11 +133,10 @@ do year = yeari, yearf,1
           call calc_invplev
         endif
 !
-        ish = ish + 6
         issh = issh + 1
-        ttime(issh) = float(ish) - 6
-        bdtime(1, issh) = ish - 6
-        bdtime(2, issh) = ish
+        bdtime(1, issh) = hours_since_ini(year, month, day, hour)
+        bdtime(2, issh) = bdtime(1, issh) + wp_step
+        ttime(issh) = float(bdtime(1, issh))
 
         outvar_h(:,:,issh)=outvar(:,:)
 !
@@ -165,7 +169,7 @@ presure=presl
 !
 do isy=1,nlat
   do isx=1,nlon
-    p_loop: do iz=1,nz
+    p_loop: do iz=1,nz-1      ! iz+1 <= nz
       if(press(isx,isy,iz) < presl)then
 !        write(*,*)'p < plev',isx,isy,presl
         exit p_loop
@@ -192,7 +196,7 @@ presure=presl
 !
 do isy=1,nlat
   do isx=1,nlon
-    p_loop: do iz=nz-1,1,-1
+    p_loop: do iz=nz-1,2,-1   ! iz-1 >= 1
       if(press(isx,isy,iz-1) >= presl .and. press(isx,isy,iz) < presl)then
 
         outvar(isx,isy)=wrfv3D(isx,isy,iz-1)+((log(press(isx,isy,iz-1))-log(presl))/   &
@@ -221,7 +225,7 @@ amonthf = pad_int(month-1, 2)
 adayf = pad_int(day-1, 2)
 ahourf = pad_int(hour-1, 2)
 
-freq='6hr'
+write(freq,'(i0,a)') wp_step, 'hr'
 frequency=trim(adjustl(freq))
 
 ! Create output filename based on metadata

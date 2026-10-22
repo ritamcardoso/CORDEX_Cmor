@@ -62,12 +62,7 @@ do year = yeari, yearf, 1
     days = days1
     mydays = 365
   endif
-  ntime = mydays * 4
-
-  if (ihour > 0) then
-    nhours = nhours - ihour + 1
-    ntime = ntime - ihour + 1
-  endif
+  ntime = n_time_steps(year, imonth, nmonths, ihour, wp_step)
 
   allocate(ttime(ntime))
   allocate(bdtime(2, ntime))
@@ -85,7 +80,7 @@ do year = yeari, yearf, 1
       aday_pad = pad_int(day, 2)
 
       ! Loop over hours
-      loop_h: do hour = ihour, nhours-1, 6
+      loop_h: do hour = ihour, 23, wp_step
         ahour = pad_int(hour, 2)
 
         filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday_pad//'_'//ahour//'_00_00'
@@ -160,11 +155,13 @@ do year = yeari, yearf, 1
           call calc_invplev_dual(wrfv3D_u, wrfv3D_v, outvar_u, outvar_v)
         endif
 
-        ish = ish + 6
         issh = issh + 1
-        ttime(issh) = float(ish) - 6
-        bdtime(1, issh) = ish - 6
-        bdtime(2, issh) = ish
+
+        bdtime(1, issh) = hours_since_ini(year, month, day, hour)
+
+        bdtime(2, issh) = bdtime(1, issh) + wp_step
+
+        ttime(issh) = float(bdtime(1, issh))
 
         outvar_h_u(:, :, issh) = outvar_u(:, :)
         outvar_h_v(:, :, issh) = outvar_v(:, :)
@@ -255,7 +252,7 @@ subroutine write_dual_output
   adayf = pad_int(day-1, 2)
   ahourf = pad_int(hour-1, 2)
 
-  freq = '6hr'
+  write(freq,'(i0,a)') wp_step, 'hr'
   frequency = trim(adjustl(freq))
 
   p_val = int(presl / 100.0)

@@ -13,7 +13,7 @@ program read_wrfout
 ! Omega is computed on the model levels and interpolated linearly in log(p) to pres,
 ! as RCM_plev_wa (from the bottom for pres >= 500 hPa, from the top above); points
 ! where pres is below the surface or above the model top are missing (1e20).
-! Output every wp_step hours (6, as the other pressure-level variables).
+! Output every wp_step hours (wp_step of the grid's ini: 3 or 6).
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
@@ -21,7 +21,6 @@ use shared_subs
 use netcdf
 !implicit none
 
-integer, parameter :: wp_step = 6                          ! hours between output times
 real, dimension(:,:,:), allocatable :: wp_w, wp_t, wp_q, wp_om
 real :: wp_tv
 
@@ -80,12 +79,7 @@ do year = yeari, yearf,1
     days = days1
     mydays = 365
   endif
-  ntime = mydays * (24 / wp_step)
-
-  if (ihour > 0) then
-    nhours=nhours-ihour+1
-    ntime = ntime - ihour + 1
-   endif
+  ntime = n_time_steps(year, imonth, nmonths, ihour, wp_step)
 
   allocate(ttime(ntime))
   allocate(bdtime(2, ntime))
@@ -104,8 +98,7 @@ do year = yeari, yearf,1
       aday = pad_int(day, 2)
 
       ! Loop over hours
-      loop_h: do hour = ihour, nhours-1, wp_step
-
+      loop_h: do hour = ihour, 23, wp_step
         ahour = pad_int(hour, 2)
 
         filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_'//ahour//'_00_00'
@@ -161,11 +154,10 @@ do year = yeari, yearf,1
           call calc_invplev
         endif
 !
-        ish = ish + wp_step
         issh = issh + 1
-        ttime(issh) = float(ish) - wp_step
-        bdtime(1, issh) = ish - wp_step
-        bdtime(2, issh) = ish
+        bdtime(1, issh) = hours_since_ini(year, month, day, hour)
+        bdtime(2, issh) = bdtime(1, issh) + wp_step
+        ttime(issh) = float(bdtime(1, issh))
 
         outvar_h(:,:,issh)=outvar(:,:)
 !
@@ -242,7 +234,7 @@ presure=presl
 !
 do isy=1,nlat
   do isx=1,nlon
-    p_loop: do iz=nz,2,-1
+    p_loop: do iz=nz-1,2,-1   ! iz-1 >= 1 (as the other RCM_plev programs)
       if(press(isx,isy,iz-1) >= presl .and. press(isx,isy,iz) < presl)then
 
         outvar(isx,isy)=wrfv3D(isx,isy,iz-1)+((log(press(isx,isy,iz-1))-log(presl))/   &

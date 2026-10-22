@@ -44,6 +44,7 @@ integer :: latid, lonid, timeid, levid, timedim, latdim, londim, levdim, level
 integer :: nlon_u, nlat_v
 
 real :: rhours, factor, heightl, presl, pres, p_top
+integer :: wp_step     ! hours between the output times of the 3-hourly/6-hourly programs (grid ini; default 6)
 real, dimension(1) :: height, pressure
 real, dimension(2) :: pressure_bounds
 real, dimension(:),   allocatable :: rlon, rlat
@@ -166,7 +167,7 @@ namelist /cordex_config/ &
     wrfvar, vaid, height, pres, vunits, vunts, &
     lname, stname, cmethods, factor, &
     projection, pole_lat, pole_lon, truelat1, truelat2, stand_lon, cen_lat, &
-    false_easting, false_northing, area_type
+    false_easting, false_northing, area_type, wp_step
 
 namelist /global_metadata/ &
     conventions, activity_id, contact, cordex_domain, domain_name, &
