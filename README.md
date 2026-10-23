@@ -456,6 +456,12 @@ USGS weight tables, with the LCZ urban classes) is in `landuse_field`
 (`shared_subs_v2.f90`); edit it there. Like the other fx files, an existing file
 is kept, so the fx fractions are those of the first year processed.
 
+**Grid-cell area and root depth (`fx` varset).** `RCM_fx_areacella.f90` writes
+`areacella = DX * DY / (MAPFAC_MX * MAPFAC_MY)` from the geo_em file (the cell area WRF
+uses). `RCM_fx_rootd.f90` writes `rootd`, the depth of the top `NROOT` soil layers
+(`sdepth`) of the dominant land-use class (`LU_INDEX`); `NROOT` is that of WRF's
+`VEGPARM.TBL` / Noah-MP's `NoahmpTable.TBL` (`nroot_modis`, `nroot_usgs` in `datvar_s`).
+
 **Wind gust (`gust` varset).** `wsgsmax` (daily maximum near-surface wind speed of
 gust) is the maximum of the hourly gusts of each day, from `RCM_sfc_wsgsmax.f90`. If the
 wrfout files have `QKE` (twice the MYNN TKE), it follows Brasseur (2001) as the CORDEX-WRF

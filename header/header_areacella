@@ -1,4 +1,4 @@
-! areacella: no CORDEX_Cmor program yet; needs MAPFAC_MX MAPFAC_MY of geo_em: DX*DY/(MAPFAC_MX*MAPFAC_MY)
+! areacella: RCM_fx_areacella (fx varset): DX*DY/(MAPFAC_MX*MAPFAC_MY) of the geo_em file
 wrfvar = 'MAPFAC_MX'
 vaid = 'areacella'
 vunts = 'm2'

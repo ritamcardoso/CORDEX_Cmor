@@ -1,4 +1,4 @@
-! rootd: no CORDEX_Cmor program yet; needs LU_INDEX ZS DZS (NROOT of VEGPARM.TBL)
+! rootd: RCM_fx_rootd (fx varset): sum of the top NROOT soil layers (sdepth) of the dominant class (LU_INDEX, VEGPARM.TBL NROOT)
 wrfvar = 'LU_INDEX'
 vaid = 'rootd'
 vunts = 'm'

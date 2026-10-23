@@ -195,11 +195,11 @@ ua250m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 250m,eastward_wind,
 ua300m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 300m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset)
 sftgif,"CORDEX-CMIP6, FPS-LUCAS",TIER 2; LUCAS CORE,%,,,,,,,x,Percentage of the Grid Cell Covered by Glacier,land_ice_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sftgif (fx varset); geo_em LU_INDEX = 15 (MODIS snow and ice)
 mrsofc,"CORDEX-CMIP6, FPS-LUCAS",TIER 2; LUCAS CORE,kg m-2,,,,,x¹,,x,Capacity of Soil to Store Water  (Field Capacity),soil_moisture_content_at_field_capacity,SCT_DOM,CORDEX_Cmor: RCM_sfc_mrsofc (soil varset); SCT_DOM of geo_em with REFSMC of SOILPARM.TBL (STAS) over the 4 Noah-MP layers
-rootd,CORDEX-CMIP6,TIER 2,m,,,,,,,x,Maximum Root Depth,root_depth,LU_INDEX ZS DZS,not produced by CORDEX_Cmor; header ready; root layers per vegetation class (NROOT of VEGPARM.TBL)
+rootd,CORDEX-CMIP6,TIER 2,m,,,,,,,x,Maximum Root Depth,root_depth,LU_INDEX LANDMASK,"CORDEX_Cmor: RCM_fx_rootd (fx varset); from geo_em; sum of the top NROOT soil layers (VEGPARM.TBL NROOT of the dominant class, LU_INDEX of geo_em)"
 sftlaf,CORDEX-CMIP6,TIER 2,%,,,,,,,x,Percentage of the Grid Cell Occupied by Lake,lake_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sftlaf (fx varset); geo_em LU_INDEX = 21 (MODIS lakes)
 sfturf,CORDEX-CMIP6,TIER 2,%,,,,,,,x,Percentage of the Grid Cell Occupied by City,urban_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sfturf (fx varset); geo_em LU_INDEX = 13 (MODIS urban)
 dtb,CORDEX-CMIP6,TIER 2,m,,,,,,,x,Depth to Bedrock,bedrock_depth,-,not produced by CORDEX_Cmor; header ready; not available from WRF (external dataset)
-areacella,"CORDEX-CMIP6, FPS-LUCAS",TIER 2; LUCAS CORE,m2,,,,,,,x,Atmosphere Grid-Cell Area,cell_area,MAPFAC_MX MAPFAC_MY,not produced by CORDEX_Cmor; header ready; geo_em; DX*DY/(MAPFAC_MX*MAPFAC_MY) with the DX/DY attributes
+areacella,"CORDEX-CMIP6, FPS-LUCAS",TIER 2; LUCAS CORE,m2,,,,,,,x,Atmosphere Grid-Cell Area,cell_area,MAPFAC_MX MAPFAC_MY MAPFAC_M,CORDEX_Cmor: RCM_fx_areacella (fx varset); DX*DY/(MAPFAC_MX*MAPFAC_MY) of the geo_em file
 hfso,CORDEX-CMIP6,TIER 2,W m-2,a,x,,,x,x,,Surface Downward Ground Heat Flux,surface_downward_ground_heat_flux,GRDFLX,CORDEX_Cmor: RCM_sfc_hfso (out2 varset); hourly mean of GRDFLX (positive into the soil)
 taspav,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature pavements,pavement_temperature,T2G_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 tasroof,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature roof,roof_temperature,T2R_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
