@@ -1,4 +1,4 @@
-! limax: no CORDEX_Cmor program yet; needs P PB T QVAPOR T2 Q2 PSFC (daily maximum of the hourly li)
+! limax: daily maximum of the hourly li (RCM_sfc_cape), from tools/aggregate.sh
 wrfvar = 'T'
 vaid = 'limax'
 vunts = 'K'

@@ -1,4 +1,4 @@
-! cinmax: no CORDEX_Cmor program yet; needs P PB T QVAPOR PH PHB HGT PSFC (daily maximum of the hourly cin)
+! cinmax: daily maximum of the hourly cin (RCM_sfc_cape), from tools/aggregate.sh
 wrfvar = 'T'
 vaid = 'cinmax'
 vunts = 'J kg-1'

@@ -655,7 +655,7 @@ status = nf90_put_att(ncid, TVarID, "calendar","proleptic_gregorian")
 status = nf90_put_att(ncid, TVarID, "units_metadata","leap_seconds: none")
 status = nf90_put_att(ncid, TVarID, "axis","T")
 
-status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
+if (len_trim(standardname) > 0) status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
 status = nf90_put_att(ncid, uVarID, "long_name",longname)
 status = nf90_put_att(ncid, uVarID, "units",vunits)
 if (trim(vunits) == 'K') status = nf90_put_att(ncid, uVarID, "units_metadata","temperature: on_scale")
@@ -795,7 +795,7 @@ status = nf90_put_att(ncid, SVarId, "positive", "down")
 status = nf90_put_att(ncid, SVarId, "axis", "Z")
 
 
-status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
+if (len_trim(standardname) > 0) status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
 status = nf90_put_att(ncid, uVarID, "long_name",longname)
 status = nf90_put_att(ncid, uVarID, "units",vunits)
 if (trim(vunits) == 'K') status = nf90_put_att(ncid, uVarID, "units_metadata","temperature: on_scale")
@@ -1213,6 +1213,144 @@ lu_st = nf90_close(lu_ncid)
 call ncerror(lu_st,'closing '//trim(fname))
 !
 end subroutine landuse_field
+!
+!-----------------------------------------------------------------------
+!
+! ---------------------------------------------------------------------------------------
+! Moist thermodynamics of a lifted parcel (RCM_sfc_cape): saturation mixing ratio,
+! virtual temperature, exact LCL (Romps 2017), pseudo-equivalent potential temperature
+! (Bolton 1980, eq. 43) and its inversion. Double precision.
+! ---------------------------------------------------------------------------------------
+!
+pure function qvs_wexler(tk, pa) result(qs)
+! saturation mixing ratio (kg kg-1) over water at tk (K) and pa (Pa): ITS-90 / Wexler
+! saturation vapour pressure with the enhancement factor (Goff 1949, over ice below
+! 0 degC), as RCM_sfc_hurs and humidity_utils.f90
+real(kind=8), intent(in) :: tk, pa
+real(kind=8) :: qs, es, fact, tc
+real(kind=8), parameter :: a1=-2.8365744d3, a2=-6.028076559d3, a3=19.54263612d0, a4=-2.737830188d-2, &
+                           a5=1.6261698d-5, a6=7.0229056d-10, a7=-1.8680009d-13, a8=2.7150305d0
+real(kind=8), parameter :: fi1=3.62183d-4, fi2=2.6061244d-5, fi3=3.8667770d-7, fi4=3.8268958d-9, &
+                           fi5=-10.7604d0, fi6=6.3987441d-2, fi7=-2.6351566d-4, fi8=1.6725084d-6
+real(kind=8), parameter :: fw1=3.536240d-4, fw2=2.932836d-5, fw3=2.616898d-7, fw4=8.581361d-9, &
+                           fw5=-10.75880d0, fw6=6.326813d-2, fw7=-2.536893d-4, fw8=6.340529d-7
+tc = tk - 273.15d0
+es = exp(a1/tk**2 + a2/tk + a3 + a4*tk + a5*tk**2 + a6*tk**3 + a7*tk**4 + a8*log(tk))
+if (tc < 0.d0) then
+  fact = exp((fi1 + fi2*tc + fi3*tc**2 + fi4*tc**3)*(1.d0 - es/pa) + &
+             exp(fi5 + fi6*tc + fi7*tc**2 + fi8*tc**3)*(es/pa - 1.d0))
+else
+  fact = exp((fw1 + fw2*tc + fw3*tc**2 + fw4*tc**3)*(1.d0 - es/pa) + &
+             exp(fw5 + fw6*tc + fw7*tc**2 + fw8*tc**3)*(es/pa - 1.d0))
+endif
+es = min(es*fact, 0.5d0*pa)
+qs = epsilon*es/(pa - es)
+end function qvs_wexler
+!
+!-----------------------------------------------------------------------
+!
+pure function tvirt(tk, r) result(tv)
+! virtual temperature (K) from the temperature and the mixing ratio r (kg kg-1)
+real(kind=8), intent(in) :: tk, r
+real(kind=8) :: tv
+tv = tk*(1.d0 + r/epsilon)/(1.d0 + r)
+end function tvirt
+!
+!-----------------------------------------------------------------------
+!
+pure function lambertw_m1(x) result(w)
+! real Lambert W function, lower branch W_-1, for -1/e <= x < 0 (Halley iterations)
+real(kind=8), intent(in) :: x
+real(kind=8) :: w, ew, f, q, l1, l2
+integer :: it
+if (x <= -exp(-1.d0)) then
+  w = -1.d0
+  return
+endif
+if (x < -0.25d0) then
+  q = -sqrt(2.d0*(1.d0 + exp(1.d0)*x))
+  w = -1.d0 + q - q**2/3.d0 + 11.d0/72.d0*q**3
+else
+  l1 = log(-x); l2 = log(-l1)
+  w = l1 - l2 + l2/l1
+endif
+do it = 1, 20
+  ew = exp(w)
+  f = w*ew - x
+  q = w*ew + ew - (w + 2.d0)*f/(2.d0*w + 2.d0)
+  if (abs(q) < 1.d-300) exit
+  w = w - f/q
+  if (abs(f) < 1.d-14*abs(x)) exit
+enddo
+end function lambertw_m1
+!
+!-----------------------------------------------------------------------
+!
+pure subroutine romps_lcl(pa, tk, r, zl, tl, pl)
+! Exact lifting condensation level of a parcel (pressure pa, temperature tk, mixing
+! ratio r), Romps (2017, J. Atmos. Sci. 74, 3891), liquid water:
+!   zl: height of the LCL above the parcel (m), tl: its temperature (K), pl: pressure (Pa).
+! A saturated (or supersaturated) parcel has its LCL at the parcel level.
+real(kind=8), intent(in) :: pa, tk, r
+real(kind=8), intent(out) :: zl, tl, pl
+real(kind=8), parameter :: ttrip=273.16d0, ptrip=611.65d0, e0v=2.3740d6, ggr=9.81d0
+real(kind=8), parameter :: rgasa=287.04d0, rgasv=461.d0, cva=719.d0, cvv=1418.d0, cvl=4119.d0
+real(kind=8), parameter :: cpa=cva+rgasa, cpv=cvv+rgasv
+real(kind=8) :: pv, qv, rgasm, cpm, al, bl, cl, pvs, arg, rh
+pv = r*pa/(rgasa/rgasv + r)
+qv = rgasa*pv/(rgasv*pa + (rgasa - rgasv)*pv)
+rgasm = (1.d0 - qv)*rgasa + qv*rgasv
+cpm = (1.d0 - qv)*cpa + qv*cpv
+pvs = ptrip*(tk/ttrip)**((cpv - cvl)/rgasv)*exp((e0v - (cvv - cvl)*ttrip)/rgasv*(1.d0/ttrip - 1.d0/tk))
+rh = pv/pvs
+if (r <= 0.d0) then
+  tl = 0.d0; zl = cpm*tk/ggr; pl = 0.d0
+  return
+endif
+if (rh >= 1.d0) then
+  zl = 0.d0; tl = tk; pl = pa
+  return
+endif
+al = -(cpv - cvl)/rgasv + cpm/rgasm
+bl = -(e0v - (cvv - cvl)*ttrip)/(rgasv*tk)
+cl = bl/al
+arg = rh**(1.d0/al)*cl*exp(cl)
+tl = cl/lambertw_m1(arg)*tk
+zl = cpm/ggr*(tk - tl)
+pl = pa*(tl/tk)**(cpm/rgasm)
+end subroutine romps_lcl
+!
+!-----------------------------------------------------------------------
+!
+pure function theta_e_bolton(tk, pa, r, tl) result(the)
+! pseudo-equivalent potential temperature (K), Bolton (1980) eq. 43: tk, pa, r (kg kg-1)
+! of the parcel and tl, its temperature at the LCL
+real(kind=8), intent(in) :: tk, pa, r, tl
+real(kind=8) :: the, rg
+rg = 1000.d0*r
+the = tk*(1.d5/pa)**(0.2854d0*(1.d0 - 0.28d-3*rg))*exp((3.376d0/tl - 0.00254d0)*rg*(1.d0 + 0.81d-3*rg))
+end function theta_e_bolton
+!
+!-----------------------------------------------------------------------
+!
+pure function t_from_theta_e(the, pa, tguess) result(tk)
+! temperature (K) of a saturated parcel at pa (Pa) with pseudo-equivalent potential
+! temperature the: Newton iterations on theta_e_bolton(T, pa, qvs(T, pa), T) = the,
+! starting from tguess (the parcel temperature at the level below)
+real(kind=8), intent(in) :: the, pa, tguess
+real(kind=8) :: tk, f0, f1, dt
+integer :: it
+tk = tguess
+do it = 1, 30
+  f0 = theta_e_bolton(tk, pa, qvs_wexler(tk, pa), tk) - the
+  f1 = theta_e_bolton(tk + 0.01d0, pa, qvs_wexler(tk + 0.01d0, pa), tk + 0.01d0) - the
+  if (f1 == f0) exit
+  dt = -f0*0.01d0/(f1 - f0)
+  dt = max(-20.d0, min(20.d0, dt))
+  tk = tk + dt
+  if (abs(dt) < 1.d-3) exit
+enddo
+end function t_from_theta_e
 !
 !-----------------------------------------------------------------------
 !

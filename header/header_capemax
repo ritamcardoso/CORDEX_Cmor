@@ -1,4 +1,4 @@
-! capemax: no CORDEX_Cmor program yet; needs P PB T QVAPOR PH PHB HGT PSFC (daily maximum of the hourly cape)
+! capemax: daily maximum of the hourly cape (RCM_sfc_cape), from tools/aggregate.sh
 wrfvar = 'T'
 vaid = 'capemax'
 vunts = 'J kg-1'
