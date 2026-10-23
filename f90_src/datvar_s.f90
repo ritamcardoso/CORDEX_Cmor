@@ -68,6 +68,10 @@ character(len=40) :: area_type
 
 real, dimension(4), parameter :: sdepth = [0.1, 0.3, 0.6, 1.0]
 real, dimension(2,4) :: sdepth_bounds
+! Number of soil layers with roots per land-use class (NROOT of WRF VEGPARM.TBL and
+! Noah-MP NoahmpTable.TBL), MODIFIED_IGBP_MODIS_NOAH (1-20) and USGS (1-27): RCM_fx_rootd
+integer, dimension(20), parameter :: nroot_modis = [4,4,4,4,4,3,3,3,3,3,2,3,1,3,1,1,0,3,3,2]
+integer, dimension(27), parameter :: nroot_usgs  = [1,3,3,3,3,3,3,3,3,3,4,4,4,4,4,0,2,2,1,3,3,3,2,1,1,0,0]
 
 ! =====================================================================
 ! --- 2. Date, Time, and Offset Control ---
@@ -90,8 +94,10 @@ integer, dimension(:,:), allocatable :: bdtime, outvar_a
 ! Real Scalars 
 real :: tv, tc, slope
 real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, es_kPa, gam, ET0   ! RCM_sfc_evspsblpot (slope above)
+real :: dx_geo, dy_geo                                                      ! RCM_fx_areacella
 real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax
 integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax (Brasseur)
+logical :: fx_exists                                                        ! fx programs: output already there
 logical :: gust_b01                                                         ! RCM_sfc_wsgsmax: QKE in wrfout -> Brasseur
 
 ! Real 1D Allocatable Arrays
@@ -100,6 +106,7 @@ real, dimension(:), allocatable :: vpt, zcol, dzcol, dvpt   ! one column (RCM_sf
 
 ! Real 2D Allocatable Arrays
 real, dimension(:,:), allocatable :: sftlf, hgt, runsf, pblh
+real, dimension(:,:), allocatable :: msftx, msfty     ! map scale factors (RCM_fx_areacella)
 real, dimension(:,:), allocatable :: wrfv2D, i_wrfv2D, outvar, outvar_i
 real, dimension(:,:), allocatable :: u_s, v_s, wind10, ust, t2, q2, uas, vas, ro, psf
 real, dimension(:,:), allocatable :: t2_i, q2_i, psf_i, wind10_i
