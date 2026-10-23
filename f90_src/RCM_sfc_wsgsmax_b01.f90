@@ -12,22 +12,21 @@ program read_wrfout
 ! and the gust is the largest wind speed of the levels that satisfy it, going up
 ! from the surface until the first level that does not (0 if none, as in CDXWRF).
 !   theta_v = theta (1 + 0.61 qv - qc)   (T + 300, QVAPOR, QCLOUD)
-!   TKE     = TKE_PBL (needs a TKE boundary-layer scheme: MYJ, MYNN, BouLac, ...)
+!   TKE     = QKE / 2 (QKE: twice the TKE of the MYNN boundary-layer scheme)
 !   levels  : heights above ground (PH + PHB on the mass levels, HGT) <= PBLH
 ! wsgsmax = maximum of the 24 hourly gusts of each day (cell_methods time: maximum).
 ! CDXWRF takes the maximum over every model time step; from hourly output the
 ! maximum can only be lower or equal.
+!
+! All the arrays are those of datvar_s (u_s/v_s: U10/V10, pblh, hgt, u/v staggered and
+! ua/va on the mass levels, ph/phb, phi: height of the w levels, zhgt: of the mass levels,
+! outvar: hourly gust, outvar_i: running daily maximum; t, qv, qc, tke 3-D; vpt, zcol, dzcol, dvpt one column).
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
 use netcdf
 !implicit none
-
-real, dimension(:,:), allocatable :: gs_u10, gs_v10, gs_pbl, gs_hgt, gs_gust, gs_dmax
-real, dimension(:,:,:), allocatable :: gs_us, gs_vs, gs_um, gs_vm, gs_zw, gs_zm, wrfv3D_z
-real, dimension(:,:,:), allocatable :: gs_th, gs_qv, gs_qc, gs_tke
-integer :: gs_nd, gs_h0, gs_k
 
 ! --- Read configuration using shared_subs subroutine
 
@@ -37,11 +36,12 @@ call init_cordex_environment
 
 call read_geog
 
-allocate(gs_u10(nlon,nlat), gs_v10(nlon,nlat), gs_pbl(nlon,nlat), gs_hgt(nlon,nlat))
-allocate(gs_gust(nlon,nlat), gs_dmax(nlon,nlat))
-allocate(gs_us(nlon+1,nlat,nz), gs_vs(nlon,nlat+1,nz), gs_um(nlon,nlat,nz), gs_vm(nlon,nlat,nz))
-allocate(gs_zw(nlon,nlat,nz+1), gs_zm(nlon,nlat,nz))
-allocate(wrfv3D_z(nlon,nlat,nz+1), gs_th(nlon,nlat,nz), gs_qv(nlon,nlat,nz), gs_qc(nlon,nlat,nz), gs_tke(nlon,nlat,nz))
+allocate(u_s(nlon,nlat), v_s(nlon,nlat), pblh(nlon,nlat), hgt(nlon,nlat))
+allocate(outvar(nlon,nlat), outvar_i(nlon,nlat))
+allocate(u(nlon+1,nlat,nz), v(nlon,nlat+1,nz), ua(nlon,nlat,nz), va(nlon,nlat,nz))
+allocate(ph(nlon,nlat,nz+1), phb(nlon,nlat,nz+1), phi(nlon,nlat,nz+1), zhgt(nlon,nlat,nz))
+allocate(t(nlon,nlat,nz), qv(nlon,nlat,nz), qc(nlon,nlat,nz), tke(nlon,nlat,nz))
+allocate(vpt(nz), zcol(nz), dzcol(nz), dvpt(nz))
 
 amonthi = pad_int(imonth, 2)
 adayi = pad_int(iday, 2)
@@ -65,36 +65,75 @@ do year = yeari, yearf
     write(*,*) year, month
     do day = 1, days(month)
       aday = pad_int(day, 2)
-      gs_dmax = -1.
+      outvar_i = -1.
       do hour = ihour, 23
         ahour = pad_int(hour, 2)
         infile = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_'//ahour//'_00_00'
 
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening '//trim(infile))
-        call read2d('U10', gs_u10)
-        call read2d('V10', gs_v10)
-        call read2d('PBLH', gs_pbl)
-        call read2d('HGT', gs_hgt)
-        call read3d('U', gs_us, nlon+1, nlat, nz)
-        call read3d('V', gs_vs, nlon, nlat+1, nz)
-        call read3d('PH', gs_zw, nlon, nlat, nz+1)
-        call read3d('PHB', wrfv3D_z, nlon, nlat, nz+1)
-        call read3d('T', gs_th, nlon, nlat, nz)
-        call read3d('QVAPOR', gs_qv, nlon, nlat, nz)
-        call read3d('QCLOUD', gs_qc, nlon, nlat, nz)
-        call read3d('TKE_PBL', gs_tke, nlon, nlat, nz)
+        status = nf90_inq_varid(ncid, 'U10', varid)
+        call ncerror(status, 'getting var id U10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, u_s, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading U10 from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'V10', varid)
+        call ncerror(status, 'getting var id V10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, v_s, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading V10 from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'PBLH', varid)
+        call ncerror(status, 'getting var id PBLH in '//trim(infile))
+        status = nf90_get_var(ncid, varid, pblh, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading PBLH from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'HGT', varid)
+        call ncerror(status, 'getting var id HGT in '//trim(infile))
+        status = nf90_get_var(ncid, varid, hgt, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading HGT from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'U', varid)
+        call ncerror(status, 'getting var id U in '//trim(infile))
+        status = nf90_get_var(ncid, varid, u, (/xoffset, yoffset, 1/), (/nlon+1, nlat, nz/))
+        call ncerror(status, 'reading U from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'V', varid)
+        call ncerror(status, 'getting var id V in '//trim(infile))
+        status = nf90_get_var(ncid, varid, v, (/xoffset, yoffset, 1/), (/nlon, nlat+1, nz/))
+        call ncerror(status, 'reading V from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'PH', varid)
+        call ncerror(status, 'getting var id PH in '//trim(infile))
+        status = nf90_get_var(ncid, varid, ph, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        call ncerror(status, 'reading PH from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'PHB', varid)
+        call ncerror(status, 'getting var id PHB in '//trim(infile))
+        status = nf90_get_var(ncid, varid, phb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        call ncerror(status, 'reading PHB from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'T', varid)
+        call ncerror(status, 'getting var id T in '//trim(infile))
+        status = nf90_get_var(ncid, varid, t, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        call ncerror(status, 'reading T from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'QVAPOR', varid)
+        call ncerror(status, 'getting var id QVAPOR in '//trim(infile))
+        status = nf90_get_var(ncid, varid, qv, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        call ncerror(status, 'reading QVAPOR from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'QCLOUD', varid)
+        call ncerror(status, 'getting var id QCLOUD in '//trim(infile))
+        status = nf90_get_var(ncid, varid, qc, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        call ncerror(status, 'reading QCLOUD from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'QKE', varid)
+        call ncerror(status, 'getting var id QKE in '//trim(infile))
+        status = nf90_get_var(ncid, varid, tke, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        call ncerror(status, 'reading QKE from '//trim(infile))
+
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 
         ! winds and heights on the mass levels
-        gs_um = 0.5 * (gs_us(1:nlon,:,:) + gs_us(2:nlon+1,:,:))
-        gs_vm = 0.5 * (gs_vs(:,1:nlat,:) + gs_vs(:,2:nlat+1,:))
-        gs_zw = (gs_zw + wrfv3D_z) / g                           ! geopotential height of the w levels (m)
-        gs_zm = 0.5 * (gs_zw(:,:,1:nz) + gs_zw(:,:,2:nz+1))     ! ... of the mass levels
+        ua = 0.5 * (u(1:nlon,:,:) + u(2:nlon+1,:,:))
+        va = 0.5 * (v(:,1:nlat,:) + v(:,2:nlat+1,:))
+        phi = (ph + phb) / g                                   ! geopotential height of the w levels (m)
+        zhgt = 0.5 * (phi(:,:,1:nz) + phi(:,:,2:nz+1))         ! ... of the mass levels
+        t = t + 300.                                           ! potential temperature (K)
+        tke = 0.5 * tke                                        ! TKE = QKE / 2
 
         call calc_gust
-        gs_dmax = max(gs_dmax, gs_gust)
+        outvar_i = max(outvar_i, outvar)
       enddo
       ihour = 0
 
@@ -102,7 +141,7 @@ do year = yeari, yearf
       bdtime(1, issh) = hours_since_ini(year, month, day, 0)
       bdtime(2, issh) = bdtime(1, issh) + 24
       ttime(issh) = float(bdtime(1, issh)) + 12.
-      outvar_h(:,:,issh) = real(nint(100.d0 * gs_dmax, 8)) / 100.
+      outvar_h(:,:,issh) = real(nint(100.d0 * outvar_i, 8)) / 100.
     enddo
   enddo
 
@@ -115,80 +154,36 @@ contains
 !
 !-----------------------------------------------------------------------
 !
-subroutine read2d(vname, field)
-! a 2-D field of the open wrfout file (ncid)
-character(len=*), intent(in) :: vname
-real, dimension(:,:), intent(out) :: field
-status = nf90_inq_varid(ncid, vname, varid)
-call ncerror(status, 'getting var id '//vname//' in '//trim(infile))
-status = nf90_get_var(ncid, varid, field, (/xoffset, yoffset/), (/nlon, nlat/))
-call ncerror(status, 'reading '//vname//' from '//trim(infile))
-end subroutine read2d
-!
-!-----------------------------------------------------------------------
-!
-subroutine read3d(vname, field, n1, n2, n3)
-! a 3-D field (n1 x n2 x n3, staggered or not) of the open wrfout file (ncid)
-character(len=*), intent(in) :: vname
-integer, intent(in) :: n1, n2, n3
-real, dimension(n1,n2,n3), intent(out) :: field
-status = nf90_inq_varid(ncid, vname, varid)
-call ncerror(status, 'getting var id '//vname//' in '//trim(infile))
-status = nf90_get_var(ncid, varid, field, (/xoffset, yoffset, 1/), (/n1, n2, n3/))
-call ncerror(status, 'reading '//vname//' from '//trim(infile))
-end subroutine read3d
-!
-!-----------------------------------------------------------------------
-!
 subroutine calc_gust
-! gust of every grid point for the current hour (gs_gust), Brasseur (2001)
-integer :: ix, iy
+! gust of every grid point for the current hour (outvar): gustwind_Brasseur01 of CDXWRF
+! (module_diagvar_cordex.F) for each column, wind speed only
 do iy = 1, nlat
   do ix = 1, nlon
-    gs_gust(ix,iy) = gust_b01(gs_zm(ix,iy,:) - gs_hgt(ix,iy), gs_th(ix,iy,:) + 300., gs_qv(ix,iy,:), &
-                              gs_qc(ix,iy,:), gs_tke(ix,iy,:), gs_um(ix,iy,:), gs_vm(ix,iy,:), gs_pbl(ix,iy))
+    outvar(ix,iy) = 0.
+    zcol = 0.; dzcol = 0.; vpt = 0.; dvpt = 0.
+    ! levels inside the boundary layer (the level above must still be below PBLH, as CDXWRF)
+    nlevs = 0
+    do k = 1, nz-1
+      if (zhgt(ix,iy,k+1) - hgt(ix,iy) > pblh(ix,iy)) exit
+      vpt(k) = t(ix,iy,k) * (1. + 0.61 * qv(ix,iy,k) - qc(ix,iy,k))   ! virtual potential temperature
+      zcol(k) = zhgt(ix,iy,k) - hgt(ix,iy)
+      nlevs = k
+    enddo
+    if (nlevs <= 1) cycle
+    dzcol(1:nlevs-1) = zcol(2:nlevs) - zcol(1:nlevs-1)
+    ! buoyancy term g dtheta_v / theta_v (centred, one-sided at the ends)
+    dvpt(1) = g * (vpt(2) - vpt(1)) / vpt(1)
+    if (nlevs > 2) dvpt(2:nlevs-1) = g * (vpt(3:nlevs) - vpt(1:nlevs-2)) / vpt(2:nlevs-1)
+    dvpt(nlevs) = g * (vpt(nlevs) - vpt(nlevs-1)) / vpt(nlevs)
+    do ilev = 2, nlevs
+      tke_int = sum(tke(ix,iy,1:ilev) * dzcol(1:ilev)) / zcol(ilev)
+      vpt_int = sum(dvpt(1:ilev))
+      if (tke_int < vpt_int) exit                                     ! end of the deflection
+      outvar(ix,iy) = max(outvar(ix,iy), sqrt(ua(ix,iy,ilev)**2 + va(ix,iy,ilev)**2))
+    enddo
   enddo
 enddo
 end subroutine calc_gust
-!
-!-----------------------------------------------------------------------
-!
-function gust_b01(zagl, pt, qv, qc, tke, u, v, hpbl) result(gust)
-! one column: gustwind_Brasseur01 of CDXWRF (module_diagvar_cordex.F), speed only
-real, dimension(nz), intent(in) :: zagl, pt, qv, qc, tke, u, v
-real, intent(in) :: hpbl
-real :: gust, tke_int, vpt_int
-real, dimension(nz) :: vpt, heights, dheights, dvpt
-integer :: k, ilev, nlevs
-gust = 0.
-heights = 0.; dheights = 0.; vpt = 0.
-! levels inside the boundary layer (the level above must still be below PBLH, as CDXWRF)
-nlevs = 0
-do k = 1, nz-1
-  if (zagl(k+1) > hpbl) exit
-  vpt(k) = pt(k) * (1. + 0.61 * qv(k) - qc(k))          ! virtual potential temperature
-  heights(k) = zagl(k)
-  nlevs = k
-enddo
-if (nlevs <= 1) return
-dheights(1:nlevs-1) = heights(2:nlevs) - heights(1:nlevs-1)
-! buoyancy term g dtheta_v / theta_v (centred, one-sided at the ends)
-dvpt = 0.
-dvpt(1) = g * (vpt(2) - vpt(1)) / vpt(1)
-if (nlevs > 2) dvpt(2:nlevs-1) = g * (vpt(3:nlevs) - vpt(1:nlevs-2)) / vpt(2:nlevs-1)
-dvpt(nlevs) = g * (vpt(nlevs) - vpt(nlevs-1)) / vpt(nlevs)
-do ilev = 2, nlevs
-  tke_int = 0.
-  vpt_int = 0.
-  do k = 1, ilev
-    tke_int = tke_int + tke(k) * dheights(k)
-    vpt_int = vpt_int + dvpt(k)
-  enddo
-  tke_int = tke_int / heights(ilev)
-  if (tke_int < vpt_int) exit                            ! end of the deflection
-  gust = max(gust, sqrt(u(ilev)**2 + v(ilev)**2))
-enddo
-end function gust_b01
 !
 !-----------------------------------------------------------------------
 !

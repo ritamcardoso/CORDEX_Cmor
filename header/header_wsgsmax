@@ -1,5 +1,5 @@
 ! wsgsmax: RCM_sfc_wsgsmax (gust varset; UPP formula from U10 V10 U V PH PHB HGT PBLH) or
-!          RCM_sfc_wsgsmax_b01 (Brasseur 2001 as CDXWRF; also T QVAPOR QCLOUD TKE_PBL)
+!          RCM_sfc_wsgsmax_b01 (Brasseur 2001 as CDXWRF; also T QVAPOR QCLOUD QKE)
 wrfvar = 'U10'         ! not used: the programs read their fields themselves
 vaid = 'wsgsmax'
 vunts = 'm s-1'
