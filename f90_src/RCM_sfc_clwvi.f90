@@ -116,16 +116,6 @@ do year = yeari, yearf,1
         status=nf90_get_var(ncid,varid,psf,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
         call ncerror(status,'reading PSFC from '//trim(infile))
 !
-!        do iy = 1, nlat
-!          do ix = 1, nlon
-!            p_iface(ix,iy,1)    = psf(ix,iy)
-!            p_iface(ix,iy,nz+1) = p_top
-!            do k = 2, nz
-!              p_iface(ix,iy,k) = 0.5 * (press(ix,iy,k-1) + press(ix,iy,k))
-!            enddo
-!          enddo
-!        enddo
-!
         status=nf90_inq_varid(ncid,wrfvar,varid)
         call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
 !

@@ -88,7 +88,7 @@ integer, dimension(8) :: values
 integer, dimension(:,:), allocatable :: bdtime, outvar_a
 
 ! Real Scalars 
-real :: tc, slope
+real :: tv, tc, slope
 real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, es_kPa, gam, ET0   ! RCM_sfc_evspsblpot (slope above)
 
 ! Real 1D Allocatable Arrays
@@ -108,8 +108,8 @@ real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 
 ! Real 3D Allocatable Arrays
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
-real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v, t
-real, dimension(:,:,:), allocatable :: qc, qi, qr, qs, smois
+real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v, w, t
+real, dimension(:,:,:), allocatable :: qv,qc, qi, qr, qs, smois
 real, dimension(:,:,:), allocatable :: outvar_3, outvar_6, outvar_d, outvar_m, outvar_d_max
 real, dimension(:,:,:), allocatable :: outvar_h_u, outvar_h_v
 real, dimension(:,:,:), allocatable :: wrfv3D_u, wrfv3D_v

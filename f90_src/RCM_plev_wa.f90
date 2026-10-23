@@ -10,9 +10,6 @@ use shared_subs
 use netcdf
 !implicit none
 
-real, dimension(:,:,:), allocatable :: wa_ws     ! W on the staggered levels (nz+1)
-
-
 ! --- Read configuration using shared_subs subroutine
 
 call init_cordex_environment
@@ -114,11 +111,11 @@ do year = yeari, yearf,1
         status = nf90_inq_varid(ncid, wrfvar, varid)
         call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
 
-        status = nf90_get_var(ncid, varid, wa_ws, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        status = nf90_get_var(ncid, varid, w, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
         call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         ! destagger: mean of the faces below and above each mass level
-        wrfv3D = 0.5 * (wa_ws(:,:,1:nz) + wa_ws(:,:,2:nz+1))
+        wrfv3D = 0.5 * (w(:,:,1:nz) + w(:,:,2:nz+1))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))

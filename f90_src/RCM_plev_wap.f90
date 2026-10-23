@@ -21,9 +21,6 @@ use shared_subs
 use netcdf
 !implicit none
 
-real, dimension(:,:,:), allocatable :: wp_w, wp_t, wp_q, wp_om
-real :: wp_tv
-
 ! --- Read configuration using shared_subs subroutine
 
 call init_cordex_environment
@@ -62,7 +59,7 @@ if (ihour > 0) ish = ish + ihour - 1
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
 allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
 allocate(wrfv3D(nlon, nlat, nz))
-allocate(wp_w(nlon, nlat, nz+1), wp_t(nlon, nlat, nz), wp_q(nlon, nlat, nz), wp_om(nlon, nlat, nz))
+allocate(wp_w(nlon, nlat, nz+1), t(nlon, nlat, nz), wp_q(nlon, nlat, nz))
 
 it = 0
 !
@@ -125,17 +122,17 @@ do year = yeari, yearf,1
         ! and water vapour mixing ratio
         status = nf90_inq_varid(ncid, 'W', varid)
         call ncerror(status,'getting var id W in '//trim(infile))
-        status = nf90_get_var(ncid, varid, wp_w, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        status = nf90_get_var(ncid, varid, w, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
         call ncerror(status,'reading W from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'T', varid)
         call ncerror(status,'getting var id T in '//trim(infile))
-        status = nf90_get_var(ncid, varid, wp_t, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, t, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading T from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'QVAPOR', varid)
         call ncerror(status,'getting var id QVAPOR in '//trim(infile))
-        status = nf90_get_var(ncid, varid, wp_q, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, qv, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading QVAPOR from '//trim(infile))
 
         status = nf90_close(ncid)
@@ -146,7 +143,6 @@ do year = yeari, yearf,1
 ! Compute variable: omega on the model levels (wrfv3D), then on the pressure level
 !
         call calc_omega
-        wrfv3D = wp_om
 !
         if(presl >= 50000.)then
           call calc_plev
@@ -188,9 +184,9 @@ subroutine calc_omega
 do iz=1,nz
   do iy=1,nlat
     do ix=1,nlon
-      wp_tv = (wp_t(ix,iy,iz) + 300.) * (press(ix,iy,iz) / pconst)**rcp            ! temperature (K)
-      wp_tv = wp_tv * (epsilon + wp_q(ix,iy,iz)) / (epsilon * (1. + wp_q(ix,iy,iz)))  ! virtual temperature
-      wp_om(ix,iy,iz) = -g * press(ix,iy,iz) / (Rd * wp_tv) * 0.5 * (wp_w(ix,iy,iz) + wp_w(ix,iy,iz+1))
+      tv = (t(ix,iy,iz) + 300.) * (press(ix,iy,iz) / pconst)**rcp            ! temperature (K)
+      tv = tv * (epsilon + qv(ix,iy,iz)) / (epsilon * (1. + qv(ix,iy,iz)))  ! virtual temperature
+      wrfv3D(ix,iy,iz) = -g * press(ix,iy,iz) / (Rd * tv) * 0.5 * (w(ix,iy,iz) + w(ix,iy,iz+1))
     enddo
   enddo
 enddo
