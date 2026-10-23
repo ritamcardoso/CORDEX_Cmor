@@ -1,4 +1,4 @@
-! clgvi: no CORDEX_Cmor program yet; needs QGRAUP P PB PSFC (vertical integral, as clivi)
+! clgvi: RCM_sfc_clgvi (wpth4 varset), vertical integral of QGRAUP (P, PB, PSFC), as clivi
 wrfvar = 'QGRAUP'
 vaid = 'clgvi'
 vunts = 'kg m-2'

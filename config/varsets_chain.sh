@@ -12,7 +12,7 @@
 #
 declare -A VARSETS=(
   [out1]="RCM_sfc_VAR:tas,ts,th,hurs,huss,hfls,hfss,evspsbl,psl,zmla,od550aer,uas,vas"
-  [out2]="RCM_sfc_VAR:ps,sfcWind,z0,tauu,tauv,evspsblpot"
+  [out2]="RCM_sfc_VAR:ps,sfcWind,z0,tauu,tauv,evspsblpot,hfso"
   [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol,mrsofc"
   [rad]="RCM_sfc_rad:rsds,rlds,rsus,rlus,rldscs,rluscs,rlut,rlutcs,rsdscs,rsdsdir,rsdt,rsuscs,rsut,rsutcs"
   [snw]="RCM_sfc_VAR:prsn,snm,snc,snw,snd,siconca,pr,prc,sund"
@@ -22,6 +22,13 @@ declare -A VARSETS=(
   [wpth1]="RCM_sfc_VAR:clivi"
   [wpth2]="RCM_sfc_VAR:prw"
   [wpth3]="RCM_sfc_VAR:clwvi"
+  # Graupel and hail paths (QGRAUP, QHAIL: depend on the microphysics), not in ORDER:
+  # run with ./run.sh <experiment> <first year> <last year> wpth4; drop clhvi without QHAIL
+  [wpth4]="RCM_sfc_VAR:clgvi,clhvi"
+  # Daily maximum wind speed of gust, not in ORDER: ./run.sh <experiment> <first year> <last year> gust
+  [gust]="RCM_sfc_VAR:wsgsmax"
+  # ... or following Brasseur (2001) as the CORDEX-WRF module (needs TKE_PBL in wrfout):
+  #[gust]="RCM_sfc_wsgsmax_b01:wsgsmax"
   [plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30,wa20,wa10"
@@ -77,7 +84,7 @@ declare -A VARSETS=(
 #
 declare -A TIME=(
   [out1]="14:00:00"
-  [out2]="10:00:00"
+  [out2]="12:00:00"   # + hfso
   [soil]="12:00:00"
   [rad]="18:00:00"
   [snw]="12:00:00"
@@ -87,6 +94,8 @@ declare -A TIME=(
   [wpth1]="13:00:00"
   [wpth2]="10:00:00"
   [wpth3]="13:00:00"
+  [wpth4]="24:00:00"   # two variables as clivi (13 h each)
+  [gust]="16:00:00"    # U, V, PH, PHB every hour (b01: also T, QVAPOR, QCLOUD, TKE_PBL: ~30 h)
   [plev_wa]="22:00:00"
   [plev_zg]="22:00:00"
   [plev_uava]="28:00:00"
@@ -158,6 +167,8 @@ declare -A ADVANCE_YEAR=(
   [urban]=1
   [lsm]=1
   [landuse]=1
+  [wpth4]=1
+  [gust]=1
   [plev_wap]=1
 )
 
@@ -182,6 +193,8 @@ declare -A NEXT=(
   [urban]="urban"
   [lsm]="lsm"
   [landuse]="landuse"
+  [wpth4]="wpth4"
+  [gust]="gust"
   [plev_wap]="plev_wap"
 )
 

@@ -456,6 +456,17 @@ USGS weight tables, with the LCZ urban classes) is in `landuse_field`
 (`shared_subs_v2.f90`); edit it there. Like the other fx files, an existing file
 is kept, so the fx fractions are those of the first year processed.
 
+**Wind gust (`gust` varset).** `wsgsmax` (daily maximum near-surface wind speed of
+gust) is the maximum of the hourly gusts of each day. `RCM_sfc_wsgsmax.f90` (active) uses
+the UPP formula of the old `RCM_50km_sfc_gust_era.f90`: the wind of the highest model
+level inside the boundary layer mixed down to 10 m,
+`max(ws10, ws10 + (ws_pbl - ws10) (1 - min(0.5, PBLH/2000)))`.
+`RCM_sfc_wsgsmax_b01.f90` (commented line) follows Brasseur (2001) as the CORDEX-WRF
+module (CDXWRF, Fita et al. 2019): the fastest boundary-layer level whose mean TKE
+exceeds the buoyancy between it and the surface; it needs `TKE_PBL` in wrfout (a TKE
+boundary-layer scheme). Both are not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
+The graupel and hail paths `clgvi`, `clhvi` are in the `wpth4` varset (not in `ORDER`).
+
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on
 the model levels (from `W`, `T`, `QVAPOR`, `P`, `PB`), interpolated in log(p) to the
