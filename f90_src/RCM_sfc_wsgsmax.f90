@@ -16,16 +16,15 @@ program read_wrfout
 ! indices are those of the grid point, and the level is defined when PBLH is below
 ! the first model level.
 !
+! All the arrays are those of datvar_s (u_s/v_s: U10/V10, pblh, hgt, u/v staggered and
+! ua/va on the mass levels, ph/phb, phi: height of the w levels, zhgt: of the mass levels,
+! outvar: hourly gust, outvar_i: running daily maximum).
+!
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
 use netcdf
 !implicit none
-
-real, dimension(:,:), allocatable :: gs_u10, gs_v10, gs_pbl, gs_hgt, gs_gust, gs_dmax
-real, dimension(:,:,:), allocatable :: gs_us, gs_vs, gs_um, gs_vm, gs_zw, gs_zm, wrfv3D_z
-
-integer :: gs_nd, gs_h0, gs_k
 
 ! --- Read configuration using shared_subs subroutine
 
@@ -35,11 +34,10 @@ call init_cordex_environment
 
 call read_geog
 
-allocate(gs_u10(nlon,nlat), gs_v10(nlon,nlat), gs_pbl(nlon,nlat), gs_hgt(nlon,nlat))
-allocate(gs_gust(nlon,nlat), gs_dmax(nlon,nlat))
-allocate(gs_us(nlon+1,nlat,nz), gs_vs(nlon,nlat+1,nz), gs_um(nlon,nlat,nz), gs_vm(nlon,nlat,nz))
-allocate(gs_zw(nlon,nlat,nz+1), gs_zm(nlon,nlat,nz))
-allocate(wrfv3D_z(nlon,nlat,nz+1))
+allocate(u_s(nlon,nlat), v_s(nlon,nlat), pblh(nlon,nlat), hgt(nlon,nlat))
+allocate(outvar(nlon,nlat), outvar_i(nlon,nlat))
+allocate(u(nlon+1,nlat,nz), v(nlon,nlat+1,nz), ua(nlon,nlat,nz), va(nlon,nlat,nz))
+allocate(ph(nlon,nlat,nz+1), phb(nlon,nlat,nz+1), phi(nlon,nlat,nz+1), zhgt(nlon,nlat,nz))
 
 amonthi = pad_int(imonth, 2)
 adayi = pad_int(iday, 2)
@@ -63,33 +61,57 @@ do year = yeari, yearf
     write(*,*) year, month
     do day = 1, days(month)
       aday = pad_int(day, 2)
-      gs_dmax = -1.
+      outvar_i = -1.
       do hour = ihour, 23
         ahour = pad_int(hour, 2)
         infile = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_'//ahour//'_00_00'
 
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening '//trim(infile))
-        call read2d('U10', gs_u10)
-        call read2d('V10', gs_v10)
-        call read2d('PBLH', gs_pbl)
-        call read2d('HGT', gs_hgt)
-        call read3d('U', gs_us, nlon+1, nlat, nz)
-        call read3d('V', gs_vs, nlon, nlat+1, nz)
-        call read3d('PH', gs_zw, nlon, nlat, nz+1)
-        call read3d('PHB', wrfv3D_z, nlon, nlat, nz+1)
+        status = nf90_inq_varid(ncid, 'U10', varid)
+        call ncerror(status, 'getting var id U10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, u_s, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading U10 from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'V10', varid)
+        call ncerror(status, 'getting var id V10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, v_s, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading V10 from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'PBLH', varid)
+        call ncerror(status, 'getting var id PBLH in '//trim(infile))
+        status = nf90_get_var(ncid, varid, pblh, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading PBLH from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'HGT', varid)
+        call ncerror(status, 'getting var id HGT in '//trim(infile))
+        status = nf90_get_var(ncid, varid, hgt, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status, 'reading HGT from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'U', varid)
+        call ncerror(status, 'getting var id U in '//trim(infile))
+        status = nf90_get_var(ncid, varid, u, (/xoffset, yoffset, 1/), (/nlon+1, nlat, nz/))
+        call ncerror(status, 'reading U from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'V', varid)
+        call ncerror(status, 'getting var id V in '//trim(infile))
+        status = nf90_get_var(ncid, varid, v, (/xoffset, yoffset, 1/), (/nlon, nlat+1, nz/))
+        call ncerror(status, 'reading V from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'PH', varid)
+        call ncerror(status, 'getting var id PH in '//trim(infile))
+        status = nf90_get_var(ncid, varid, ph, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        call ncerror(status, 'reading PH from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'PHB', varid)
+        call ncerror(status, 'getting var id PHB in '//trim(infile))
+        status = nf90_get_var(ncid, varid, phb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        call ncerror(status, 'reading PHB from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 
         ! winds and heights on the mass levels
-        gs_um = 0.5 * (gs_us(1:nlon,:,:) + gs_us(2:nlon+1,:,:))
-        gs_vm = 0.5 * (gs_vs(:,1:nlat,:) + gs_vs(:,2:nlat+1,:))
-        gs_zw = (gs_zw + wrfv3D_z) / g                           ! geopotential height of the w levels (m)
-        gs_zm = 0.5 * (gs_zw(:,:,1:nz) + gs_zw(:,:,2:nz+1))     ! ... of the mass levels
+        ua = 0.5 * (u(1:nlon,:,:) + u(2:nlon+1,:,:))
+        va = 0.5 * (v(:,1:nlat,:) + v(:,2:nlat+1,:))
+        phi = (ph + phb) / g                                   ! geopotential height of the w levels (m)
+        zhgt = 0.5 * (phi(:,:,1:nz) + phi(:,:,2:nz+1))         ! ... of the mass levels
 
         call calc_gust
-        gs_dmax = max(gs_dmax, gs_gust)
+        outvar_i = max(outvar_i, outvar)
       enddo
       ihour = 0
 
@@ -97,7 +119,7 @@ do year = yeari, yearf
       bdtime(1, issh) = hours_since_ini(year, month, day, 0)
       bdtime(2, issh) = bdtime(1, issh) + 24
       ttime(issh) = float(bdtime(1, issh)) + 12.
-      outvar_h(:,:,issh) = real(nint(100.d0 * gs_dmax, 8)) / 100.
+      outvar_h(:,:,issh) = real(nint(100.d0 * outvar_i, 8)) / 100.
     enddo
   enddo
 
@@ -110,46 +132,19 @@ contains
 !
 !-----------------------------------------------------------------------
 !
-subroutine read2d(vname, field)
-! a 2-D field of the open wrfout file (ncid)
-character(len=*), intent(in) :: vname
-real, dimension(:,:), intent(out) :: field
-status = nf90_inq_varid(ncid, vname, varid)
-call ncerror(status, 'getting var id '//vname//' in '//trim(infile))
-status = nf90_get_var(ncid, varid, field, (/xoffset, yoffset/), (/nlon, nlat/))
-call ncerror(status, 'reading '//vname//' from '//trim(infile))
-end subroutine read2d
-!
-!-----------------------------------------------------------------------
-!
-subroutine read3d(vname, field, n1, n2, n3)
-! a 3-D field (n1 x n2 x n3, staggered or not) of the open wrfout file (ncid)
-character(len=*), intent(in) :: vname
-integer, intent(in) :: n1, n2, n3
-real, dimension(n1,n2,n3), intent(out) :: field
-status = nf90_inq_varid(ncid, vname, varid)
-call ncerror(status, 'getting var id '//vname//' in '//trim(infile))
-status = nf90_get_var(ncid, varid, field, (/xoffset, yoffset, 1/), (/n1, n2, n3/))
-call ncerror(status, 'reading '//vname//' from '//trim(infile))
-end subroutine read3d
-!
-!-----------------------------------------------------------------------
-!
 subroutine calc_gust
-! gust of every grid point for the current hour (gs_gust)
-real :: ws10, wsp, dws
-integer :: ix, iy, k, l
+! gust of every grid point for the current hour (outvar)
 do iy = 1, nlat
   do ix = 1, nlon
     l = 1
     do k = 1, nz
-      if (gs_zm(ix,iy,k) - gs_hgt(ix,iy) > gs_pbl(ix,iy)) exit
+      if (zhgt(ix,iy,k) - hgt(ix,iy) > pblh(ix,iy)) exit
       l = k
     enddo
-    ws10 = sqrt(gs_u10(ix,iy)**2 + gs_v10(ix,iy)**2)
-    wsp  = sqrt(gs_um(ix,iy,l)**2 + gs_vm(ix,iy,l)**2)
-    dws  = (wsp - ws10) * (1. - min(0.5, gs_pbl(ix,iy) / 2000.))
-    gs_gust(ix,iy) = max(ws10, ws10 + dws)
+    ws10 = sqrt(u_s(ix,iy)**2 + v_s(ix,iy)**2)
+    wsp  = sqrt(ua(ix,iy,l)**2 + va(ix,iy,l)**2)
+    dws  = (wsp - ws10) * (1. - min(0.5, pblh(ix,iy) / 2000.))
+    outvar(ix,iy) = max(ws10, ws10 + dws)
   enddo
 enddo
 end subroutine calc_gust

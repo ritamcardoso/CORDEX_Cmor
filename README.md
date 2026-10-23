@@ -463,8 +463,8 @@ level inside the boundary layer mixed down to 10 m,
 `max(ws10, ws10 + (ws_pbl - ws10) (1 - min(0.5, PBLH/2000)))`.
 `RCM_sfc_wsgsmax_b01.f90` (commented line) follows Brasseur (2001) as the CORDEX-WRF
 module (CDXWRF, Fita et al. 2019): the fastest boundary-layer level whose mean TKE
-exceeds the buoyancy between it and the surface; it needs `TKE_PBL` in wrfout (a TKE
-boundary-layer scheme). Both are not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
+exceeds the buoyancy between it and the surface; it uses TKE = `QKE`/2 (twice the TKE of the
+MYNN boundary-layer scheme), so `QKE` must be in wrfout. Both are not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
 The graupel and hail paths `clgvi`, `clhvi` are in the `wpth4` varset (not in `ORDER`).
 
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS

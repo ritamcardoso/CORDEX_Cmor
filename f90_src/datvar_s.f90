@@ -90,12 +90,15 @@ integer, dimension(:,:), allocatable :: bdtime, outvar_a
 ! Real Scalars 
 real :: tv, tc, slope
 real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, es_kPa, gam, ET0   ! RCM_sfc_evspsblpot (slope above)
+real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax, RCM_sfc_wsgsmax_b01
+integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax_b01
 
 ! Real 1D Allocatable Arrays
 real, dimension(:), allocatable :: ttime, ttime3, ttime6, ttimed, ttimem, ttimes
+real, dimension(:), allocatable :: vpt, zcol, dzcol, dvpt   ! one column (RCM_sfc_wsgsmax_b01)
 
 ! Real 2D Allocatable Arrays
-real, dimension(:,:), allocatable :: sftlf, hgt, runsf
+real, dimension(:,:), allocatable :: sftlf, hgt, runsf, pblh
 real, dimension(:,:), allocatable :: wrfv2D, i_wrfv2D, outvar, outvar_i
 real, dimension(:,:), allocatable :: u_s, v_s, wind10, ust, t2, q2, uas, vas, ro, psf
 real, dimension(:,:), allocatable :: t2_i, q2_i, psf_i, wind10_i
@@ -109,7 +112,7 @@ real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 ! Real 3D Allocatable Arrays
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
 real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v, w, t
-real, dimension(:,:,:), allocatable :: qv,qc, qi, qr, qs, smois
+real, dimension(:,:,:), allocatable :: qv,qc, qi, qr, qs, smois, tke
 real, dimension(:,:,:), allocatable :: outvar_3, outvar_6, outvar_d, outvar_m, outvar_d_max
 real, dimension(:,:,:), allocatable :: outvar_h_u, outvar_h_v
 real, dimension(:,:,:), allocatable :: wrfv3D_u, wrfv3D_v
