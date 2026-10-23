@@ -255,7 +255,7 @@ treeFracNdlDcd,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entir
 tslsiLut,FPS-LUCAS,TIER 1,K,i,x,,,,,,Surface temperature (i.e. temperature at which long-wave radiation emitted),surface_temperature,TSK,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
 urbanFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Urban Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF urban classes incl. LCZ (landuse_field in shared_subs_v2.f90)
 vortmen,FPS-LUCAS,TIER 1,s-1,i,,x,,,,,relative vorticity,atmosphere_relative_vorticity,U V MAPFAC_U MAPFAC_V MAPFAC_M P PB,not produced by CORDEX_Cmor; header ready; relative vorticity on pressure levels
-wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,,omega,lagrangian_tendency_of_air_pressure,W T QVAPOR P PB,"CORDEX_Cmor: RCM_plev_wap (plev_wap varset), as wap<p> on each pressure level (1000 to 30 hPa); omega = -rho g w; written every 6 h"
+wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,,omega,lagrangian_tendency_of_air_pressure,W T QVAPOR P PB,"CORDEX_Cmor: RCM_plev_wap (plev_wap varset), as wap<p> on each pressure level (1000 to 30 hPa); omega = -rho g w; every wp_step hours (grid ini)"
 slthick,FPS-LUCAS,TIER 1,m,,,,,x¹,,x,Thickness of Soil Layers,cell_thickness,DZS,not produced by CORDEX_Cmor; header ready; Noah-MP soil layer thickness
 lcvr,FPS-LUCAS,,1,,x,,,x¹,,x,Land Cover Dominant Class,,LU_INDEX,"CORDEX_Cmor: RCM_fx_lcvr (fx varset, from geo_em) and RCM_sfc_landuse (landuse varset); LU_INDEX (dominant land-use class); hourly from wrfout; not in the phase 2 workbook list"
 
