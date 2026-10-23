@@ -1,4 +1,4 @@
-! li: no CORDEX_Cmor program yet; needs P PB T QVAPOR T2 Q2 PSFC (derived)
+! li: written by RCM_sfc_cape (varset cape, archived with cape_x), 500 hPa; metadata hard-coded there
 wrfvar = 'T'
 vaid = 'li'
 vunts = 'K'

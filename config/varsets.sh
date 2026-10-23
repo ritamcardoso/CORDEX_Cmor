@@ -28,6 +28,10 @@ declare -A VARSETS=(
   # Daily maximum wind speed of gust (Brasseur 2001 if QKE is in wrfout, else UPP), not in ORDER:
   # ./run.sh <experiment> <first year> <last year> gust
   [gust]="RCM_sfc_VAR:wsgsmax"
+  # Surface-parcel CAPE, CIN, lifted index and LCL height (Romps 2017 LCL), hourly, not in ORDER:
+  # ./run.sh <experiment> <first year> <last year> cape. One run of RCM_sfc_cape writes the four
+  # variables; cin, li and lcl are archived through the companion varset cape_x (CP_EXTRA).
+  [cape]="RCM_sfc_VAR:cape"
   [plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30,wa20,wa10"
@@ -61,6 +65,7 @@ declare -A VARSETS=(
   #[plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30,ua20,ua10"
   [zlev_ua0]="RCM_zlev_ua:ua100m,ua150m,ua50m"
   [zlev_ua1]="RCM_zlev_ua:ua300m,ua250m,ua200m"
+  [cape_x]="RCM_sfc_cape:cin,li,lcl"   # written by RCM_sfc_cape (varset cape)
   # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
   # run with ./run.sh fpsurb <first year> <last year> urban
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_VAR:hurscan,husscan,sfcWindcan,tasblue,tsblue;RCM_sfc_ts:tsskin"
@@ -106,6 +111,7 @@ declare -A TIME=(
   [wpth2]="10:00:00"
   [wpth3]="13:00:00"
   [wpth4]="24:00:00"   # two variables as clivi (13 h each)
+  [cape]="40:00:00"    # ~75 us per column and hour (EUR-12: ~31 h) + reading 7 3D fields
   [gust]="16:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
   [plev_wa]="22:00:00"
   [plev_zg]="22:00:00"
@@ -151,17 +157,20 @@ declare -A MEM=(
   [zlev_uava0]="16G"
   [zlev_uava1]="16G"
   [soil]="16G"
+  [cape]="32G"     # four yearly hourly fields in memory (EUR-12: ~25 GB)
 )
 
 #
 #--- CP_EXTRA: extra varset archived with this one ------------
-# Second varset archived after this one: the ua* files that the
-# uava programs write alongside the va* files they are named for.
+# Second varset archived after this one: the files that a program writes
+# alongside the variable it is named for (ua* from the uava programs;
+# cin, li and lcl from RCM_sfc_cape).
 #
 declare -A CP_EXTRA=(
   [plev_uava]="plev_ua"
   [zlev_uava0]="zlev_ua0"
   [zlev_uava1]="zlev_ua1"
+  [cape]="cape_x"
 )
 
 #
@@ -180,6 +189,7 @@ declare -A ADVANCE_YEAR=(
   [landuse]=1
   [wpth4]=1
   [gust]=1
+  [cape]=1
   [plev_wap]=1
 )
 
@@ -206,6 +216,7 @@ declare -A NEXT=(
   [landuse]="landuse"
   [wpth4]="wpth4"
   [gust]="gust"
+  [cape]="cape"
   [plev_wap]="plev_wap"
 )
 

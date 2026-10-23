@@ -1,4 +1,4 @@
-! cin: no CORDEX_Cmor program yet; needs P PB T QVAPOR PH PHB HGT PSFC (derived)
+! cin: written by RCM_sfc_cape (varset cape, archived with cape_x); metadata hard-coded there
 wrfvar = 'T'
 vaid = 'cin'
 vunts = 'J kg-1'

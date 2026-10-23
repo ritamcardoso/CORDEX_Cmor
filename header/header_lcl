@@ -1,0 +1,9 @@
+! lcl: written by RCM_sfc_cape (varset cape, archived with cape_x), Romps (2017); metadata hard-coded there
+wrfvar = 'T'
+vaid = 'lcl'
+vunts = 'm'
+lname = 'Lifting Condensation Level Height above Ground'
+stname = ''
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -473,6 +473,22 @@ PBLH/2000)))`. The method is chosen from the first wrfout file and written to th
 It is not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
 The graupel and hail paths `clgvi`, `clhvi` are in the `wpth4` varset (not in `ORDER`).
 
+**Convection indices (`cape` varset).** `RCM_sfc_cape.f90` writes, every hour, `cape` and
+`cin` (J kg-1), `li` (K) and `lcl` (m above ground) for a parcel lifted from the lowest model
+level. The LCL is exact (Romps 2017, with the real Lambert W₋₁ branch); below it the parcel
+follows the dry adiabat, above it the Bolton (1980, eq. 43) pseudo-adiabat (θe with the Romps
+T_LCL, inverted by Newton). Saturation uses the Wexler/ITS-90 formula with the enhancement
+factor (as `hurs`); the buoyancy uses the virtual temperature. CAPE and CIN follow
+RIP/NCL/wrf-python: the LCL and the zero crossings of the buoyancy are inserted in the
+column, the energy is accumulated with the trapezoidal rule, the EL is the highest level of
+positive buoyancy (up to 100 hPa) and the LFC the level of minimum energy below it;
+`cape = E(EL) - E(LFC)`, `cin = -E(LFC)`. Without an EL `cape = cin = 0` (so `cin` is 0, not
+missing, where there is no CAPE). `li = T(500 hPa) - T_parcel(500 hPa)`, with the
+environment interpolated in log(p). `cin`, `li` and `lcl` are archived through the
+companion varset `cape_x` (`CP_EXTRA`); `capemax`, `cinmax` and `limax` are the daily maxima
+made by `tools/aggregate.sh` from the hourly files. About 75 µs per column and hour
+(EUR-12: ~31 h and ~25 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
+
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on
 the model levels (from `W`, `T`, `QVAPOR`, `P`, `PB`), interpolated in log(p) to the

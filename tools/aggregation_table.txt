@@ -50,7 +50,7 @@ asy440aer|asy440aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 440 nm|
 asy550aer|asy550aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 550 nm|mean|area: time: mean|Aerosol Asymmetry Parameter at 550 nm
 asy870aer|asy870aer|mean|area: time: mean|Aerosol Asymmetry Parameter at 870 nm|mean|area: time: mean|Aerosol Asymmetry Parameter at 870 nm
 cape|cape|mean|area: time: mean|Convective Available Potential Energy|mean|area: time: mean|Convective Available Potential Energy
-capemax|capemax|max|area: mean time: maximum|Daily Maximum Convective Available Potential Energy|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Convective Available Potential Energy
+capemax|cape|max|area: mean time: maximum|Daily Maximum Convective Available Potential Energy|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Convective Available Potential Energy
 cdnc|cdnc|mean|area: time: mean|Cloud Liquid Droplet Number Concentration|mean|area: time: mean|Cloud Liquid Droplet Number Concentration
 cheaqpso4|cheaqpso4|mean|area: time: mean|Aqueous-Phase Production Rate of SO4|mean|area: time: mean|Aqueous-Phase Production Rate of SO4
 chegpso4|chegpso4|mean|area: time: mean|Gas-Phase Production Rate of SO4|mean|area: time: mean|Gas-Phase Production Rate of SO4
@@ -58,7 +58,7 @@ chepnh4|chepnh4|mean|area: time: mean|Chemical Production of Dry Ammonium Aeroso
 chepno3|chepno3|mean|area: time: mean|Chemical Production of Dry Nitrate Aerosol|mean|area: time: mean|Chemical Production of Dry Nitrate Aerosol
 chepsoa|chepsoa|mean|area: time: mean|Chemical Production of Dry Aerosol Secondary Organic Matter|mean|area: time: mean|Chemical Production of Dry Aerosol Secondary Organic Matter
 cin|cin|mean|area: time: mean|Convective Inhibition|mean|area: time: mean|Convective Inhibition
-cinmax|cinmax|max|area: mean time: maximum|Daily Maximum Convective Inhibition|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Convective Inhibition
+cinmax|cin|max|area: mean time: maximum|Daily Maximum Convective Inhibition|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Convective Inhibition
 clh|clh|mean|area: time: mean|High Level Cloud Fraction|mean|area: time: mean|High Level Cloud Fraction
 clivi|clivi|mean|area: time: mean|Ice Water Path|mean|area: time: mean|Ice Water Path
 cll|cll|mean|area: time: mean|Low Level Cloud Fraction|mean|area: time: mean|Low Level Cloud Fraction
@@ -127,7 +127,7 @@ hus850|hus850|mean|area: time: mean|Specific Humidity at 850hPa|mean|area: time:
 hus925|hus925|mean|area: time: mean|Specific Humidity at 925hPa|mean|area: time: mean|Specific Humidity at 925hPa
 huss|huss|mean|area: time: mean|Near-Surface Specific Humidity|mean|area: time: mean|Near-Surface Specific Humidity
 li|li|mean|area: time: mean|Lifted Index|mean|area: time: mean|Lifted Index
-limax|limax|max|area: mean time: maximum|Daily Maximum Lifted Index|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Lifted Index
+limax|li|max|area: mean time: maximum|Daily Maximum Lifted Index|mean|area: mean time: maximum within days time: mean over days|Daily Maximum Lifted Index
 mlotst|mlotst|mean|area: mean where sea time: mean|Ocean Mixed Layer Thickness Defined by Sigma T|mean|area: mean where sea time: mean|Ocean Mixed Layer Thickness Defined by Sigma T
 mrfso|mrfso|mean|area: mean where land time: mean|Soil Frozen Water Content|mean|area: mean where land time: mean|Soil Frozen Water Content
 mrfsos|mrfsos|mean|area: mean where land time: mean|Frozen Water Content in Upper Portion of Soil Column|mean|area: mean where land time: mean|Frozen Water Content in Upper Portion of Soil Column
@@ -424,3 +424,5 @@ urbanFrac|urbanFrac|mean|area: mean time: mean|Percentage of the Grid Cell Occup
 cnc|cnc|mean|area: mean time: mean|Canopy Covered Area Percentage|mean|area: mean time: mean|Canopy Covered Area Percentage
 clgvi|clgvi|mean|area: time: mean|Vertical integral of mass content of graupel|mean|area: time: mean|Vertical integral of mass content of graupel
 clhvi|clhvi|mean|area: time: mean|Vertical integral of mass content of hail|mean|area: time: mean|Vertical integral of mass content of hail
+# Not in the CORDEX-CMIP6 tables (RCM_sfc_cape)
+lcl|lcl|mean|area: time: mean|Lifting Condensation Level Height above Ground|mean|area: time: mean|Lifting Condensation Level Height above Ground

@@ -98,11 +98,18 @@ real :: dx_geo, dy_geo                                                      ! RC
 real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax
 integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax (Brasseur)
 logical :: fx_exists                                                        ! fx programs: output already there
+! RCM_sfc_cape: surface parcel of one column (double precision)
+real(kind=8) :: p_par, t_par, r_par, th_par, the_par, z_lcl, t_lcl, p_lcl
+real(kind=8) :: t_lift, q_lift, z_lift, tv_lift, t_env, q_env, tv_env, fac1, fac2, fden
+real(kind=8) :: ben_min, t500, te500
+integer :: kk, klcl, kel, klfc, kmax
+logical :: lcl_in, found_el
 logical :: gust_b01                                                         ! RCM_sfc_wsgsmax: QKE in wrfout -> Brasseur
 
 ! Real 1D Allocatable Arrays
 real, dimension(:), allocatable :: ttime, ttime3, ttime6, ttimed, ttimem, ttimes
 real, dimension(:), allocatable :: vpt, zcol, dzcol, dvpt   ! one column (RCM_sfc_wsgsmax, Brasseur)
+real(kind=8), dimension(:), allocatable :: buoy_c, zrel_c, ben_c   ! one column, with inserted levels (RCM_sfc_cape)
 
 ! Real 2D Allocatable Arrays
 real, dimension(:,:), allocatable :: sftlf, hgt, runsf, pblh
@@ -119,6 +126,7 @@ real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 
 ! Real 3D Allocatable Arrays
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
+real, dimension(:,:,:), allocatable :: cin_h, li_h, lcl_h   ! RCM_sfc_cape (cape in outvar_h)
 real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v, w, t
 real, dimension(:,:,:), allocatable :: qv,qc, qi, qr, qs, smois, tke
 real, dimension(:,:,:), allocatable :: outvar_3, outvar_6, outvar_d, outvar_m, outvar_d_max
