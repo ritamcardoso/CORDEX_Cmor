@@ -271,6 +271,11 @@ See [`experiments/README.md`](experiments/README.md) for the full details.
     fills in from that grid's `OUTPUT_WRF[]`/`OUTPUT_DIR[]` in `<name>.sh`.
   * **Naming Conventions:** change the general domain and model names used
     for the CMORised variables (`dom`/`outdom`, same file).
+  * **Sub-daily step:** `wp_step` (same file, default 6) is the number of hours
+    between the output times of the programs that write 3-hourly or 6-hourly
+    files (pressure levels `RCM_plev_*`, soil layers `RCM_sfc_tsl`/`mrsol`/`mrsfl`):
+    `wp_step = 6` gives `6hr` files, `wp_step = 3` gives `3hr` files (e.g. for LUCAS).
+    It must divide 24. The length of the time axis follows from it.
 * **Global Properties:** edit `<name>_global_<DOMAIN_ID>_<grid>.ini`
   (e.g. `cordex_global_EUR-12_d01.ini`) — the global characteristics of
   the variables, tailored to your experiment. Both files of a grid must
@@ -450,7 +455,7 @@ USGS weight tables, with the LCZ urban classes) is in `landuse_field`
 is kept, so the fx fractions are those of the first year processed.
 
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
-`wap` as `wap1000` … `wap30` (Pa s-1, every 6 h, instantaneous): omega = -rho g w on
+`wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on
 the model levels (from `W`, `T`, `QVAPOR`, `P`, `PB`), interpolated in log(p) to the
 level `pres` of the header as `RCM_plev_wa`. It is not in `ORDER`; run it with
 `./run.sh lucas 2000 2010 plev_wap`. The line with 20 and 10 hPa is commented, as for
