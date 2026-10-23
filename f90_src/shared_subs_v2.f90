@@ -1227,7 +1227,18 @@ pure function qvs_wexler(tk, pa) result(qs)
 ! saturation vapour pressure with the enhancement factor (Goff 1949, over ice below
 ! 0 degC), as RCM_sfc_hurs and humidity_utils.f90
 real(kind=8), intent(in) :: tk, pa
-real(kind=8) :: qs, es, fact, tc
+real(kind=8) :: qs, dqs
+call qvs_wexler_dt(tk, pa, qs, dqs)
+end function qvs_wexler
+!
+!-----------------------------------------------------------------------
+!
+pure subroutine qvs_wexler_dt(tk, pa, qs, dqs)
+! qvs_wexler and its exact derivative dqs = d qs / d tk (kg kg-1 K-1), for Newton
+! iterations (t_from_theta_e)
+real(kind=8), intent(in) :: tk, pa
+real(kind=8), intent(out) :: qs, dqs
+real(kind=8) :: es, des, dlnes, tc, fa, dfa, fb, dfb, eb, fact, dlnf, ew
 real(kind=8), parameter :: a1=-2.8365744d3, a2=-6.028076559d3, a3=19.54263612d0, a4=-2.737830188d-2, &
                            a5=1.6261698d-5, a6=7.0229056d-10, a7=-1.8680009d-13, a8=2.7150305d0
 real(kind=8), parameter :: fi1=3.62183d-4, fi2=2.6061244d-5, fi3=3.8667770d-7, fi4=3.8268958d-9, &
@@ -1235,17 +1246,32 @@ real(kind=8), parameter :: fi1=3.62183d-4, fi2=2.6061244d-5, fi3=3.8667770d-7, f
 real(kind=8), parameter :: fw1=3.536240d-4, fw2=2.932836d-5, fw3=2.616898d-7, fw4=8.581361d-9, &
                            fw5=-10.75880d0, fw6=6.326813d-2, fw7=-2.536893d-4, fw8=6.340529d-7
 tc = tk - 273.15d0
-es = exp(a1/tk**2 + a2/tk + a3 + a4*tk + a5*tk**2 + a6*tk**3 + a7*tk**4 + a8*log(tk))
+! Wexler / ITS-90 saturation vapour pressure and d ln(es) / dT
+ew = exp(a1/tk**2 + a2/tk + a3 + a4*tk + a5*tk**2 + a6*tk**3 + a7*tk**4 + a8*log(tk))
+dlnes = -2.d0*a1/tk**3 - a2/tk**2 + a4 + 2.d0*a5*tk + 3.d0*a6*tk**2 + 4.d0*a7*tk**3 + a8/tk
+! enhancement factor: ln f = fa (1 - ew/pa) + exp(fb) (ew/pa - 1), fa and fb cubics in tc
 if (tc < 0.d0) then
-  fact = exp((fi1 + fi2*tc + fi3*tc**2 + fi4*tc**3)*(1.d0 - es/pa) + &
-             exp(fi5 + fi6*tc + fi7*tc**2 + fi8*tc**3)*(es/pa - 1.d0))
+  fa  = fi1 + fi2*tc + fi3*tc**2 + fi4*tc**3
+  dfa = fi2 + 2.d0*fi3*tc + 3.d0*fi4*tc**2
+  fb  = fi5 + fi6*tc + fi7*tc**2 + fi8*tc**3
+  dfb = fi6 + 2.d0*fi7*tc + 3.d0*fi8*tc**2
 else
-  fact = exp((fw1 + fw2*tc + fw3*tc**2 + fw4*tc**3)*(1.d0 - es/pa) + &
-             exp(fw5 + fw6*tc + fw7*tc**2 + fw8*tc**3)*(es/pa - 1.d0))
+  fa  = fw1 + fw2*tc + fw3*tc**2 + fw4*tc**3
+  dfa = fw2 + 2.d0*fw3*tc + 3.d0*fw4*tc**2
+  fb  = fw5 + fw6*tc + fw7*tc**2 + fw8*tc**3
+  dfb = fw6 + 2.d0*fw7*tc + 3.d0*fw8*tc**2
 endif
-es = min(es*fact, 0.5d0*pa)
-qs = epsilon*es/(pa - es)
-end function qvs_wexler
+eb   = exp(fb)
+fact = exp(fa*(1.d0 - ew/pa) + eb*(ew/pa - 1.d0))
+dlnf = dfa*(1.d0 - ew/pa) + eb*dfb*(ew/pa - 1.d0) + (eb - fa)*ew*dlnes/pa
+es  = ew*fact
+des = es*(dlnes + dlnf)
+if (es > 0.5d0*pa) then                  ! capped (very hot or low pressure): flat
+  es = 0.5d0*pa; des = 0.d0
+endif
+qs  = epsilon*es/(pa - es)
+dqs = epsilon*pa*des/(pa - es)**2
+end subroutine qvs_wexler_dt
 !
 !-----------------------------------------------------------------------
 !
@@ -1335,17 +1361,26 @@ end function theta_e_bolton
 !
 pure function t_from_theta_e(the, pa, tguess) result(tk)
 ! temperature (K) of a saturated parcel at pa (Pa) with pseudo-equivalent potential
-! temperature the: Newton iterations on theta_e_bolton(T, pa, qvs(T, pa), T) = the,
-! starting from tguess (the parcel temperature at the level below)
+! temperature the: Newton iterations on ln theta_e_bolton(T, pa, qvs(T, pa), T) = ln the,
+! starting from tguess (the parcel temperature at the level below). The derivative is
+! exact (qvs_wexler_dt), so each iteration needs one saturation evaluation.
+!   ln theta_e = ln T + kap ln(p0/p) + (3.376/T - 0.00254) rg (1 + 0.81e-3 rg)
+!   kap = 0.2854 (1 - 0.28e-3 rg), rg = 1000 qs(T, p) (g kg-1)
 real(kind=8), intent(in) :: the, pa, tguess
-real(kind=8) :: tk, f0, f1, dt
+real(kind=8) :: tk, qs, dqs, rg, drg, lnp, aa, f0, f1, dt
 integer :: it
 tk = tguess
+lnp = log(1.d5/pa)
 do it = 1, 30
-  f0 = theta_e_bolton(tk, pa, qvs_wexler(tk, pa), tk) - the
-  f1 = theta_e_bolton(tk + 0.01d0, pa, qvs_wexler(tk + 0.01d0, pa), tk + 0.01d0) - the
-  if (f1 == f0) exit
-  dt = -f0*0.01d0/(f1 - f0)
+  call qvs_wexler_dt(tk, pa, qs, dqs)
+  rg  = 1000.d0*qs
+  drg = 1000.d0*dqs
+  aa  = 3.376d0/tk - 0.00254d0
+  f0  = log(tk) + 0.2854d0*(1.d0 - 0.28d-3*rg)*lnp + aa*rg*(1.d0 + 0.81d-3*rg) - log(the)
+  f1  = 1.d0/tk - 0.2854d0*0.28d-3*lnp*drg - 3.376d0/tk**2*rg*(1.d0 + 0.81d-3*rg) &
+        + aa*(1.d0 + 1.62d-3*rg)*drg
+  if (f1 <= 0.d0) exit
+  dt = -f0/f1
   dt = max(-20.d0, min(20.d0, dt))
   tk = tk + dt
   if (abs(dt) < 1.d-3) exit

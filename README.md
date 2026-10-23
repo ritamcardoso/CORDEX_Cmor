@@ -486,8 +486,8 @@ positive buoyancy (up to 100 hPa) and the LFC the level of minimum energy below 
 missing, where there is no CAPE). `li = T(500 hPa) - T_parcel(500 hPa)`, with the
 environment interpolated in log(p). `cin`, `li` and `lcl` are archived through the
 companion varset `cape_x` (`CP_EXTRA`); `capemax`, `cinmax` and `limax` are the daily maxima
-made by `tools/aggregate.sh` from the hourly files. About 75 µs per column and hour
-(EUR-12: ~31 h and ~25 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
+made by `tools/aggregate.sh` from the hourly files. About 57 µs per column and hour
+(EUR-12: ~24 h and ~25 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
 
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on
