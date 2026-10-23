@@ -398,10 +398,12 @@ values are used instead.
 **Variable list.** [`CORDEX_Cmor_variables.csv`](CORDEX_Cmor_variables.csv) lists the
 requested variables of CORDEX-CMIP6 (as in WRF-CMORizer's `CORDEX_CMIP6_variables.csv`,
 ordered CORE, TIER 1, TIER 2), FPS-URB-RCC (the urban variables of its data request) and
-FPS-LUCAS (phase 2 workbook), one row per variable and project: project, priority, units,
-`ag` (`i` instantaneous, `a` average), requested frequencies (1hr to mon), metadata, all
-the WRF fields the variable needs (space-separated), and which program of this repo
-writes it. `CORDEX_Cmor_variables.xlsx` is the same table with the variables this repo
+FPS-LUCAS (phase 2 workbook): project, priority, units, `ag` (`i` instantaneous, `a`
+average), requested frequencies (1hr to mon, and fx for time-invariant fields),
+metadata, all the WRF fields the variable needs (space-separated), and which program of
+this repo writes it. A variable in both the CORDEX and the LUCAS lists is one row
+(project `CORDEX-CMIP6, FPS-LUCAS`); a frequency only LUCAS requests is marked `x¹`
+(legend at the bottom), and time-invariant variables are taken to be also daily in LUCAS. `CORDEX_Cmor_variables.xlsx` is the same table with the variables this repo
 does not write in red.
 
 It's the single place that defines every variable group ("varset"), what Fortran program(s) process it, how
