@@ -25,10 +25,9 @@ declare -A VARSETS=(
   # Graupel and hail paths (QGRAUP, QHAIL: depend on the microphysics), not in ORDER:
   # run with ./run.sh <experiment> <first year> <last year> wpth4; drop clhvi without QHAIL
   [wpth4]="RCM_sfc_VAR:clgvi,clhvi"
-  # Daily maximum wind speed of gust, not in ORDER: ./run.sh <experiment> <first year> <last year> gust
+  # Daily maximum wind speed of gust (Brasseur 2001 if QKE is in wrfout, else UPP), not in ORDER:
+  # ./run.sh <experiment> <first year> <last year> gust
   [gust]="RCM_sfc_VAR:wsgsmax"
-  # ... or following Brasseur (2001) as the CORDEX-WRF module (needs QKE in wrfout):
-  #[gust]="RCM_sfc_wsgsmax_b01:wsgsmax"
   [plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30,wa20,wa10"
@@ -107,7 +106,7 @@ declare -A TIME=(
   [wpth2]="10:00:00"
   [wpth3]="13:00:00"
   [wpth4]="24:00:00"   # two variables as clivi (13 h each)
-  [gust]="16:00:00"    # U, V, PH, PHB every hour (b01: also T, QVAPOR, QCLOUD, QKE: ~30 h)
+  [gust]="16:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
   [plev_wa]="22:00:00"
   [plev_zg]="22:00:00"
   [plev_uava]="28:00:00"
