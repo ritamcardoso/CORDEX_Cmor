@@ -90,12 +90,13 @@ integer, dimension(:,:), allocatable :: bdtime, outvar_a
 ! Real Scalars 
 real :: tv, tc, slope
 real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, es_kPa, gam, ET0   ! RCM_sfc_evspsblpot (slope above)
-real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax, RCM_sfc_wsgsmax_b01
-integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax_b01
+real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax
+integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax (Brasseur)
+logical :: gust_b01                                                         ! RCM_sfc_wsgsmax: QKE in wrfout -> Brasseur
 
 ! Real 1D Allocatable Arrays
 real, dimension(:), allocatable :: ttime, ttime3, ttime6, ttimed, ttimem, ttimes
-real, dimension(:), allocatable :: vpt, zcol, dzcol, dvpt   ! one column (RCM_sfc_wsgsmax_b01)
+real, dimension(:), allocatable :: vpt, zcol, dzcol, dvpt   ! one column (RCM_sfc_wsgsmax, Brasseur)
 
 ! Real 2D Allocatable Arrays
 real, dimension(:,:), allocatable :: sftlf, hgt, runsf, pblh

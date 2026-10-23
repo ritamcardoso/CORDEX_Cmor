@@ -457,14 +457,14 @@ USGS weight tables, with the LCZ urban classes) is in `landuse_field`
 is kept, so the fx fractions are those of the first year processed.
 
 **Wind gust (`gust` varset).** `wsgsmax` (daily maximum near-surface wind speed of
-gust) is the maximum of the hourly gusts of each day. `RCM_sfc_wsgsmax.f90` (active) uses
-the UPP formula of the old `RCM_50km_sfc_gust_era.f90`: the wind of the highest model
-level inside the boundary layer mixed down to 10 m,
-`max(ws10, ws10 + (ws_pbl - ws10) (1 - min(0.5, PBLH/2000)))`.
-`RCM_sfc_wsgsmax_b01.f90` (commented line) follows Brasseur (2001) as the CORDEX-WRF
+gust) is the maximum of the hourly gusts of each day, from `RCM_sfc_wsgsmax.f90`. If the
+wrfout files have `QKE` (twice the MYNN TKE), it follows Brasseur (2001) as the CORDEX-WRF
 module (CDXWRF, Fita et al. 2019): the fastest boundary-layer level whose mean TKE
-exceeds the buoyancy between it and the surface; it uses TKE = `QKE`/2 (twice the TKE of the
-MYNN boundary-layer scheme), so `QKE` must be in wrfout. Both are not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
+(`QKE`/2) exceeds the buoyancy between it and the surface. Without `QKE` it uses the UPP
+formula of the old `RCM_50km_sfc_gust_era.f90`: the wind of the highest model level inside
+the boundary layer mixed down to 10 m, `max(ws10, ws10 + (ws_pbl - ws10) (1 - min(0.5,
+PBLH/2000)))`. The method is chosen from the first wrfout file and written to the job log.
+It is not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
 The graupel and hail paths `clgvi`, `clhvi` are in the `wpth4` varset (not in `ORDER`).
 
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
