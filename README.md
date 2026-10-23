@@ -449,6 +449,13 @@ USGS weight tables, with the LCZ urban classes) is in `landuse_field`
 (`shared_subs_v2.f90`); edit it there. Like the other fx files, an existing file
 is kept, so the fx fractions are those of the first year processed.
 
+**Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
+`wap` as `wap1000` … `wap30` (Pa s-1, every 6 h, instantaneous): omega = -rho g w on
+the model levels (from `W`, `T`, `QVAPOR`, `P`, `PB`), interpolated in log(p) to the
+level `pres` of the header as `RCM_plev_wa`. It is not in `ORDER`; run it with
+`./run.sh lucas 2000 2010 plev_wap`. The line with 20 and 10 hPa is commented, as for
+the other pressure-level varsets.
+
 **Hourly land cover for land-use change runs (`landuse` varset).** For LUCAS,
 where the land-use maps change during the run, `RCM_sfc_landuse.f90` writes the
 seven fractions and `lcvr` every hour (instantaneous, `time: point`), from `LANDUSEF` /

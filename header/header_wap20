@@ -1,0 +1,10 @@
+! wap20: written by RCM_plev_wap (plev_wap varset); omega = -rho g w from W, T, QVAPOR, P, PB; missing (1e20) unless the model levels reach above 20 hPa (p_top < 20 hPa)
+wrfvar = 'W'
+vaid = 'wap20'
+pres = 2000.
+vunts = 'Pa s-1'
+lname = 'Omega (=dp/dt) at 20hPa'
+stname = 'lagrangian_tendency_of_air_pressure'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!
