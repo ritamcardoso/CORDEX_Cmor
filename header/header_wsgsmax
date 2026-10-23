@@ -1,5 +1,6 @@
-! wsgsmax: no CORDEX_Cmor program yet; no gust diagnostic in the WRF output
-wrfvar = ''
+! wsgsmax: RCM_sfc_wsgsmax (gust varset; UPP formula from U10 V10 U V PH PHB HGT PBLH) or
+!          RCM_sfc_wsgsmax_b01 (Brasseur 2001 as CDXWRF; also T QVAPOR QCLOUD TKE_PBL)
+wrfvar = 'U10'         ! not used: the programs read their fields themselves
 vaid = 'wsgsmax'
 vunts = 'm s-1'
 lname = 'Daily Maximum Near-Surface Wind Speed of Gust'

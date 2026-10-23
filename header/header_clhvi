@@ -1,4 +1,4 @@
-! clhvi: no CORDEX_Cmor program yet; needs QHAIL P PB PSFC (vertical integral; microphysics with hail)
+! clhvi: RCM_sfc_clhvi (wpth4 varset), vertical integral of QHAIL (P, PB, PSFC); needs a microphysics with hail
 wrfvar = 'QHAIL'
 vaid = 'clhvi'
 vunts = 'kg m-2'

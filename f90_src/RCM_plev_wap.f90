@@ -59,7 +59,7 @@ if (ihour > 0) ish = ish + ihour - 1
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
 allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
 allocate(wrfv3D(nlon, nlat, nz))
-allocate(wp_w(nlon, nlat, nz+1), t(nlon, nlat, nz), wp_q(nlon, nlat, nz))
+allocate(w(nlon, nlat, nz+1), t(nlon, nlat, nz), qv(nlon, nlat, nz))
 
 it = 0
 !

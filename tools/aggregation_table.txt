@@ -422,3 +422,5 @@ cropFrac|cropFrac|mean|area: mean time: mean|Percentage Crop Cover|mean|area: me
 baresoilFrac|baresoilFrac|mean|area: mean time: mean|Bare Soil Percentage Area Coverage|mean|area: mean time: mean|Bare Soil Percentage Area Coverage
 urbanFrac|urbanFrac|mean|area: mean time: mean|Percentage of the Grid Cell Occupied by Urban Area|mean|area: mean time: mean|Percentage of the Grid Cell Occupied by Urban Area
 cnc|cnc|mean|area: mean time: mean|Canopy Covered Area Percentage|mean|area: mean time: mean|Canopy Covered Area Percentage
+clgvi|clgvi|mean|area: time: mean|Vertical integral of mass content of graupel|mean|area: time: mean|Vertical integral of mass content of graupel
+clhvi|clhvi|mean|area: time: mean|Vertical integral of mass content of hail|mean|area: time: mean|Vertical integral of mass content of hail

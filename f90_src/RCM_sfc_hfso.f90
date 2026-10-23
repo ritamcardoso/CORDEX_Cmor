@@ -42,38 +42,56 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(wrfv2D(nlon, nlat))
+allocate(wrfv2D(nlon,nlat))
+allocate(outvar_i(nlon,nlat))
 
 it = 0
+yearf=yeari+1
+!
 do year = yeari, yearf,1
 
   write(ayear, '(i4)') year
-  issh = 0
+ !
+  if(year == yearf)then
+    nmonths=1
+  endif
+!
+  if(it == 0)then
+    write(ayeari,'(i4)')year
+    issh=0
 
   ! Compute time length and allocate time sensitive variables
-  if (mod(year, 4) == 0 .and. year /= 2100) then
+    if (mod(year, 4) == 0 .and. year /= 2100) then
       days = days2
       mydays = 366
-  else
+    else
       days = days1
       mydays = 365
-  endif
-  ntime = mydays * nhours
+    endif
+    ntime = mydays * nhours
 
-  if (ihour > 0) then
-    nhours=nhours-ihour+1
-    ntime = ntime - ihour + 1
-  endif
+    if (ihour > 0) then
+      nhours=nhours-ihour+1
+      ntime = ntime - ihour + 1
+    endif
 
-  allocate(ttime(ntime))
-  allocate(bdtime(2, ntime))
-  allocate(outvar_h(nlon, nlat, ntime))
+    allocate(ttime(ntime))
+    allocate(bdtime(2, ntime))
+    allocate(outvar_h(nlon, nlat, ntime))
+  endif
 
   ! Loop over months
   do month = imonth, nmonths
 
     ndays = days(month)
     amonth = pad_int(month, 2)
+!
+   if(year == yearf)then
+      ndays=1
+      nhours=1
+    endif
+!
+    write(*,*)year,month
 
     ! Loop over days
     do day = 1, ndays
@@ -91,22 +109,35 @@ do year = yeari, yearf,1
         call ncerror(status,'opening '//trim(infile))
 
         ! Read wrf var
-        status = nf90_inq_varid(ncid, wrfvar, varid)
+!
+        status=nf90_inq_varid(ncid,wrfvar,varid)
         call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
-        
+!
         status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
         call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
-
-        status = nf90_close(ncid)
+!
+        status=nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
+!
+! Compute variable
+!
+        if(it == 0)then
+          it=it+1
+!
+          outvar_i=wrfv2D
+
+          cycle loop_h
+        endif
 
         ish = ish + 1
         issh = issh + 1
-        ttime(issh) = float(ish) - 1
+        ttime(issh) = float(ish) - 0.5
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        outvar_h(:,:,issh)=wrfv2D(:,:)
+        outvar_h(:,:,issh)=(wrfv2D(:,:)+outvar_i(:,:))/2.
+!
+        outvar_i=wrfv2D
 
       enddo loop_h    ! end hour
 !
@@ -116,17 +147,15 @@ do year = yeari, yearf,1
     enddo             ! end day
   enddo               ! end month
 
-  ! Write annual output using shared subroutine
   write(ayearf, '(i4)') year
-  write(ayeari, '(i4)') year
-
-  call write_output
 
 enddo
-
-contains
 !
-!----------------------------------------------------------------------------------------------------
+!  Write annual output using shared subroutine
+!
+call write_output
+!
+contains
 !
 subroutine write_output
 ! Logic to prepare filenames and call NetCDF writer
