@@ -98,6 +98,7 @@ real :: dx_geo, dy_geo                                                      ! RC
 real :: vo_dx, vo_dy, vo_dudy, vo_dvdx                                     ! RCM_plev_vortmen: grid spacing (m), derivatives
 integer :: vo_hw, vo_he, vo_hs, vo_hn, vo_nxh, vo_nyh, vo_nxf, vo_nyf     ! RCM_plev_vortmen: halo (0/1) W E S N, sizes with halo, full grid
 integer :: vo_i, vo_j, vo_ip, vo_im, vo_jp, vo_jm, vo_dimid                ! RCM_plev_vortmen: indices with halo and neighbours, dimension id
+integer :: plev_kg, plev_it, plev_steps, plev_scan              ! plev_map: first guess, iterations, steps walked, full scans
 real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax
 integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax (Brasseur)
 logical :: fx_exists                                                        ! fx programs: output already there
@@ -135,6 +136,8 @@ real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
 real, dimension(:,:,:), allocatable :: cin_h, li_h, lcl_h   ! RCM_sfc_cape (cape in outvar_h)
 real, dimension(:,:,:), allocatable :: outvar_n, outvar_n_i  ! one time step of several variables (RCM_sfc_wpth, RCM_sfc_clouds)
+integer, dimension(:,:), allocatable :: plev_k          ! plev_map: model level k with p(k) >= presl > p(k+1), 0 = missing
+real, dimension(:,:), allocatable :: plev_w             ! plev_map: log(p) weight of level k+1
 real, dimension(:,:,:), allocatable :: lc_frac          ! LANDUSEF of every category, % (RCM_fx_landCoverFrac)
 real, dimension(:), allocatable :: sl_dz                  ! soil layer thicknesses DZS, m (RCM_fx_slthick)
 integer :: lc_ncat                                        ! number of land-use categories (RCM_fx_landCoverFrac)

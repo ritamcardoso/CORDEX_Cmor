@@ -149,11 +149,10 @@ do year = yeari, yearf, 1
         enddo
 
         ! Perform optimized interpolation (Single-pass vertical search loop)
-        if (presl >= 50000.0) then
-          call calc_plev_dual(wrfv3D_u, wrfv3D_v, outvar_u, outvar_v)
-        else
-          call calc_invplev_dual(wrfv3D_u, wrfv3D_v, outvar_u, outvar_v)
-        endif
+        ! levels bracketing presl at every point (map, once), then u and v in log(p)
+        call plev_map(press, presl)
+        call plev_interp(wrfv3D_u, outvar_u)
+        call plev_interp(wrfv3D_v, outvar_v)
 
         issh = issh + 1
 
@@ -181,64 +180,6 @@ enddo
 
 contains
 
-subroutine calc_plev_dual(f3d_u, f3d_v, f2d_u, f2d_v)
-  real, dimension(nlon, nlat, nz), intent(in)  :: f3d_u, f3d_v
-  real, dimension(nlon, nlat),     intent(out) :: f2d_u, f2d_v
-  real :: weight_factor
-
-  f2d_u = 1.e+20
-  f2d_v = 1.e+20
-!  pressure(1) = presl
-
-  do iy = 1, nlat
-    do ix = 1, nlon
-      p_loop: do iz = 1, nz - 1
-        if (press(ix, iy, iz) < presl) then
-          exit p_loop
-        endif
-        if (press(ix, iy, iz) >= presl .and. press(ix, iy, iz+1) < presl) then
-          ! Extract common weighting log factor once
-          weight_factor = (log(press(ix, iy, iz)) - log(presl)) / &
-                          (log(press(ix, iy, iz)) - log(press(ix, iy, iz+1)))
-
-          ! Interpolate both fields simultaneously
-          f2d_u(ix, iy) = f3d_u(ix, iy, iz) + weight_factor * (f3d_u(ix, iy, iz+1) - f3d_u(ix, iy, iz))
-          f2d_v(ix, iy) = f3d_v(ix, iy, iz) + weight_factor * (f3d_v(ix, iy, iz+1) - f3d_v(ix, iy, iz))
-          exit p_loop
-        endif
-      enddo p_loop
-    enddo
-  enddo
-end subroutine calc_plev_dual
-
-subroutine calc_invplev_dual(f3d_u, f3d_v, f2d_u, f2d_v)
-  real, dimension(nlon, nlat, nz), intent(in)  :: f3d_u, f3d_v
-  real, dimension(nlon, nlat),     intent(out) :: f2d_u, f2d_v
-  real :: weight_factor
-
-  f2d_u = 1.e+20
-  f2d_v = 1.e+20
-!  pressure(1) = presl
-
-  do iy = 1, nlat
-    do ix = 1, nlon
-      p_loop: do iz = nz - 1, 2, -1
-        if (press(ix, iy, iz-1) >= presl .and. press(ix, iy, iz) < presl) then
-          ! Extract common weighting log factor once
-          weight_factor = (log(press(ix, iy, iz-1)) - log(presl)) / &
-                          (log(press(ix, iy, iz-1)) - log(press(ix, iy, iz)))
-
-          ! Interpolate both fields simultaneously
-          f2d_u(ix, iy) = f3d_u(ix, iy, iz-1) + weight_factor * (f3d_u(ix, iy, iz) - f3d_u(ix, iy, iz-1))
-          f2d_v(ix, iy) = f3d_v(ix, iy, iz-1) + weight_factor * (f3d_v(ix, iy, iz) - f3d_v(ix, iy, iz-1))
-          exit p_loop
-        elseif (press(ix, iy, iz) > presl) then
-          exit p_loop
-        endif
-      enddo p_loop
-    enddo
-  enddo
-end subroutine calc_invplev_dual
 
 subroutine write_dual_output
   use datvar_s

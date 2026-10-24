@@ -1212,6 +1212,90 @@ end function urban_cell
 !
 !-----------------------------------------------------------------------
 !
+subroutine plev_map(pr, pl)
+! Map of the model levels that bracket the pressure level pl (Pa): plev_k(ix,iy) = k
+! with pr(k) >= pl > pr(k+1), and the log(p) weight plev_w of level k+1, used by
+! plev_interp. Pressure is smooth in the horizontal, so the level of the previous point
+! (the point to the west; at the start of a row, the first point of the row below) is
+! the first guess, and the search walks from it: down (k-1) while pr(k) < pl, up (k+1)
+! while pr(k+1) >= pl - usually 0 to 2 steps. Points where pl is below the surface
+! (pr(1) < pl) or above the model top (pr(nz) >= pl) get plev_k = 0 (missing).
+! If the walk does not end within nz steps (non-monotonic column), the column is
+! scanned from the bottom, as the earlier RCM_plev programs did.
+use datvar_s
+real, dimension(nlon,nlat,nz), intent(in) :: pr
+real, intent(in) :: pl
+integer :: pm_i, pm_j, pm_k
+!
+if (.not. allocated(plev_k)) allocate(plev_k(nlon,nlat), plev_w(nlon,nlat))
+plev_k = 0
+plev_w = 0.
+plev_kg = 1
+plev_steps = 0
+plev_scan = 0
+do pm_j = 1, nlat
+  if (pm_j > 1) then
+    if (plev_k(1,pm_j-1) > 0) plev_kg = plev_k(1,pm_j-1)
+  endif
+  do pm_i = 1, nlon
+    if (pr(pm_i,pm_j,1) < pl .or. pr(pm_i,pm_j,nz) >= pl) cycle      ! below ground / above top
+    pm_k = max(1, min(nz-1, plev_kg))
+    walk: do plev_it = 1, nz
+      if (pr(pm_i,pm_j,pm_k) < pl) then
+        pm_k = pm_k - 1
+      else if (pr(pm_i,pm_j,pm_k+1) >= pl) then
+        pm_k = pm_k + 1
+      else
+        exit walk
+      endif
+      plev_steps = plev_steps + 1
+      if (pm_k < 1 .or. pm_k > nz-1) exit walk
+    enddo walk
+    if (pm_k < 1 .or. pm_k > nz-1 .or. plev_it > nz) then
+      ! not monotonic: first bracket from the bottom
+      plev_scan = plev_scan + 1
+      pm_k = 0
+      do plev_it = 1, nz-1
+        if (pr(pm_i,pm_j,plev_it) >= pl .and. pr(pm_i,pm_j,plev_it+1) < pl) then
+          pm_k = plev_it
+          exit
+        endif
+      enddo
+      if (pm_k == 0) cycle
+    endif
+    plev_k(pm_i,pm_j) = pm_k
+    plev_w(pm_i,pm_j) = (log(pr(pm_i,pm_j,pm_k)) - log(pl)) / (log(pr(pm_i,pm_j,pm_k)) - log(pr(pm_i,pm_j,pm_k+1)))
+    plev_kg = pm_k
+  enddo
+enddo
+!
+end subroutine plev_map
+!
+!-----------------------------------------------------------------------
+!
+subroutine plev_interp(f3d, f2d)
+! f3d on the model levels -> f2d on the pressure level of the last plev_map, linear in
+! log(p): f2d = f3d(k) + plev_w (f3d(k+1) - f3d(k)); missing (1e20) where plev_k = 0
+use datvar_s
+real, dimension(nlon,nlat,nz), intent(in) :: f3d
+real, dimension(nlon,nlat), intent(out) :: f2d
+integer :: pm_i, pm_j, pm_k
+!
+do pm_j = 1, nlat
+  do pm_i = 1, nlon
+    pm_k = plev_k(pm_i,pm_j)
+    if (pm_k > 0) then
+      f2d(pm_i,pm_j) = f3d(pm_i,pm_j,pm_k) + plev_w(pm_i,pm_j) * (f3d(pm_i,pm_j,pm_k+1) - f3d(pm_i,pm_j,pm_k))
+    else
+      f2d(pm_i,pm_j) = 1.e+20
+    endif
+  enddo
+enddo
+!
+end subroutine plev_interp
+!
+!-----------------------------------------------------------------------
+!
 subroutine landuse_field(fname, lu_out)
 ! Land-cover fraction (% of the grid cell) or dominant category of the variable vaid,
 ! from LANDUSEF / LU_INDEX of the wrfout file fname (RCM_fx_landuse, RCM_sfc_landuse):

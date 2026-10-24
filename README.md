@@ -525,6 +525,15 @@ companion varset `cape_x` (`CP_EXTRA`); `capemax`, `cinmax` and `limax` are the 
 made by `tools/aggregate.sh` from the hourly files. About 57 µs per column and hour
 (EUR-12: ~24 h and ~25 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
 
+**Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map` and `plev_interp` (`shared_subs_v2.f90`).
+- `plev_map` builds, for the pressure level, a map of the model level k with p(k) ≥ p_level > p(k+1) at every point.
+  - Pressure is smooth in the horizontal, so the search starts from the level found at the neighbouring point.
+  - It moves down while p(k) < p_level and up while p(k+1) ≥ p_level. That is under one step per point on average.
+  - It falls back to a scan from the bottom only if a column is not monotonic.
+- `plev_interp` interpolates any field linearly in log(p) with that map, so u and v share one map.
+- Points where the level is below the ground or above the model top are missing.
+- The earlier programs are in `f90_src/deprecated`. The results are the same, except that a level lying between the two top model levels is now interpolated; the old top-down search never tested that pair.
+
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on
 the model levels (from `W`, `T`, `QVAPOR`, `P`, `PB`), interpolated in log(p) to the
