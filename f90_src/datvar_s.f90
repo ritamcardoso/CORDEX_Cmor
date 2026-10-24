@@ -116,6 +116,7 @@ real(kind=8), dimension(:), allocatable :: buoy_c, zrel_c, ben_c   ! one column,
 ! Real 2D Allocatable Arrays
 real, dimension(:,:), allocatable :: sftlf, hgt, runsf, pblh
 real, dimension(:,:), allocatable :: msftx, msfty     ! map scale factors (RCM_fx_areacella)
+real, dimension(:,:), allocatable :: lsm_a, lsm_b, lsm_c   ! further Noah-MP 2-D fields (RCM_sfc_interception, RCM_sfc_cVeg)
 real, dimension(:,:), allocatable :: wrfv2D, i_wrfv2D, outvar, outvar_i
 real, dimension(:,:), allocatable :: u_s, v_s, wind10, ust, t2, q2, uas, vas, ro, psf
 real, dimension(:,:), allocatable :: t2_i, q2_i, psf_i, wind10_i
@@ -130,6 +131,28 @@ real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
 real, dimension(:,:,:), allocatable :: cin_h, li_h, lcl_h   ! RCM_sfc_cape (cape in outvar_h)
 real, dimension(:,:,:), allocatable :: outvar_n, outvar_n_i  ! one time step of several variables (RCM_sfc_wpth, RCM_sfc_clouds)
+real, dimension(:,:,:), allocatable :: lc_frac          ! LANDUSEF of every category, % (RCM_fx_landCoverFrac)
+real, dimension(:), allocatable :: sl_dz                  ! soil layer thicknesses DZS, m (RCM_fx_slthick)
+integer :: lc_ncat                                        ! number of land-use categories (RCM_fx_landCoverFrac)
+character(len=48), dimension(:), allocatable :: lc_names ! names of the land-use categories (RCM_fx_landCoverFrac)
+character(len=80) :: lc_scheme                            ! MMINLU of the wrfout file (RCM_fx_landCoverFrac)
+integer :: lc_lcz1, lc_nnamed, lc_dimid                  ! first LCZ class, named classes, land_cat dimension
+logical :: lc_modis                                       ! MODIS (else USGS) land-use table
+! names of the land-use categories, MODIFIED_IGBP_MODIS_NOAH and USGS (RCM_fx_landCoverFrac)
+character(len=48), dimension(21), parameter :: lc_md_names = [character(len=48) :: &
+  'evergreen needleleaf forest', 'evergreen broadleaf forest', 'deciduous needleleaf forest', &
+  'deciduous broadleaf forest', 'mixed forest', 'closed shrubland', 'open shrubland', &
+  'woody savanna', 'savanna', 'grassland', 'permanent wetland', 'cropland', 'urban', &
+  'cropland/natural vegetation mosaic', 'snow and ice', 'barren', 'water', 'wooded tundra', &
+  'mixed tundra', 'barren tundra', 'lakes']
+character(len=48), dimension(24), parameter :: lc_us_names = [character(len=48) :: &
+  'urban', 'dryland cropland and pasture', 'irrigated cropland and pasture', &
+  'mixed dryland/irrigated cropland and pasture', 'cropland/grassland mosaic', &
+  'cropland/woodland mosaic', 'grassland', 'shrubland', 'mixed shrubland/grassland', 'savanna', &
+  'deciduous broadleaf forest', 'deciduous needleleaf forest', 'evergreen broadleaf forest', &
+  'evergreen needleleaf forest', 'mixed forest', 'water', 'herbaceous wetland', 'wooded wetland', &
+  'barren or sparsely vegetated', 'herbaceous tundra', 'wooded tundra', 'mixed tundra', &
+  'bare ground tundra', 'snow or ice']
 real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v, w, t
 real, dimension(:,:,:), allocatable :: qv,qc, qi, qr, qs, smois, tke
 real, dimension(:,:,:), allocatable :: outvar_3, outvar_6, outvar_d, outvar_m, outvar_d_max

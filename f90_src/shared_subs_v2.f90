@@ -593,6 +593,136 @@ end subroutine write_netcdf_2D
 !
 !-----------------------------------------------------------------------
 !
+subroutine write_netcdf_fx_soil(uvar)
+! fx variable on the soil layers (lon, lat, depth), e.g. slthick: depth = middle of each
+! layer, depth_bnds from the layer thicknesses sl_dz (datvar_s, from DZS)
+use netcdf
+use datvar_s
+!
+integer :: LatDimID,LonDimID,BDimID,VDimID,depth_dimid,SVarId,SBVarId
+integer :: LonVarID,LatVarID,rlatVarId,rlonVarID,uVarID,rpVarID,ks
+real, dimension(:,:,:) :: uvar
+real(kind=8), dimension(2,size(sl_dz)) :: zb
+
+zb(1,1) = 0.d0
+do ks = 1, size(sl_dz)
+  if (ks > 1) zb(1,ks) = zb(2,ks-1)
+  zb(2,ks) = zb(1,ks) + dble(sl_dz(ks))
+enddo
+
+status = nf90_create(fnameout, IOR(IOR(nf90_noclobber, nf90_netcdf4), nf90_classic_model), ncid)
+call handle_err(status)
+
+call def_horizontal_dims(ncid, LonDimID, LatDimID, BDimID, VDimID)
+status = nf90_def_dim(ncid, "depth", size(sl_dz), depth_dimid)
+call handle_err(status)
+
+call def_horizontal_vars(ncid, LonDimID, LatDimID, BDimID, VDimID, LonVarID, LatVarID, rlonVarID, rlatVarID, rpVarID)
+
+status = nf90_def_var(ncid, "depth", nf90_double, (/ depth_dimid /), SVarId)
+call handle_err(status)
+status = nf90_def_var(ncid, "depth_bnds", nf90_double, (/ BDimID, depth_dimid /), SBVarId)
+call handle_err(status)
+status = nf90_put_att(ncid, SVarId, "standard_name", "depth")
+status = nf90_put_att(ncid, SVarId, "long_name", "depth")
+status = nf90_put_att(ncid, SVarId, "bounds", "depth_bnds")
+status = nf90_put_att(ncid, SVarId, "units", "m")
+status = nf90_put_att(ncid, SVarId, "positive", "down")
+status = nf90_put_att(ncid, SVarId, "axis", "Z")
+
+status = nf90_def_var(ncid, varname, nf90_float, (/ LonDimId, LatDimID, depth_dimid /), uVarId)
+call handle_err(status)
+status = nf90_def_var_deflate(ncid, uVarId, shuffle = 1, deflate = 1, deflate_level = 1)
+call handle_err(status)
+
+if (len_trim(standardname) > 0) status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
+status = nf90_put_att(ncid, uVarID, "long_name",longname)
+status = nf90_put_att(ncid, uVarID, "units",vunits)
+status = nf90_put_att(ncid, uVarID, "grid_mapping",trim(projection))
+status = nf90_put_att(ncid, uVarID, "coordinates","lat lon")
+status = nf90_put_att(ncid, uVarID, "cell_methods",cellmethods)
+status = nf90_put_att(ncid, uVarID, "cell_measures","area: areacella")
+status = nf90_put_att(ncid, uVarID, "_FillValue",huge_val)
+status = nf90_put_att(ncid, uVarID, "missing_value",huge_val)
+
+call write_global_attributes
+
+status = nf90_enddef(ncid)
+
+call put_horizontal_vars(ncid, LonVarID, LatVarID, rlonVarID, rlatVarID)
+status = nf90_put_var(ncid, SVarID, anint(5.d5*(zb(1,:)+zb(2,:)))/1.d6 )
+call handle_err(status)
+status = nf90_put_var(ncid, SBVarID, anint(1.d6*zb)/1.d6 )
+call handle_err(status)
+status = nf90_put_var(ncid, uVarId, uvar )
+call handle_err(status)
+
+status = nf90_close(ncid)
+call handle_err(status)
+!
+end subroutine write_netcdf_fx_soil
+!
+!-----------------------------------------------------------------------
+!
+subroutine write_netcdf_fx_cat(uvar)
+! fx variable per land-use category (lon, lat, vegtype), e.g. landCoverFrac: lc_ncat
+! categories named lc_names (datvar_s) in the string coordinate vegtype
+use netcdf
+use datvar_s
+!
+integer :: LatDimID,LonDimID,BDimID,VDimID,cat_dimid,str_dimid,CVarId
+integer :: LonVarID,LatVarID,rlatVarId,rlonVarID,uVarID,rpVarID,kc
+real, dimension(:,:,:) :: uvar
+
+status = nf90_create(fnameout, IOR(IOR(nf90_noclobber, nf90_netcdf4), nf90_classic_model), ncid)
+call handle_err(status)
+
+call def_horizontal_dims(ncid, LonDimID, LatDimID, BDimID, VDimID)
+status = nf90_def_dim(ncid, "vegtype", lc_ncat, cat_dimid)
+call handle_err(status)
+status = nf90_def_dim(ncid, "strlen", len(lc_names), str_dimid)
+call handle_err(status)
+
+call def_horizontal_vars(ncid, LonDimID, LatDimID, BDimID, VDimID, LonVarID, LatVarID, rlonVarID, rlatVarID, rpVarID)
+
+status = nf90_def_var(ncid, "vegtype", nf90_char, (/ str_dimid, cat_dimid /), CVarId)
+call handle_err(status)
+status = nf90_put_att(ncid, CVarId, "long_name", "land-use category of the WRF land-use table")
+
+status = nf90_def_var(ncid, varname, nf90_float, (/ LonDimId, LatDimID, cat_dimid /), uVarId)
+call handle_err(status)
+status = nf90_def_var_deflate(ncid, uVarId, shuffle = 1, deflate = 1, deflate_level = 1)
+call handle_err(status)
+
+if (len_trim(standardname) > 0) status = nf90_put_att(ncid, uVarID, "standard_name",standardname)
+status = nf90_put_att(ncid, uVarID, "long_name",longname)
+status = nf90_put_att(ncid, uVarID, "units",vunits)
+status = nf90_put_att(ncid, uVarID, "grid_mapping",trim(projection))
+status = nf90_put_att(ncid, uVarID, "coordinates","lat lon vegtype")
+status = nf90_put_att(ncid, uVarID, "cell_methods",cellmethods)
+status = nf90_put_att(ncid, uVarID, "cell_measures","area: areacella")
+status = nf90_put_att(ncid, uVarID, "_FillValue",huge_val)
+status = nf90_put_att(ncid, uVarID, "missing_value",huge_val)
+
+call write_global_attributes
+
+status = nf90_enddef(ncid)
+
+call put_horizontal_vars(ncid, LonVarID, LatVarID, rlonVarID, rlatVarID)
+do kc = 1, lc_ncat
+  status = nf90_put_var(ncid, CVarId, lc_names(kc), start=(/1,kc/), count=(/len(lc_names),1/))
+  call handle_err(status)
+enddo
+status = nf90_put_var(ncid, uVarId, uvar )
+call handle_err(status)
+
+status = nf90_close(ncid)
+call handle_err(status)
+!
+end subroutine write_netcdf_fx_cat
+!
+!-----------------------------------------------------------------------
+!
 subroutine write_netcdf_rtime_3d(uvar,mtime,utime,btime)
 use netcdf
 use datvar_s
@@ -1088,7 +1218,10 @@ subroutine landuse_field(fname, lu_out)
 !   treeFrac, shrubFrac, grassFrac, cropFrac, baresoilFrac, urbanFrac: 100 * sum over
 !   the categories k of w(k) LANDUSEF(k), with the weight tables below (edit them to
 !   change the grouping; a mosaic class may be split); cnc: tree+shrub+grass+crop;
-!   lcvr: LU_INDEX. Water, snow/ice and ungrouped wetland count in none of them.
+!   treeFracBdlDcd, treeFracBdlEvg, treeFracNdlDcd, treeFracNdlEvg: the pure forest
+!   classes of each leaf type and phenology (mixed forest and the mosaics in none);
+!   residualFrac: land neither vegetated nor bare (urban, incl. LCZ, and snow/ice);
+!   lcvr: LU_INDEX. Water, snow/ice and ungrouped wetland count in none of the others.
 ! The table follows the MMINLU attribute of the file: MODIFIED_IGBP_MODIS_NOAH
 ! (LCZ urban classes 51-61) or USGS (LCZ 31-41). No sea mask.
 use netcdf
@@ -1114,7 +1247,12 @@ integer, dimension(21), parameter :: &
   md_grass = [0,0,0,0,0, 0,0,0,1,1, 1,0,0,0,0, 0,0,0,1,0, 0], &
   md_crop  = [0,0,0,0,0, 0,0,0,0,0, 0,1,0,1,0, 0,0,0,0,0, 0], &
   md_bare  = [0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 1,0,0,0,1, 0], &
-  md_urban = [0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,0,0, 0]
+  md_urban = [0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,0, 0,0,0,0,0, 0], &
+  md_ndlevg= [1,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
+  md_bdlevg= [0,1,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
+  md_ndldcd= [0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
+  md_bdldcd= [0,0,0,1,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
+  md_resid = [0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1, 0,0,0,0,0, 0]
 !
 ! weights per category, USGS:
 !  1 urban  2 dryland crop  3 irrigated crop  4 mixed dry/irrigated crop  5 crop/grassland mosaic
@@ -1128,7 +1266,12 @@ real, dimension(24), parameter :: &
   us_grass = [0.,0.,0.,0.,.5, 0.,1.,0.,.5,1., 0.,0.,0.,0.,0., 0.,1.,0.,0.,1., 0.,0.,0.,0.], &
   us_crop  = [0.,1.,1.,1.,.5, .5,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
   us_bare  = [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,1.,0., 0.,0.,1.,0.], &
-  us_urban = [1.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.]
+  us_urban = [1.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
+  us_bdldcd= [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 1.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
+  us_ndldcd= [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,1.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
+  us_bdlevg= [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,1.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
+  us_ndlevg= [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,1.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
+  us_resid = [1.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,1.]
 !
 lu_st = nf90_open(trim(fname), nf90_nowrite, lu_ncid)
 call ncerror(lu_st,'opening '//trim(fname))
@@ -1166,6 +1309,11 @@ else
       case ('baresoilFrac'); g(1:21) = md_bare
       case ('urbanFrac');    g(1:21) = md_urban
       case ('cnc');          g(1:21) = md_tree + md_shrub + md_grass + md_crop
+      case ('treeFracBdlDcd'); g(1:21) = md_bdldcd
+      case ('treeFracBdlEvg'); g(1:21) = md_bdlevg
+      case ('treeFracNdlDcd'); g(1:21) = md_ndldcd
+      case ('treeFracNdlEvg'); g(1:21) = md_ndlevg
+      case ('residualFrac');   g(1:21) = md_resid
       case default
         print *, 'ERROR: landuse_field does not know the variable ', trim(vaid)
         stop 95
@@ -1181,6 +1329,11 @@ else
       case ('baresoilFrac'); g = us_bare
       case ('urbanFrac');    g = us_urban
       case ('cnc');          g = us_tree + us_shrub + us_grass + us_crop
+      case ('treeFracBdlDcd'); g = us_bdldcd
+      case ('treeFracBdlEvg'); g = us_bdlevg
+      case ('treeFracNdlDcd'); g = us_ndldcd
+      case ('treeFracNdlEvg'); g = us_ndlevg
+      case ('residualFrac');   g = us_resid
       case default
         print *, 'ERROR: landuse_field does not know the variable ', trim(vaid)
         stop 95
@@ -1188,7 +1341,7 @@ else
     lu_w(1:24) = g
   endif
   ! LCZ urban classes (11 of them), when the file has them
-  if (trim(vaid) == 'urbanFrac') lu_w(lcz1:lcz1+10) = 1.
+  if (trim(vaid) == 'urbanFrac' .or. trim(vaid) == 'residualFrac') lu_w(lcz1:lcz1+10) = 1.
 !
   allocate(lu_f(nlon,nlat))
   lu_out = 0.

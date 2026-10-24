@@ -1,4 +1,4 @@
-! tslsiLut: no CORDEX_Cmor program yet; no land-use tiles in WRF: grid-cell value
+! tslsiLut: RCM_sfc_ts with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'TSK'
 vaid = 'tslsiLut'
 vunts = 'K'

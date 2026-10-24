@@ -1,9 +1,9 @@
-! irrLut: no CORDEX_Cmor program yet; needs IRWATSI IRWATMI IRWATFI (Noah-MP irrigation, opt_irr); no land-use tiles in WRF: grid-cell value
-wrfvar = 'IRWATSI'
+! irrLut: RCM_sfc_irrLut — hourly change of IRSIVOL + IRMIVOL + IRFIVOL (Noah-MP opt_irr; add them to wrfout with iofields); no land-use tiles in WRF: grid-cell value
+wrfvar = 'IRSIVOL'
 vaid = 'irrLut'
 vunts = 'kg m-2 s-1'
 lname = 'Irrigation Flux on Land-Use Tile'
 stname = 'surface_downward_mass_flux_of_water_due_to_irrigation'
-cmethods = 'area: time: mean'
+cmethods = 'area: mean where land time: mean'
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

@@ -57,7 +57,7 @@ declare -A VARSETS=(
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
-  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc"
+  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
   [teste]="RCM_sfc_rad:rsds"
   # Manual runs only (not in any stream)
@@ -79,10 +79,16 @@ declare -A VARSETS=(
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_VAR:hurscan,husscan,sfcWindcan,tasblue,tsblue;RCM_sfc_ts:tsskin"
   # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
   # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
-  [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran,lai,vegFrac,alb"
+  [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran,lai,vegFrac,alb,tcs,tgs,interception,rough,cVeg,npp"
+  # FPS-LUCAS "...Lut" variables: WRF has no land-use tiles, so these are the grid-cell values,
+  # written by the programs of the corresponding variables with the Lut headers. Not in ORDER:
+  # ./run.sh <experiment> <first year> <last year> lut
+  [lut]="RCM_sfc_hfls:hflsLut;RCM_sfc_hfss:hfssLut;RCM_sfc_huss:hussLut;RCM_sfc_tas:tasLut;RCM_sfc_ts:tslsiLut;RCM_sfc_lai:laiLut;RCM_sfc_mrro:mrroLut;RCM_sfc_mrso:mrsoLut;RCM_sfc_mrsos:mrsosLut;RCM_sfc_rad:rlusLut,rsusLut;RCM_sfc_snw:sweLut"
+  # Irrigation (Noah-MP opt_irr > 0, with IRSIVOL IRMIVOL IRFIVOL added to wrfout by iofields), not in ORDER:
+  [irr]="RCM_sfc_VAR:irrLut"
   # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
   # run with ./run.sh lucas <first year> <last year> landuse
-  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr"
+  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac"
   # Omega on pressure levels (LUCAS wap), not in ORDER: run with ./run.sh lucas <first year> <last year> plev_wap
   [plev_wap]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400,wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
@@ -129,7 +135,9 @@ declare -A TIME=(
   [zlev_va0]="19:00:00"
   [zlev_va1]="19:00:00"
   [urban]="14:00:00"
-  [lsm]="08:00:00"
+  [lsm]="14:00:00"    # 12 variables (~1.2 h each)
+  [lut]="24:00:00"    # 12 variables, as rad (~1.3 h each) and mrso/mrsos (SMOIS)
+  [irr]="04:00:00"
   [landuse]="10:00:00"
   [plev_wap]="36:00:00"   # as plev_wa (22 h), plus W, T and QVAPOR for every level
 )
@@ -204,6 +212,8 @@ declare -A ADVANCE_YEAR=(
   [testex]=1       [teste]=1
   [urban]=1
   [lsm]=1
+  [lut]=1
+  [irr]=1
   [landuse]=1
   [wpth4]=1
   [gust]=1
@@ -233,6 +243,8 @@ declare -A NEXT=(
   [teste]="teste"
   [urban]="urban"
   [lsm]="lsm"
+  [lut]="lut"
+  [irr]="irr"
   [landuse]="landuse"
   [wpth4]="wpth4"
   [gust]="gust"

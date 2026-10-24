@@ -1,4 +1,4 @@
-! tcs: no CORDEX_Cmor program yet; TV (Noah-MP)
+! tcs: RCM_sfc_tcs — Noah-MP vegetation temperature TV
 wrfvar = 'TV'
 vaid = 'tcs'
 vunts = 'K'
