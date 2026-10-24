@@ -4,6 +4,7 @@ vunts = 'K'
 lname = 'Near-Surface Air Temperature'
 stname = 'air_temperature'
 cmethods = 'area: mean time: point'
+outstep = 1           ! hours (output step); CORDEX-CMIP6 1h, FPS-LUCAS 1h
 height = 2.0
 factor = 0.0           ! costant to multipy variable with ( used only if /= 0)
 !

@@ -40,6 +40,7 @@ subroutine read_cordex_config(cfg_filename)
     stand_lon = missing_value; cen_lat = missing_value
     false_easting = 0.;        false_northing = 0.
     wp_step = 6
+    outstep = -1
 
     read(unit_id, nml=cordex_config, iostat=status_id)
     if (status_id /= 0) then
@@ -52,6 +53,20 @@ subroutine read_cordex_config(cfg_filename)
     if (wp_step < 1 .or. mod(24, wp_step) /= 0) then
         print *, "ERROR: wp_step = ", wp_step, " in ", trim(cfg_filename), ": it must divide 24 (e.g. 3 or 6)"
         stop 95
+    end if
+
+    ! Output step of the variable (header, hours): 1, 3, 6 ... 24 (daily); 0 = wp_step of the
+    ! grid ini (variables whose step differs between experiments, e.g. CORDEX 6hr, LUCAS 1hr)
+    if (outstep == 0) then
+        ostep = wp_step
+    else if (outstep > 0) then
+        ostep = outstep
+        if (mod(24, ostep) /= 0) then
+            print *, "ERROR: outstep = ", outstep, " in ", trim(cfg_filename), ": it must divide 24 (1, 3, 6, 24)"
+            stop 95
+        end if
+    else
+        ostep = -1                       ! no outstep in the header: the program's own step
     end if
 
     ! The projection must be set in the grid's ini (see experiments/README.md)
@@ -1209,6 +1224,110 @@ else
   urban_cell = frc > 0. .and. (k == 13 .or. (k >= 51 .and. k <= 61))
 endif
 end function urban_cell
+!
+!-----------------------------------------------------------------------
+!
+subroutine resample_time(fin, tin, bin, rs_hours, cmeth, fout, tout, bout, nout)
+! Hourly values fin(:,:,i) at the times tin(i) (hours since iniyear; time bounds bin) ->
+! values every rs_hours hours (3, 6, ... 24 = daily).
+!  - cmeth with "time: point" and rs_hours < 24: the instantaneous values at the hours that
+!    are multiples of rs_hours (no averaging);
+!  - otherwise the mean (the sum for "time: sum") of the hourly values whose interval
+!    starts in the window [k step, (k+1) step), with time = middle of the window and
+!    bounds k step and (k+1) step. Missing values (1e20) are left out; a window with
+!    only missing values is missing.
+! The windows follow 00 UTC of the days (hours since iniyear-01-01 00:00).
+use datvar_s
+real, dimension(:,:,:), intent(in) :: fin
+real, dimension(:), intent(in) :: tin
+integer, dimension(:,:), intent(in) :: bin
+integer, intent(in) :: rs_hours
+character(len=*), intent(in) :: cmeth
+real, dimension(:,:,:), allocatable, intent(out) :: fout
+real, dimension(:), allocatable, intent(out) :: tout
+integer, dimension(:,:), allocatable, intent(out) :: bout
+integer, intent(out) :: nout
+integer :: rs_step, rs_k0, rs_k, rs_i, rs_n, rs_j
+logical :: rs_point, rs_sum
+real, dimension(:,:), allocatable :: rs_cnt
+!
+rs_step = rs_hours
+rs_point = index(cmeth, 'time: point') > 0 .and. rs_step < 24
+rs_sum   = index(cmeth, 'time: sum') > 0
+rs_n = size(tin)
+if (rs_point) then
+  nout = count(mod(nint(tin), rs_step) == 0)
+  allocate(fout(size(fin,1), size(fin,2), nout), tout(nout), bout(2, nout))
+  rs_j = 0
+  do rs_i = 1, rs_n
+    if (mod(nint(tin(rs_i)), rs_step) == 0) then
+      rs_j = rs_j + 1
+      fout(:,:,rs_j) = fin(:,:,rs_i)
+      tout(rs_j) = tin(rs_i)
+      bout(:,rs_j) = (/ nint(tin(rs_i)), nint(tin(rs_i)) + rs_step /)
+    endif
+  enddo
+else
+  rs_k0 = floor(real(bin(1,1)) / rs_step)
+  nout = floor(real(bin(1,rs_n)) / rs_step) - rs_k0 + 1
+  allocate(fout(size(fin,1), size(fin,2), nout), tout(nout), bout(2, nout))
+  allocate(rs_cnt(size(fin,1), size(fin,2)))
+  rs_j = 0
+  do rs_i = 1, rs_n
+    rs_k = floor(real(bin(1,rs_i)) / rs_step) - rs_k0 + 1
+    if (rs_k /= rs_j) then                              ! a new window
+      if (rs_j > 0) call close_window
+      rs_j = rs_k
+      fout(:,:,rs_j) = 0.
+      rs_cnt = 0.
+      tout(rs_j) = (rs_k0 + rs_j - 1) * rs_step + 0.5 * rs_step
+      bout(:,rs_j) = (/ (rs_k0 + rs_j - 1) * rs_step, (rs_k0 + rs_j) * rs_step /)
+    endif
+    where (fin(:,:,rs_i) < 1.e19)
+      fout(:,:,rs_j) = fout(:,:,rs_j) + fin(:,:,rs_i)
+      rs_cnt = rs_cnt + 1.
+    endwhere
+  enddo
+  call close_window
+  deallocate(rs_cnt)
+endif
+!
+contains
+  subroutine close_window
+  where (rs_cnt > 0.)
+    fout(:,:,rs_j) = merge(fout(:,:,rs_j), fout(:,:,rs_j) / max(rs_cnt, 1.), rs_sum)
+  elsewhere
+    fout(:,:,rs_j) = 1.e+20
+  endwhere
+  end subroutine close_window
+end subroutine resample_time
+!
+!-----------------------------------------------------------------------
+!
+subroutine resample_output
+! The variable of the header at its output step ostep (outstep of the header, or wp_step
+! for outstep = 0) when that is longer than 1 hour: outvar_h, ttime, bdtime and ntime are
+! replaced by the resampled ones (resample_time) and freq is set ('<ostep>hr' or 'day').
+! Nothing is done for hourly output (ostep = 1) or without outstep in the header.
+use datvar_s
+!
+if (ostep <= 1) return
+! only the time steps filled (issh; a run of fewer months leaves the rest of the year empty)
+if (issh < 1 .or. issh > ntime) issh = ntime
+call resample_time(outvar_h(:,:,1:issh), ttime(1:issh), bdtime(:,1:issh), ostep, cellmethods, &
+                   outvar_r, ttime_r, bdtime_r, nt_r)
+call move_alloc(outvar_r, outvar_h)
+call move_alloc(ttime_r, ttime)
+call move_alloc(bdtime_r, bdtime)
+ntime = nt_r
+if (ostep == 24) then
+  freq = 'day'
+else
+  write(freq,'(i0,a)') ostep, 'hr'
+endif
+write(*,*) trim(vaid), ': written at ', trim(freq), ' (outstep ', outstep, ')'
+!
+end subroutine resample_output
 !
 !-----------------------------------------------------------------------
 !

@@ -3,7 +3,8 @@ vaid = 'snw'
 vunts = 'kg m-2'
 lname = 'Surface Snow Amount'
 stname = 'surface_snow_amount'
-cmethods = 'area: mean where land time: mean'
+cmethods = 'area: mean where land time: point'
+outstep = 6           ! hours (output step); CORDEX-CMIP6 6h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !                                                                            
 !

@@ -5,5 +5,6 @@ vunts = 'kg m-2'
 lname = 'Total Soil Moisture on Land-Use Tile'
 stname = 'mass_content_of_water_in_soil'
 cmethods = 'area: mean where land time: point'
+outstep = 1           ! hours (output step); FPS-LUCAS 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

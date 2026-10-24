@@ -4,5 +4,6 @@ vunts = '%'
 lname = 'Total Vegetated Percentage Cover'
 stname = 'area_fraction'
 cmethods = 'area: mean where land time: point'
+outstep = 1           ! hours (output step); not requested by CORDEX-CMIP6 or FPS-LUCAS: the program step
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

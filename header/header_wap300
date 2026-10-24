@@ -6,5 +6,6 @@ vunts = 'Pa s-1'
 lname = 'Omega (=dp/dt) at 300hPa'
 stname = 'lagrangian_tendency_of_air_pressure'
 cmethods = 'area: mean time: point'
+outstep = 3           ! hours (output step); FPS-LUCAS 3h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

@@ -4,5 +4,6 @@ vunts = 'kg m-2'
 lname = 'Total Water Content of Soil Layer'
 stname = 'mass_content_of_water_in_soil_layer'
 cmethods = 'area: mean where land time: point'
+outstep = 0           ! hours (0 = wp_step); CORDEX-CMIP6 6h, FPS-LUCAS 1h: wp_step of the grid ini (6 CORDEX, 1 LUCAS)
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

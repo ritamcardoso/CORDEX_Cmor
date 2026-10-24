@@ -4,5 +4,6 @@ vunts = 'kg m-2'
 lname = 'Soil Frozen Water Content'
 stname = 'soil_frozen_water_content'
 cmethods = 'area: mean where land time: point'
+outstep = 6           ! hours (output step); CORDEX-CMIP6 6h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

@@ -5,5 +5,6 @@ vunts = 'W m-2'
 lname = 'Latent Heat Flux on Land-Use Tile'
 stname = 'surface_upward_latent_heat_flux'
 cmethods = 'area: time: mean'
+outstep = 1           ! hours (output step); FPS-LUCAS 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

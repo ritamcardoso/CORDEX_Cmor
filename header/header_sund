@@ -4,6 +4,7 @@ vunts = 's'
 lname = 'Daily Duration of Sunshine'
 stname = 'duration_of_sunshine'
 cmethods = 'time: sum'
+outstep = 1           ! hours (output step); CORDEX-CMIP6 day, kept hourly (from the hourly sunshine duration)
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
 !

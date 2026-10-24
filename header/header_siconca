@@ -4,5 +4,6 @@ vunts = '%'
 lname = 'Sea-Ice Area Percentage (Atmospheric Grid)'
 stname = 'sea_ice_area_fraction'
 cmethods = 'area: time: mean'
+outstep = 24           ! hours (24 = daily); CORDEX-CMIP6 24h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

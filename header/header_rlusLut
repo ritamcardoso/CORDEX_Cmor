@@ -5,5 +5,6 @@ vunts = 'W m-2'
 lname = 'Surface Upwelling Longwave on Land-Use Tile'
 stname = 'surface_upwelling_longwave_flux_in_air'
 cmethods = 'area: time: mean'
+outstep = 1           ! hours (output step); FPS-LUCAS 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

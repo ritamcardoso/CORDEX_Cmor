@@ -5,5 +5,6 @@ vunts = 'kg m-2'
 lname = 'Vertical integral of mass content of hail'
 stname = 'atmosphere_mass_content_of_hail'
 cmethods = 'area: mean time: point'
+outstep = 1           ! hours (output step); not requested by CORDEX-CMIP6 or FPS-LUCAS: the program step
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

@@ -9,6 +9,7 @@ integer :: ix, iy
 
 ! Read configuration using shared_subs subroutine
 call init_cordex_environment
+if (ostep < 1) ostep = wp_step       ! output step: outstep of the header (0 or missing: wp_step of the grid ini)
 
 ! Read Grid Information (Latitude, Longitude)
 call read_geog
@@ -62,7 +63,7 @@ do year = yeari, yearf, 1
     days = days1
     mydays = 365
   endif
-  ntime = n_time_steps(year, imonth, nmonths, ihour, wp_step)
+  ntime = n_time_steps(year, imonth, nmonths, ihour, ostep)
 
   allocate(ttime(ntime))
   allocate(bdtime(2, ntime))
@@ -80,7 +81,7 @@ do year = yeari, yearf, 1
       aday_pad = pad_int(day, 2)
 
       ! Loop over hours
-      loop_h: do hour = ihour, 23, wp_step
+      loop_h: do hour = ihour, 23, ostep
         ahour = pad_int(hour, 2)
 
         filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday_pad//'_'//ahour//'_00_00'
@@ -158,7 +159,7 @@ do year = yeari, yearf, 1
 
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)
 
-        bdtime(2, issh) = bdtime(1, issh) + wp_step
+        bdtime(2, issh) = bdtime(1, issh) + ostep
 
         ttime(issh) = float(bdtime(1, issh))
 
@@ -193,7 +194,7 @@ subroutine write_dual_output
   adayf = pad_int(day-1, 2)
   ahourf = pad_int(hour-1, 2)
 
-  write(freq,'(i0,a)') wp_step, 'hr'
+  write(freq,'(i0,a)') ostep, 'hr'
   frequency = trim(adjustl(freq))
 
   p_val = int(presl / 100.0)

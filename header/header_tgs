@@ -5,5 +5,6 @@ vunts = 'K'
 lname = 'Surface Bare Soil Temperature'
 stname = 'surface_temperature'
 cmethods = 'area: mean where land time: point'
+outstep = 1           ! hours (output step); FPS-LUCAS 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

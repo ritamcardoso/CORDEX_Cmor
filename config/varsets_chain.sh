@@ -91,10 +91,13 @@ declare -A VARSETS=(
   # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
   # run with ./run.sh lucas <first year> <last year> landuse
   [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
-  # Omega on pressure levels (LUCAS wap), not in ORDER: run with ./run.sh lucas <first year> <last year> plev_wap
-  [plev_wap]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400,wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30"
+  # Omega on pressure levels (LUCAS wap), not in ORDER; two varsets (levels split in two, as
+  # plev_vortmen0/1) so that each fits one job at the 3-hourly output (outstep = 3):
+  # ./run.sh lucas <first year> <last year> plev_wap0 (and plev_wap1)
+  [plev_wap0]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400"
+  [plev_wap1]="RCM_plev_wap:wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
-  #[plev_wap]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400,wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30,wap20,wap10"
+  #[plev_wap1]="RCM_plev_wap:wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30,wap20,wap10"
   # Relative vorticity on pressure levels (LUCAS vortmen), not in ORDER; two varsets (levels split
   # in two, as zlev_uava0/1) so that each fits one job even with wp_step = 3:
   # ./run.sh lucas <first year> <last year> plev_vortmen0 (and plev_vortmen1)
@@ -127,11 +130,11 @@ declare -A TIME=(
   [cape]="40:00:00"    # ~57 us per column and hour (EUR-12: ~24 h) + reading 6 3D fields
   [lcl]="08:00:00"     # lowest levels only
   [gust]="16:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
-  [plev_wa]="22:00:00"
-  [plev_zg]="22:00:00"
-  [plev_uava]="28:00:00"
-  [plev_hus]="18:00:00"
-  [plev_ta]="18:00:00"
+  [plev_wa]="26:00:00"     # 3hr output (outstep = 3): 2 x max 10h57 at 6hr + 4 h
+  [plev_zg]="34:00:00"     # 3hr output (outstep = 3): 2 x max 14h35 at 6hr + 4 h
+  [plev_uava]="44:00:00"     # 3hr output (outstep = 3): 2 x max 19h38 at 6hr + 4 h
+  [plev_hus]="26:00:00"     # 3hr output (outstep = 3): 2 x max 10h41 at 6hr + 4 h
+  [plev_ta]="29:00:00"     # 3hr output (outstep = 3): 2 x max 12h03 at 6hr + 4 h
   [zlev_hus]="10:00:00"
   [zlev_ta]="10:00:00"
   [zlev_uava0]="25:00:00"
@@ -151,7 +154,8 @@ declare -A TIME=(
   [landuse]="10:00:00"
   [plev_vortmen0]="32:00:00"   # 8 levels, U V P PB: ~1.8 h per level at wp_step 6 (~15 h), double at wp_step 3
   [plev_vortmen1]="32:00:00"
-  [plev_wap]="36:00:00"   # as plev_wa (22 h), plus W, T and QVAPOR for every level
+  [plev_wap0]="40:00:00"  # 8 levels at 3hr: as half of plev_wa (2 x 10h57 / 2), plus W, T and QVAPOR for every level
+  [plev_wap1]="40:00:00"
 )
 
 #
@@ -233,7 +237,8 @@ declare -A ADVANCE_YEAR=(
   [lcl]=1
   [clouds]=1
   [wpth]=1
-  [plev_wap]=1
+  [plev_wap0]=1
+  [plev_wap1]=1
   [plev_vortmen0]=1
   [plev_vortmen1]=1
 )
@@ -267,7 +272,8 @@ declare -A NEXT=(
   [lcl]="lcl"
   [clouds]="clouds"
   [wpth]="wpth"
-  [plev_wap]="plev_wap"
+  [plev_wap0]="plev_wap0"
+  [plev_wap1]="plev_wap1"
   [plev_vortmen0]="plev_vortmen0"
   [plev_vortmen1]="plev_vortmen1"
 )

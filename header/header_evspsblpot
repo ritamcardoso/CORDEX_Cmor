@@ -4,5 +4,6 @@ vunts = 'kg m-2 s-1'
 lname = 'Potential Evapotranspiration'
 stname = 'water_potential_evaporation_flux'
 cmethods = 'area: mean where land time: mean'
+outstep = 1           ! hours (output step); CORDEX-CMIP6 1h, FPS-LUCAS 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

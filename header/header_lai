@@ -3,6 +3,7 @@ vaid = 'lai'
 vunts = '1'
 lname = 'Leaf Area Index'
 stname = 'leaf_area_index'
-cmethods = 'area: mean where land time: point'
+cmethods = 'area: mean where land time: mean'
+outstep = 24           ! hours (24 = daily); FPS-LUCAS 24h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

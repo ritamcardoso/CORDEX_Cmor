@@ -115,16 +115,19 @@ hour.
 | `wxtrm` | 08:00 | max 0h00m17s |
 | `wpth1`, `wpth3` | 13:00 | ~8h43 each (half of old wpth1's 17h25) |
 | `wpth2` | 10:00 | max 7h58 |
-| `plev_wa` | 22:00 | max 10h57 |
-| `plev_zg` | 22:00 | max 14h35 |
-| `plev_uava` | 28:00 | max 19h38 |
-| `plev_hus` | 18:00 | max 10h41 |
-| `plev_ta` | 18:00 | max 12h03 |
+| `plev_wa` | 26:00 | 3hr output (outstep 3): 2 × max 10h57 at 6hr + 4h |
+| `plev_zg` | 34:00 | 3hr: 2 × max 14h35 + 4h |
+| `plev_uava` | 44:00 | 3hr: 2 × max 19h38 + 4h |
+| `plev_hus` | 26:00 | 3hr: 2 × max 10h41 + 4h |
+| `plev_ta` | 29:00 | 3hr: 2 × max 12h03 + 4h |
+| `plev_wap0`, `plev_wap1` (manual) | 40:00 | 8 levels each at 3hr, est |
 | `zlev_hus` | 10:00 | max 4h05 |
 | `zlev_ta` | 10:00 | max 5h37 |
 | `zlev_uava0`, `zlev_uava1` | 25:00 | est ~20h54 (was 12:00 — too short) |
 | `cloud` (manual) | 28:00 | max 24h06 (was 26:00 — under 2h to spare) |
 | `tau` (manual) | 16:00 | max 3h05 |
+
+The pressure-level variables are written every 3 hours (`outstep = 3` in their headers: the CORDEX-CMIP6 3hr tables), twice as often as with the earlier `wp_step = 6`. Their streams take about 10–20 h more per model year than the times above; re-run `tools/report_walltimes.sh` after the first year and rebalance.
 
 The limits are for **one** model year; with a second grid enabled (main
 README §2) every job does both grids, so raise them accordingly.

@@ -6,5 +6,6 @@ vunts = 'm'
 lname = 'Geopotential Height at 10hPa'
 stname = 'geopotential_height'
 cmethods = 'area: mean time: point'
+outstep = 3           ! hours (output step); CORDEX-CMIP6 3h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

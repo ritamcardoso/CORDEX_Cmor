@@ -65,6 +65,8 @@ real :: false_easting, false_northing          ! Lambert, metres
 
 ! Scalar area-type coordinate for sftlaf/sfturf (set in their header)
 character(len=40) :: area_type
+integer :: outstep   ! header: output step in hours (1, 3, 6 or 24 = daily); 0 = wp_step of the grid ini
+integer :: ostep     ! the step used: outstep, or wp_step for outstep = 0 (-1: no outstep in the header)
 
 real, dimension(4), parameter :: sdepth = [0.1, 0.3, 0.6, 1.0]
 real, dimension(2,4) :: sdepth_bounds
@@ -136,6 +138,10 @@ real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
 real, dimension(:,:,:), allocatable :: cin_h, li_h, lcl_h   ! RCM_sfc_cape (cape in outvar_h)
 real, dimension(:,:,:), allocatable :: outvar_n, outvar_n_i  ! one time step of several variables (RCM_sfc_wpth, RCM_sfc_clouds)
+real, dimension(:,:,:), allocatable :: outvar_r          ! resample_time: the output at the step of outstep
+real, dimension(:), allocatable :: ttime_r                 ! ... its times (hours since iniyear)
+integer, dimension(:,:), allocatable :: bdtime_r          ! ... its time bounds
+integer :: nt_r                                           ! ... its number of time steps
 integer, dimension(:,:), allocatable :: plev_k          ! plev_map: model level k with p(k) >= presl > p(k+1), 0 = missing
 real, dimension(:,:), allocatable :: plev_w             ! plev_map: log(p) weight of level k+1
 real, dimension(:,:,:), allocatable :: lc_frac          ! LANDUSEF of every category, % (RCM_fx_landCoverFrac)
@@ -219,7 +225,7 @@ namelist /cordex_config/ &
     wrfvar, vaid, height, pres, vunits, vunts, &
     lname, stname, cmethods, factor, &
     projection, pole_lat, pole_lon, truelat1, truelat2, stand_lon, cen_lat, &
-    false_easting, false_northing, area_type, wp_step
+    false_easting, false_northing, area_type, wp_step, outstep
 
 namelist /global_metadata/ &
     conventions, activity_id, contact, cordex_domain, domain_name, &
