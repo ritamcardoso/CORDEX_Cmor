@@ -216,8 +216,8 @@ hurscan,FPS-URB-RCC,URB-RCC,%,i,x,,,x,x,,Near-Surface Relative Humidity within c
 husscan,FPS-URB-RCC,URB-RCC,1,i,x,,,x,x,,Near-Surface Specific Humidity within canyon,specific_humidity_canyon,QCAN_URB2D,CORDEX_Cmor: RCM_sfc_husscan (urban varset); q = r/(1+r); urban cells only
 sfcWindcan,FPS-URB-RCC,URB-RCC,m s-1,i,x,,,x,x,,Near-Surface Wind Speed within canyon,wind_speed_canyon,UCAN_URB2D,CORDEX_Cmor: RCM_sfc_sfcWindcan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 hu,FPS-LUCAS,CORE,m3/m3,i,x,,,,,,Atmospheric humidity at model levels,specific_humidity,QVAPOR,not produced by CORDEX_Cmor; header ready; model levels
-lai,FPS-LUCAS,CORE,1,i,,,,x,,,leaf area index,leaf_area_index,LAI,CORDEX_Cmor: RCM_sfc_lsm (lsm varset); LUCAS name LAI
-alb,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_lsm (lsm varset)
+lai,FPS-LUCAS,CORE,1,i,,,,x,,,leaf area index,leaf_area_index,LAI,CORDEX_Cmor: RCM_sfc_lai (lsm varset); LUCAS name LAI
+alb,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_alb (lsm varset)
 albc,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,-,not produced by CORDEX_Cmor; header ready; no canopy albedo in the WRF output
 baresoilFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Bare Soil Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 cnc,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage of area covered by vegetation.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF tree+shrub+grass+crop (landuse_field in shared_subs_v2.f90)

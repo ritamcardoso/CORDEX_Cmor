@@ -1,25 +1,15 @@
 program read_wrfout
 !
-! RCM_sfc_lsm — land-surface state variables (1hr, instantaneous: time: point).
-! The variable (vaid in its header) selects the WRF field:
-!
-!   lai      LAI      leaf area index (m2 m-2 -> 1)            land cells
-!   vegFrac  FVEG     green vegetation fraction (0-1 -> %)     land cells
-!   alb      ALBEDO   surface albedo (1)                       every cell
-!
-! Sea points (LANDMASK = 0) are missing (1.e20) for lai and vegFrac
-! ("area: mean where land"). The scaling to % is done here, not with factor,
-! so that the missing value is not scaled. Values rounded to 1e-4.
+! RCM_sfc_alb — alb (1hr, instantaneous: time: point) from the WRF field ALBEDO
+! (wrfvar of the header): surface albedo (1).
+! every cell.
+! Values rounded to 1e-4.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
 use netcdf
 !implicit none
-
-character(len=20) :: ls_v
-real :: ls_scale
-logical :: ls_land
 
 ! --- Read configuration using shared_subs subroutine
 
@@ -28,18 +18,6 @@ call init_cordex_environment
 ! --- Read Grid Information (Latitude, Longitude) ---
 
 call read_geog
-
-! --- The variable: WRF field, cells kept, scaling
-ls_scale = 1.; ls_land = .true.
-select case (trim(vaid))
-  case ('lai');     ls_v = 'LAI'
-  case ('vegFrac'); ls_v = 'FVEG';   ls_scale = 100.
-  case ('alb');     ls_v = 'ALBEDO'; ls_land = .false.
-  case default
-    print *, 'ERROR: RCM_sfc_lsm does not know the variable ', trim(vaid)
-    stop 95
-end select
-write(*,*) trim(vaid), ' from ', trim(ls_v)
 
 ! --- Initialising grid and time counters
 nzt = nz + 1
@@ -117,11 +95,11 @@ do year = yeari, yearf,1
         call ncerror(status,'opening '//trim(infile))
 
         ! Read wrf var
-        status = nf90_inq_varid(ncid, trim(ls_v), varid)
-        call ncerror(status,'getting var id '//trim(ls_v)//' in '//trim(infile))
-        
+        status = nf90_inq_varid(ncid, wrfvar, varid)
+        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
+
         status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading '//trim(ls_v)//' from '//trim(infile))
+        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
@@ -133,11 +111,7 @@ do year = yeari, yearf,1
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        where (ls_land .and. landmask < 0.5)
-          outvar_h(:,:,issh) = 1.e+20
-        elsewhere
-          outvar_h(:,:,issh) = real(nint(1.d4 * ls_scale * wrfv2D, 8)) / 1.e4
-        endwhere
+        outvar_h(:,:,issh) = real(nint(1.d4 * wrfv2D, 8)) / 1.e4
 
       enddo loop_h    ! end hour
 !

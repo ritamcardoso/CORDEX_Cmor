@@ -442,7 +442,7 @@ geo_em file and the STAS field capacities of `SOILPARM.TBL`.
 **Noah-MP land-surface variables (`lsm` varset) and land cover (`fx`).**
 `RCM_sfc_evspsblsoi.f90`, `RCM_sfc_evspsblveg.f90` and `RCM_sfc_tran.f90` write the hourly
 means `evspsblsoi`, `evspsblveg` and `tran` (kg m-2 s-1): the mean of the instantaneous rates `EDIR`, `ECAN` and
-`ETRAN` (mm s-1) at the start and end of each hour. `RCM_sfc_lsm.f90` writes the instantaneous `lai`
+`ETRAN` (mm s-1) at the start and end of each hour. `RCM_sfc_lai.f90`, `RCM_sfc_vegFrac.f90` and `RCM_sfc_alb.f90` write the instantaneous `lai`
 (`LAI`), `vegFrac` (`FVEG` in %) and `alb` (`ALBEDO`). Sea points are missing,
 except for `alb`. These fields must be in the wrfout files (Noah-MP output, as in
 LUCAS), so `lsm` is not in `ORDER`; run it on its own, e.g.

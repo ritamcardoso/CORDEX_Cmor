@@ -79,7 +79,7 @@ declare -A VARSETS=(
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_VAR:hurscan,husscan,sfcWindcan,tasblue,tsblue;RCM_sfc_ts:tsskin"
   # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
   # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
-  [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran;RCM_sfc_lsm:lai,vegFrac,alb"
+  [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran,lai,vegFrac,alb"
   # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
   # run with ./run.sh lucas <first year> <last year> landuse
   [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr"
