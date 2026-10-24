@@ -52,7 +52,7 @@ do vc_year = yeari, yearf
     vc_tf = max(hours_since_ini(year, month, 1, 0), t_sim0 + modulo(-t_sim0, 24))
     vc_rec = (hours_since_ini(year, month, day, 0) + 24 - vc_tf) / 24 + 1   ! record of day + 1, 00 UTC
     filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'// &
-               pad_int(1 + (vc_tf - hours_since_ini(year, month, 1, 0)) / 24, 2)//'_00_00_00'
+               trim(pad_int(1 + (vc_tf - hours_since_ini(year, month, 1, 0)) / 24, 2))//'_00_00_00'
     infile = trim(filename)
 !
     allocate(wrfv3D(nlon,nlat,vc_nd))

@@ -65,4 +65,21 @@ A program that no longer follows the loop template of `f90_src` is reported and 
 
 ## Checks done
 
-(In progress: comparison with f90_src over a whole year, and partial periods.)
+On test data (10×10 points, 2015), 98 program/variable cases covering every kind of variable. Cases outside a varset were included too: clh, clt and plev_va.
+
+- **Whole year:** with `sim_start = '2015-01-01_00'` and `sim_end = '2016-01-01_00'`, the output is bit-for-bit the same as from `f90_src`: data, time, bounds, attributes and file names.
+- **Partial periods:**
+
+  | Period | Shows |
+  |---|---|
+  | 2015-11-20_00 to 2015-12-31_18 | ends at 18 UTC |
+  | 2015-03-15_07 to 2015-04-02_13 | starts mid-month at 07 UTC |
+  | 2015-06-10_00 to 2015-06-12_00 | 2 days |
+  | 2015-06-10_03 to 2015-06-10_08 | 5 hours: no 6-hourly or daily window is complete, so those 17 variables write no file |
+  | 2015-12-25_00 to 2016-01-01_00, `yearf = 2016` | a 2-year job: the 2016 chunk holds only the 00 UTC value of the instantaneous variables |
+
+  In all of them:
+  - every value written is identical to the same time step of the whole-year run, with the same bounds;
+  - the time steps written are exactly those inside the period;
+  - only incomplete windows are left out.
+- **`tools/aggregate.sh`** on hourly tas and pr ending 31 Dec 18 UTC: daily files from 20 Nov to 30 Dec, equal to the mean of the 24 hours. The incomplete 31 Dec, November and December are left out. Starting at 07 UTC, the first day is the next one.

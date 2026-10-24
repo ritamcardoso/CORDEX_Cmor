@@ -71,8 +71,8 @@ do vc_year = yeari, yearf
         call ncerror(status,'opening '//trim(infile))
 !
         if(it == 0)then
-          allocate(cosalp(nlon,nlat))
-          allocate(sinalp(nlon,nlat))
+          if (.not. allocated(cosalp)) allocate(cosalp(nlon,nlat))
+          if (.not. allocated(sinalp)) allocate(sinalp(nlon,nlat))
 !
           status=nf90_inq_varid(ncid,'COSALPHA',varid)
           call ncerror(status,'getting var id COSALPHA in '//trim(infile))

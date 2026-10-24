@@ -255,6 +255,27 @@ def convert(name, text):
         if find(L, r'^\s*call write_\w*output', ie, iyend) < 0:
             raise Skip('no "call write_output" in the year loop')
 
+    # --- interval programs: it = 0 again at each chunk (time_chunk), so arrays allocated
+    #     once under "if (it == 0)" (e.g. cosalp) are allocated only if they are not yet
+    if interval:
+        k = 0
+        while k < len(L):
+            if re.match(r'\s*if\s*\(\s*it\s*==\s*0\s*\)\s*then', L[k]):
+                d, j = 1, k + 1
+                while d > 0:
+                    s = L[j].split('!')[0].strip().lower()
+                    if re.match(r'if\s*\(.*\)\s*then$', s):
+                        d += 1
+                    elif re.match(r'end\s*if$', s):
+                        d -= 1
+                    m = re.match(r'(\s*)allocate\((\w+)\(', L[j])
+                    if m and m.group(2) not in ('ttime', 'bdtime') and not m.group(2).startswith('outvar_h'):
+                        L[j] = f'{m.group(1)}if (.not. allocated({m.group(2)})) {L[j].strip()}'
+                    j += 1
+                k = j
+            else:
+                k += 1
+
     # --- file names: no time step left (e.g. daily output of a run shorter than a day)
     t = '\n'.join(L)
     t = re.sub(r'time_label\(\s*(\w+)\(1\)\s*,\s*\1\(\s*(\w+)\s*\)\s*\)', r'time_range(\1,\2)', t)

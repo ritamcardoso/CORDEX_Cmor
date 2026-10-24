@@ -1202,7 +1202,9 @@ end subroutine sim_period
 !
 logical function time_chunk(cy, step, interval)
 ! The chunk of year cy: sets t_ch0, t_ch1, ntime (time values), vc_nfiles (files to read),
-! vc_step, vc_interval, and resets issh, it and ish (= t_ch0). The first time step is the
+! vc_step, vc_interval, and resets issh and ish (= t_ch0), and it for interval values (it = 0:
+! the first file of the chunk, only read; in instantaneous programs it is a once-per-run
+! flag, as in f90_src, and is left as it is). The first time step is the
 ! first multiple of step (from 00 UTC) at or after sim_start, the last one the last at or
 ! before sim_end (sim_end - step for interval values). .false. if the year has none.
 ! resample_time then drops the windows with missing time steps (rs_complete): a day,
@@ -1235,7 +1237,7 @@ logical function time_chunk(cy, step, interval)
     vc_nfiles = ntime + merge(1, 0, interval)
     rs_complete = .true.
     issh = 0
-    it = 0
+    if (interval) it = 0
     ish = t_ch0
     if (ntime > 0) then
         write(*,'(a,i4,a,a,a,a,a,i0,a,i0,a)') ' year ', cy, ': ', trim(hours_label(t_ch0)), ' to ', &
