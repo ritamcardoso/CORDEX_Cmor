@@ -4,6 +4,7 @@ vaid = 'rough'
 vunts = 'm'
 lname = 'Roughness Length'
 stname = 'surface_roughness_length'
-cmethods = 'area: mean time: point'
+cmethods = 'area: time: mean'
+outstep = 'day'          ! FPS-LUCAS day: daily
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

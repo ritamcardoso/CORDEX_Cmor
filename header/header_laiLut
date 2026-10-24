@@ -4,6 +4,7 @@ vaid = 'laiLut'
 vunts = '1'
 lname = 'Leaf Area Index on Land-Use Tile'
 stname = 'leaf_area_index'
-cmethods = 'area: mean where land time: point'
+cmethods = 'area: mean where land time: mean'
+outstep = 'day'          ! FPS-LUCAS day: daily
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

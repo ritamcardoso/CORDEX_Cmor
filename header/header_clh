@@ -4,6 +4,7 @@ vunts = '%'
 lname = 'High Level Cloud Fraction'
 stname = 'cloud_area_fraction_in_atmosphere_layer'
 cmethods = 'area: time: mean'
+outstep = 'wp'          ! CORDEX-CMIP6 6hr (mean), day, mon: every wp_step hours
 factor = 100.           ! costant to multipy variable with ( used only if /= 0)
 !
 !

@@ -27,7 +27,7 @@ The `&cordex_config` namelist. Set:
 
 - **Domain & geography** — the grid dimensions (`nz`/`nlon`/`nlat`/`xoffset`/`yoffset`) and the matching `geog` name.
 - **Naming conventions** — `dom`/`outdom`, the domain and model names used in the CMORised output filenames.
-- **Sub-daily step** — `wp_step` (default 6): hours between the output times of the 3-hourly/6-hourly programs (pressure levels, soil layers). `6` writes `6hr` files, `3` writes `3hr` files; it must divide 24.
+- **Sub-daily step** — `wp_step` (default 6): hours between the output times of the 3-hourly/6-hourly programs (pressure levels, soil layers) and of the variables whose header has `outstep = 'wp'` (for example snw, snd, snc, mrso, mrro, mrros, mrfso, snm, clh, clm, cll, the clear-sky radiation). `6` writes `6hr` files and `3` writes `3hr` files; `1` writes `1hr` files, which is what FPS-LUCAS asks for mrso, mrro and mrros. It must divide 24.
 - **Map projection** — `projection`, the CF name of the output grid's projection, plus its parameters. It sets the 1-D coordinates and the grid-mapping variable (named after the projection) in every output file; the job stops if it is missing.
 
   | `projection` | Parameters | Written to the files |

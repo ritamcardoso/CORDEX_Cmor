@@ -40,6 +40,7 @@ subroutine read_cordex_config(cfg_filename)
     stand_lon = missing_value; cen_lat = missing_value
     false_easting = 0.;        false_northing = 0.
     wp_step = 6
+    outstep = ''
 
     read(unit_id, nml=cordex_config, iostat=status_id)
     if (status_id /= 0) then
@@ -51,6 +52,13 @@ subroutine read_cordex_config(cfg_filename)
     ! Step of the sub-daily (3hr/6hr) programs: a divisor of 24 hours
     if (wp_step < 1 .or. mod(24, wp_step) /= 0) then
         print *, "ERROR: wp_step = ", wp_step, " in ", trim(cfg_filename), ": it must divide 24 (e.g. 3 or 6)"
+        stop 95
+    end if
+
+    ! Output step of the variable (header): the program's own step, every wp_step hours, or daily
+    outstep = trim(adjustl(outstep))
+    if (len_trim(outstep) > 0 .and. trim(outstep) /= 'wp' .and. trim(outstep) /= 'day') then
+        print *, "ERROR: outstep = '", trim(outstep), "' in ", trim(cfg_filename), ": use 'wp', 'day' or leave it out"
         stop 95
     end if
 
@@ -1209,6 +1217,112 @@ else
   urban_cell = frc > 0. .and. (k == 13 .or. (k >= 51 .and. k <= 61))
 endif
 end function urban_cell
+!
+!-----------------------------------------------------------------------
+!
+subroutine resample_time(fin, tin, bin, mode, cmeth, fout, tout, bout, nout)
+! Hourly values fin(:,:,i) at the times tin(i) (hours since iniyear; time bounds bin) ->
+! values at the step of mode: 'wp' = every wp_step hours, 'day' = every 24 hours.
+!  - cmeth with "time: point" and mode 'wp': the instantaneous values at the hours that
+!    are multiples of wp_step (no averaging);
+!  - otherwise the mean (the sum for "time: sum") of the hourly values whose interval
+!    starts in the window [k step, (k+1) step), with time = middle of the window and
+!    bounds k step and (k+1) step. Missing values (1e20) are left out; a window with
+!    only missing values is missing.
+! The windows follow 00 UTC of the days (hours since iniyear-01-01 00:00).
+use datvar_s
+real, dimension(:,:,:), intent(in) :: fin
+real, dimension(:), intent(in) :: tin
+integer, dimension(:,:), intent(in) :: bin
+character(len=*), intent(in) :: mode, cmeth
+real, dimension(:,:,:), allocatable, intent(out) :: fout
+real, dimension(:), allocatable, intent(out) :: tout
+integer, dimension(:,:), allocatable, intent(out) :: bout
+integer, intent(out) :: nout
+integer :: rs_step, rs_k0, rs_k, rs_i, rs_n, rs_j
+logical :: rs_point, rs_sum
+real, dimension(:,:), allocatable :: rs_cnt
+!
+if (trim(mode) == 'day') then
+  rs_step = 24
+else
+  rs_step = wp_step
+endif
+rs_point = index(cmeth, 'time: point') > 0 .and. trim(mode) == 'wp'
+rs_sum   = index(cmeth, 'time: sum') > 0
+rs_n = size(tin)
+if (rs_point) then
+  nout = count(mod(nint(tin), rs_step) == 0)
+  allocate(fout(size(fin,1), size(fin,2), nout), tout(nout), bout(2, nout))
+  rs_j = 0
+  do rs_i = 1, rs_n
+    if (mod(nint(tin(rs_i)), rs_step) == 0) then
+      rs_j = rs_j + 1
+      fout(:,:,rs_j) = fin(:,:,rs_i)
+      tout(rs_j) = tin(rs_i)
+      bout(:,rs_j) = (/ nint(tin(rs_i)), nint(tin(rs_i)) + rs_step /)
+    endif
+  enddo
+else
+  rs_k0 = floor(real(bin(1,1)) / rs_step)
+  nout = floor(real(bin(1,rs_n)) / rs_step) - rs_k0 + 1
+  allocate(fout(size(fin,1), size(fin,2), nout), tout(nout), bout(2, nout))
+  allocate(rs_cnt(size(fin,1), size(fin,2)))
+  rs_j = 0
+  do rs_i = 1, rs_n
+    rs_k = floor(real(bin(1,rs_i)) / rs_step) - rs_k0 + 1
+    if (rs_k /= rs_j) then                              ! a new window
+      if (rs_j > 0) call close_window
+      rs_j = rs_k
+      fout(:,:,rs_j) = 0.
+      rs_cnt = 0.
+      tout(rs_j) = (rs_k0 + rs_j - 1) * rs_step + 0.5 * rs_step
+      bout(:,rs_j) = (/ (rs_k0 + rs_j - 1) * rs_step, (rs_k0 + rs_j) * rs_step /)
+    endif
+    where (fin(:,:,rs_i) < 1.e19)
+      fout(:,:,rs_j) = fout(:,:,rs_j) + fin(:,:,rs_i)
+      rs_cnt = rs_cnt + 1.
+    endwhere
+  enddo
+  call close_window
+  deallocate(rs_cnt)
+endif
+!
+contains
+  subroutine close_window
+  where (rs_cnt > 0.)
+    fout(:,:,rs_j) = merge(fout(:,:,rs_j), fout(:,:,rs_j) / max(rs_cnt, 1.), rs_sum)
+  elsewhere
+    fout(:,:,rs_j) = 1.e+20
+  endwhere
+  end subroutine close_window
+end subroutine resample_time
+!
+!-----------------------------------------------------------------------
+!
+subroutine resample_output
+! The variable of the header at the step of its outstep ('wp' or 'day'): outvar_h,
+! ttime, bdtime and ntime are replaced by the resampled ones (resample_time) and freq
+! is set (wp_step 'hr' or 'day'). Nothing is done when outstep is empty.
+use datvar_s
+!
+if (len_trim(outstep) == 0) return
+! only the time steps filled (issh; a run of fewer months leaves the rest of the year empty)
+if (issh < 1 .or. issh > ntime) issh = ntime
+call resample_time(outvar_h(:,:,1:issh), ttime(1:issh), bdtime(:,1:issh), outstep, cellmethods, &
+                   outvar_r, ttime_r, bdtime_r, nt_r)
+call move_alloc(outvar_r, outvar_h)
+call move_alloc(ttime_r, ttime)
+call move_alloc(bdtime_r, bdtime)
+ntime = nt_r
+if (trim(outstep) == 'day') then
+  freq = 'day'
+else
+  write(freq,'(i0,a)') wp_step, 'hr'
+endif
+write(*,*) trim(vaid), ': written at ', trim(freq), ' (outstep ', trim(outstep), ')'
+!
+end subroutine resample_output
 !
 !-----------------------------------------------------------------------
 !

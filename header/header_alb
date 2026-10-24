@@ -3,6 +3,7 @@ vaid = 'alb'
 vunts = '1'
 lname = 'Albedo'
 stname = 'surface_albedo'
-cmethods = 'area: mean time: point'
+cmethods = 'area: time: mean'
+outstep = 'day'          ! FPS-LUCAS day: daily
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

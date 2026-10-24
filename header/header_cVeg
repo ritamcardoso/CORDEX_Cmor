@@ -4,6 +4,7 @@ vaid = 'cVeg'
 vunts = 'kg m-2'
 lname = 'Carbon Mass in Vegetation'
 stname = 'vegetation_carbon_content'
-cmethods = 'area: mean where land time: point'
+cmethods = 'area: mean where land time: mean'
+outstep = 'day'          ! FPS-LUCAS day: daily
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

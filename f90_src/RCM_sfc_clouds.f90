@@ -9,7 +9,8 @@ program read_wrfout
 !   cll  Low Level Cloud Fraction       p > 680 hPa          (companion)
 !
 ! The same routines as RCM_sfc_cloud (random/maximum overlap, Sundqvist et al. 1989), so the
-! results are identical to four runs of RCM_sfc_cloud. clh, clm and cll are archived through
+! results are identical to four runs of RCM_sfc_cloud. clt is written every hour; clh, clm
+! and cll as means over wp_step hours (CORDEX-CMIP6 6hr), as RCM_sfc_cloud with their headers. clh, clm and cll are archived through
 ! the companion varset (CP_EXTRA); their metadata is set in write_output. The header's
 ! factor (100: fraction -> %) is applied to all four.
 !
@@ -485,9 +486,32 @@ do nv = 1, ncomb
       varname = 'cll'; vunits = '%'; longname = 'Low Level Cloud Fraction'
       standardname = 'cloud_area_fraction_in_atmosphere_layer'; cellmethods = 'area: time: mean'
   end select
-  outfile=trim(dir_out)//trim(varname)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
-  fnameout=trim(adjustl(outfile))
-  call write_netcdf_rtime_3d(outvar_h_4d(:,:,:,nv), ntime, ttime, bdtime)
+  ! output step: clt that of its header (outstep), clh, clm and cll every wp_step hours
+  ! (CORDEX-CMIP6 6hr means: resample_time)
+  if (nv == 1) then
+    write(*,*) trim(varname), ': outstep ', trim(outstep), ' (empty: 1hr)'
+  endif
+  if (nv > 1 .or. len_trim(outstep) > 0) then
+    if (nv > 1) then
+      call resample_time(outvar_h_4d(:,:,1:issh,nv), ttime(1:issh), bdtime(:,1:issh), 'wp', cellmethods, outvar_r, ttime_r, bdtime_r, nt_r)
+      write(freq,'(i0,a)') wp_step, 'hr'
+    else
+      call resample_time(outvar_h_4d(:,:,1:issh,nv), ttime(1:issh), bdtime(:,1:issh), outstep, cellmethods, outvar_r, ttime_r, bdtime_r, nt_r)
+      freq = 'day'
+      if (trim(outstep) == 'wp') write(freq,'(i0,a)') wp_step, 'hr'
+    endif
+    frequency=trim(adjustl(freq))
+    outfile=trim(dir_out)//trim(varname)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime_r(1),ttime_r(nt_r)))//'.nc'
+    fnameout=trim(adjustl(outfile))
+    call write_netcdf_rtime_3d(outvar_r, nt_r, ttime_r, bdtime_r)
+    deallocate(outvar_r, ttime_r, bdtime_r)
+  else
+    freq='1hr'
+    frequency=trim(adjustl(freq))
+    outfile=trim(dir_out)//trim(varname)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
+    fnameout=trim(adjustl(outfile))
+    call write_netcdf_rtime_3d(outvar_h_4d(:,:,:,nv), ntime, ttime, bdtime)
+  endif
 enddo
 
 ! back to the header's variable

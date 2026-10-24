@@ -3,7 +3,8 @@ vaid = 'mrros'
 vunts = 'kg m-2 s-1'
 lname = 'Surface Runoff'
 stname = 'surface_runoff_flux'
-cmethods = 'area: mean where land time: point'
+cmethods = 'area: mean where land time: mean'
+outstep = 'wp'          ! CORDEX-CMIP6 6hr (mean); FPS-LUCAS 1hr (wp_step = 1): every wp_step hours
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
 !

@@ -3,7 +3,8 @@ vaid = 'snd'
 vunts = 'm'
 lname = 'Snow Depth'
 stname = 'surface_snow_thickness'
-cmethods = 'area: mean where land time: mean'
+cmethods = 'area: mean where land time: point'
+outstep = 'wp'          ! CORDEX-CMIP6 6hr (point); FPS-LUCAS day: every wp_step hours
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !                                                                 
 !

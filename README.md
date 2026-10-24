@@ -528,6 +528,17 @@ The LCL height above ground, `lcl` (not a CORDEX variable), is written by `RCM_s
 only the lowest model levels. The earlier `RCM_sfc_cape.f90`, which also wrote `lcl`, is in
 `f90_src/deprecated` (and its OpenMP copy in `f90_src_parallel/deprecated`).
 
+**Output step of a variable (`outstep` in its header).** A program writes its own step, usually 1hr, unless the header sets `outstep`:
+- **`outstep = 'wp'`:** every `wp_step` hours (grid ini). Instantaneous variables ("time: point") keep the values at those hours; means become the mean over the `wp_step` hours, with time bounds.
+- **`outstep = 'day'`:** daily means, or daily sums for "time: sum".
+
+The resampling is `resample_output` / `resample_time` in `shared_subs_v2.f90`. It follows the highest frequency that CORDEX-CMIP6 (CMOR tables) or FPS-LUCAS request:
+- **6hr, so `'wp'`:** snw, snd, snc, mrfso, snm, clh, clm, cll, rldscs, rluscs, rlutcs, rsdscs, rsuscs, rsutcs.
+- **Different in CORDEX and LUCAS, so `'wp'`** (each experiment sets the step in its ini): mrso, mrro, mrros (CORDEX 6hr, LUCAS 1hr).
+- **Daily, so `'day'`:** siconca, sund, z0 (CORDEX); alb, albc, cVeg, lai, laiLut, npp, rough (LUCAS).
+
+In `RCM_sfc_clouds`, clt stays hourly and clh, clm and cll are written every `wp_step` hours. The earlier versions of the programs changed for this are in `f90_src/deprecated`.
+
 **Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map` and `plev_interp` (`shared_subs_v2.f90`).
 - `plev_map` builds, for the pressure level, a map of the model level k with p(k) ≥ p_level > p(k+1) at every point.
   - Pressure is smooth in the horizontal, so the search starts from the level found at the neighbouring point.
