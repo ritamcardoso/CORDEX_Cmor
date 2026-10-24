@@ -1596,12 +1596,14 @@ end function qvs_wexler
 !
 !-----------------------------------------------------------------------
 !
-pure subroutine qvs_wexler_dt(tk, pa, qs, dqs)
-! qvs_wexler and its exact derivative dqs = d qs / d tk (kg kg-1 K-1), for Newton
-! iterations (t_from_theta_e)
+pure subroutine es_wexler_dt(tk, pa, es, des)
+! saturation vapour pressure es (Pa) over water at tk (K) in moist air at pa (Pa) and its
+! exact derivative des = d es / d tk (Pa K-1): ITS-90 / Wexler formula with the enhancement
+! factor (Goff 1949; the coefficients for ice below 0 degC), as RCM_sfc_hurs. Used by
+! qvs_wexler_dt (CAPE) and RCM_sfc_evspsblpot (Penman-Monteith es and its slope).
 real(kind=8), intent(in) :: tk, pa
-real(kind=8), intent(out) :: qs, dqs
-real(kind=8) :: es, des, dlnes, tc, fa, dfa, fb, dfb, eb, fact, dlnf, ew
+real(kind=8), intent(out) :: es, des
+real(kind=8) :: dlnes, tc, fa, dfa, fb, dfb, eb, fact, dlnf, ew
 real(kind=8), parameter :: a1=-2.8365744d3, a2=-6.028076559d3, a3=19.54263612d0, a4=-2.737830188d-2, &
                            a5=1.6261698d-5, a6=7.0229056d-10, a7=-1.8680009d-13, a8=2.7150305d0
 real(kind=8), parameter :: fi1=3.62183d-4, fi2=2.6061244d-5, fi3=3.8667770d-7, fi4=3.8268958d-9, &
@@ -1629,6 +1631,17 @@ fact = exp(fa*(1.d0 - ew/pa) + eb*(ew/pa - 1.d0))
 dlnf = dfa*(1.d0 - ew/pa) + eb*dfb*(ew/pa - 1.d0) + (eb - fa)*ew*dlnes/pa
 es  = ew*fact
 des = es*(dlnes + dlnf)
+end subroutine es_wexler_dt
+!
+!-----------------------------------------------------------------------
+!
+pure subroutine qvs_wexler_dt(tk, pa, qs, dqs)
+! qvs_wexler and its exact derivative dqs = d qs / d tk (kg kg-1 K-1), for Newton
+! iterations (t_from_theta_e); es and its derivative from es_wexler_dt
+real(kind=8), intent(in) :: tk, pa
+real(kind=8), intent(out) :: qs, dqs
+real(kind=8) :: es, des
+call es_wexler_dt(tk, pa, es, des)
 if (es > 0.5d0*pa) then                  ! capped (very hot or low pressure): flat
   es = 0.5d0*pa; des = 0.d0
 endif

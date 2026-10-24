@@ -242,9 +242,12 @@ subroutine calc_evspsblpot
 !   G    soil heat flux (MJ m-2 h-1): 0.1 Rn when Rn > 0 (day), 0.5 Rn otherwise (night) (eq. 45-46)
 !   T    2 m air temperature (degC), mean of the hour (T2)
 !   u2   2 m wind speed: 0.748 x 10 m wind speed (eq. 47), mean of the hour (U10, V10)
-!   es   saturation vapour pressure at T (kPa): 0.6108 exp(17.27 T / (T + 237.3)) (eq. 11)
+!   es   saturation vapour pressure at T (kPa): ITS-90 / Wexler formula over water with the
+!        enhancement factor (Goff 1949), as hurs and cape (es_wexler_dt in shared_subs_v2.f90),
+!        instead of the FAO-56 Tetens formula (eq. 11)
 !   ea   actual vapour pressure (kPa) from the specific humidity: q p / (0.622 + 0.378 q) (Q2, PSFC)
-!   D    slope of the saturation vapour pressure curve: 4098 es / (T + 237.3)^2 (eq. 13)
+!   D    slope of the saturation vapour pressure curve (kPa degC-1): the exact derivative of
+!        that es (es_wexler_dt), instead of FAO-56 eq. 13
 !   gam  psychrometric constant: 0.665e-3 p (kPa degC-1) (eq. 8), with the model surface pressure p (PSFC)
 !
 ! ET0 (mm h-1 = kg m-2 h-1) / 3600 -> kg m-2 s-1. Sea points (LANDMASK = 0) are missing
@@ -263,9 +266,11 @@ do ix=1,nlon
       else
         ghf = 0.5 * Rn_MJ
       endif
-      es_kPa = 0.6108 * exp(17.27 * t2_C / (t2_C + 237.3))                     ! kPa
+      ! saturation vapour pressure and its slope: as hurs and cape (Wexler / ITS-90, enhancement factor)
+      call es_wexler_dt(real(t2_C, 8) + 273.15d0, 1000.d0 * real(psf_kPa, 8), es_pa, des_pa)
+      es_kPa = real(es_pa / 1000.d0)                                           ! kPa
       vpres = q2_m * psf_kPa / (0.622 + 0.378 * q2_m)                          ! kPa
-      slope = 4098. * es_kPa / (t2_C + 237.3)**2                                 ! kPa degC-1
+      slope = real(des_pa / 1000.d0)                                           ! kPa degC-1
       gam = 0.665e-3 * psf_kPa                                                 ! kPa degC-1
       ET0 = (0.408 * slope * (Rn_MJ - ghf) &
                + gam * (37. / (t2_C + 273.)) * wind2 * (es_kPa - vpres)) &

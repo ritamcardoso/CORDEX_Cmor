@@ -96,6 +96,7 @@ integer, dimension(:,:), allocatable :: bdtime, outvar_a
 ! Real Scalars 
 real :: tv, tc, slope
 real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, es_kPa, gam, ET0   ! RCM_sfc_evspsblpot (slope above)
+real(kind=8) :: es_pa, des_pa                                            ! RCM_sfc_evspsblpot: es (Pa) and d es / dT (Pa K-1), es_wexler_dt
 real :: dx_geo, dy_geo                                                      ! RCM_fx_areacella
 real :: vo_dx, vo_dy, vo_dudy, vo_dvdx                                     ! RCM_plev_vortmen: grid spacing (m), derivatives
 integer :: vo_hw, vo_he, vo_hs, vo_hn, vo_nxh, vo_nyh, vo_nxf, vo_nyf     ! RCM_plev_vortmen: halo (0/1) W E S N, sizes with halo, full grid
