@@ -6,6 +6,8 @@ These programs are the same as in `f90_src`, with only OpenMP directives added, 
 |---|---|---|
 | `RCM_sfc_cape.f90` | `calc_cape` (rows `iy`; the per-column work variables of `datvar_s` are private) | `cape` |
 | `RCM_sfc_cloud.f90` | `calc_clt`, `calc_clh`, `calc_clm`, `calc_cll` | `cloud1`, `cloud2`, `cloud` |
+| `RCM_sfc_clouds.f90` | the same four routines, all in one run | `clouds` |
+| `RCM_sfc_wpth.f90` | `calc_wpth` | `wpth` |
 | `RCM_sfc_clivi.f90`, `RCM_sfc_prw.f90`, `RCM_sfc_clwvi.f90`, `RCM_sfc_clgvi.f90`, `RCM_sfc_clhvi.f90` | `calc_prw` | `wpth1` … `wpth4` |
 
 Compiled without the OpenMP flag, the directives are comments and each program is the serial program of `f90_src`. The modules (`datvar_s.f90`, `shared_subs_v2.f90`) are the ones in `f90_src`. Every variable is still declared there.
@@ -30,6 +32,7 @@ On the test data, the results are bit-for-bit the same as the serial programs, w
 |---|---|---|
 | cape | ~50 % | up to ~2× faster (11.4 s → 8.9 s with 2 threads) |
 | cloud | ~20–25 % | ≤ 25 % |
+| clouds (four in one run) | larger (one reading, four calculations) | more than cloud |
 | water paths | ~0 % (reading only) | none |
 
 For the water paths, and partly for the clouds, it would be faster to read the wrfout files once for several variables (as `RCM_sfc_cape` does for cin, li and lcl) than to add threads.

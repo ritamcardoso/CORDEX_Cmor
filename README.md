@@ -473,6 +473,16 @@ PBLH/2000)))`. The method is chosen from the first wrfout file and written to th
 It is not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
 The graupel and hail paths `clgvi`, `clhvi` are in the `wpth4` varset (not in `ORDER`).
 
+**Clouds and water paths from one reading (`clouds`, `wpth` varsets).** `RCM_sfc_clouds.f90`
+writes `clt`, `clh`, `clm` and `cll` in one run (one reading of `CLDFRA`, `P`, `PB`, `PSFC` per
+wrfout file); `RCM_sfc_wpth.f90` writes `prw`, `clivi` and `clwvi` (one reading of `P`, `PB`,
+`PSFC`, `QVAPOR`, `QCLOUD`, `QICE`, `QRAIN`, `QSNOW`). Same formulas as `RCM_sfc_cloud` and
+`RCM_sfc_prw`/`clivi`/`clwvi`, so the files are identical (data, attributes and names). On the test month,
+the four clouds took 5.7 s instead of 16.0 s for four runs, and the three water paths 5.7 s instead of 12.4 s. The companions
+are archived through `clouds_x` and `wpth_x` (`CP_EXTRA`). They replace `cloud1` + `cloud2` and
+`wpth1` + `wpth2` + `wpth3`, but are not in `ORDER` yet: `./run.sh <experiment> 2000 2010 clouds`
+(or `wpth`). Graupel and hail (`clgvi`, `clhvi`) stay in `wpth4`.
+
 **OpenMP versions (optional).** `f90_src_parallel/` has OpenMP versions of the CAPE, cloud and
 water-path programs (the same code with directives that share out the grid columns). They are
 used only when `OMP_FLAG` is set in `env.site.sh`. The job then asks for `CPUS[varset]` cores

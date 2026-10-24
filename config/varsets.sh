@@ -32,6 +32,12 @@ declare -A VARSETS=(
   # ./run.sh <experiment> <first year> <last year> cape. One run of RCM_sfc_cape writes the four
   # variables; cin, li and lcl are archived through the companion varset cape_x (CP_EXTRA).
   [cape]="RCM_sfc_VAR:cape"
+  # One reading of the wrfout files for several variables, not in ORDER (alternative to
+  # cloud1 + cloud2 and wpth1 + wpth2 + wpth3, same files): ./run.sh <experiment> <years> clouds | wpth
+  # clouds: clt, clh, clm, cll from RCM_sfc_clouds; wpth: prw, clivi, clwvi from RCM_sfc_wpth.
+  # The companions are archived through clouds_x and wpth_x (CP_EXTRA).
+  [clouds]="RCM_sfc_clouds:clt"
+  [wpth]="RCM_sfc_wpth:prw"
   [plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30,wa20,wa10"
@@ -66,6 +72,8 @@ declare -A VARSETS=(
   [zlev_ua0]="RCM_zlev_ua:ua100m,ua150m,ua50m"
   [zlev_ua1]="RCM_zlev_ua:ua300m,ua250m,ua200m"
   [cape_x]="RCM_sfc_cape:cin,li,lcl"   # written by RCM_sfc_cape (varset cape)
+  [clouds_x]="RCM_sfc_clouds:clh,clm,cll"   # written by RCM_sfc_clouds (varset clouds)
+  [wpth_x]="RCM_sfc_wpth:clivi,clwvi"       # written by RCM_sfc_wpth (varset wpth)
   # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
   # run with ./run.sh fpsurb <first year> <last year> urban
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_VAR:hurscan,husscan,sfcWindcan,tasblue,tsblue;RCM_sfc_ts:tsskin"
@@ -111,6 +119,8 @@ declare -A TIME=(
   [wpth2]="10:00:00"
   [wpth3]="13:00:00"
   [wpth4]="24:00:00"   # two variables as clivi (13 h each)
+  [clouds]="16:00:00"  # one cloud1 variable (~8.5 h) x ~1.4 (test: 4 variables in 1.4x the time of one)
+  [wpth]="20:00:00"    # one water path (10-13 h) x ~1.4
   [cape]="40:00:00"    # ~57 us per column and hour (EUR-12: ~24 h) + reading 7 3D fields
   [gust]="16:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
   [plev_wa]="22:00:00"
@@ -158,6 +168,8 @@ declare -A MEM=(
   [zlev_uava1]="16G"
   [soil]="16G"
   [cape]="32G"     # four yearly hourly fields in memory (EUR-12: ~25 GB)
+  [clouds]="32G"   # four yearly hourly fields
+  [wpth]="24G"     # three yearly hourly fields (EUR-12: ~18 GB)
 )
 
 #
@@ -172,6 +184,7 @@ declare -A CPUS=(
   [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
   [cloud2]=4
   [cloud]=4
+  [clouds]=4       # four calculations per reading
   # The water paths (wpth1-4) are limited by reading the wrfout files: no gain.
 )
 
@@ -186,6 +199,8 @@ declare -A CP_EXTRA=(
   [zlev_uava0]="zlev_ua0"
   [zlev_uava1]="zlev_ua1"
   [cape]="cape_x"
+  [clouds]="clouds_x"
+  [wpth]="wpth_x"
 )
 
 #
@@ -205,6 +220,8 @@ declare -A ADVANCE_YEAR=(
   [wpth4]=1
   [gust]=1
   [cape]=1
+  [clouds]=1
+  [wpth]=1
   [plev_wap]=1
 )
 
@@ -232,6 +249,8 @@ declare -A NEXT=(
   [wpth4]="wpth4"
   [gust]="gust"
   [cape]="cape"
+  [clouds]="clouds"
+  [wpth]="wpth"
   [plev_wap]="plev_wap"
 )
 

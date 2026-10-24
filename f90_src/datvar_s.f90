@@ -104,6 +104,8 @@ real(kind=8) :: t_lift, q_lift, z_lift, tv_lift, t_env, q_env, tv_env, fac1, fac
 real(kind=8) :: ben_min, t500, te500
 integer :: kk, klcl, kel, klfc, kmax
 logical :: lcl_in, found_el
+real :: wp_v, wp_i, wp_c, dpk                                             ! RCM_sfc_wpth: column sums, layer thickness
+integer :: nv, ncomb                                                      ! RCM_sfc_wpth, RCM_sfc_clouds: variable index, number of variables
 logical :: gust_b01                                                         ! RCM_sfc_wsgsmax: QKE in wrfout -> Brasseur
 
 ! Real 1D Allocatable Arrays
@@ -127,6 +129,7 @@ real(kind=8), dimension(:,:), allocatable :: Rn, Rn_i
 ! Real 3D Allocatable Arrays
 real, dimension(:,:,:), allocatable :: outvar_h, wrfv3D
 real, dimension(:,:,:), allocatable :: cin_h, li_h, lcl_h   ! RCM_sfc_cape (cape in outvar_h)
+real, dimension(:,:,:), allocatable :: outvar_n, outvar_n_i  ! one time step of several variables (RCM_sfc_wpth, RCM_sfc_clouds)
 real, dimension(:,:,:), allocatable :: p, pb, press, p_iface, phb, ph, phi, zhgt, ua, va, u, v, w, t
 real, dimension(:,:,:), allocatable :: qv,qc, qi, qr, qs, smois, tke
 real, dimension(:,:,:), allocatable :: outvar_3, outvar_6, outvar_d, outvar_m, outvar_d_max
