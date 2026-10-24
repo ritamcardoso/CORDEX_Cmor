@@ -1,4 +1,3 @@
-! hfso: RCM_sfc_hfso (out2 varset), hourly mean of GRDFLX as hfls (positive downward, into the soil)
 wrfvar = 'GRDFLX'
 vaid = 'hfso'
 vunts = 'W m-2'

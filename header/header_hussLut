@@ -1,4 +1,3 @@
-! hussLut: RCM_sfc_huss with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'Q2'
 vaid = 'hussLut'
 vunts = '1'

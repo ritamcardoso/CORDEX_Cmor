@@ -1,4 +1,3 @@
-! prhmax: no CORDEX_Cmor program yet; needs RAINC I_RAINC RAINNC I_RAINNC (hourly precipitation, then the daily maximum)
 wrfvar = 'RAINNC'
 vaid = 'prhmax'
 vunts = 'kg m-2 s-1'

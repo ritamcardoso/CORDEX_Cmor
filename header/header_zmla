@@ -6,4 +6,4 @@ stname = 'atmosphere_boundary_layer_thickness'
 cmethods = 'area: mean time: point'
 outstep = 1           ! hours (output step); CORDEX-CMIP6 1h, FPS-LUCAS 3h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-!!
+!

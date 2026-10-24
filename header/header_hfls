@@ -6,4 +6,4 @@ stname = 'surface_upward_latent_heat_flux'
 cmethods = 'area: time: mean'
 outstep = 1           ! hours (output step); CORDEX-CMIP6 1h, FPS-LUCAS 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-!!
+!

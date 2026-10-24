@@ -1,4 +1,3 @@
-! mrroLut: RCM_sfc_mrro (RUNSF + RUNSB) with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'RUNSB'
 vaid = 'mrroLut'
 vunts = 'kg m-2 s-1'

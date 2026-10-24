@@ -1,4 +1,3 @@
-! interception: RCM_sfc_interception — Noah-MP CANLIQ + CANICE
 wrfvar = 'CANLIQ'
 vaid = 'interception'
 vunts = 'kg m-2'

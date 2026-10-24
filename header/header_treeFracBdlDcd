@@ -1,4 +1,3 @@
-! treeFracBdlDcd: RCM_fx_landuse / RCM_sfc_landuse — LANDUSEF MODIS class 4, USGS 11 (landuse_field)
 wrfvar = 'LANDUSEF'
 vaid = 'treeFracBdlDcd'
 vunts = '%'

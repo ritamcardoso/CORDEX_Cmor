@@ -1,4 +1,3 @@
-! pastureFrac: RCM_fx_landuse / RCM_sfc_landuse — LANDUSEF grassland class (MODIS 10, USGS 7) taken as pasture (landuse_field)
 wrfvar = 'LANDUSEF'
 vaid = 'pastureFrac'
 vunts = '%'

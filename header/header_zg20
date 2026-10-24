@@ -1,4 +1,3 @@
-! zg20: written by RCM_plev_zg, in the commented varset lines with all the pressure levels; needs PH PHB P PB; missing (1e20) unless the model levels reach above 20 hPa (p_top < 20 hPa)
 wrfvar = 'PH'
 vaid = 'zg20'
 pres = 2000.

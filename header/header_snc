@@ -6,5 +6,4 @@ stname = 'surface_snow_area_fraction'
 cmethods = 'area: mean time: point'
 outstep = 6           ! hours (output step); CORDEX-CMIP6 6h, FPS-LUCAS 24h
 factor = 100.           ! costant to multipy variable with ( used only if /= 0)
-!                                                                                
 !

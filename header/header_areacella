@@ -1,4 +1,3 @@
-! areacella: RCM_fx_areacella (fx varset): DX*DY/(MAPFAC_MX*MAPFAC_MY) of the geo_em file
 wrfvar = 'MAPFAC_MX'
 vaid = 'areacella'
 vunts = 'm2'

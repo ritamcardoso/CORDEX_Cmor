@@ -1,4 +1,3 @@
-! sweLut: RCM_sfc_snw (SNOW, factor 0.001: kg m-2 -> m) with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'SNOW'
 vaid = 'sweLut'
 vunts = 'm'

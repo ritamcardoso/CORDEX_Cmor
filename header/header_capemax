@@ -1,4 +1,3 @@
-! capemax: daily maximum of the hourly cape (RCM_sfc_cape), from tools/aggregate.sh
 wrfvar = 'T'
 vaid = 'capemax'
 vunts = 'J kg-1'

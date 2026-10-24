@@ -1,4 +1,3 @@
-! mrsoLut: RCM_sfc_mrso with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'SMOIS'
 vaid = 'mrsoLut'
 vunts = 'kg m-2'

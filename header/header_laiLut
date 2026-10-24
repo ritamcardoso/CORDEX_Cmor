@@ -1,4 +1,3 @@
-! laiLut: RCM_sfc_lai with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'LAI'
 vaid = 'laiLut'
 vunts = '1'

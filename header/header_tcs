@@ -1,4 +1,3 @@
-! tcs: RCM_sfc_tcs — Noah-MP vegetation temperature TV
 wrfvar = 'TV'
 vaid = 'tcs'
 vunts = 'K'

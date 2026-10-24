@@ -1,4 +1,3 @@
-! limax: daily maximum of the hourly li (RCM_sfc_cape), from tools/aggregate.sh
 wrfvar = 'T'
 vaid = 'limax'
 vunts = 'K'

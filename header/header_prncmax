@@ -7,4 +7,3 @@ cmethods = 'time: point'
 outstep = 24           ! hours (24 = daily); daily program (not requested by CORDEX-CMIP6 or FPS-LUCAS)
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
-!

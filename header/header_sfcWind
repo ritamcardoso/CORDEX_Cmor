@@ -8,4 +8,3 @@ outstep = 1           ! hours (output step); CORDEX-CMIP6 1h, FPS-LUCAS 1h
 height = 10.
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
-!

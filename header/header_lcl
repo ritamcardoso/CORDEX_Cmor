@@ -1,4 +1,3 @@
-! lcl: RCM_sfc_lcl — Romps (2017) LCL of the lowest model level, height above ground (P PB T QVAPOR PH PHB HGT)
 wrfvar = 'QVAPOR'
 vaid = 'lcl'
 vunts = 'm'

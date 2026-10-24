@@ -1,4 +1,3 @@
-! wap30: written by RCM_plev_wap (plev_wap varset); omega = -rho g w from W, T, QVAPOR, P, PB
 wrfvar = 'W'
 vaid = 'wap30'
 pres = 3000.

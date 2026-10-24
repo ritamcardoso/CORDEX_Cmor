@@ -1,4 +1,3 @@
-! residualFrac: RCM_fx_landuse / RCM_sfc_landuse — LANDUSEF urban (incl. LCZ) + snow/ice classes (landuse_field); LUCAS name resdiualFrac
 wrfvar = 'LANDUSEF'
 vaid = 'residualFrac'
 vunts = '%'

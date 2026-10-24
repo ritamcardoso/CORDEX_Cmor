@@ -1,4 +1,3 @@
-! albc: RCM_sfc_albc — ALBEDO x vegetated fraction of the cell (LANDUSEF, cnc classes)
 wrfvar = 'ALBEDO'
 vaid = 'albc'
 vunts = '1'

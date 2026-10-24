@@ -1,4 +1,3 @@
-! dtb: no CORDEX_Cmor program yet; not available from WRF (external dataset)
 wrfvar = ''
 vaid = 'dtb'
 vunts = 'm'
