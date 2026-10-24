@@ -435,6 +435,7 @@ treeFracBdlDcd|treeFracBdlDcd|mean|area: mean time: mean|Percentage of Entire Gr
 treeFracBdlEvg|treeFracBdlEvg|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Broadleaf Evergreen Trees|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Broadleaf Evergreen Trees
 treeFracNdlDcd|treeFracNdlDcd|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Needleleaf Deciduous Trees|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Needleleaf Deciduous Trees
 residualFrac|residualFrac|mean|area: mean time: mean|Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil|mean|area: mean time: mean|Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil
+pastureFrac|pastureFrac|mean|area: mean time: mean|Percentage of Land Which Is Anthropogenic Pasture|mean|area: mean time: mean|Percentage of Land Which Is Anthropogenic Pasture
 
 # Not in the CORDEX-CMIP6 tables (RCM_sfc_cape)
 lcl|lcl|mean|area: time: mean|Lifting Condensation Level Height above Ground|mean|area: time: mean|Lifting Condensation Level Height above Ground

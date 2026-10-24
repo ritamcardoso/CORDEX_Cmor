@@ -57,7 +57,7 @@ declare -A VARSETS=(
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
-  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac"
+  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
   [teste]="RCM_sfc_rad:rsds"
   # Manual runs only (not in any stream)
@@ -88,7 +88,7 @@ declare -A VARSETS=(
   [irr]="RCM_sfc_VAR:irrLut"
   # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
   # run with ./run.sh lucas <first year> <last year> landuse
-  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac"
+  [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
   # Omega on pressure levels (LUCAS wap), not in ORDER: run with ./run.sh lucas <first year> <last year> plev_wap
   [plev_wap]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400,wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):

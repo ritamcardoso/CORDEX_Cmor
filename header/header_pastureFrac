@@ -1,5 +1,5 @@
-! pastureFrac: no CORDEX_Cmor program yet; no pasture class in the WRF land-use tables
-wrfvar = ''
+! pastureFrac: RCM_fx_landuse / RCM_sfc_landuse — LANDUSEF grassland class (MODIS 10, USGS 7) taken as pasture (landuse_field)
+wrfvar = 'LANDUSEF'
 vaid = 'pastureFrac'
 vunts = '%'
 lname = 'Percentage of Land Which Is Anthropogenic Pasture'
