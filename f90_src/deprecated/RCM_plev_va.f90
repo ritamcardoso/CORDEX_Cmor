@@ -256,7 +256,8 @@ subroutine write_dual_output
   frequency = trim(adjustl(freq))
 
   p_val = int(presl / 100.0)
-  p_str = adjustl(pad_int(p_val, 1))
+  write(p_str, '(I0)') p_val  ! 'I0' adjusts to the width needed (pad_int(p_val, 1) failed for p >= 100 hPa)
+  p_str = adjustl(p_str)
 
   ! Build unique system output targets natively using context pressure levels
   fnameout_u = trim(dir_out)//'ua'//trim(p_str)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
