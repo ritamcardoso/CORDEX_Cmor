@@ -509,20 +509,24 @@ used only when `OMP_FLAG` is set in `env.site.sh`. The job then asks for `CPUS[v
 programs mostly read files.
 
 **Convection indices (`cape` varset).** `RCM_sfc_cape.f90` writes, every hour, `cape` and
-`cin` (J kg-1), `li` (K) and `lcl` (m above ground) for a parcel lifted from the lowest model
-level. The LCL is exact (Romps 2017, with the real Lambert W₋₁ branch); below it the parcel
+`cin` (J kg-1) and `li` (K) for a parcel lifted from the lowest model level, through every
+model level up to the model top. The LCL is exact (Romps 2017, with the real Lambert W₋₁ branch); below it the parcel
 follows the dry adiabat, above it the Bolton (1980, eq. 43) pseudo-adiabat (θe with the Romps
 T_LCL, inverted by Newton). Saturation uses the Wexler/ITS-90 formula with the enhancement
 factor (as `hurs`); the buoyancy uses the virtual temperature. CAPE and CIN follow
 RIP/NCL/wrf-python: the LCL and the zero crossings of the buoyancy are inserted in the
 column, the energy is accumulated with the trapezoidal rule, the EL is the highest level of
-positive buoyancy (up to 100 hPa) and the LFC the level of minimum energy below it;
+positive buoyancy and the LFC the level of minimum energy below it;
 `cape = E(EL) - E(LFC)`, `cin = -E(LFC)`. Without an EL `cape = cin = 0` (so `cin` is 0, not
 missing, where there is no CAPE). `li = T(500 hPa) - T_parcel(500 hPa)`, with the
-environment interpolated in log(p). `cin`, `li` and `lcl` are archived through the
+environment interpolated in log(p). `cin` and `li` are archived through the
 companion varset `cape_x` (`CP_EXTRA`); `capemax`, `cinmax` and `limax` are the daily maxima
 made by `tools/aggregate.sh` from the hourly files. About 57 µs per column and hour
-(EUR-12: ~24 h and ~25 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
+(EUR-12: ~24 h and ~18 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
+The LCL height above ground, `lcl` (not a CORDEX variable), is written by `RCM_sfc_lcl.f90`
+(`lcl` varset, not in `ORDER`) from the same parcel and the same Romps (2017) solution. It reads
+only the lowest model levels. The earlier `RCM_sfc_cape.f90`, which also wrote `lcl`, is in
+`f90_src/deprecated` (and its OpenMP copy in `f90_src_parallel/deprecated`).
 
 **Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map` and `plev_interp` (`shared_subs_v2.f90`).
 - `plev_map` builds, for the pressure level, a map of the model level k with p(k) ≥ p_level > p(k+1) at every point.
