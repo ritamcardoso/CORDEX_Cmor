@@ -1,4 +1,4 @@
-! rsusLut: no CORDEX_Cmor program yet; as rsus (ACSWUPB I_ACSWUPB); no land-use tiles in WRF: grid-cell value
+! rsusLut: RCM_sfc_rad (ACSWUPB I_ACSWUPB) with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'ACSWUPB'
 vaid = 'rsusLut'
 vunts = 'W m-2'

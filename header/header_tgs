@@ -1,4 +1,4 @@
-! tgs: no CORDEX_Cmor program yet; TGB (Noah-MP bare ground)
+! tgs: RCM_sfc_tgs — Noah-MP bare-ground temperature TGB
 wrfvar = 'TGB'
 vaid = 'tgs'
 vunts = 'K'

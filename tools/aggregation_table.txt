@@ -414,6 +414,13 @@ tran|tran|mean|area: mean where land time: mean|Transpiration|mean|area: mean wh
 lai|lai|mean|area: mean where land time: mean|Leaf Area Index|mean|area: mean where land time: mean|Leaf Area Index
 vegFrac|vegFrac|mean|area: mean where land time: mean|Total Vegetated Percentage Cover|mean|area: mean where land time: mean|Total Vegetated Percentage Cover
 alb|alb|mean|area: time: mean|Albedo|mean|area: time: mean|Albedo
+albc|albc|mean|area: mean where land time: mean|Canopy Albedo|mean|area: mean where land time: mean|Canopy Albedo
+tcs|tcs|mean|area: mean where land time: mean|Vegetation Canopy Temperature|mean|area: mean where land time: mean|Vegetation Canopy Temperature
+tgs|tgs|mean|area: mean where land time: mean|Surface Bare Soil Temperature|mean|area: mean where land time: mean|Surface Bare Soil Temperature
+interception|interception|mean|area: mean where land time: mean|Canopy Water Amount|mean|area: mean where land time: mean|Canopy Water Amount
+rough|rough|mean|area: time: mean|Roughness Length|mean|area: time: mean|Roughness Length
+cVeg|cVeg|mean|area: mean where land time: mean|Carbon Mass in Vegetation|mean|area: mean where land time: mean|Carbon Mass in Vegetation
+npp|npp|mean|area: mean where land time: mean|Net Primary Production on Land as Carbon Mass Flux|mean|area: mean where land time: mean|Net Primary Production on Land as Carbon Mass Flux
 # Land-cover fractions (landuse varset; LUCAS, hourly instantaneous)
 treeFrac|treeFrac|mean|area: mean time: mean|Tree Cover Percentage|mean|area: mean time: mean|Tree Cover Percentage
 shrubFrac|shrubFrac|mean|area: mean time: mean|Percentage Cover by Shrub|mean|area: mean time: mean|Percentage Cover by Shrub
@@ -424,5 +431,12 @@ urbanFrac|urbanFrac|mean|area: mean time: mean|Percentage of the Grid Cell Occup
 cnc|cnc|mean|area: mean time: mean|Canopy Covered Area Percentage|mean|area: mean time: mean|Canopy Covered Area Percentage
 clgvi|clgvi|mean|area: time: mean|Vertical integral of mass content of graupel|mean|area: time: mean|Vertical integral of mass content of graupel
 clhvi|clhvi|mean|area: time: mean|Vertical integral of mass content of hail|mean|area: time: mean|Vertical integral of mass content of hail
+treeFracBdlDcd|treeFracBdlDcd|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Broadleaf Deciduous Trees|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Broadleaf Deciduous Trees
+treeFracBdlEvg|treeFracBdlEvg|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Broadleaf Evergreen Trees|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Broadleaf Evergreen Trees
+treeFracNdlDcd|treeFracNdlDcd|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Needleleaf Deciduous Trees|mean|area: mean time: mean|Percentage of Entire Grid Cell Covered by Needleleaf Deciduous Trees
+residualFrac|residualFrac|mean|area: mean time: mean|Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil|mean|area: mean time: mean|Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil
+
 # Not in the CORDEX-CMIP6 tables (RCM_sfc_cape)
 lcl|lcl|mean|area: time: mean|Lifting Condensation Level Height above Ground|mean|area: time: mean|Lifting Condensation Level Height above Ground
+# FPS-LUCAS Lut variables (lut varset; grid-cell values), daily in LUCAS
+laiLut|laiLut|mean|area: mean where land time: mean|Leaf Area Index on Land-Use Tile|mean|area: mean where land time: mean|Leaf Area Index on Land-Use Tile

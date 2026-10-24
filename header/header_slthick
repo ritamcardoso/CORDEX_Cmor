@@ -1,4 +1,4 @@
-! slthick: no CORDEX_Cmor program yet; DZS (Noah-MP soil layers)
+! slthick: RCM_fx_slthick — DZS on the soil layers (fx)
 wrfvar = 'DZS'
 vaid = 'slthick'
 vunts = 'm'

@@ -1,4 +1,4 @@
-! landCoverFrac: no CORDEX_Cmor program yet; one field per land-use class (needs a 3-D fx writer)
+! landCoverFrac: RCM_fx_landCoverFrac — LANDUSEF of every land-use category (fx, vegtype dimension)
 wrfvar = 'LANDUSEF'
 vaid = 'landCoverFrac'
 vunts = '%'

@@ -1,4 +1,4 @@
-! interception: no CORDEX_Cmor program yet; needs CANLIQ CANICE (Noah-MP canopy liquid and ice)
+! interception: RCM_sfc_interception — Noah-MP CANLIQ + CANICE
 wrfvar = 'CANLIQ'
 vaid = 'interception'
 vunts = 'kg m-2'

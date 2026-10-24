@@ -1,4 +1,4 @@
-! cVeg: no CORDEX_Cmor program yet; needs LFMASS STMASS WOOD (Noah-MP, g m-2: factor 0.001); dynamic vegetation only
+! cVeg: RCM_sfc_cVeg — Noah-MP LFMASS + RTMASS + STMASS + WOOD (g m-2 -> kg m-2); dynamic vegetation (opt_dveg) only
 wrfvar = 'LFMASS'
 vaid = 'cVeg'
 vunts = 'kg m-2'

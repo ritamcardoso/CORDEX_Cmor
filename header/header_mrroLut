@@ -1,5 +1,5 @@
-! mrroLut: no CORDEX_Cmor program yet; needs RUNSF RUNSB (as mrro); no land-use tiles in WRF: grid-cell value
-wrfvar = 'RUNSF'
+! mrroLut: RCM_sfc_mrro (RUNSF + RUNSB) with this header — no land-use tiles in WRF: the grid-cell value
+wrfvar = 'RUNSB'
 vaid = 'mrroLut'
 vunts = 'kg m-2 s-1'
 lname = 'Total Runoff on Land-Use Tile'

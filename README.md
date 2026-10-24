@@ -462,6 +462,26 @@ uses). `RCM_fx_rootd.f90` writes `rootd`, the depth of the top `NROOT` soil laye
 (`sdepth`) of the dominant land-use class (`LU_INDEX`); `NROOT` is that of WRF's
 `VEGPARM.TBL` / Noah-MP's `NoahmpTable.TBL` (`nroot_modis`, `nroot_usgs` in `datvar_s`).
 
+**Further FPS-LUCAS variables.**
+- `lsm` varset (Noah-MP, 1hr, instantaneous unless stated). One program each:
+  - `tcs` (TV), `tgs` (TGB), `interception` (CANLIQ + CANICE), `rough` (ZNT, every cell);
+  - `cVeg` (LFMASS + RTMASS + STMASS + WOOD, g m-2 → kg m-2, taken as carbon mass);
+  - `npp` (NPP, hourly mean, g → kg).
+
+  `cVeg` and `npp` are meaningful only with dynamic vegetation (`opt_dveg`).
+- `irr` varset: `irrLut` is the hourly change of the accumulated irrigation water IRSIVOL + IRMIVOL + IRFIVOL, divided by 3600 s. It needs `opt_irr` > 0 and the three fields added to wrfout (`iofields_filename`: `+:h:0:IRSIVOL,IRMIVOL,IRFIVOL`).
+- `lut` varset: WRF has no land-use tiles, so the twelve `…Lut` variables are the grid-cell values. Each is written by the program of the corresponding variable with its own Lut header: `hflsLut`, `hfssLut`, `hussLut`, `tasLut`, `tslsiLut`, `laiLut`, `mrroLut`, `mrsoLut`, `mrsosLut`, `rlusLut`, `rsusLut`, and `sweLut` (snw × 0.001, m).
+- `fx` varset:
+  - `slthick` (`RCM_fx_slthick`: DZS on the soil layers, with depth and depth_bnds);
+  - `landCoverFrac` (`RCM_fx_landCoverFrac`: LANDUSEF of every category, with a `vegtype` string coordinate naming the MODIS or USGS classes).
+- `fx` and `landuse` varsets: `treeFracBdlDcd`, `treeFracBdlEvg`, `treeFracNdlDcd` (the pure forest classes) and `residualFrac` (urban, including LCZ, plus snow/ice). These are new groups in `landuse_field`.
+
+- `plev_vortmen0` and `plev_vortmen1` varsets: `RCM_plev_vortmen` writes the relative vorticity `vortmen<p>` (s-1, every `wp_step` hours) on the same pressure levels as the other pressure-level variables. It is computed on the model levels as in wrf-python, m² [∂(v/m_v)/∂x − ∂(u/m_u)/∂y] from U, V and the map factors, with centred differences (one extra row and column read around the output window). It is then interpolated in log(p) as for `wap`. LUCAS asks for 3hr: set `wp_step = 3` in the grid's ini for that.
+
+- `lsm` varset: `albc` (`RCM_sfc_albc`, 1hr) is the surface albedo ALBEDO times the vegetated fraction of the cell. That fraction comes from the LANDUSEF classes of `cnc` (tree, shrub, grass and crop), read from the same wrfout file, so it follows the land-use maps.
+
+Not available from WRF: `pastureFrac` (no pasture class).
+
 **Wind gust (`gust` varset).** `wsgsmax` (daily maximum near-surface wind speed of
 gust) is the maximum of the hourly gusts of each day, from `RCM_sfc_wsgsmax.f90`. If the
 wrfout files have `QKE` (twice the MYNN TKE), it follows Brasseur (2001) as the CORDEX-WRF

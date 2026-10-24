@@ -1,9 +1,9 @@
-! albc: no CORDEX_Cmor program yet; no canopy albedo in the WRF output
-wrfvar = ''
+! albc: RCM_sfc_albc — ALBEDO x vegetated fraction of the cell (LANDUSEF, cnc classes)
+wrfvar = 'ALBEDO'
 vaid = 'albc'
 vunts = '1'
 lname = 'Canopy Albedo'
 stname = 'canopy_albedo'
-cmethods = 'area: mean where land time: mean'
+cmethods = 'area: mean where land time: point'
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

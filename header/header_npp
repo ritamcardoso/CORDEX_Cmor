@@ -1,4 +1,4 @@
-! npp: no CORDEX_Cmor program yet; NPP (Noah-MP, g m-2 s-1: factor 0.001); dynamic vegetation only
+! npp: RCM_sfc_npp — hourly mean of the Noah-MP NPP (g m-2 s-1 C -> kg m-2 s-1); dynamic vegetation (opt_dveg) only
 wrfvar = 'NPP'
 vaid = 'npp'
 vunts = 'kg m-2 s-1'

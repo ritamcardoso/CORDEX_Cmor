@@ -1,4 +1,4 @@
-! treeFracNdlDcd: no CORDEX_Cmor program yet; LANDUSEF MODIS class 3
+! treeFracNdlDcd: RCM_fx_landuse / RCM_sfc_landuse — LANDUSEF MODIS class 3, USGS 12 (landuse_field)
 wrfvar = 'LANDUSEF'
 vaid = 'treeFracNdlDcd'
 vunts = '%'
