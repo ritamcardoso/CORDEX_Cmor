@@ -68,7 +68,7 @@ for vs in "${!CP_EXTRA[@]}"; do
 done
 
 #
-#--- 4. ADVANCE_YEAR[]/CP_TIME[]/MEM[] keys are real varsets ----
+#--- 4. ADVANCE_YEAR[]/CP_TIME[]/MEM[]/CPUS[] keys are real varsets
 # Catches typos in the keys of these arrays.
 #
 for vs in "${!ADVANCE_YEAR[@]}"; do
@@ -84,6 +84,13 @@ done
 for vs in "${!MEM[@]}"; do
   if [ -z "${VARSETS[$vs]+x}" ]; then
     err "MEM[$vs] is set but '$vs' is not in VARSETS[]."
+  fi
+done
+for vs in "${!CPUS[@]}"; do
+  if [ -z "${VARSETS[$vs]+x}" ]; then
+    err "CPUS[$vs] is set but '$vs' is not in VARSETS[]."
+  elif ! [[ "${CPUS[$vs]}" =~ ^[1-9][0-9]*$ ]]; then
+    err "CPUS[$vs]=\"${CPUS[$vs]}\" is not a positive integer."
   fi
 done
 

@@ -146,8 +146,9 @@ done
 
 #
 #--- Per-varset flags for run_out_generic.sh / run_cp_generic.sh -
-# For run_out_generic.sh / run_cp_generic.sh: job name, --time, --mem and
-# log files from config/varsets.sh for the varset (4th argument).
+# For run_out_generic.sh / run_cp_generic.sh: job name, --time, --mem,
+# --cpus-per-task (CPUS, with OMP_FLAG only) and log files from
+# config/varsets.sh for the varset (4th argument).
 #
 if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_generic.sh ]] && [ $# -ge 4 ]; then
   vs="$4"
@@ -158,9 +159,13 @@ if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_gener
     source "${VARSETS_FILE}" >/dev/null 2>&1
     if [ -z "${VARSETS[$vs]+x}" ]; then echo "UNKNOWN|"; exit 0; fi
     if [ "${prefix}" = wrf ]; then
-      printf '%s|\n' "${TIME[$vs]:-}" "${MEM[$vs]:-${DEFAULT_MEM:-}}"
+      # CPUS only with OpenMP (OMP_FLAG in env.site.sh)
+      # shellcheck source=/dev/null
+      omp_flag="$( source "${env_file}" >/dev/null 2>&1; echo "${OMP_FLAG:-}" )"
+      cpus=""; [ -n "${omp_flag}" ] && cpus="${CPUS[$vs]:-}"
+      printf '%s|\n' "${TIME[$vs]:-}" "${MEM[$vs]:-${DEFAULT_MEM:-}}" "${cpus}"
     else
-      printf '%s|\n' "${CP_TIME[$vs]:-${DEFAULT_CP_TIME:-}}" ""
+      printf '%s|\n' "${CP_TIME[$vs]:-${DEFAULT_CP_TIME:-}}" "" ""
     fi
   )"
   mapfile -t vs_values <<< "${vs_settings}"
@@ -170,6 +175,7 @@ if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_gener
   fi
   vs_time="${vs_values[0]%|}"
   vs_mem="${vs_values[1]%|}"
+  vs_cpus="${vs_values[2]%|}"
 
   caller_has --job-name || caller_has -J || site_args+=("--job-name=${prefix}-${vs}")
   if ! caller_has --time && ! caller_has -t; then
@@ -180,6 +186,7 @@ if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_gener
     fi
   fi
   if [ -n "${vs_mem}" ] && ! caller_has --mem; then site_args+=("--mem=${vs_mem}"); fi
+  if [ -n "${vs_cpus}" ] && ! caller_has --cpus-per-task && ! caller_has -c; then site_args+=("--cpus-per-task=${vs_cpus}"); fi
   caller_has --output || caller_has -o || site_args+=("--output=${prefix}-${vs}.%j.out")
   caller_has --error  || caller_has -e || site_args+=("--error=${prefix}-${vs}.%j.out")
 fi

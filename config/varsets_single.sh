@@ -148,6 +148,21 @@ declare -A MEM=(
 )
 
 #
+#--- CPUS: OpenMP threads of the processing job (optional) ----
+# Used only when OMP_FLAG is set in env.site.sh: the varset's programs
+# that have an OpenMP version in f90_src_parallel are built from there,
+# submit.sh asks for --cpus-per-task=CPUS[varset] and the program runs
+# with as many threads. Without OMP_FLAG this array is ignored.
+#
+declare -A CPUS=(
+  [cape]=8         # the calculation is about half of the run
+  [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
+  [cloud2]=4
+  [cloud]=4
+  # The water paths (wpth1-4) are limited by reading the wrfout files: no gain.
+)
+
+#
 #--- CP_EXTRA: extra varset archived with this one ------------
 # Second varset archived after this one: the files that a program writes
 # alongside the variable it is named for (ua* from the uava programs;

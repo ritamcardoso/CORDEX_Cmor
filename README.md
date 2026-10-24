@@ -473,6 +473,12 @@ PBLH/2000)))`. The method is chosen from the first wrfout file and written to th
 It is not in `ORDER`: `./run.sh <experiment> 2000 2010 gust`.
 The graupel and hail paths `clgvi`, `clhvi` are in the `wpth4` varset (not in `ORDER`).
 
+**OpenMP versions (optional).** `f90_src_parallel/` has OpenMP versions of the CAPE, cloud and
+water-path programs (the same code with directives that share out the grid columns). They are
+used only when `OMP_FLAG` is set in `env.site.sh`. The job then asks for `CPUS[varset]` cores
+(`config/varsets.sh`). See `f90_src_parallel/README.md`; only `cape` gains much, since the other
+programs mostly read files.
+
 **Convection indices (`cape` varset).** `RCM_sfc_cape.f90` writes, every hour, `cape` and
 `cin` (J kg-1), `li` (K) and `lcl` (m above ground) for a parcel lifted from the lowest model
 level. The LCL is exact (Romps 2017, with the real Lambert W₋₁ branch); below it the parcel

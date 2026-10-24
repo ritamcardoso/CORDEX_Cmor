@@ -192,8 +192,20 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     # Builds the shared module, the shared subroutines and the program, then
     # runs it; any failure stops the job (see "Failure handling").
     #
-    $FC $FFLAGS -c "${PROG_DIR}/${MOD_NAME}.f90" || fail "compiling ${MOD_NAME}.f90 failed"
-    $FC $FFLAGS -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC || fail "compiling ${SUB_NAME}.f90 failed"
+    # OpenMP (optional): with OMP_FLAG set in env.site.sh, a program that has
+    # a version in f90_src_parallel is built from there with OMP_FLAG and runs
+    # with SLURM_CPUS_PER_TASK threads (CPUS in config/varsets.sh).
+    src_dir="${PROG_DIR}"; omp=""
+    par_dir="${PROG_DIR_PARALLEL:-${PROG_DIR%/}_parallel}"
+    if [ -n "${OMP_FLAG:-}" ] && [ -f "${par_dir}/${PROG_NAME}.f90" ]; then
+      src_dir="${par_dir}"; omp="${OMP_FLAG}"
+      export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"
+      echo "OpenMP: ${PROG_NAME} from ${par_dir}, ${OMP_NUM_THREADS} thread(s)"
+    fi
+    # shellcheck disable=SC2086
+    $FC $FFLAGS $omp -c "${PROG_DIR}/${MOD_NAME}.f90" || fail "compiling ${MOD_NAME}.f90 failed"
+    # shellcheck disable=SC2086
+    $FC $FFLAGS $omp -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC || fail "compiling ${SUB_NAME}.f90 failed"
     # Every -L folder in ALL_LIBS is also written into the executable
     # (rpath), so it finds the NetCDF/HDF5 libraries it was linked with even
     # when the loaded modules don't put them on LD_LIBRARY_PATH.
@@ -202,7 +214,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
       case "$w" in -L?*) RPATH+=" -Wl,-rpath,${w#-L}" ;; esac
     done
     # shellcheck disable=SC2086
-    $FC $FFLAGS ${PROG_DIR}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
+    $FC $FFLAGS $omp ${src_dir}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
       || fail "compiling ${PROG_NAME}.f90 failed"
 
     touch repack_marker
