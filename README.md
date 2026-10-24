@@ -479,8 +479,7 @@ uses). `RCM_fx_rootd.f90` writes `rootd`, the depth of the top `NROOT` soil laye
 - `plev_vortmen0` and `plev_vortmen1` varsets: `RCM_plev_vortmen` writes the relative vorticity `vortmen<p>` (s-1, every `wp_step` hours) on the same pressure levels as the other pressure-level variables. It is computed on the model levels as in wrf-python, m² [∂(v/m_v)/∂x − ∂(u/m_u)/∂y] from U, V and the map factors, with centred differences (one extra row and column read around the output window). It is then interpolated in log(p) as for `wap`. LUCAS asks for 3hr: set `wp_step = 3` in the grid's ini for that.
 
 - `lsm` varset: `albc` (`RCM_sfc_albc`, 1hr) is the surface albedo ALBEDO times the vegetated fraction of the cell. That fraction comes from the LANDUSEF classes of `cnc` (tree, shrub, grass and crop), read from the same wrfout file, so it follows the land-use maps.
-
-Not available from WRF: `pastureFrac` (no pasture class).
+- `fx` and `landuse` varsets: `pastureFrac` is the grassland class (MODIS 10, USGS 7). The WRF land-use tables have no pasture class, so grassland is taken as pasture; it is also counted in `grassFrac`.
 
 **Wind gust (`gust` varset).** `wsgsmax` (daily maximum near-surface wind speed of
 gust) is the maximum of the hourly gusts of each day, from `RCM_sfc_wsgsmax.f90`. If the

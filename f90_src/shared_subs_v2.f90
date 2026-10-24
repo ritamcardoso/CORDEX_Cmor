@@ -1222,6 +1222,8 @@ subroutine landuse_field(fname, lu_out)
 !   treeFracBdlDcd, treeFracBdlEvg, treeFracNdlDcd, treeFracNdlEvg: the pure forest
 !   classes of each leaf type and phenology (mixed forest and the mosaics in none);
 !   residualFrac: land neither vegetated nor bare (urban, incl. LCZ, and snow/ice);
+!   pastureFrac: the grassland class (MODIS 10, USGS 7), taken as pasture (the tables have
+!   no pasture class; it is also part of grassFrac);
 !   lcvr: LU_INDEX. Water, snow/ice and ungrouped wetland count in none of the others.
 ! The table follows the MMINLU attribute of the file: MODIFIED_IGBP_MODIS_NOAH
 ! (LCZ urban classes 51-61) or USGS (LCZ 31-41). No sea mask.
@@ -1253,7 +1255,8 @@ integer, dimension(21), parameter :: &
   md_bdlevg= [0,1,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
   md_ndldcd= [0,0,1,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
   md_bdldcd= [0,0,0,1,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0], &
-  md_resid = [0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1, 0,0,0,0,0, 0]
+  md_resid = [0,0,0,0,0, 0,0,0,0,0, 0,0,1,0,1, 0,0,0,0,0, 0], &
+  md_past  = [0,0,0,0,0, 0,0,0,0,1, 0,0,0,0,0, 0,0,0,0,0, 0]
 !
 ! weights per category, USGS:
 !  1 urban  2 dryland crop  3 irrigated crop  4 mixed dry/irrigated crop  5 crop/grassland mosaic
@@ -1272,7 +1275,8 @@ real, dimension(24), parameter :: &
   us_ndldcd= [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,1.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
   us_bdlevg= [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,1.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
   us_ndlevg= [0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,1.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.], &
-  us_resid = [1.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,1.]
+  us_resid = [1.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,1.], &
+  us_past  = [0.,0.,0.,0.,0., 0.,1.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.,0., 0.,0.,0.,0.]
 !
 lu_st = nf90_open(trim(fname), nf90_nowrite, lu_ncid)
 call ncerror(lu_st,'opening '//trim(fname))
@@ -1315,6 +1319,7 @@ else
       case ('treeFracNdlDcd'); g(1:21) = md_ndldcd
       case ('treeFracNdlEvg'); g(1:21) = md_ndlevg
       case ('residualFrac');   g(1:21) = md_resid
+      case ('pastureFrac');    g(1:21) = md_past
       case default
         print *, 'ERROR: landuse_field does not know the variable ', trim(vaid)
         stop 95
@@ -1335,6 +1340,7 @@ else
       case ('treeFracNdlDcd'); g = us_ndldcd
       case ('treeFracNdlEvg'); g = us_ndlevg
       case ('residualFrac');   g = us_resid
+      case ('pastureFrac');    g = us_past
       case default
         print *, 'ERROR: landuse_field does not know the variable ', trim(vaid)
         stop 95
