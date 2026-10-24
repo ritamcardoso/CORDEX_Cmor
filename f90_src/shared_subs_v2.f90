@@ -1587,8 +1587,8 @@ end subroutine landuse_field
 !
 pure function qvs_wexler(tk, pa) result(qs)
 ! saturation mixing ratio (kg kg-1) over water at tk (K) and pa (Pa): ITS-90 / Wexler
-! saturation vapour pressure with the enhancement factor (Goff 1949, over ice below
-! 0 degC), as RCM_sfc_hurs and humidity_utils.f90
+! saturation vapour pressure with the enhancement factor of Hardy (1998) (es_wexler_dt),
+! as RCM_sfc_hurs and RCM_sfc_hurscan
 real(kind=8), intent(in) :: tk, pa
 real(kind=8) :: qs, dqs
 call qvs_wexler_dt(tk, pa, qs, dqs)
@@ -1598,8 +1598,11 @@ end function qvs_wexler
 !
 pure subroutine es_wexler_dt(tk, pa, es, des)
 ! saturation vapour pressure es (Pa) over water at tk (K) in moist air at pa (Pa) and its
-! exact derivative des = d es / d tk (Pa K-1): ITS-90 / Wexler formula with the enhancement
-! factor (Goff 1949; the coefficients for ice below 0 degC), as RCM_sfc_hurs. Used by
+! exact derivative des = d es / d tk (Pa K-1): ITS-90 formula of Wexler (1976) for water,
+! times the enhancement factor of moist air (Greenspan 1976, ITS-90 coefficients of Hardy
+! 1998: water 0 to 100 degC, and supercooled water -50 to 0 degC below 0 degC)
+!   f = exp[ fa (1 - ew/pa) + exp(fb) (pa/ew - 1) ],  fa, fb cubics in t (degC)
+! (f ~ 1.004 at 20 degC and 1000 hPa). Used by RCM_sfc_hurs, RCM_sfc_hurscan,
 ! qvs_wexler_dt (CAPE) and RCM_sfc_evspsblpot (Penman-Monteith es and its slope).
 real(kind=8), intent(in) :: tk, pa
 real(kind=8), intent(out) :: es, des
@@ -1614,8 +1617,8 @@ tc = tk - 273.15d0
 ! Wexler / ITS-90 saturation vapour pressure and d ln(es) / dT
 ew = exp(a1/tk**2 + a2/tk + a3 + a4*tk + a5*tk**2 + a6*tk**3 + a7*tk**4 + a8*log(tk))
 dlnes = -2.d0*a1/tk**3 - a2/tk**2 + a4 + 2.d0*a5*tk + 3.d0*a6*tk**2 + 4.d0*a7*tk**3 + a8/tk
-! enhancement factor: ln f = fa (1 - ew/pa) + exp(fb) (ew/pa - 1), fa and fb cubics in tc
-if (tc < 0.d0) then
+! enhancement factor: ln f = fa (1 - ew/pa) + exp(fb) (pa/ew - 1), fa and fb cubics in tc
+if (tc < 0.d0) then                      ! supercooled water (Hardy 1998, -50 to 0 degC)
   fa  = fi1 + fi2*tc + fi3*tc**2 + fi4*tc**3
   dfa = fi2 + 2.d0*fi3*tc + 3.d0*fi4*tc**2
   fb  = fi5 + fi6*tc + fi7*tc**2 + fi8*tc**3
@@ -1627,8 +1630,9 @@ else
   dfb = fw6 + 2.d0*fw7*tc + 3.d0*fw8*tc**2
 endif
 eb   = exp(fb)
-fact = exp(fa*(1.d0 - ew/pa) + eb*(ew/pa - 1.d0))
-dlnf = dfa*(1.d0 - ew/pa) + eb*dfb*(ew/pa - 1.d0) + (eb - fa)*ew*dlnes/pa
+fact = exp(fa*(1.d0 - ew/pa) + eb*(pa/ew - 1.d0))
+! d ln f / dT, with d ew / dT = ew dlnes
+dlnf = dfa*(1.d0 - ew/pa) + eb*dfb*(pa/ew - 1.d0) - fa*ew*dlnes/pa - eb*(pa/ew)*dlnes
 es  = ew*fact
 des = es*(dlnes + dlnf)
 end subroutine es_wexler_dt
