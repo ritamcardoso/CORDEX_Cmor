@@ -168,6 +168,7 @@ subroutine calc_rh
 ! Calculates relative humidity.
 ! Following WMO, supercooled water is assumed for temperatures below 0ºC and esat is always calculated in reference to water.
 ! Enhancement factor is used calculate the effective esat in the presence of other gases
+! esat (with the enhancement factor) from es_wexler_dt (shared_subs_v2.f90), as cape and evspsblpot.
 !
 ! REFERENCES
 ! Wexler, A., Vapor Pressure Formulation for Water in Range 0 to 100°C. A Revision, Journal of Research of the National Bureau of Standards <96> A. Physics and Chemistry, September <96> December 1976, Vol. 80A, Nos.5 and 6, 775-785
@@ -175,19 +176,8 @@ subroutine calc_rh
 ! Wexler, A., Vapor Pressure Formulation for Ice, Journal of Research of the National Bureau of Standards <96> A. Physics and Chemistry, January <96> February 1977, Vol. 81A, No. 1, 5-19
 !
 ! Goff, J. A., Standardization of Thermodynamic Properties of Moist Air, Heating, Piping, and Air Conditioning, 1949, Vol. 21, 118.
-!
-real(kind=8) :: fact
-real, dimension(nlon,nlat) :: TK
-real(kind=8), parameter :: a1=-2.8365744e3,a2=-6.028076559e3,a3=19.54263612,a4=-2.737830188e-2
-real(kind=8), parameter :: a5=1.6261698e-5,a6=7.0229056e-10,a7=-1.8680009e-13,a8=2.7150305
-real(kind=8), parameter :: b1=-5.8666426e3,b2=22.32870244,b3=1.39387003e-2,b4=-3.4262402e-5
-real(kind=8), parameter :: b5=2.7040955e-8,b6=6.7063522e-1
-real(kind=8), parameter :: fi1=3.62183e-4,fi2=2.6061244e-5,fi3=3.8667770e-7,fi4=3.8268958e-9,fi5=-10.7604,fi6=6.3987441e-2, &
-                           fi7=-2.6351566e-4,fi8=1.6725084e-6
-real(kind=8), parameter :: fw1=3.536240e-4,fw2=2.932836e-5,fw3=2.616898e-7,fw4=8.581361e-9,fw5=-10.75880,fw6=6.326813e-2, &
-                           fw7=-2.536893e-4,fw8=6.340529e-7
-!
-TK=t2-273.15
+! Hardy, B., ITS-90 formulations for vapor pressure, frostpoint temperature, dewpoint temperature, and enhancement
+!   factors in the range -100 to +100 C, Proc. Third International Symposium on Humidity and Moisture, 1998.
 !
 do i=1,nlon
   do j=1,nlat
@@ -198,17 +188,11 @@ do i=1,nlon
         
     e_sfc(i,j)=(mr(i,j)/(epsilon+mr(i,j)))*psf(i,j)
 !
-    esat(i,j)=exp(a1*t2(i,j)**-2+a2/t2(i,j)+a3+a4*t2(i,j)+a5*t2(i,j)**2+a6*t2(i,j)**3+a7*t2(i,j)**4+a8*log(t2(i,j))) ! ITS-90 @ -100C to 100C. From 0C to 100C is comparable to Wexler's eq15
+    ! saturation vapour pressure over water in moist air (ITS-90 / Wexler x enhancement factor, Pa)
+    call es_wexler_dt(real(t2(i,j), 8), real(psf(i,j), 8), es_pa, des_pa)
+    esat(i,j)=real(es_pa)
 !
-    if(TK(i,j) < 0.)then              ! below 0 degC: enhancement factor over ice
-      fact=exp((fi1+fi2*TK(i,j)+fi3*TK(i,j)**2+fi4*TK(i,j)**3)*(1.-(esat(i,j)/psf(i,j)))+ &
-                    exp(fi5+fi6*TK(i,j)+fi7*TK(i,j)**2+fi8*TK(i,j)**3)*((esat(i,j)/psf(i,j))-1.d0))
-    else
-      fact=exp((fw1+fw2*TK(i,j)+fw3*TK(i,j)**2+fw4*TK(i,j)**3)*(1.-(esat(i,j)/psf(i,j)))+ &
-                    exp(fw5+fw6*TK(i,j)+fw7*TK(i,j)**2+fw8*TK(i,j)**3)*((esat(i,j)/psf(i,j))-1.d0))
-    endif
-!
-    mr_sat(i,j)=epsilon*(esat(i,j)*fact)/(psf(i,j)-(esat(i,j)*fact))
+    mr_sat(i,j)=epsilon*esat(i,j)/(psf(i,j)-esat(i,j))
 !
     outvar(i,j)=max(min(mr(i,j)/mr_sat(i,j),1.),0.0)*100.
   enddo
