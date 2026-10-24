@@ -217,7 +217,7 @@ husscan,FPS-URB-RCC,URB-RCC,1,i,x,,,x,x,,Near-Surface Specific Humidity within c
 sfcWindcan,FPS-URB-RCC,URB-RCC,m s-1,i,x,,,x,x,,Near-Surface Wind Speed within canyon,wind_speed_canyon,UCAN_URB2D,CORDEX_Cmor: RCM_sfc_sfcWindcan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 lai,FPS-LUCAS,CORE,1,i,,,,x,,,leaf area index,leaf_area_index,LAI,CORDEX_Cmor: RCM_sfc_lai (lsm varset); LUCAS name LAI
 alb,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_alb (lsm varset)
-albc,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,-,not produced by CORDEX_Cmor; header ready; no canopy albedo in the WRF output
+albc,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,ALBEDO LANDUSEF,CORDEX_Cmor: RCM_sfc_albc (lsm varset); ALBEDO x vegetated fraction of the cell (LANDUSEF classes of cnc)
 baresoilFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Bare Soil Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 cnc,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage of area covered by vegetation.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF tree+shrub+grass+crop (landuse_field in shared_subs_v2.f90)
 cropFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage Crop Cover,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)

@@ -414,6 +414,7 @@ tran|tran|mean|area: mean where land time: mean|Transpiration|mean|area: mean wh
 lai|lai|mean|area: mean where land time: mean|Leaf Area Index|mean|area: mean where land time: mean|Leaf Area Index
 vegFrac|vegFrac|mean|area: mean where land time: mean|Total Vegetated Percentage Cover|mean|area: mean where land time: mean|Total Vegetated Percentage Cover
 alb|alb|mean|area: time: mean|Albedo|mean|area: time: mean|Albedo
+albc|albc|mean|area: mean where land time: mean|Canopy Albedo|mean|area: mean where land time: mean|Canopy Albedo
 tcs|tcs|mean|area: mean where land time: mean|Vegetation Canopy Temperature|mean|area: mean where land time: mean|Vegetation Canopy Temperature
 tgs|tgs|mean|area: mean where land time: mean|Surface Bare Soil Temperature|mean|area: mean where land time: mean|Surface Bare Soil Temperature
 interception|interception|mean|area: mean where land time: mean|Canopy Water Amount|mean|area: mean where land time: mean|Canopy Water Amount

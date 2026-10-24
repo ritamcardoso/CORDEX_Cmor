@@ -78,7 +78,7 @@ declare -A VARSETS=(
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_VAR:hurscan,husscan,sfcWindcan,tasblue,tsblue;RCM_sfc_ts:tsskin"
   # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
   # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
-  [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran,lai,vegFrac,alb,tcs,tgs,interception,rough,cVeg,npp"
+  [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran,lai,vegFrac,alb,albc,tcs,tgs,interception,rough,cVeg,npp"
   # FPS-LUCAS "...Lut" variables: WRF has no land-use tiles, so these are the grid-cell values,
   # written by the programs of the corresponding variables with the Lut headers. Not in ORDER:
   # ./run.sh <experiment> <first year> <last year> lut
@@ -141,7 +141,7 @@ declare -A TIME=(
   [zlev_va0]="19:00:00"
   [zlev_va1]="19:00:00"
   [urban]="14:00:00"
-  [lsm]="14:00:00"    # 12 variables (~1.2 h each)
+  [lsm]="16:00:00"    # 13 variables (~1.2 h each)
   [lut]="24:00:00"    # 12 variables, as rad (~1.3 h each) and mrso/mrsos (SMOIS)
   [irr]="04:00:00"
   [landuse]="10:00:00"

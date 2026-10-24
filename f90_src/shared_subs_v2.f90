@@ -1217,7 +1217,8 @@ subroutine landuse_field(fname, lu_out)
 ! from LANDUSEF / LU_INDEX of the wrfout file fname (RCM_fx_landuse, RCM_sfc_landuse):
 !   treeFrac, shrubFrac, grassFrac, cropFrac, baresoilFrac, urbanFrac: 100 * sum over
 !   the categories k of w(k) LANDUSEF(k), with the weight tables below (edit them to
-!   change the grouping; a mosaic class may be split); cnc: tree+shrub+grass+crop;
+!   change the grouping; a mosaic class may be split); cnc: tree+shrub+grass+crop (also
+!   for albc, the canopy albedo of RCM_sfc_albc);
 !   treeFracBdlDcd, treeFracBdlEvg, treeFracNdlDcd, treeFracNdlEvg: the pure forest
 !   classes of each leaf type and phenology (mixed forest and the mosaics in none);
 !   residualFrac: land neither vegetated nor bare (urban, incl. LCZ, and snow/ice);
@@ -1308,7 +1309,7 @@ else
       case ('cropFrac');     g(1:21) = md_crop
       case ('baresoilFrac'); g(1:21) = md_bare
       case ('urbanFrac');    g(1:21) = md_urban
-      case ('cnc');          g(1:21) = md_tree + md_shrub + md_grass + md_crop
+      case ('cnc', 'albc');  g(1:21) = md_tree + md_shrub + md_grass + md_crop
       case ('treeFracBdlDcd'); g(1:21) = md_bdldcd
       case ('treeFracBdlEvg'); g(1:21) = md_bdlevg
       case ('treeFracNdlDcd'); g(1:21) = md_ndldcd
@@ -1328,7 +1329,7 @@ else
       case ('cropFrac');     g = us_crop
       case ('baresoilFrac'); g = us_bare
       case ('urbanFrac');    g = us_urban
-      case ('cnc');          g = us_tree + us_shrub + us_grass + us_crop
+      case ('cnc', 'albc');  g = us_tree + us_shrub + us_grass + us_crop
       case ('treeFracBdlDcd'); g = us_bdldcd
       case ('treeFracBdlEvg'); g = us_bdlevg
       case ('treeFracNdlDcd'); g = us_ndldcd
