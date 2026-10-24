@@ -1,11 +1,8 @@
 program read_wrfout
 !
-! RCM_sfc_lsmflx — Noah-MP water fluxes (1hr, hourly means, kg m-2 s-1) from the
-! instantaneous rates of wrfout (mm s-1 = kg m-2 s-1):
-!
-!   evspsblsoi  EDIR    water evaporation from soil (ground surface)
-!   evspsblveg  ECAN    evaporation of the water intercepted by the canopy
-!   tran        ETRAN   transpiration
+! RCM_sfc_evspsblveg — evspsblveg, Evaporation from Canopy (1hr, hourly mean, kg m-2 s-1), from the Noah-MP
+! instantaneous rate ECAN of wrfout (evaporation of the water intercepted by the canopy; mm s-1 = kg m-2 s-1). The field read is
+! wrfvar of the header.
 !
 ! value of hour h = mean of the rates at the start and at the end of the hour,
 ! written at hh:30 with bounds hh:00-hh+1:00, as the other hourly means.
@@ -17,9 +14,6 @@ use shared_subs
 use netcdf
 !implicit none
 
-real, dimension(:,:), allocatable :: la_rate, la_ratep
-character(len=20) :: la_ratev
-
 ! --- Read configuration using shared_subs subroutine
 
 call init_cordex_environment
@@ -27,16 +21,6 @@ call init_cordex_environment
 ! --- Read Grid Information (Latitude, Longitude, LANDMASK) ---
 
 call read_geog
-
-select case (trim(vaid))
-  case ('evspsblsoi'); la_ratev = 'EDIR'
-  case ('evspsblveg'); la_ratev = 'ECAN'
-  case ('tran');       la_ratev = 'ETRAN'
-  case default
-    print *, 'ERROR: RCM_sfc_lsmflx does not know the variable ', trim(vaid)
-    stop 95
-end select
-write(*,*) trim(vaid), ' from ', trim(la_ratev)
 
 ! --- Initialising grid and time counters
 nz = 10
@@ -66,7 +50,8 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(la_rate(nlon,nlat), la_ratep(nlon,nlat))
+allocate(wrfv2D(nlon,nlat))
+allocate(outvar_i(nlon,nlat))
 
 it = 0
 yearf=yeari+1
@@ -131,14 +116,20 @@ do year = yeari, yearf,1
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening '//trim(infile))
 
-        call read_field(la_ratev, la_rate)
+        ! Read wrf var
+!
+        status=nf90_inq_varid(ncid,wrfvar,varid)
+        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
+!
+        status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
         if(it == 0)then
           it=it+1
-          la_ratep = la_rate
+          outvar_i = wrfv2D
           cycle loop_h
         endif
 
@@ -150,7 +141,7 @@ do year = yeari, yearf,1
 
         call calc_flux
 
-        la_ratep = la_rate
+        outvar_i = wrfv2D
 
       enddo loop_h    ! end hour
 !
@@ -172,29 +163,15 @@ contains
 !
 !----------------------------------------------------------------------------------------------------
 !
-subroutine read_field(vname, field)
-! one 2-D field of the open wrfout file (ncid), cut to the output grid
-character(len=*), intent(in) :: vname
-real, dimension(:,:), intent(out) :: field
-!
-status=nf90_inq_varid(ncid,trim(vname),varid)
-call ncerror(status,'getting var id '//trim(vname)//' in '//trim(infile))
-status=nf90_get_var(ncid,varid,field,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//trim(vname)//' from '//trim(infile))
-!
-end subroutine read_field
-!
-!----------------------------------------------------------------------------------------------------
-!
 subroutine calc_flux
 ! hourly mean flux (kg m-2 s-1) of hour issh; sea points missing
 !
 do ix=1,nlon
   do iy=1,nlat
     if (landmask(ix,iy) > 0.) then
-      outvar_h(ix,iy,issh) = 0.5 * (la_rate(ix,iy) + la_ratep(ix,iy))
+      outvar_h(ix,iy,issh) = 0.5 * (wrfv2D(ix,iy) + outvar_i(ix,iy))
     else
-      outvar_h(ix,iy,issh) = 1.e+20
+      outvar_h(ix,iy,issh) = huge_val
     endif
   enddo
 enddo

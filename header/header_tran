@@ -1,4 +1,4 @@
-wrfvar = 'ETRAN'        ! RCM_sfc_lsmflx: hourly mean of the rate ETRAN (mm s-1)
+wrfvar = 'ETRAN'        ! RCM_sfc_tran: hourly mean of the rate ETRAN (mm s-1)
 vaid = 'tran'
 vunts = 'kg m-2 s-1'
 lname = 'Transpiration'
