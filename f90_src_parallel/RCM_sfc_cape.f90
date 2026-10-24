@@ -6,13 +6,15 @@ program read_wrfout
 !
 !
 ! RCM_sfc_cape — convective diagnostics of the surface parcel (1hr, instantaneous), all
-! four written by one run (vaid = cape in the header; the others are companions, as ua
-! of RCM_plev_uava):
+! three written by one run (vaid = cape in the header; cin and li are companions,
+! archived through cape_x):
 !
 !   cape  Convective Available Potential Energy (J kg-1)
 !   cin   Convective Inhibition (J kg-1, positive)
 !   li    Lifted Index at 500 hPa (K): T_environment - T_parcel
-!   lcl   Lifting Condensation Level, height above ground (m)
+!
+! The lifting condensation level (lcl, not a CORDEX variable) is written by RCM_sfc_lcl;
+! the earlier version of this program, which also wrote it, is in f90_src/deprecated.
 !
 ! Parcel: the lowest model level (p = P + PB, T from theta = T + 300, r = QVAPOR).
 !  - LCL: exact solution of Romps (2017, J. Atmos. Sci. 74, 3891) for its height,
@@ -26,12 +28,12 @@ program read_wrfout
 !  - As RIP / NCL / wrf-python: the accumulated energy E(z) = int_0^z B dz (trapezoids);
 !    EL = highest level at or above the LCL with B >= 0; LFC = level between the LCL and
 !    the EL where E is minimum; CAPE = E(EL) - E(LFC), CIN = -E(LFC) (both >= 0).
-!    No EL (B < 0 everywhere above the LCL): CAPE = CIN = 0. The parcel is lifted up to
-!    100 hPa (the stratosphere above cannot hold an EL).
+!    No EL (B < 0 everywhere above the LCL): CAPE = CIN = 0. The parcel is lifted to
+!    the model top (every model level), as RIP / NCL / wrf-python.
 !  - LI: parcel at 500 hPa (dry adiabat if the LCL is above 500 hPa, else the theta_e
 !    pseudo-adiabat), environment T log(p)-interpolated; missing where the surface is
 !    above 500 hPa.
-! Fields from wrfout: P, PB, T, QVAPOR, PH, PHB (HGT for the LCL above ground).
+! Fields from wrfout: P, PB, T, QVAPOR, PH, PHB.
 ! All arrays and scalars are those of datvar_s.
 !
 ! Use external modules for variables and shared subroutines
@@ -49,7 +51,7 @@ call init_cordex_environment
 call read_geog
 
 allocate(p(nlon,nlat,nz), pb(nlon,nlat,nz), press(nlon,nlat,nz), t(nlon,nlat,nz), qv(nlon,nlat,nz))
-allocate(ph(nlon,nlat,nz+1), phb(nlon,nlat,nz+1), phi(nlon,nlat,nz+1), zhgt(nlon,nlat,nz), hgt(nlon,nlat))
+allocate(ph(nlon,nlat,nz+1), phb(nlon,nlat,nz+1), phi(nlon,nlat,nz+1), zhgt(nlon,nlat,nz))
 allocate(buoy_c(2*nz+4), zrel_c(2*nz+4), ben_c(2*nz+4))
 
 amonthi = pad_int(imonth, 2)
@@ -66,7 +68,7 @@ do year = yeari, yearf
 
   ntime = n_time_steps(year, imonth, nmonths, ihour, 1)
   allocate(ttime(ntime), bdtime(2, ntime))
-  allocate(outvar_h(nlon,nlat,ntime), cin_h(nlon,nlat,ntime), li_h(nlon,nlat,ntime), lcl_h(nlon,nlat,ntime))
+  allocate(outvar_h(nlon,nlat,ntime), cin_h(nlon,nlat,ntime), li_h(nlon,nlat,ntime))
   issh = 0
 
   do month = imonth, nmonths
@@ -110,11 +112,6 @@ do year = yeari, yearf
         call ncerror(status, 'getting var id PHB in '//trim(infile))
         status = nf90_get_var(ncid, varid, phb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
         call ncerror(status, 'reading PHB from '//trim(infile))
-
-        status = nf90_inq_varid(ncid, 'HGT', varid)
-        call ncerror(status, 'getting var id HGT in '//trim(infile))
-        status = nf90_get_var(ncid, varid, hgt, (/xoffset, yoffset/), (/nlon, nlat/))
-        call ncerror(status, 'reading HGT from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
@@ -163,7 +160,6 @@ do iy = 1, nlat
     th_par = t_par * (pconst / p_par)**rcp
     call romps_lcl(p_par, t_par, r_par, z_lcl, t_lcl, p_lcl)
     the_par = theta_e_bolton(t_par, p_par, r_par, t_lcl)
-    lcl_h(ix,iy,issh) = real(z_lcl + zhgt(ix,iy,1) - hgt(ix,iy))
 
     ! 2) lift the parcel: buoyancy on the model levels, with the LCL and the zero
     !    crossings inserted (heights relative to the parcel level)
@@ -172,7 +168,6 @@ do iy = 1, nlat
     klcl = 0
     t_lift = t_par
     level_loop: do k = 1, nz
-      if (press(ix,iy,k) < 1.e4) exit level_loop             ! up to 100 hPa (above it B < 0: no EL)
       insert_loop: do
         kk = kk + 1
         if (zhgt(ix,iy,k) - zhgt(ix,iy,1) < z_lcl) then
@@ -288,7 +283,7 @@ end subroutine calc_cape
 !-----------------------------------------------------------------------
 !
 subroutine write_output
-! one hourly file per variable and year: cape (the header), cin, li, lcl
+! one hourly file per variable and year: cape (the header), cin, li
 
 freq = '1hr'
 frequency = trim(adjustl(freq))
@@ -319,16 +314,11 @@ cellmethods = 'area: mean time: point'
 fnameout = trim(dir_out)//trim(varname)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
 call write_netcdf_rtime_3d(li_h, ntime, ttime, bdtime)
 
-varname = 'lcl'; vunits = 'm'; longname = 'Lifting Condensation Level Height above Ground'
-standardname = ''; cellmethods = 'area: mean time: point'
-fnameout = trim(dir_out)//trim(varname)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
-call write_netcdf_rtime_3d(lcl_h, ntime, ttime, bdtime)
-
 ! back to the header's variable for the next year
 varname = trim(adjustl(vaid)); vunits = trim(adjustl(vunts)); longname = trim(adjustl(lname))
 standardname = trim(adjustl(stname)); cellmethods = trim(adjustl(cmethods))
 
-deallocate(ttime, bdtime, outvar_h, cin_h, li_h, lcl_h)
+deallocate(ttime, bdtime, outvar_h, cin_h, li_h)
 
 end subroutine write_output
 !

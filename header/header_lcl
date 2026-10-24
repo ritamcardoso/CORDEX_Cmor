@@ -1,5 +1,5 @@
-! lcl: written by RCM_sfc_cape (varset cape, archived with cape_x), Romps (2017); metadata hard-coded there
-wrfvar = 'T'
+! lcl: RCM_sfc_lcl — Romps (2017) LCL of the lowest model level, height above ground (P PB T QVAPOR PH PHB HGT)
+wrfvar = 'QVAPOR'
 vaid = 'lcl'
 vunts = 'm'
 lname = 'Lifting Condensation Level Height above Ground'
