@@ -1,4 +1,3 @@
-! tasLut: RCM_sfc_tas with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'T2'
 vaid = 'tasLut'
 vunts = 'K'

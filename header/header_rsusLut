@@ -1,4 +1,3 @@
-! rsusLut: RCM_sfc_rad (ACSWUPB I_ACSWUPB) with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'ACSWUPB'
 vaid = 'rsusLut'
 vunts = 'W m-2'

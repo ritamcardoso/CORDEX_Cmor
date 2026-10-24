@@ -1,4 +1,3 @@
-! tgs: RCM_sfc_tgs — Noah-MP bare-ground temperature TGB
 wrfvar = 'TGB'
 vaid = 'tgs'
 vunts = 'K'

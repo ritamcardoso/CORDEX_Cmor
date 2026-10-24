@@ -1,4 +1,3 @@
-! li: written by RCM_sfc_cape (varset cape, archived with cape_x), 500 hPa; metadata hard-coded there
 wrfvar = 'T'
 vaid = 'li'
 vunts = 'K'

@@ -1,4 +1,3 @@
-! treeFracBdlEvg: RCM_fx_landuse / RCM_sfc_landuse — LANDUSEF MODIS class 2, USGS 13 (landuse_field)
 wrfvar = 'LANDUSEF'
 vaid = 'treeFracBdlEvg'
 vunts = '%'

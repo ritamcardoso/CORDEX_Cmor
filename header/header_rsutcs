@@ -6,5 +6,4 @@ stname = 'toa_outgoing_shortwave_flux_assuming_clear_sky'
 cmethods = 'area: time: mean'
 outstep = 6           ! hours (output step); CORDEX-CMIP6 6h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-! 
 !

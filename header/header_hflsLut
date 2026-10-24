@@ -1,4 +1,3 @@
-! hflsLut: RCM_sfc_hfls with this header — no land-use tiles in WRF: the grid-cell value
 wrfvar = 'LH'
 vaid = 'hflsLut'
 vunts = 'W m-2'

@@ -1,4 +1,3 @@
-! rough: RCM_sfc_rough — roughness length ZNT
 wrfvar = 'ZNT'
 vaid = 'rough'
 vunts = 'm'

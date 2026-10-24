@@ -1,4 +1,3 @@
-! rootd: RCM_fx_rootd (fx varset): sum of the top NROOT soil layers (sdepth) of the dominant class (LU_INDEX, VEGPARM.TBL NROOT)
 wrfvar = 'LU_INDEX'
 vaid = 'rootd'
 vunts = 'm'

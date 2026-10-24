@@ -1,4 +1,3 @@
-! irrLut: RCM_sfc_irrLut — hourly change of IRSIVOL + IRMIVOL + IRFIVOL (Noah-MP opt_irr; add them to wrfout with iofields); no land-use tiles in WRF: grid-cell value
 wrfvar = 'IRSIVOL'
 vaid = 'irrLut'
 vunts = 'kg m-2 s-1'

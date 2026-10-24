@@ -1,4 +1,3 @@
-! anthroheat: no CORDEX_Cmor program yet; not in the WRF history output; grid-cell average
 wrfvar = ''
 vaid = 'anthroheat'
 vunts = 'W m-2'

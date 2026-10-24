@@ -1,4 +1,3 @@
-! landCoverFrac: RCM_fx_landCoverFrac — LANDUSEF of every land-use category (fx, vegtype dimension)
 wrfvar = 'LANDUSEF'
 vaid = 'landCoverFrac'
 vunts = '%'

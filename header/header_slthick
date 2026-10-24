@@ -1,4 +1,3 @@
-! slthick: RCM_fx_slthick — DZS on the soil layers (fx)
 wrfvar = 'DZS'
 vaid = 'slthick'
 vunts = 'm'

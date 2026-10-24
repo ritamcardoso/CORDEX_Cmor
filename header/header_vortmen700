@@ -1,4 +1,3 @@
-! vortmen700: written by RCM_plev_vortmen (plev_vortmen varset); relative vorticity from U, V, MAPFAC_U/V/M, P, PB
 wrfvar = 'U'
 vaid = 'vortmen700'
 pres = 70000.

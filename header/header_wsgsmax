@@ -1,5 +1,3 @@
-! wsgsmax: RCM_sfc_wsgsmax (gust varset): Brasseur 2001 as CDXWRF if QKE is in wrfout
-!          (U V PH PHB HGT PBLH T QVAPOR QCLOUD QKE), else the UPP formula (U10 V10 U V PH PHB HGT PBLH)
 wrfvar = 'U10'         ! not used: the programs read their fields themselves
 vaid = 'wsgsmax'
 vunts = 'm s-1'

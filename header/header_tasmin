@@ -7,4 +7,4 @@ cmethods = 'area: mean time: minimum'
 outstep = 24           ! hours (24 = daily); CORDEX-CMIP6 24h, FPS-LUCAS 24h
 height = 2.
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
-!!
+!

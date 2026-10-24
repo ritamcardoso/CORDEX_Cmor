@@ -1,4 +1,3 @@
-! clgvi: RCM_sfc_clgvi (wpth4 varset), vertical integral of QGRAUP (P, PB, PSFC), as clivi
 wrfvar = 'QGRAUP'
 vaid = 'clgvi'
 vunts = 'kg m-2'

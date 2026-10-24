@@ -7,4 +7,3 @@ cmethods = 'area: mean where land time: mean'
 outstep = 0           ! hours (0 = wp_step); CORDEX-CMIP6 6h, FPS-LUCAS 1h: wp_step of the grid ini (6 CORDEX, 1 LUCAS)
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
-!

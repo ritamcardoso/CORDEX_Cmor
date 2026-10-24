@@ -1,4 +1,3 @@
-! cinmax: daily maximum of the hourly cin (RCM_sfc_cape), from tools/aggregate.sh
 wrfvar = 'T'
 vaid = 'cinmax'
 vunts = 'J kg-1'
