@@ -118,11 +118,9 @@ do year = yeari, yearf,1
 !
         wrfv3D=wrfv3D/(1.0+wrfv3D)
 !
-        if(presl >= 50000.)then
-          call calc_plev
-        else
-          call calc_invplev
-        endif
+        ! levels bracketing presl at every point (map), then the log(p) interpolation
+        call plev_map(press, presl)
+        call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)
@@ -149,59 +147,6 @@ do year = yeari, yearf,1
 enddo
 
 contains
-!
-!-------------------------------------------------------------------------------------------------------------------
-!
-subroutine calc_plev
-use datvar_s
-!
-outvar=1.e+20
-presure=presl
-!
-do isy=1,nlat
-  do isx=1,nlon
-    p_loop: do iz=1,nz-1      ! iz+1 <= nz
-      if(press(isx,isy,iz) < presl)then
-!        write(*,*)'p < plev',isx,isy,presl
-        exit p_loop
-      endif
-      if(press(isx,isy,iz) >= presl .and. press(isx,isy,iz+1) < presl)then
-
-        outvar(isx,isy)=wrfv3D(isx,isy,iz)+((log(press(isx,isy,iz))-log(presl))/   &
-            (log(press(isx,isy,iz))-log(press(isx,isy,iz+1))))*(wrfv3D(isx,isy,iz+1)-wrfv3D(isx,isy,iz))
-        exit p_loop
-      endif
-    enddo p_loop
-  enddo
-enddo
-!
-end
-!
-!-------------------------------------------------------------------------------------------------------------------
-!
-subroutine calc_invplev
-use datvar_s
-!
-outvar=1.e+20
-presure=presl
-!
-do isy=1,nlat
-  do isx=1,nlon
-    p_loop: do iz=nz-1,2,-1   ! iz-1 >= 1
-      if(press(isx,isy,iz-1) >= presl .and. press(isx,isy,iz) < presl)then
-
-        outvar(isx,isy)=wrfv3D(isx,isy,iz-1)+((log(press(isx,isy,iz-1))-log(presl))/   &
-            (log(press(isx,isy,iz-1))-log(press(isx,isy,iz))))*(wrfv3D(isx,isy,iz)-wrfv3D(isx,isy,iz-1))
-        exit p_loop
-      elseif(press(isx,isy,iz) > presl)then
-!        write(*,*)'p < plev',isx,isy,presl
-        exit p_loop
-      endif
-    enddo p_loop
-  enddo
-enddo
-!
-end
 !
 !
 !-------------------------------------------------------------------------------------------------

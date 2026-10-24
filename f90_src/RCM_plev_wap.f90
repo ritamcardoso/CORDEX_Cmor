@@ -11,7 +11,7 @@ program read_wrfout
 !   mass levels.
 !
 ! Omega is computed on the model levels and interpolated linearly in log(p) to pres,
-! as RCM_plev_wa (from the bottom for pres >= 500 hPa, from the top above); points
+! with the level map of plev_map and plev_interp (shared_subs_v2.f90); points
 ! where pres is below the surface or above the model top are missing (1e20).
 ! Output every wp_step hours (wp_step of the grid's ini: 3 or 6).
 !
@@ -144,11 +144,9 @@ do year = yeari, yearf,1
 !
         call calc_omega
 !
-        if(presl >= 50000.)then
-          call calc_plev
-        else
-          call calc_invplev
-        endif
+        ! levels bracketing presl at every point (map), then the log(p) interpolation
+        call plev_map(press, presl)
+        call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)
@@ -192,59 +190,6 @@ do iz=1,nz
 enddo
 !
 end subroutine calc_omega
-!
-!-------------------------------------------------------------------------------------------------------------------
-!
-subroutine calc_plev
-use datvar_s
-!
-outvar=1.e+20
-presure=presl
-!
-do isy=1,nlat
-  do isx=1,nlon
-    p_loop: do iz=1,nz-1
-      if(press(isx,isy,iz) < presl)then
-!        write(*,*)'p < plev',isx,isy,presl
-        exit p_loop
-      endif
-      if(press(isx,isy,iz) >= presl .and. press(isx,isy,iz+1) < presl)then
-
-        outvar(isx,isy)=wrfv3D(isx,isy,iz)+((log(press(isx,isy,iz))-log(presl))/   &
-            (log(press(isx,isy,iz))-log(press(isx,isy,iz+1))))*(wrfv3D(isx,isy,iz+1)-wrfv3D(isx,isy,iz))
-        exit p_loop
-      endif
-    enddo p_loop
-  enddo
-enddo
-!
-end
-!
-!-------------------------------------------------------------------------------------------------------------------
-!
-subroutine calc_invplev
-use datvar_s
-!
-outvar=1.e+20
-presure=presl
-!
-do isy=1,nlat
-  do isx=1,nlon
-    p_loop: do iz=nz-1,2,-1   ! iz-1 >= 1 (as the other RCM_plev programs)
-      if(press(isx,isy,iz-1) >= presl .and. press(isx,isy,iz) < presl)then
-
-        outvar(isx,isy)=wrfv3D(isx,isy,iz-1)+((log(press(isx,isy,iz-1))-log(presl))/   &
-            (log(press(isx,isy,iz-1))-log(press(isx,isy,iz))))*(wrfv3D(isx,isy,iz)-wrfv3D(isx,isy,iz-1))
-        exit p_loop
-      elseif(press(isx,isy,iz) > presl)then
-!        write(*,*)'p < plev',isx,isy,presl
-        exit p_loop
-      endif
-    enddo p_loop
-  enddo
-enddo
-!
-end
 !
 !
 !-------------------------------------------------------------------------------------------------
