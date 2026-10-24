@@ -1,0 +1,231 @@
+program read_wrfout
+!
+! Variable-calendar version (f90_src_varcalendar) of f90_src/RCM_sfc_tauu.f90, made by
+! tools/make_varcalendar.py: for each year yeari..yearf, only the time steps inside the
+! simulation period sim_start..sim_end of the grid ini (time_chunk, set_time_step).
+! Change f90_src/RCM_sfc_tauu.f90 and rerun tools/make_varcalendar.py rather than this file.
+!
+! Use external modules for variables and shared subroutines
+use datvar_s
+use shared_subs
+use netcdf
+!implicit none
+
+
+! --- Read configuration using shared_subs subroutine
+
+call init_cordex_environment
+
+! --- Read Grid Information (Latitude, Longitude) ---
+
+call read_geog
+
+! --- Initialising grid and time counters
+nz = 10
+nzt = nz + 1
+nhours = 24
+
+
+! --- Main Processing Loops ---
+allocate(outvar(nlon,nlat), outvar_a(nlon,nlat), outvar_i(nlon,nlat))
+allocate(wind10(nlon,nlat), uas(nlon,nlat), vas(nlon,nlat), u_s(nlon,nlat), v_s(nlon,nlat))
+allocate(ro(nlon,nlat), psf(nlon,nlat), t2(nlon,nlat), q2(nlon,nlat))
+allocate(ust(nlon,nlat))
+
+it = 0
+!
+do vc_year = yeari, yearf
+  ! the part of the year inside sim_start..sim_end (nothing to do if none)
+  if (.not. time_chunk(vc_year, 1, .true.)) cycle
+  year = vc_year
+
+  write(ayear, '(i4)') year
+!
+!
+  if(it == 0)then
+    write(ayeari,'(i4)')year
+    issh=0
+
+    ! Compute time length and allocate time sensitive variables
+    if (mod(year, 4) == 0 .and. year /= 2100) then
+      days = days2
+      mydays = 366
+    else
+      days = days1
+      mydays = 365
+    endif
+
+
+    allocate(ttime(ntime))
+    allocate(bdtime(2, ntime))
+    allocate(outvar_h(nlon, nlat, ntime))
+  endif
+
+  ! Loop over months
+  ! Loop over the files of the chunk: set_time_step sets year, month, day, hour,
+  ! ayear, amonth, aday, ahour and infile
+  loop_h: do vc_ifl = 1, vc_nfiles
+    call set_time_step(vc_ifl)
+
+        status = nf90_open(infile, nf90_nowrite, ncid)
+        call ncerror(status,'opening '//trim(infile))
+!
+        if(it == 0)then
+          allocate(cosalp(nlon,nlat))
+          allocate(sinalp(nlon,nlat))
+!
+          status=nf90_inq_varid(ncid,'COSALPHA',varid)
+          call ncerror(status,'getting var id COSALPHA in '//trim(infile))
+!
+          status=nf90_get_var(ncid,varid,cosalp,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading COSALPHA from '//trim(infile))
+!
+          status=nf90_inq_varid(ncid,'SINALPHA',varid)
+          call ncerror(status,'getting var id SINALPHA in '//trim(infile))
+!
+          status=nf90_get_var(ncid,varid,sinalp,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading SINALPHA from '//trim(infile))
+!
+        endif
+!
+        ! Read wrf var
+!
+        status=nf90_inq_varid(ncid,'U10',varid)
+        call ncerror(status,'getting var id U10 in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,u_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading U10 from '//trim(infile))
+!
+        status=nf90_inq_varid(ncid,'V10',varid)
+        call ncerror(status,'getting var id V10 in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,v_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading V10 from '//trim(infile))
+!
+        status=nf90_inq_varid(ncid,'UST',varid)
+        call ncerror(status,'getting var id UST in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading UST from '//trim(infile))
+!
+        status=nf90_inq_varid(ncid,'T2',varid)
+        call ncerror(status,'getting var id T2 in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,t2,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading T2 from '//trim(infile))
+!
+        status=nf90_inq_varid(ncid,'Q2',varid)
+        call ncerror(status,'getting var id Q2 in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,q2,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading Q2 from '//trim(infile))
+!
+        status=nf90_inq_varid(ncid,'PSFC',varid)
+        call ncerror(status,'getting var id PSFC in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,psf,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading PSFC from '//trim(infile))
+!
+        status=nf90_close(ncid)
+        call ncerror(status,'closing '//trim(infile))
+!
+        call calc_tauv
+
+        if(it == 0)then
+          it=it+1
+
+          outvar_i=outvar
+          cycle loop_h
+        endif
+
+        ish = ish + 1
+        issh = issh + 1
+        ttime(issh) = float(ish) - 0.5
+        bdtime(1, issh) = ish - 1
+        bdtime(2, issh) = ish
+
+        outvar_a(:,:)=nint(1000.d0*(outvar(:,:)+outvar_i(:,:))/2.)
+
+        outvar_h(:,:,issh)=float(outvar_a(:,:))/1000.d0
+
+        outvar_i=outvar
+!        
+      enddo loop_h    ! end of the files of the chunk
+
+  write(ayearf, '(i4)') year
+
+  call write_output              ! one file per year (chunk)
+enddo
+!
+contains
+!
+!---------------------------------------------------------------------------
+!
+subroutine calc_tauv
+!
+!
+do ix=1,nlon
+  do iy=1,nlat
+!
+    uas(ix,iy)=(u_s(ix,iy)*cosalp(ix,iy))-(v_s(ix,iy)*sinalp(ix,iy))
+!    vas(ix,iy)=(v_s(ix,iy)*cosalp(ix,iy))+(u_s(ix,iy)*sinalp(ix,iy))
+    wind10(ix,iy)=sqrt(u_s(ix,iy)**2+v_s(ix,iy)**2)
+!
+    ro(ix,iy)=(psf(ix,iy)/(Rd*t2(ix,iy)))*(1-((q2(ix,iy)*(1-epsilon))/(epsilon+q2(ix,iy))))
+!
+    outvar(ix,iy)=ro(ix,iy)*(ust(ix,iy)**2./wind10(ix,iy))*uas(ix,iy)
+!
+  enddo
+enddo
+!
+end subroutine calc_tauv
+!
+!----------------------------------------------------------------------------------------------------
+!
+subroutine write_output
+! Logic to prepare filenames and call NetCDF writer
+use datvar_s
+use shared_subs
+use netcdf
+
+amonthf = pad_int(month-1, 2)
+adayf = pad_int(day-1, 2)
+ahourf = pad_int(hour-1, 2)
+
+freq='1hr'
+frequency=trim(adjustl(freq))
+
+! Create output filename based on metadata
+outfile=trim(dir_out)//trim(vaid)//trim(outdom)//trim(freq)//'_'//trim(time_range(ttime,ntime))//'.nc'
+fnameout=trim(adjustl(outfile))
+
+if (factor /= 0.) outvar_h = outvar_h * factor
+
+call date_and_time(date,times,zone,values)
+!
+!Values    1    2    3      4       5     6      7       8
+!Meaning Year Month Day Time_zone  Hour Minute Second  Millisecond
+!                       offset(min)
+!
+write(yyyy,'(i4)')values(1)
+mm = pad_int(values(2), 2)
+dd = pad_int(values(3), 2)
+hh = pad_int(values(5), 2)
+mn = pad_int(values(6), 2)
+ss = pad_int(values(7), 2)
+
+cdate=yyyy//'-'//mm//'-'//dd//'-T'//hh//':'//mn//':'//ss//'Z'
+creationdate=cdate(1:len_trim(cdate))
+!
+! Call the shared NetCDF writer from shared_subs
+!
+call write_netcdf_rtime_3d(outvar_h, ntime, ttime, bdtime)
+
+deallocate(ttime)
+deallocate(bdtime)
+deallocate(outvar_h)
+
+end subroutine write_output
+
+
+end program read_wrfout

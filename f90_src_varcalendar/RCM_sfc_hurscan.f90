@@ -1,0 +1,216 @@
+program read_wrfout
+!
+! Variable-calendar version (f90_src_varcalendar) of f90_src/RCM_sfc_hurscan.f90, made by
+! tools/make_varcalendar.py: for each year yeari..yearf, only the time steps inside the
+! simulation period sim_start..sim_end of the grid ini (time_chunk, set_time_step).
+! Change f90_src/RCM_sfc_hurscan.f90 and rerun tools/make_varcalendar.py rather than this file.
+!
+!
+! RCM_sfc_hurscan — near-surface relative humidity within the canyon (hurscan, 1hr,
+! instantaneous, %), as hurs, from the canyon temperature TCAN_URB2D, the canyon
+! mixing ratio QCAN_URB2D and the surface pressure PSFC of the urban scheme output.
+! Kept only at urban cells (urban_cell in shared_subs_v2.f90: FRC_URB2D > 0 and
+! LU_INDEX an urban category of the MODIS or USGS table of the geo_em file, LCZ
+! classes included); missing elsewhere.
+!
+! Use external modules for variables and shared subroutines
+use datvar_s
+use shared_subs
+use netcdf
+!implicit none
+
+logical, dimension(:,:), allocatable :: ub_keep
+
+! --- Read configuration using shared_subs subroutine
+
+call init_cordex_environment
+
+! --- Read Grid Information (Latitude, Longitude) ---
+
+call read_geog
+
+allocate(ub_keep(nlon,nlat))
+ub_keep = urban_cell(urb_frac, luindex)
+write(*,*) trim(vaid), ' from TCAN_URB2D, QCAN_URB2D, PSFC, land-use table ', trim(lu_table), ': ', &
+           count(ub_keep), ' urban cells of ', nlon*nlat
+
+! --- Initialising grid and time counters
+nz = 10
+nzt = nz + 1
+nhours = 24
+
+
+! --- Main Processing Loops ---
+allocate(outvar(nlon,nlat))
+allocate(t2(nlon,nlat))
+allocate(mr(nlon,nlat))
+allocate(psf(nlon,nlat))
+allocate(mr_sat(nlon,nlat))
+allocate(e_sfc(nlon,nlat))
+allocate(esat(nlon,nlat))
+
+it = 0
+do vc_year = yeari, yearf
+  ! the part of the year inside sim_start..sim_end (nothing to do if none)
+  if (.not. time_chunk(vc_year, 1, .false.)) cycle
+  year = vc_year
+
+  write(ayear, '(i4)') year
+  issh = 0
+
+  ! Compute time length and allocate time sensitive variables
+  if (mod(year, 4) == 0 .and. year /= 2100) then
+      days = days2
+      mydays = 366
+  else
+      days = days1
+      mydays = 365
+  endif
+
+
+  allocate(ttime(ntime))
+  allocate(bdtime(2, ntime))
+  allocate(outvar_h(nlon, nlat, ntime))
+
+  ! Loop over months
+  ! Loop over the files of the chunk: set_time_step sets year, month, day, hour,
+  ! ayear, amonth, aday, ahour and infile
+  loop_h: do vc_ifl = 1, vc_nfiles
+    call set_time_step(vc_ifl)
+
+        status = nf90_open(infile, nf90_nowrite, ncid)
+        call ncerror(status,'opening '//trim(infile))
+
+        ! Read wrf var
+        status=nf90_inq_varid(ncid,'TCAN_URB2D',varid)
+        call ncerror(status,'getting var id TCAN_URB2D in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,t2,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading TCAN_URB2D from '//trim(infile))
+!
+        status=nf90_inq_varid(ncid,'PSFC',varid)
+        call ncerror(status,'getting var id PSFC in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,psf,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading PSFC from '//trim(infile))
+!
+        status=nf90_inq_varid(ncid,'QCAN_URB2D',varid)
+        call ncerror(status,'getting var id QCAN_URB2D in '//trim(infile))
+!
+        status=nf90_get_var(ncid,varid,mr,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading QCAN_URB2D from '//trim(infile))
+!
+        status=nf90_close(ncid)
+        call ncerror(status,'closing '//trim(infile))
+!
+! Compute variable
+!
+        call calc_rh
+
+        ish = ish + 1
+        issh = issh + 1
+        ttime(issh) = float(ish) - 1
+        bdtime(1, issh) = ish - 1
+        bdtime(2, issh) = ish
+
+        outvar_h(:,:,issh)=outvar(:,:)
+
+      enddo loop_h    ! end of the files of the chunk
+
+  ! Write annual output using shared subroutine
+  write(ayearf, '(i4)') year
+  write(ayeari, '(i4)') year
+
+  call write_output
+
+enddo
+
+contains
+!-----------------------------------------------------------------------------------------------------------------------------------
+!
+subroutine calc_rh
+!
+! Calculates relative humidity.
+! Following WMO, supercooled water is assumed for temperatures below 0ºC and esat is always calculated in reference to water.
+! Enhancement factor is used calculate the effective esat in the presence of other gases
+! esat (with the enhancement factor) from es_wexler_dt (shared_subs_v2.f90), as cape and evspsblpot.
+!
+! REFERENCES
+! Wexler, A., Vapor Pressure Formulation for Water in Range 0 to 100°C. A Revision, Journal of Research of the National Bureau of Standards <96> A. Physics and Chemistry, September <96> December 1976, Vol. 80A, Nos.5 and 6, 775-785
+!
+! Wexler, A., Vapor Pressure Formulation for Ice, Journal of Research of the National Bureau of Standards <96> A. Physics and Chemistry, January <96> February 1977, Vol. 81A, No. 1, 5-19
+!
+! Goff, J. A., Standardization of Thermodynamic Properties of Moist Air, Heating, Piping, and Air Conditioning, 1949, Vol. 21, 118.
+! Hardy, B., ITS-90 formulations for vapor pressure, frostpoint temperature, dewpoint temperature, and enhancement
+!   factors in the range -100 to +100 C, Proc. Third International Symposium on Humidity and Moisture, 1998.
+!
+do i=1,nlon
+  do j=1,nlat
+    if (.not. ub_keep(i,j)) then
+      outvar(i,j)=1.e+20
+      cycle
+    endif
+        
+    e_sfc(i,j)=(mr(i,j)/(epsilon+mr(i,j)))*psf(i,j)
+!
+    ! saturation vapour pressure over water in moist air (ITS-90 / Wexler x enhancement factor, Pa)
+    call es_wexler_dt(real(t2(i,j), 8), real(psf(i,j), 8), es_pa, des_pa)
+    esat(i,j)=real(es_pa)
+!
+    mr_sat(i,j)=epsilon*esat(i,j)/(psf(i,j)-esat(i,j))
+!
+    outvar(i,j)=max(min(mr(i,j)/mr_sat(i,j),1.),0.0)*100.
+  enddo
+enddo
+!
+end subroutine calc_rh        
+!
+!----------------------------------------------------------------------------------------------------
+!
+subroutine write_output
+! Logic to prepare filenames and call NetCDF writer
+use datvar_s
+use shared_subs
+use netcdf
+
+amonthf = pad_int(month-1, 2)
+adayf = pad_int(day-1, 2)
+ahourf = pad_int(hour-1, 2)
+
+freq='1hr'
+frequency=trim(adjustl(freq))
+
+! Create output filename based on metadata
+outfile=trim(dir_out)//trim(vaid)//trim(outdom)//trim(freq)//'_'//trim(time_range(ttime,ntime))//'.nc'
+fnameout=trim(adjustl(outfile))
+
+if (factor /= 0.) outvar_h = outvar_h * factor
+
+call date_and_time(date,times,zone,values)
+!
+!Values    1    2    3      4       5     6      7       8
+!Meaning Year Month Day Time_zone  Hour Minute Second  Millisecond
+!                       offset(min)
+!
+write(yyyy,'(i4)')values(1)
+mm = pad_int(values(2), 2)
+dd = pad_int(values(3), 2)
+hh = pad_int(values(5), 2)
+mn = pad_int(values(6), 2)
+ss = pad_int(values(7), 2)
+
+cdate=yyyy//'-'//mm//'-'//dd//'-T'//hh//':'//mn//':'//ss//'Z'
+creationdate=cdate(1:len_trim(cdate))
+!
+! Call the shared NetCDF writer from shared_subs
+!
+call write_netcdf_rtime_3d(outvar_h, ntime, ttime, bdtime)
+
+deallocate(ttime)
+deallocate(bdtime)
+deallocate(outvar_h)
+
+end subroutine write_output
+
+
+end program read_wrfout

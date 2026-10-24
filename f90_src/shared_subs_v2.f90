@@ -753,6 +753,10 @@ character(len=40) :: day_units
 real(kind=8) :: tfac
 logical :: point
 
+if (mtime < 1) then                ! variable calendar: no (complete) time step in this chunk
+  write(*,*) 'no time step to write: ', trim(fnameout), ' is not written'
+  return
+endif
 ! Time axis in days since <iniyear>-01-01T00:00:00Z: values that the
 ! programs count in hours are divided by 24 (tfac), daily ones are kept.
 day_units = 'days since '//ayearini//'-01-01T00:00:00Z'
@@ -889,6 +893,10 @@ character(len=40) :: day_units
 real(kind=8) :: tfac
 logical :: point
 
+if (mtime < 1) then                ! variable calendar: no (complete) time step in this chunk
+  write(*,*) 'no time step to write: ', trim(fnameout), ' is not written'
+  return
+endif
 ! Time axis in days since <iniyear>-01-01T00:00:00Z: values that the
 ! programs count in hours are divided by 24 (tfac), daily ones are kept.
 day_units = 'days since '//ayearini//'-01-01T00:00:00Z'
@@ -1068,6 +1076,16 @@ function time_label(t1, t2) result(label)
     label = trim(time_stamp(t1))//'-'//trim(time_stamp(t2))
 end function time_label
 !
+! time_label of the first and the last of the n time values tt (variable calendar: n may be 0
+! when no time step is left, e.g. a daily variable of a simulation shorter than a day)
+function time_range(tt, n) result(label)
+    real, dimension(:), intent(in) :: tt
+    integer, intent(in) :: n
+    character(len=25) :: label
+    label = ''
+    if (n >= 1) label = time_label(tt(1), tt(n))
+end function time_range
+!
 !-----------------------------------------------------------------------
 !
 function time_stamp(t) result(stamp)
@@ -1114,6 +1132,158 @@ function hours_since_ini(y, m, d, h) result(hrs)
     integer :: hrs
     hrs = 24 * (days_from_civil(y, m, d) - days_from_civil(iniyear, 1, 1)) + h
 end function hours_since_ini
+!
+!-----------------------------------------------------------------------
+!
+! --- Variable calendar (programs of f90_src_varcalendar) ---
+! The simulation period is set in the grid ini by sim_start and sim_end ('YYYY-MM-DD_HH',
+! UTC: the first and the last wrfout file), and may start and end at any hour. A run
+! processes the years yeari..yearf; each year is one chunk, the part of the year inside the
+! simulation period, written to one file per variable:
+!
+!   do vc_year = yeari, yearf
+!     if (.not. time_chunk(vc_year, step, interval)) cycle   ! no time step of this year
+!     ... allocate(ttime(ntime), ...) ...
+!     loop_h: do vc_ifl = 1, vc_nfiles
+!       call set_time_step(vc_ifl)       ! year, month, day, hour, ayear ... ahour, infile
+!       ...
+!
+! step: hours between the files read (1, or ostep for the programs that read every ostep
+! hours). interval = .true. for values over the interval between two files (accumulated
+! fields, interval means): the chunk then has the intervals [t, t + step] that start in the
+! year, and the last one ends at sim_end; one more file is read than there are values.
+!
+function sim_time_hours(s, key) result(t)
+! hours since iniyear-01-01 00 UTC of 'YYYY-MM-DD_HH' (namelist key key)
+    character(len=*), intent(in) :: s, key
+    integer :: t, y, m, d, h, ios, nd
+    logical :: bad
+    bad = len_trim(s) /= 13
+    if (.not. bad) bad = s(5:5) /= '-' .or. s(8:8) /= '-' .or. s(11:11) /= '_'
+    if (.not. bad) then
+        read(s, '(i4,1x,i2,1x,i2,1x,i2)', iostat=ios) y, m, d, h
+        bad = ios /= 0
+    endif
+    if (.not. bad) bad = m < 1 .or. m > 12 .or. h < 0 .or. h > 23
+    if (.not. bad) then
+        nd = days_from_civil(merge(y + 1, y, m == 12), merge(1, m + 1, m == 12), 1) - days_from_civil(y, m, 1)
+        bad = d < 1 .or. d > nd
+    endif
+    if (bad) then
+        print *, "ERROR: ", key, " = '", trim(s), "' in inputlist.inp: it must be 'YYYY-MM-DD_HH'", &
+                 " (the grid ini of the experiment)"
+        stop 95
+    endif
+    if (y < iniyear) then
+        print *, "ERROR: ", key, " = '", trim(s), "' is before iniyear = ", iniyear
+        stop 95
+    endif
+    t = hours_since_ini(y, m, d, h)
+end function sim_time_hours
+!
+!-----------------------------------------------------------------------
+!
+subroutine sim_period
+! checks sim_start and sim_end of the namelist and sets t_sim0, t_sim1 (hours since iniyear)
+    if (len_trim(sim_start) == 0 .or. len_trim(sim_end) == 0) then
+        print *, "ERROR: sim_start and sim_end ('YYYY-MM-DD_HH', the first and the last wrfout file)", &
+                 " must be set in the grid ini for the programs of f90_src_varcalendar"
+        stop 95
+    endif
+    t_sim0 = sim_time_hours(sim_start, 'sim_start')
+    t_sim1 = sim_time_hours(sim_end, 'sim_end')
+    if (t_sim1 < t_sim0) then
+        print *, "ERROR: sim_end = '", sim_end, "' is before sim_start = '", sim_start, "'"
+        stop 95
+    endif
+end subroutine sim_period
+!
+!-----------------------------------------------------------------------
+!
+logical function time_chunk(cy, step, interval)
+! The chunk of year cy: sets t_ch0, t_ch1, ntime (time values), vc_nfiles (files to read),
+! vc_step, vc_interval, and resets issh, it and ish (= t_ch0). The first time step is the
+! first multiple of step (from 00 UTC) at or after sim_start, the last one the last at or
+! before sim_end (sim_end - step for interval values). .false. if the year has none.
+! resample_time then drops the windows with missing time steps (rs_complete): a day,
+! 6 hours or month that is not complete in the simulation period is not written.
+    integer, intent(in) :: cy, step
+    logical, intent(in) :: interval
+    integer :: ty0, ty1
+    call sim_period
+    if (step < 1 .or. mod(24, step) /= 0) then
+        print *, "ERROR: time_chunk: step = ", step, " hours must divide 24"
+        stop 95
+    endif
+    ty0 = hours_since_ini(cy, 1, 1, 0)                 ! first and last hour of the year
+    ty1 = hours_since_ini(cy + 1, 1, 1, 0) - 1
+    t_ch0 = max(t_sim0, ty0)
+    t_ch0 = t_ch0 + modulo(-t_ch0, step)               ! up to a multiple of step
+    if (interval) then
+        t_ch1 = min(t_sim1 - step, ty1)                  ! the last interval ends at sim_end
+    else
+        t_ch1 = min(t_sim1, ty1)
+    endif
+    t_ch1 = t_ch1 - modulo(t_ch1, step)                 ! down to a multiple of step
+    if (t_ch1 >= t_ch0) then
+        ntime = (t_ch1 - t_ch0) / step + 1
+    else
+        ntime = 0
+    endif
+    vc_step = step
+    vc_interval = interval
+    vc_nfiles = ntime + merge(1, 0, interval)
+    rs_complete = .true.
+    issh = 0
+    it = 0
+    ish = t_ch0
+    if (ntime > 0) then
+        write(*,'(a,i4,a,a,a,a,a,i0,a,i0,a)') ' year ', cy, ': ', trim(hours_label(t_ch0)), ' to ', &
+            trim(hours_label(t_ch1 + merge(step, 0, interval))), ', ', ntime, ' time steps (', vc_nfiles, ' files)'
+    else
+        write(*,'(a,i4,a,a,a,a,a)') ' year ', cy, ': outside the simulation period (', trim(sim_start), &
+            ' to ', trim(sim_end), '), nothing to write'
+    endif
+    time_chunk = ntime > 0
+end function time_chunk
+!
+!-----------------------------------------------------------------------
+!
+subroutine set_time_step(k)
+! Date of file k (1 .. vc_nfiles) of the chunk, t_ch0 + (k - 1) vc_step: year, month, day,
+! hour, ayear, amonth, aday, ahour, days (of that year), filename and infile (the wrfout file)
+    integer, intent(in) :: k
+    integer :: t
+    t = t_ch0 + (k - 1) * vc_step
+    call civil_from_days(days_from_civil(iniyear, 1, 1) + t / 24, year, month, day)
+    hour = mod(t, 24)
+    write(ayear, '(i4.4)') year
+    amonth = pad_int(month, 2)
+    aday = pad_int(day, 2)
+    ahour = pad_int(hour, 2)
+    if (mod(year, 4) == 0 .and. (mod(year, 100) /= 0 .or. mod(year, 400) == 0)) then
+        days = days2
+        mydays = 366
+    else
+        days = days1
+        mydays = 365
+    endif
+    ndays = days(month)
+    filename = trim(dir_in)//trim(wrfile)//'_d0'//trim(dom)//'_'//ayear//'-'//amonth//'-'//aday//'_'//ahour//'_00_00'
+    infile = trim(filename)
+    if (k == 1 .or. (day == 1 .and. hour < vc_step)) write(*,*) year, month
+end subroutine set_time_step
+!
+!-----------------------------------------------------------------------
+!
+function hours_label(t) result(label)
+! 'YYYY-MM-DD_HH' of t hours since iniyear-01-01 00 UTC
+    integer, intent(in) :: t
+    character(len=13) :: label
+    integer :: y, m, d
+    call civil_from_days(days_from_civil(iniyear, 1, 1) + t / 24, y, m, d)
+    write(label, '(i4.4,a,i2.2,a,i2.2,a,i2.2)') y, '-', m, '-', d, '_', mod(t, 24)
+end function hours_label
 !
 !-----------------------------------------------------------------------
 !
@@ -1290,9 +1460,47 @@ else
   enddo
   call close_window
   deallocate(rs_cnt)
+  if (rs_complete) call drop_partial_windows
 endif
 !
 contains
+  subroutine drop_partial_windows
+  ! variable calendar: keep only the windows with all their time steps (rs_step / the step
+  ! of the input, counted from the input time bounds), e.g. not the last day of a
+  ! simulation that ends at 18 UTC
+  integer :: rs_din, rs_m
+  integer, allocatable :: rs_nin(:)
+  logical, allocatable :: rs_keep(:)
+  real, dimension(:,:,:), allocatable :: rs_f
+  real, dimension(:), allocatable :: rs_t
+  integer, dimension(:,:), allocatable :: rs_b
+  rs_din = max(bin(2,1) - bin(1,1), 1)
+  allocate(rs_nin(nout), rs_keep(nout))
+  rs_nin = 0
+  do rs_i = 1, rs_n
+    rs_k = floor(real(bin(1,rs_i)) / rs_step) - rs_k0 + 1
+    rs_nin(rs_k) = rs_nin(rs_k) + 1
+  enddo
+  rs_keep = rs_nin * rs_din >= rs_step
+  if (all(rs_keep)) return
+  rs_m = count(rs_keep)
+  write(*,'(a,i0,a,i0,a)') ' resample_time: ', nout - rs_m, ' incomplete ', rs_step, &
+                           '-hour window(s) left out (start or end of the simulation)'
+  allocate(rs_f(size(fout,1), size(fout,2), rs_m), rs_t(rs_m), rs_b(2, rs_m))
+  rs_j = 0
+  do rs_i = 1, nout
+    if (.not. rs_keep(rs_i)) cycle
+    rs_j = rs_j + 1
+    rs_f(:,:,rs_j) = fout(:,:,rs_i)
+    rs_t(rs_j) = tout(rs_i)
+    rs_b(:,rs_j) = bout(:,rs_i)
+  enddo
+  call move_alloc(rs_f, fout)
+  call move_alloc(rs_t, tout)
+  call move_alloc(rs_b, bout)
+  nout = rs_m
+  end subroutine drop_partial_windows
+!
   subroutine close_window
   where (rs_cnt > 0.)
     fout(:,:,rs_j) = merge(fout(:,:,rs_j), fout(:,:,rs_j) / max(rs_cnt, 1.), rs_sum)

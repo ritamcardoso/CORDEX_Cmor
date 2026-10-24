@@ -189,6 +189,7 @@ the provided folder structure:
 
 ```
 f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90, ...)
+f90_src_varcalendar/ <- the same programs for any simulation period (sim_start/sim_end in the grid ini, §2)
 header/        <- per-variable namelist headers
 experiments/   <- one folder per experiment: <name>.sh (grids, paths) + its ini files (§2, experiments/README.md)
 config/        <- varsets.sh: the active variables/programs/scheduling, the only one the scripts read (§5, config/README.md);
@@ -198,6 +199,7 @@ scripts/       <- the 3 generic job scripts (+ load_experiment.sh, which they so
 run.sh         <- the simple way to start: ./run.sh <experiment> <first year> [<last year>] [<varset> ...] (§0)
 submit.sh      <- submits every job (§6, §9)
 tools/         <- helper scripts (§11): report_walltimes.sh, lint_varsets.sh, merge_soil_monthly.sh,
+                  make_varcalendar.py (remakes f90_src_varcalendar from f90_src),
                   check_and_found_var.sh, check_archive.sh + variables.txt;
                   ncrepack-cordex (+ its LICENSE), run on every new file (§6);
                   aggregate.sh + aggregation_table.txt: daily and monthly files (§11)
@@ -276,6 +278,16 @@ See [`experiments/README.md`](experiments/README.md) for the full details.
     files (pressure levels `RCM_plev_*`, soil layers `RCM_sfc_tsl`/`mrsol`/`mrsfl`):
     `wp_step = 6` gives `6hr` files, `wp_step = 3` gives `3hr` files (e.g. for LUCAS).
     It must divide 24. The length of the time axis follows from it.
+  * **Simulation period (optional):** `sim_start` and `sim_end`
+    (`'YYYY-MM-DD_HH'`, the first and the last wrfout file). Without them the
+    programs of `f90_src` process whole calendar years. If they are set (both,
+    explicitly), the programs are built from
+    [`f90_src_varcalendar`](f90_src_varcalendar/README.md), which write only the
+    time steps inside the period. The period may start and end at any hour,
+    e.g. `sim_end = '2100-12-31_18'`, or last only a few days or hours. A day,
+    6 hours or month that is not complete in the period is not written, and the
+    accumulated fields end at `sim_end`. The years of a job and of the chain are
+    limited to those of the period.
 * **Global Properties:** edit `<name>_global_<DOMAIN_ID>_<grid>.ini`
   (e.g. `cordex_global_EUR-12_d01.ini`) — the global characteristics of
   the variables, tailored to your experiment. Both files of a grid must
@@ -910,6 +922,19 @@ It reports an **error** if:
 and a **warning** for every varset without its own `CP_TIME[]` (it uses
 `DEFAULT_CP_TIME`).
 
+### `make_varcalendar.py` — keep `f90_src_varcalendar` in step with `f90_src`
+
+The programs of [`f90_src_varcalendar`](f90_src_varcalendar/README.md) (any
+simulation period) are made from those of `f90_src` and `f90_src_parallel`.
+After changing a program there:
+
+```bash
+tools/make_varcalendar.py           # remake f90_src_varcalendar
+tools/make_varcalendar.py --check   # exit status 1 if it is out of step with f90_src
+```
+
+`RCM_sfc_xtrm` and `RCM_sfc_wsgsmax` were converted by hand: change both copies.
+
 ### `check_and_found_var.sh` — which variables were extracted, per year
 
 Checks the output folders for every variable in `variables.txt` (the 172
@@ -1014,6 +1039,8 @@ or directly on a login node for a few variables:
   (`tools/aggregation_table.txt`):
   * **Daily:** the mean, maximum, minimum or sum of the 24 (1hr), 8 (3hr) or 4
     (6hr) values of each day. `prhmax` is the daily maximum of the hourly `pr`.
+    Only whole days: the incomplete first or last day of a simulation that starts
+    or ends during a day (`sim_start`/`sim_end`, §2) is left out.
     Variables already written as daily files (e.g. `tasmax`, `tasmin`,
     `sfcWindmax` from `wrfxtrm`) are taken from those files; `-s` recomputes
     them from the sub-daily files instead.

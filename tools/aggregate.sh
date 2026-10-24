@@ -221,7 +221,7 @@ agg_var() {
   [ "$src" != "$v" ] && prefix="${v}${prefix#"$src"}"
 
   # daily values of each year: $wk/d_<year>.nc
-  local i0 i1 t0 d0 nt op
+  local i0 i1 d0 nt nd op
   for y in "${need[@]}"; do
     f="$wk/d_${y}.nc"
     if [ -n "${day_src[$y]:-}" ]; then
@@ -230,14 +230,28 @@ agg_var() {
       step ncks -O -h -d time,"$i0","$i1" "${day_src[$y]}" "$f" || return 1
     else
       nn=${sub_n[$y]}; nt=$(ntime "${sub_src[$y]}")
-      t0=$(times "${sub_src[$y]}" | head -1)
-      # whole days only, starting at 00:00 (instantaneous) or within the first step (interval data)
-      if ! awk -v t="$t0" -v n="$nn" 'BEGIN{f=t-int(t+1e-6); exit !(f < 1.0/n - 1e-6)}' || [ $(( nt % nn )) -ne 0 ]; then
-        echo "ERROR $v ${y}: $(basename "${sub_src[$y]}") does not hold whole days (${nt} steps, first at ${t0})" >&2; return 1
+      # whole days only: from the first record that starts a day (00:00 for instantaneous
+      # data, within the first step for interval data), as many whole days as there are.
+      # The days at the start or the end of a simulation that are not complete (programs
+      # of f90_src_varcalendar) are left out.
+      read -r i0 nd d0 <<< "$(times "${sub_src[$y]}" | awk -v n="$nn" '
+        {t[NR-1]=$1} END{
+          for (i=0; i<NR; i++) {f=t[i]-int(t[i]+1e-6); if (f < 1.0/n - 1e-6) break}
+          if (i >= NR) {print -1, 0, 0; exit}
+          nd=int((NR-i)/n); d0=int(t[i]+1e-6)
+          for (k=0; k<nd*n; k++) if (t[i+k] < d0 + k/n - 1e-6 || t[i+k] >= d0 + (k+1)/n - 1e-6) {print -2, k, d0; exit}
+          print i, nd, d0}')"
+      if [ "$i0" = -2 ]; then
+        echo "ERROR $v ${y}: $(basename "${sub_src[$y]}") is not ${nn} evenly spaced steps a day (record $(( nd )) after day ${d0})" >&2; return 1
       fi
-      d0=$(awk -v t="$t0" 'BEGIN{printf "%d", int(t+1e-6)}')
+      if [ "$i0" -lt 0 ] || [ "$nd" -eq 0 ]; then
+        echo "  ${y}: no whole day in $(basename "${sub_src[$y]}") (${nt} steps) — year left out"; continue
+      fi
+      i1=$(( i0 + nd * nn - 1 ))
+      [ "$i0" -gt 0 ] || [ "$i1" -lt $(( nt - 1 )) ] && \
+        echo "  ${y}: ${nd} whole days (records ${i0}-${i1} of ${nt}); the incomplete days are left out"
       case "$dm" in mean) op=avg ;; max) op=max ;; min) op=min ;; sum) op=ttl ;; esac
-      step ncra -O -h --mro -d time,,,"$nn","$nn" -y "$op" "${sub_src[$y]}" "$f" || return 1
+      step ncra -O -h --mro -d time,"$i0","$i1","$nn","$nn" -y "$op" "${sub_src[$y]}" "$f" || return 1
       [ "$src" != "$v" ] && { step ncrename -O -h -v "${src},${v}" "$f" >/dev/null || return 1; }
       # time at 12:00 of each day, bounds 00:00-00:00
       nt=$(ntime "$f")
