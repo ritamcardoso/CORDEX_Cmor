@@ -216,15 +216,15 @@ hurscan,FPS-URB-RCC,URB-RCC,%,i,x,,,x,x,,Near-Surface Relative Humidity within c
 husscan,FPS-URB-RCC,URB-RCC,1,i,x,,,x,x,,Near-Surface Specific Humidity within canyon,specific_humidity_canyon,QCAN_URB2D,CORDEX_Cmor: RCM_sfc_husscan (urban varset); q = r/(1+r); urban cells only
 sfcWindcan,FPS-URB-RCC,URB-RCC,m s-1,i,x,,,x,x,,Near-Surface Wind Speed within canyon,wind_speed_canyon,UCAN_URB2D,CORDEX_Cmor: RCM_sfc_sfcWindcan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 hu,FPS-LUCAS,CORE,m3/m3,i,x,,,,,,Atmospheric humidity at model levels,specific_humidity,QVAPOR,not produced by CORDEX_Cmor; header ready; model levels
-lai,FPS-LUCAS,CORE,1,i,,,,x,,,leaf area index,leaf_area_index,LAI,CORDEX_Cmor: RCM_sfc_lsm (lsm varset); LUCAS name LAI
-alb,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_lsm (lsm varset)
+lai,FPS-LUCAS,CORE,1,i,,,,x,,,leaf area index,leaf_area_index,LAI,CORDEX_Cmor: RCM_sfc_lai (lsm varset); LUCAS name LAI
+alb,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_alb (lsm varset)
 albc,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,-,not produced by CORDEX_Cmor; header ready; no canopy albedo in the WRF output
 baresoilFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Bare Soil Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 cnc,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage of area covered by vegetation.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF tree+shrub+grass+crop (landuse_field in shared_subs_v2.f90)
 cropFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage Crop Cover,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 cVeg,FPS-LUCAS,TIER 1,kg m-2,i,,,,x,,,Carbon mass per unit area in vegetation.,vegetation_carbon_content,LFMASS STMASS WOOD,not produced by CORDEX_Cmor; header ready; Noah-MP with dynamic vegetation (opt_dveg)
-evspsblsoi,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Water evaporation from soil (including sublimation).,water_evaporation_flux_from_soil,EDIR,CORDEX_Cmor: RCM_sfc_lsmflx (lsm varset)
-evspsblveg,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,The canopy evaporation and sublimation (if present in model); may include dew formation as a negative flux.,water_evaporation_flux_from_canopy,ECAN,CORDEX_Cmor: RCM_sfc_lsmflx (lsm varset)
+evspsblsoi,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Water evaporation from soil (including sublimation).,water_evaporation_flux_from_soil,EDIR,CORDEX_Cmor: RCM_sfc_evspsblsoi (lsm varset)
+evspsblveg,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,The canopy evaporation and sublimation (if present in model); may include dew formation as a negative flux.,water_evaporation_flux_from_canopy,ECAN,CORDEX_Cmor: RCM_sfc_evspsblveg (lsm varset)
 grassFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Natural Grass Area Percentage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 hflsLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Latent Heat Flux on Land-Use Tile,surface_upward_latent_heat_flux,LH,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
 hfssLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Sensible Heat Flux on Land-Use Tile,surface_upward_sensible_heat_flux,HFX,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF: grid-cell value only
@@ -247,7 +247,7 @@ sweLut,FPS-LUCAS,TIER 1,m,i,x,,,,,,Snow Water Equivalent on Land-Use Tile,lwe_th
 tasLut,FPS-LUCAS,TIER 1,K,i,x,,,,,,"Air temperature is the bulk temperature of the air, not the surface (skin) temperature.",air_temperature,T2,not produced by CORDEX_Cmor; header ready; no land-use tiles in WRF (Noah-MP T2MV/T2MB: vegetated/bare parts)
 tcs,FPS-LUCAS,TIER 1,K,i,x,,,,,,"Vegetation temperature, averaged over all vegetation types",canopy_temperature,TV,not produced by CORDEX_Cmor; header ready; Noah-MP vegetation temperature
 tgs,FPS-LUCAS,TIER 1,K,i,x,,,,,,Surface bare soil temperature,surface_temperature,TGB,not produced by CORDEX_Cmor; header ready; Noah-MP bare ground temperature
-tran,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Transpiration (may include dew formation as a negative flux).,transpiration_flux,ETRAN,CORDEX_Cmor: RCM_sfc_lsmflx (lsm varset)
+tran,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Transpiration (may include dew formation as a negative flux).,transpiration_flux,ETRAN,CORDEX_Cmor: RCM_sfc_tran (lsm varset)
 treeFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Tree Cover Percentage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 treeFracBdlDcd,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entire grid cell that is covered by broadleaf deciduous trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; header ready; MODIS class 4 (deciduous broadleaf forest)
 treeFracBdlEvg,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entire grid cell that is covered by broadleaf evergreen trees.,area_fraction,LANDUSEF,not produced by CORDEX_Cmor; header ready; MODIS class 2 (evergreen broadleaf forest)

@@ -1,15 +1,9 @@
 program read_wrfout
 !
-! RCM_sfc_lsmflx — Noah-MP water fluxes (1hr, hourly means, kg m-2 s-1) from the
-! instantaneous rates of wrfout (mm s-1 = kg m-2 s-1):
-!
-!   evspsblsoi  EDIR    water evaporation from soil (ground surface)
-!   evspsblveg  ECAN    evaporation of the water intercepted by the canopy
-!   tran        ETRAN   transpiration
-!
-! value of hour h = mean of the rates at the start and at the end of the hour,
-! written at hh:30 with bounds hh:00-hh+1:00, as the other hourly means.
-! Sea points (LANDMASK = 0) are missing ("area: mean where land").
+! RCM_sfc_alb — alb (1hr, instantaneous: time: point) from the WRF field ALBEDO
+! (wrfvar of the header): surface albedo (1).
+! every cell.
+! Values rounded to 1e-4.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
@@ -17,29 +11,15 @@ use shared_subs
 use netcdf
 !implicit none
 
-real, dimension(:,:), allocatable :: la_rate, la_ratep
-character(len=20) :: la_ratev
-
 ! --- Read configuration using shared_subs subroutine
 
 call init_cordex_environment
 
-! --- Read Grid Information (Latitude, Longitude, LANDMASK) ---
+! --- Read Grid Information (Latitude, Longitude) ---
 
 call read_geog
 
-select case (trim(vaid))
-  case ('evspsblsoi'); la_ratev = 'EDIR'
-  case ('evspsblveg'); la_ratev = 'ECAN'
-  case ('tran');       la_ratev = 'ETRAN'
-  case default
-    print *, 'ERROR: RCM_sfc_lsmflx does not know the variable ', trim(vaid)
-    stop 95
-end select
-write(*,*) trim(vaid), ' from ', trim(la_ratev)
-
 ! --- Initialising grid and time counters
-nz = 10
 nzt = nz + 1
 nhours = 24
 
@@ -66,55 +46,38 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(la_rate(nlon,nlat), la_ratep(nlon,nlat))
+allocate(wrfv2D(nlon, nlat))
 
 it = 0
-yearf=yeari+1
-!
 do year = yeari, yearf,1
 
   write(ayear, '(i4)') year
- !
-  if(year == yearf)then
-    nmonths=1
-  endif
-!
-  if(it == 0)then
-    write(ayeari,'(i4)')year
-    issh=0
+  issh = 0
 
   ! Compute time length and allocate time sensitive variables
-    if (mod(year, 4) == 0 .and. year /= 2100) then
+  if (mod(year, 4) == 0 .and. year /= 2100) then
       days = days2
       mydays = 366
-    else
+  else
       days = days1
       mydays = 365
-    endif
-    ntime = mydays * nhours
-
-    if (ihour > 0) then
-      nhours=nhours-ihour+1
-      ntime = ntime - ihour + 1
-    endif
-
-    allocate(ttime(ntime))
-    allocate(bdtime(2, ntime))
-    allocate(outvar_h(nlon, nlat, ntime))
   endif
+  ntime = mydays * nhours
+
+  if (ihour > 0) then
+    nhours=nhours-ihour+1
+    ntime = ntime - ihour + 1
+  endif
+
+  allocate(ttime(ntime))
+  allocate(bdtime(2, ntime))
+  allocate(outvar_h(nlon, nlat, ntime))
 
   ! Loop over months
   do month = imonth, nmonths
 
     ndays = days(month)
     amonth = pad_int(month, 2)
-!
-   if(year == yearf)then
-      ndays=1
-      nhours=1
-    endif
-!
-    write(*,*)year,month
 
     ! Loop over days
     do day = 1, ndays
@@ -131,26 +94,24 @@ do year = yeari, yearf,1
         status = nf90_open(infile, nf90_nowrite, ncid)
         call ncerror(status,'opening '//trim(infile))
 
-        call read_field(la_ratev, la_rate)
+        ! Read wrf var
+        status = nf90_inq_varid(ncid, wrfvar, varid)
+        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
+
+        status=nf90_get_var(ncid,varid,wrfv2D,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
-!
-        if(it == 0)then
-          it=it+1
-          la_ratep = la_rate
-          cycle loop_h
-        endif
+
 
         ish = ish + 1
         issh = issh + 1
-        ttime(issh) = float(ish) - 0.5
+        ttime(issh) = float(ish) - 1
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        call calc_flux
-
-        la_ratep = la_rate
+        outvar_h(:,:,issh) = real(nint(1.d4 * wrfv2D, 8)) / 1.e4
 
       enddo loop_h    ! end hour
 !
@@ -160,46 +121,15 @@ do year = yeari, yearf,1
     enddo             ! end day
   enddo               ! end month
 
+  ! Write annual output using shared subroutine
   write(ayearf, '(i4)') year
+  write(ayeari, '(i4)') year
+
+  call write_output
 
 enddo
-!
-!  Write annual output using shared subroutine
-!
-call write_output
-!
+
 contains
-!
-!----------------------------------------------------------------------------------------------------
-!
-subroutine read_field(vname, field)
-! one 2-D field of the open wrfout file (ncid), cut to the output grid
-character(len=*), intent(in) :: vname
-real, dimension(:,:), intent(out) :: field
-!
-status=nf90_inq_varid(ncid,trim(vname),varid)
-call ncerror(status,'getting var id '//trim(vname)//' in '//trim(infile))
-status=nf90_get_var(ncid,varid,field,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-call ncerror(status,'reading '//trim(vname)//' from '//trim(infile))
-!
-end subroutine read_field
-!
-!----------------------------------------------------------------------------------------------------
-!
-subroutine calc_flux
-! hourly mean flux (kg m-2 s-1) of hour issh; sea points missing
-!
-do ix=1,nlon
-  do iy=1,nlat
-    if (landmask(ix,iy) > 0.) then
-      outvar_h(ix,iy,issh) = 0.5 * (la_rate(ix,iy) + la_ratep(ix,iy))
-    else
-      outvar_h(ix,iy,issh) = 1.e+20
-    endif
-  enddo
-enddo
-!
-end subroutine calc_flux
 !
 !----------------------------------------------------------------------------------------------------
 !
@@ -219,6 +149,7 @@ frequency=trim(adjustl(freq))
 ! Create output filename based on metadata
 outfile=trim(dir_out)//trim(vaid)//trim(outdom)//trim(freq)//'_'//trim(time_label(ttime(1),ttime(ntime)))//'.nc'
 fnameout=trim(adjustl(outfile))
+
 
 call date_and_time(date,times,zone,values)
 !
