@@ -1,29 +1,29 @@
 output variable name,project,Priority,units,ag,1hr,3hr,6hr,day,mon,fx,long_name,standard_name,WRF variable,comment
-tas,CORDEX-CMIP6,CORE; LUCAS CORE,K,i,x,,,x,x,,Near-Surface Air Temperature,air_temperature,T2,CORDEX_Cmor: RCM_sfc_tas (out1 varset)
-tasmax,CORDEX-CMIP6,CORE; LUCAS CORE,K,,,,,x,x,,Daily Maximum Near-Surface Air Temperature,air_temperature,T2MAX,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); wrfxtrm stream
-tasmin,CORDEX-CMIP6,CORE; LUCAS CORE,K,,,,,x,x,,Daily Minimum Near-Surface Air Temperature,air_temperature,T2MIN,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); wrfxtrm stream
-pr,CORDEX-CMIP6,CORE; LUCAS CORE,kg m-2 s-1,a,x,,,x,x,,Precipitation,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC RAINSH,CORDEX_Cmor: RCM_sfc_pr (snw varset)
-evspsbl,CORDEX-CMIP6,CORE; LUCAS CORE,kg m-2 s-1,a,x,,,x,x,,Evaporation Including Sublimation and Transpiration,water_evapotranspiration_flux,QFX,CORDEX_Cmor: RCM_sfc_evspsbl (out1 varset)
-huss,CORDEX-CMIP6,CORE; LUCAS CORE,1,i,x,,,x,x,,Near-Surface Specific Humidity,specific_humidity,Q2,CORDEX_Cmor: RCM_sfc_huss (out1 varset)
-hurs,CORDEX-CMIP6,CORE; LUCAS CORE,%,i,x,,,x,x,,Near-Surface Relative Humidity,relative_humidity,Q2 T2 PSFC,CORDEX_Cmor: RCM_sfc_hurs (out1 varset)
-ps,CORDEX-CMIP6,CORE; LUCAS CORE,Pa,i,x,,,x,x,,Surface Air Pressure,surface_air_pressure,PSFC,CORDEX_Cmor: RCM_sfc_ps (out2 varset)
-psl,CORDEX-CMIP6,CORE; LUCAS CORE,Pa,i,x,,,x,x,,Sea Level Pressure,air_pressure_at_mean_sea_level,PSFC P PB PH PHB T,CORDEX_Cmor: RCM_sfc_psl (out1 varset)
-sfcWind,CORDEX-CMIP6,CORE; LUCAS CORE,m s-1,i,x,,,x,x,,Near-Surface Wind Speed,wind_speed,U10 V10,CORDEX_Cmor: RCM_sfc_sfcWind (out2 varset)
-uas,CORDEX-CMIP6,CORE; LUCAS CORE,m s-1,i,x,,,x,x,,Eastward Near-Surface Wind,eastward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_uas (out1 varset)
-vas,CORDEX-CMIP6,CORE; LUCAS CORE,m s-1,i,x,,,x,x,,Northward Near-Surface Wind,northward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_vas (out1 varset)
-clt,CORDEX-CMIP6,CORE; LUCAS CORE,%,a,x,,,x,x,,Total Cloud Cover Percentage,cloud_area_fraction,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset)
-rsds,CORDEX-CMIP6,CORE; LUCAS CORE,W m-2,a,x,,,x,x,,Surface Downwelling Shortwave Radiation,surface_downwelling_shortwave_flux_in_air,ACSWDNB I_ACSWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-rlds,CORDEX-CMIP6,CORE; LUCAS CORE,W m-2,a,x,,,x,x,,Surface Downwelling Longwave Radiation,surface_downwelling_longwave_flux_in_air,ACLWDNB I_ACLWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-orog,CORDEX-CMIP6,CORE; LUCAS CORE,m,,,,,,,x,Surface Altitude,surface_altitude,HGT_M,CORDEX_Cmor: RCM_fx_orog (fx varset); from geo_em
-sftlf,CORDEX-CMIP6,CORE; LUCAS CORE,%,,,,,,,x,Percentage of the Grid Cell Occupied by Land,land_area_fraction,LANDMASK,CORDEX_Cmor: RCM_fx_sftlf (fx varset); from geo_em
+tas,CORDEX-CMIP6,CORE,K,i,x,,,x,x,,Near-Surface Air Temperature,air_temperature,T2,CORDEX_Cmor: RCM_sfc_tas (out1 varset)
+tasmax,CORDEX-CMIP6,CORE,K,,,,,x,x,,Daily Maximum Near-Surface Air Temperature,air_temperature,T2MAX,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); wrfxtrm stream
+tasmin,CORDEX-CMIP6,CORE,K,,,,,x,x,,Daily Minimum Near-Surface Air Temperature,air_temperature,T2MIN,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); wrfxtrm stream
+pr,CORDEX-CMIP6,CORE,kg m-2 s-1,a,x,,,x,x,,Precipitation,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC RAINSH,CORDEX_Cmor: RCM_sfc_pr (snw varset)
+evspsbl,CORDEX-CMIP6,CORE,kg m-2 s-1,a,x,,,x,x,,Evaporation Including Sublimation and Transpiration,water_evapotranspiration_flux,QFX,CORDEX_Cmor: RCM_sfc_evspsbl (out1 varset)
+huss,CORDEX-CMIP6,CORE,1,i,x,,,x,x,,Near-Surface Specific Humidity,specific_humidity,Q2,CORDEX_Cmor: RCM_sfc_huss (out1 varset)
+hurs,CORDEX-CMIP6,CORE,%,i,x,,,x,x,,Near-Surface Relative Humidity,relative_humidity,Q2 T2 PSFC,CORDEX_Cmor: RCM_sfc_hurs (out1 varset)
+ps,CORDEX-CMIP6,CORE,Pa,i,x,,,x,x,,Surface Air Pressure,surface_air_pressure,PSFC,CORDEX_Cmor: RCM_sfc_ps (out2 varset)
+psl,CORDEX-CMIP6,CORE,Pa,i,x,,,x,x,,Sea Level Pressure,air_pressure_at_mean_sea_level,PSFC P PB PH PHB T,CORDEX_Cmor: RCM_sfc_psl (out1 varset)
+sfcWind,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Near-Surface Wind Speed,wind_speed,U10 V10,CORDEX_Cmor: RCM_sfc_sfcWind (out2 varset)
+uas,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Eastward Near-Surface Wind,eastward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_uas (out1 varset)
+vas,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Northward Near-Surface Wind,northward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_vas (out1 varset)
+clt,CORDEX-CMIP6,CORE,%,a,x,,,x,x,,Total Cloud Cover Percentage,cloud_area_fraction,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset)
+rsds,CORDEX-CMIP6,CORE,W m-2,a,x,,,x,x,,Surface Downwelling Shortwave Radiation,surface_downwelling_shortwave_flux_in_air,ACSWDNB I_ACSWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
+rlds,CORDEX-CMIP6,CORE,W m-2,a,x,,,x,x,,Surface Downwelling Longwave Radiation,surface_downwelling_longwave_flux_in_air,ACLWDNB I_ACLWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
+orog,CORDEX-CMIP6,CORE,m,,,,,,,x,Surface Altitude,surface_altitude,HGT_M,CORDEX_Cmor: RCM_fx_orog (fx varset); from geo_em
+sftlf,CORDEX-CMIP6,CORE,%,,,,,,,x,Percentage of the Grid Cell Occupied by Land,land_area_fraction,LANDMASK,CORDEX_Cmor: RCM_fx_sftlf (fx varset); from geo_em
 va200m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 200m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset)
 va250m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 250m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset)
 va300m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 300m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset)
 ts,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,x,,,x,x,,Surface Temperature,surface_temperature,TSK,CORDEX_Cmor: RCM_sfc_ts (out1 varset)
-tsl,CORDEX-CMIP6,TIER 1; LUCAS TIER 1,K,i,x,,x,x,x,,Temperature of Soil,soil_temperature,TSLB,CORDEX_Cmor: RCM_sfc_tsl (soil varset)
+tsl,CORDEX-CMIP6,TIER 1,K,i,x,,x,x,x,,Temperature of Soil,soil_temperature,TSLB,CORDEX_Cmor: RCM_sfc_tsl (soil varset)
 prc,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x,,,x,x,,Convective Precipitation,convective_precipitation_flux,RAINC I_RAINC,CORDEX_Cmor: RCM_sfc_prc (snw varset)
 prhmax,CORDEX-CMIP6,TIER 1,kg m-2 s-1,,x,,,x,x,,Daily Maximum Hourly Precipitation Rate,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC,not produced by CORDEX_Cmor; header ready; daily maximum of the hourly precipitation
-prsn,CORDEX-CMIP6,TIER 1; LUCAS TIER 1,kg m-2 s-1,a,x,,,x,x,,Snowfall Flux,snowfall_flux,SNOWNC,CORDEX_Cmor: RCM_sfc_prsn (snw varset)
+prsn,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,,,x,x,,Snowfall Flux,snowfall_flux,SNOWNC,CORDEX_Cmor: RCM_sfc_prsn (snw varset)
 mrros,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x,,x,x,x,,Surface Runoff,surface_runoff_flux,RUNSF,CORDEX_Cmor: RCM_sfc_mrros (soil varset)
 mrro,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x,,x,x,x,,Total Runoff,runoff_flux,RUNSB RUNSF,CORDEX_Cmor: RCM_sfc_mrro (soil varset)
 snm,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,,x,x,x,,Surface Snow Melt,surface_snow_melt_flux,ACSNOM,CORDEX_Cmor: RCM_sfc_snm (snw varset)
