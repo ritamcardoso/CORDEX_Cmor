@@ -4,5 +4,6 @@ vunts = 'K'
 lname = 'Near-surface temperature blue spaces'
 stname = 'bluespaces_temperature'
 cmethods = 'area: mean time: point'
+outstep = 1           ! hours (output step); not requested by CORDEX-CMIP6 or FPS-LUCAS: the program step
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

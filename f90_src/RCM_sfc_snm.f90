@@ -186,7 +186,7 @@ adayf = pad_int(day-1, 2)
 ahourf = pad_int(hour-1, 2)
 
 freq='1hr'
-call resample_output        ! outstep of the header: every wp_step hours or daily (else 1hr)
+call resample_output        ! output step: outstep of the header (hours; 0 = wp_step of the grid ini)
 frequency=trim(adjustl(freq))
 
 ! Create output filename based on metadata

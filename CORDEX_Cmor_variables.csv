@@ -1,198 +1,198 @@
 output variable name,project,Priority,units,ag,1hr,3hr,6hr,day,mon,fx,long_name,standard_name,WRF variable,comment
-tas,CORDEX-CMIP6,CORE,K,i,x,,,x,x,,Near-Surface Air Temperature,air_temperature,T2,CORDEX_Cmor: RCM_sfc_tas (out1 varset)
-tasmax,CORDEX-CMIP6,CORE,K,,,,,x,x,,Daily Maximum Near-Surface Air Temperature,air_temperature,T2MAX,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); wrfxtrm stream
-tasmin,CORDEX-CMIP6,CORE,K,,,,,x,x,,Daily Minimum Near-Surface Air Temperature,air_temperature,T2MIN,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); wrfxtrm stream
-pr,CORDEX-CMIP6,CORE,kg m-2 s-1,a,x,,,x,x,,Precipitation,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC RAINSH,CORDEX_Cmor: RCM_sfc_pr (snw varset)
-evspsbl,CORDEX-CMIP6,CORE,kg m-2 s-1,a,x,x,,x,x,,Evaporation Including Sublimation and Transpiration,water_evapotranspiration_flux,QFX,CORDEX_Cmor: RCM_sfc_evspsbl (out1 varset)
-huss,CORDEX-CMIP6,CORE,1,i,x,,,x,x,,Near-Surface Specific Humidity,specific_humidity,Q2,CORDEX_Cmor: RCM_sfc_huss (out1 varset)
-hurs,CORDEX-CMIP6,CORE,%,i,x,,,x,x,,Near-Surface Relative Humidity,relative_humidity,Q2 T2 PSFC,CORDEX_Cmor: RCM_sfc_hurs (out1 varset)
-ps,CORDEX-CMIP6,CORE,Pa,i,x,,,x,x,,Surface Air Pressure,surface_air_pressure,PSFC,CORDEX_Cmor: RCM_sfc_ps (out2 varset)
-psl,CORDEX-CMIP6,CORE,Pa,i,x,x,,x,x,,Sea Level Pressure,air_pressure_at_mean_sea_level,PSFC P PB PH PHB T,CORDEX_Cmor: RCM_sfc_psl (out1 varset)
-sfcWind,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Near-Surface Wind Speed,wind_speed,U10 V10,CORDEX_Cmor: RCM_sfc_sfcWind (out2 varset)
-uas,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Eastward Near-Surface Wind,eastward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_uas (out1 varset)
-vas,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Northward Near-Surface Wind,northward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_vas (out1 varset)
-clt,CORDEX-CMIP6,CORE,%,a,x,x,,x,x,,Total Cloud Cover Percentage,cloud_area_fraction,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset)
-rsds,CORDEX-CMIP6,CORE,W m-2,a,x,,,x,x,,Surface Downwelling Shortwave Radiation,surface_downwelling_shortwave_flux_in_air,ACSWDNB I_ACSWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-rlds,CORDEX-CMIP6,CORE,W m-2,a,x,,,x,x,,Surface Downwelling Longwave Radiation,surface_downwelling_longwave_flux_in_air,ACLWDNB I_ACLWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
+tas,CORDEX-CMIP6,CORE,K,i,x,,,x,x,,Near-Surface Air Temperature,air_temperature,T2,CORDEX_Cmor: RCM_sfc_tas (out1 varset); written hourly
+tasmax,CORDEX-CMIP6,CORE,K,,,,,x,x,,Daily Maximum Near-Surface Air Temperature,air_temperature,T2MAX,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); written daily; wrfxtrm stream
+tasmin,CORDEX-CMIP6,CORE,K,,,,,x,x,,Daily Minimum Near-Surface Air Temperature,air_temperature,T2MIN,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); written daily; wrfxtrm stream
+pr,CORDEX-CMIP6,CORE,kg m-2 s-1,a,x,,,x,x,,Precipitation,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC RAINSH,CORDEX_Cmor: RCM_sfc_pr (snw varset); written hourly
+evspsbl,CORDEX-CMIP6,CORE,kg m-2 s-1,a,x,x,,x,x,,Evaporation Including Sublimation and Transpiration,water_evapotranspiration_flux,QFX,CORDEX_Cmor: RCM_sfc_evspsbl (out1 varset); written hourly
+huss,CORDEX-CMIP6,CORE,1,i,x,,,x,x,,Near-Surface Specific Humidity,specific_humidity,Q2,CORDEX_Cmor: RCM_sfc_huss (out1 varset); written hourly
+hurs,CORDEX-CMIP6,CORE,%,i,x,,,x,x,,Near-Surface Relative Humidity,relative_humidity,Q2 T2 PSFC,CORDEX_Cmor: RCM_sfc_hurs (out1 varset); written hourly
+ps,CORDEX-CMIP6,CORE,Pa,i,x,,,x,x,,Surface Air Pressure,surface_air_pressure,PSFC,CORDEX_Cmor: RCM_sfc_ps (out2 varset); written hourly
+psl,CORDEX-CMIP6,CORE,Pa,i,x,x,,x,x,,Sea Level Pressure,air_pressure_at_mean_sea_level,PSFC P PB PH PHB T,CORDEX_Cmor: RCM_sfc_psl (out1 varset); written hourly
+sfcWind,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Near-Surface Wind Speed,wind_speed,U10 V10,CORDEX_Cmor: RCM_sfc_sfcWind (out2 varset); written hourly
+uas,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Eastward Near-Surface Wind,eastward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_uas (out1 varset); written hourly
+vas,CORDEX-CMIP6,CORE,m s-1,i,x,,,x,x,,Northward Near-Surface Wind,northward_wind,COSALPHA SINALPHA U10 V10,CORDEX_Cmor: RCM_sfc_vas (out1 varset); written hourly
+clt,CORDEX-CMIP6,CORE,%,a,x,x,,x,x,,Total Cloud Cover Percentage,cloud_area_fraction,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset); written hourly
+rsds,CORDEX-CMIP6,CORE,W m-2,a,x,,,x,x,,Surface Downwelling Shortwave Radiation,surface_downwelling_shortwave_flux_in_air,ACSWDNB I_ACSWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly
+rlds,CORDEX-CMIP6,CORE,W m-2,a,x,,,x,x,,Surface Downwelling Longwave Radiation,surface_downwelling_longwave_flux_in_air,ACLWDNB I_ACLWDNB,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly
 orog,CORDEX-CMIP6,CORE,m,,,,,,,x,Surface Altitude,surface_altitude,HGT_M,CORDEX_Cmor: RCM_fx_orog (fx varset); from geo_em
 sftlf,CORDEX-CMIP6,CORE,%,,,,,,,x,Percentage of the Grid Cell Occupied by Land,land_area_fraction,LANDMASK,CORDEX_Cmor: RCM_fx_sftlf (fx varset); from geo_em
-va200m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 200m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset)
-va250m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 250m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset)
-va300m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 300m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset)
-ts,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,x,x,,x,x,,Surface Temperature,surface_temperature,TSK,CORDEX_Cmor: RCM_sfc_ts (out1 varset)
-tsl,CORDEX-CMIP6,TIER 1,K,i,x¹,,x,x,x,,Temperature of Soil,soil_temperature,TSLB,CORDEX_Cmor: RCM_sfc_tsl (soil varset)
-prc,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x,,,x,x,,Convective Precipitation,convective_precipitation_flux,RAINC I_RAINC,CORDEX_Cmor: RCM_sfc_prc (snw varset)
+va200m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 200m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset); written hourly
+va250m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 250m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset); written hourly
+va300m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 300m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava1 varset); written hourly
+ts,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,x,x,,x,x,,Surface Temperature,surface_temperature,TSK,CORDEX_Cmor: RCM_sfc_ts (out1 varset); written hourly
+tsl,CORDEX-CMIP6,TIER 1,K,i,x¹,,x,x,x,,Temperature of Soil,soil_temperature,TSLB,"CORDEX_Cmor: RCM_sfc_tsl (soil varset); written every wp_step hours (grid ini: 6 CORDEX, 1 LUCAS)"
+prc,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x,,,x,x,,Convective Precipitation,convective_precipitation_flux,RAINC I_RAINC,CORDEX_Cmor: RCM_sfc_prc (snw varset); written hourly
 prhmax,CORDEX-CMIP6,TIER 1,kg m-2 s-1,,,,,x,,,Daily Maximum Hourly Precipitation Rate,precipitation_flux,RAINC I_RAINC RAINNC I_RAINNC,not produced by CORDEX_Cmor; header ready; daily maximum of the hourly precipitation
-prsn,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,x,,x,x,,Snowfall Flux,snowfall_flux,SNOWNC,CORDEX_Cmor: RCM_sfc_prsn (snw varset)
-mrros,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x¹,,x,x,x,,Surface Runoff,surface_runoff_flux,RUNSF,CORDEX_Cmor: RCM_sfc_mrros (soil varset); written every wp_step hours (grid ini)
-mrro,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x¹,,x,x,x,,Total Runoff,runoff_flux,RUNSB RUNSF,CORDEX_Cmor: RCM_sfc_mrro (soil varset); written every wp_step hours (grid ini)
-snm,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,,,x,x,x,,Surface Snow Melt,surface_snow_melt_flux,ACSNOM,CORDEX_Cmor: RCM_sfc_snm (snw varset); written every wp_step hours (grid ini)
-tauu,CORDEX-CMIP6,TIER 1,Pa,a,x,,,x,x,,Surface Downward Eastward Wind Stress,surface_downward_eastward_stress,COSALPHA SINALPHA U10 V10 UST T2 Q2 PSFC,CORDEX_Cmor: RCM_sfc_tauu (out2 varset)
-tauv,CORDEX-CMIP6,TIER 1,Pa,a,x,,,x,x,,Surface Downward Northward Wind Stress,surface_downward_northward_stress,COSALPHA SINALPHA U10 V10 UST T2 Q2 PSFC,CORDEX_Cmor: RCM_sfc_tauv (out2 varset)
-sfcWindmax,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,,,,,x,x,,Daily Maximum Near-Surface Wind Speed,wind_speed,SPDUV10MAX,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); wrfxtrm stream
-sund,CORDEX-CMIP6,TIER 1,s,,,,,x,x,,Daily Duration of Sunshine,duration_of_sunshine,SWDOWN,CORDEX_Cmor: RCM_sfc_sund (snw varset); written daily
-rsdsdir,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,Surface Direct Downwelling Shortwave Radiation,surface_direct_downwelling_shortwave_flux_in_air,ACSWDNBC I_ACSWDNBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); header uses ACSWDNBC (clear-sky downwelling); WRF also writes SWDDIR (instantaneous direct shortwave)
-rsus,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,,,x,x,,Surface Upwelling Shortwave Radiation,surface_upwelling_shortwave_flux_in_air,ACSWUPB I_ACSWUPB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-rlus,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,,,x,x,,Surface Upwelling Longwave Radiation,surface_upwelling_longwave_flux_in_air,ACLWUPB I_ACLWUPB,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-rlut,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,TOA Outgoing Longwave Radiation,toa_outgoing_longwave_flux,ACLWUPT I_ACLWUPT,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-rsdt,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,TOA Incident Shortwave Radiation,toa_incoming_shortwave_flux,ACSWDNT I_ACSWDNT,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-rsut,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,TOA Outgoing Shortwave Radiation,toa_outgoing_shortwave_flux,ACSWUPT I_ACSWUPT,CORDEX_Cmor: RCM_sfc_rad (rad varset)
-hfls,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,x,,x,x,,Surface Upward Latent Heat Flux,surface_upward_latent_heat_flux,LH,CORDEX_Cmor: RCM_sfc_hfls (out1 varset)
-hfss,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,x,,x,x,,Surface Upward Sensible Heat Flux,surface_upward_sensible_heat_flux,HFX,CORDEX_Cmor: RCM_sfc_hfss (out1 varset)
-mrfso,CORDEX-CMIP6,TIER 1,kg m-2,i,,,x,x,x,,Soil Frozen Water Content,soil_frozen_water_content,SH2O SMOIS,CORDEX_Cmor: RCM_sfc_mrfso (soil varset); written every wp_step hours (grid ini)
-mrfsos,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,,Frozen Water Content in Upper Portion of Soil Column,frozen_water_content_of_soil_layer,SH2O SMOIS,CORDEX_Cmor: RCM_sfc_mrfsos (soil varset)
-mrsfl,CORDEX-CMIP6,TIER 1,kg m-2,i,,,x,x,x,,Frozen Water Content of Soil Layer,frozen_water_content_of_soil_layer,SH2O SMOIS,CORDEX_Cmor: RCM_sfc_mrsfl (soil varset)
-mrso,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x¹,,x,x,x,,Total Soil Moisture Content,mass_content_of_water_in_soil,SMOIS,CORDEX_Cmor: RCM_sfc_mrso (soil varset); written every wp_step hours (grid ini)
-mrsos,CORDEX-CMIP6,TIER 1,kg m-2,i,x,x,,x,x,,Moisture in Upper Portion of Soil Column,mass_content_of_water_in_soil_layer,SMOIS,CORDEX_Cmor: RCM_sfc_mrsos (soil varset)
-mrsol,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x¹,,x,x,x,,Total Water Content of Soil Layer,mass_content_of_water_in_soil_layer,SMOIS,CORDEX_Cmor: RCM_sfc_mrsol (soil varset)
-snw,CORDEX-CMIP6,TIER 1,kg m-2,i,,,x,x,x,,Surface Snow Amount,surface_snow_amount,SNOW,CORDEX_Cmor: RCM_sfc_snw (snw varset); written every wp_step hours (grid ini)
-snc,CORDEX-CMIP6,TIER 1; LUCAS CORE,%,i,,,x,x,x,,Snow Area Percentage,surface_snow_area_fraction,SNOWC,CORDEX_Cmor: RCM_sfc_snc (snw varset); written every wp_step hours (grid ini)
-snd,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,,x,x,x,,Snow Depth,surface_snow_thickness,SNOWH,CORDEX_Cmor: RCM_sfc_snd (snw varset); written every wp_step hours (grid ini)
+prsn,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,x,x,,x,x,,Snowfall Flux,snowfall_flux,SNOWNC,CORDEX_Cmor: RCM_sfc_prsn (snw varset); written hourly
+mrros,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x¹,,x,x,x,,Surface Runoff,surface_runoff_flux,RUNSF,"CORDEX_Cmor: RCM_sfc_mrros (soil varset); written every wp_step hours (grid ini: 6 CORDEX, 1 LUCAS)"
+mrro,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2 s-1,a,x¹,,x,x,x,,Total Runoff,runoff_flux,RUNSB RUNSF,"CORDEX_Cmor: RCM_sfc_mrro (soil varset); written every wp_step hours (grid ini: 6 CORDEX, 1 LUCAS)"
+snm,CORDEX-CMIP6,TIER 1,kg m-2 s-1,a,,,x,x,x,,Surface Snow Melt,surface_snow_melt_flux,ACSNOM,CORDEX_Cmor: RCM_sfc_snm (snw varset); written every 6 hours
+tauu,CORDEX-CMIP6,TIER 1,Pa,a,x,,,x,x,,Surface Downward Eastward Wind Stress,surface_downward_eastward_stress,COSALPHA SINALPHA U10 V10 UST T2 Q2 PSFC,CORDEX_Cmor: RCM_sfc_tauu (out2 varset); written hourly
+tauv,CORDEX-CMIP6,TIER 1,Pa,a,x,,,x,x,,Surface Downward Northward Wind Stress,surface_downward_northward_stress,COSALPHA SINALPHA U10 V10 UST T2 Q2 PSFC,CORDEX_Cmor: RCM_sfc_tauv (out2 varset); written hourly
+sfcWindmax,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,,,,,x,x,,Daily Maximum Near-Surface Wind Speed,wind_speed,SPDUV10MAX,CORDEX_Cmor: RCM_sfc_xtrm (wxtrm varset); written daily; wrfxtrm stream
+sund,CORDEX-CMIP6,TIER 1,s,,,,,x,x,,Daily Duration of Sunshine,duration_of_sunshine,SWDOWN,CORDEX_Cmor: RCM_sfc_sund (snw varset); written hourly
+rsdsdir,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,Surface Direct Downwelling Shortwave Radiation,surface_direct_downwelling_shortwave_flux_in_air,ACSWDNBC I_ACSWDNBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly; header uses ACSWDNBC (clear-sky downwelling); WRF also writes SWDDIR (instantaneous direct shortwave)
+rsus,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,,,x,x,,Surface Upwelling Shortwave Radiation,surface_upwelling_shortwave_flux_in_air,ACSWUPB I_ACSWUPB,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly
+rlus,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,,,x,x,,Surface Upwelling Longwave Radiation,surface_upwelling_longwave_flux_in_air,ACLWUPB I_ACLWUPB,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly
+rlut,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,TOA Outgoing Longwave Radiation,toa_outgoing_longwave_flux,ACLWUPT I_ACLWUPT,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly
+rsdt,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,TOA Incident Shortwave Radiation,toa_incoming_shortwave_flux,ACSWDNT I_ACSWDNT,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly
+rsut,CORDEX-CMIP6,TIER 1,W m-2,a,x,,,x,x,,TOA Outgoing Shortwave Radiation,toa_outgoing_shortwave_flux,ACSWUPT I_ACSWUPT,CORDEX_Cmor: RCM_sfc_rad (rad varset); written hourly
+hfls,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,x,,x,x,,Surface Upward Latent Heat Flux,surface_upward_latent_heat_flux,LH,CORDEX_Cmor: RCM_sfc_hfls (out1 varset); written hourly
+hfss,CORDEX-CMIP6,TIER 1; LUCAS CORE,W m-2,a,x,x,,x,x,,Surface Upward Sensible Heat Flux,surface_upward_sensible_heat_flux,HFX,CORDEX_Cmor: RCM_sfc_hfss (out1 varset); written hourly
+mrfso,CORDEX-CMIP6,TIER 1,kg m-2,i,,,x,x,x,,Soil Frozen Water Content,soil_frozen_water_content,SH2O SMOIS,CORDEX_Cmor: RCM_sfc_mrfso (soil varset); written every 6 hours
+mrfsos,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,,Frozen Water Content in Upper Portion of Soil Column,frozen_water_content_of_soil_layer,SH2O SMOIS,CORDEX_Cmor: RCM_sfc_mrfsos (soil varset); written hourly
+mrsfl,CORDEX-CMIP6,TIER 1,kg m-2,i,,,x,x,x,,Frozen Water Content of Soil Layer,frozen_water_content_of_soil_layer,SH2O SMOIS,CORDEX_Cmor: RCM_sfc_mrsfl (soil varset); written every 6 hours
+mrso,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x¹,,x,x,x,,Total Soil Moisture Content,mass_content_of_water_in_soil,SMOIS,"CORDEX_Cmor: RCM_sfc_mrso (soil varset); written every wp_step hours (grid ini: 6 CORDEX, 1 LUCAS)"
+mrsos,CORDEX-CMIP6,TIER 1,kg m-2,i,x,x,,x,x,,Moisture in Upper Portion of Soil Column,mass_content_of_water_in_soil_layer,SMOIS,CORDEX_Cmor: RCM_sfc_mrsos (soil varset); written hourly
+mrsol,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x¹,,x,x,x,,Total Water Content of Soil Layer,mass_content_of_water_in_soil_layer,SMOIS,"CORDEX_Cmor: RCM_sfc_mrsol (soil varset); written every wp_step hours (grid ini: 6 CORDEX, 1 LUCAS)"
+snw,CORDEX-CMIP6,TIER 1,kg m-2,i,,,x,x,x,,Surface Snow Amount,surface_snow_amount,SNOW,CORDEX_Cmor: RCM_sfc_snw (snw varset); written every 6 hours
+snc,CORDEX-CMIP6,TIER 1; LUCAS CORE,%,i,,,x,x,x,,Snow Area Percentage,surface_snow_area_fraction,SNOWC,CORDEX_Cmor: RCM_sfc_snc (snw varset); written every 6 hours
+snd,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,,x,x,x,,Snow Depth,surface_snow_thickness,SNOWH,CORDEX_Cmor: RCM_sfc_snd (snw varset); written every 6 hours
 siconca,CORDEX-CMIP6,TIER 1,%,,,,,x,x,,Sea-Ice Area Percentage (Atmospheric Grid),sea_ice_area_fraction,SEAICE,CORDEX_Cmor: RCM_sfc_siconca (snw varset); written daily
-zmla,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,x,x,,x,x,,Height of Boundary Layer,atmosphere_boundary_layer_thickness,PBLH,CORDEX_Cmor: RCM_sfc_zmla (out1 varset)
-prw,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x,x,,x,x,,Water Vapor Path,atmosphere_mass_content_of_water_vapor,QVAPOR P PB PSFC,CORDEX_Cmor: RCM_sfc_prw (wpth2 varset)
-clwvi,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x,x,,x,x,,Condensed Water Path,atmosphere_mass_content_of_cloud_condensed_water,QCLOUD P PB PSFC QICE QRAIN QSNOW,CORDEX_Cmor: RCM_sfc_clwvi (wpth3 varset)
-clivi,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x,,,x,x,,Ice Water Path,atmosphere_mass_content_of_cloud_ice,P PB PSFC QICE QSNOW,CORDEX_Cmor: RCM_sfc_clivi (wpth1 varset)
-clgvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,,Vertical integral of mass content of graupel,atmosphere_mass_content_of_graupel,QGRAUP P PB PSFC,CORDEX_Cmor: RCM_sfc_clgvi (wpth4 varset)
-clhvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,,Vertical integral of mass content of hail,atmosphere_mass_content_of_hail,QHAIL P PB PSFC,CORDEX_Cmor: RCM_sfc_clhvi (wpth4 varset); needs a microphysics with hail (QHAIL)
-ua1000,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua925,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua700,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua600,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua400,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua300,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua200,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-va1000,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va925,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va700,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va600,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va400,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va300,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va200,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-ta1000,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta925,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta850,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta700,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta600,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta500,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta400,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta300,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta250,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta200,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-hus1000,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus925,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus850,CORDEX-CMIP6,TIER 1; LUCAS CORE,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus700,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus600,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus500,CORDEX-CMIP6,TIER 1; LUCAS CORE,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus400,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus300,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus250,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus200,CORDEX-CMIP6,TIER 1; LUCAS CORE,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-zg1000,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg925,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg700,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg600,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg400,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg300,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg200,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-wa1000,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa925,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa700,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa600,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa400,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa300,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa200,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-ua50m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Eastward Wind at 50m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua0 varset)
-ua100m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Eastward Wind at 100m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua0 varset)
-ua150m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Eastward Wind at 150m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua0 varset)
-va50m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 50m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava0 varset)
-va100m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 100m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava0 varset)
-va150m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 150m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava0 varset)
-ta50m,CORDEX-CMIP6,TIER 1,K,i,x,,,x,x,,Air Temperature at 50m,air_temperature,T HGT PH PHB P PB,CORDEX_Cmor: RCM_zlev_ta (zlev_ta varset)
-hus50m,CORDEX-CMIP6,TIER 1,1,i,x,,,x,x,,Specific Humidity at 50m,specific_humidity,QVAPOR HGT PH PHB,CORDEX_Cmor: RCM_zlev_hus (zlev_hus varset)
-evspsblpot,CORDEX-CMIP6,TIER 2; LUCAS CORE,kg m-2 s-1,a,x,,,x,x,,Potential Evapotranspiration,water_potential_evaporation_flux,T2 Q2 PSFC U10 V10 ACSWDNB I_ACSWDNB ACSWUPB I_ACSWUPB ACLWDNB I_ACLWDNB ACLWUPB I_ACLWUPB,CORDEX_Cmor: RCM_sfc_evspsblpot (out2 varset); FAO-56 Penman-Monteith hourly; net radiation from the accumulated radiation
+zmla,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,x,x,,x,x,,Height of Boundary Layer,atmosphere_boundary_layer_thickness,PBLH,CORDEX_Cmor: RCM_sfc_zmla (out1 varset); written hourly
+prw,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x,x,,x,x,,Water Vapor Path,atmosphere_mass_content_of_water_vapor,QVAPOR P PB PSFC,CORDEX_Cmor: RCM_sfc_prw (wpth2 varset); written hourly
+clwvi,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x,x,,x,x,,Condensed Water Path,atmosphere_mass_content_of_cloud_condensed_water,QCLOUD P PB PSFC QICE QRAIN QSNOW,CORDEX_Cmor: RCM_sfc_clwvi (wpth3 varset); written hourly
+clivi,CORDEX-CMIP6,TIER 1; LUCAS CORE,kg m-2,i,x,,,x,x,,Ice Water Path,atmosphere_mass_content_of_cloud_ice,P PB PSFC QICE QSNOW,CORDEX_Cmor: RCM_sfc_clivi (wpth1 varset); written hourly
+clgvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,,Vertical integral of mass content of graupel,atmosphere_mass_content_of_graupel,QGRAUP P PB PSFC,CORDEX_Cmor: RCM_sfc_clgvi (wpth4 varset); written hourly
+clhvi,CORDEX-CMIP6,TIER 1,kg m-2,i,x,,,x,x,,Vertical integral of mass content of hail,atmosphere_mass_content_of_hail,QHAIL P PB PSFC,CORDEX_Cmor: RCM_sfc_clhvi (wpth4 varset); written hourly; needs a microphysics with hail (QHAIL)
+ua1000,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua925,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua700,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua600,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua400,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua300,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua200,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+va1000,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va925,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va700,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va600,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va400,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va300,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va200,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+ta1000,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta925,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta850,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta700,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta600,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta500,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta400,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta300,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta250,CORDEX-CMIP6,TIER 1; LUCAS CORE,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta200,CORDEX-CMIP6,TIER 1,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+hus1000,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus925,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus850,CORDEX-CMIP6,TIER 1; LUCAS CORE,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus700,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus600,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus500,CORDEX-CMIP6,TIER 1; LUCAS CORE,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus400,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus300,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus250,CORDEX-CMIP6,TIER 1,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus200,CORDEX-CMIP6,TIER 1; LUCAS CORE,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+zg1000,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg925,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg700,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg600,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg400,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg300,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg200,CORDEX-CMIP6,TIER 1,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+wa1000,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa925,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa850,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa700,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa600,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa500,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa400,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa300,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa250,CORDEX-CMIP6,TIER 1; LUCAS CORE,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa200,CORDEX-CMIP6,TIER 1,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+ua50m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Eastward Wind at 50m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua0 varset); written hourly
+ua100m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Eastward Wind at 100m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua0 varset); written hourly
+ua150m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Eastward Wind at 150m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua0 varset); written hourly
+va50m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 50m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava0 varset); written hourly
+va100m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 100m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava0 varset); written hourly
+va150m,CORDEX-CMIP6,TIER 1,m s-1,i,x,,,x,x,,Northward Wind at 150m,northward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_uava (zlev_uava0 varset); written hourly
+ta50m,CORDEX-CMIP6,TIER 1,K,i,x,,,x,x,,Air Temperature at 50m,air_temperature,T HGT PH PHB P PB,CORDEX_Cmor: RCM_zlev_ta (zlev_ta varset); written hourly
+hus50m,CORDEX-CMIP6,TIER 1,1,i,x,,,x,x,,Specific Humidity at 50m,specific_humidity,QVAPOR HGT PH PHB,CORDEX_Cmor: RCM_zlev_hus (zlev_hus varset); written hourly
+evspsblpot,CORDEX-CMIP6,TIER 2; LUCAS CORE,kg m-2 s-1,a,x,,,x,x,,Potential Evapotranspiration,water_potential_evaporation_flux,T2 Q2 PSFC U10 V10 ACSWDNB I_ACSWDNB ACSWUPB I_ACSWUPB ACLWDNB I_ACLWDNB ACLWUPB I_ACLWUPB,CORDEX_Cmor: RCM_sfc_evspsblpot (out2 varset); written hourly; FAO-56 Penman-Monteith hourly; net radiation from the accumulated radiation
 wsgsmax,CORDEX-CMIP6,TIER 2,m s-1,,,,,x,x,,Daily Maximum Near-Surface Wind Speed of Gust,wind_speed_of_gust,U10 V10 U V PH PHB HGT PBLH T QVAPOR QCLOUD QKE,"CORDEX_Cmor: RCM_sfc_wsgsmax (gust varset); Brasseur 2001 as CDXWRF if QKE is in wrfout (T QVAPOR QCLOUD QKE), else UPP formula (U10 V10); daily maximum of the hourly gust"
-clh,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,,High Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud1 varset); written every wp_step hours (grid ini)
-clm,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,,Mid Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud1 varset); written every wp_step hours (grid ini)
-cll,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,,Low Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset); written every wp_step hours (grid ini)
-rsdscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Downwelling Clear-Sky Shortwave Radiation,surface_downwelling_shortwave_flux_in_air_assuming_clear_sky,ACSWDNBC I_ACSWDNBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every wp_step hours (grid ini)
-rldscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Downwelling Clear-Sky Longwave Radiation,surface_downwelling_longwave_flux_in_air_assuming_clear_sky,ACLWDNBC I_ACLWDNBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every wp_step hours (grid ini)
-rsuscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Upwelling Clear-Sky Shortwave Radiation,surface_upwelling_shortwave_flux_in_air_assuming_clear_sky,ACSWUPBC I_ACSWUPBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every wp_step hours (grid ini)
-rluscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Upwelling Clear-Sky Longwave Radiation,surface_upwelling_longwave_flux_in_air_assuming_clear_sky,ACLWUPBC I_ACLWUPBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every wp_step hours (grid ini)
-rsutcs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,TOA Outgoing Clear-Sky Shortwave Radiation,toa_outgoing_shortwave_flux_assuming_clear_sky,ACSWUPTC I_ACSWUPTC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every wp_step hours (grid ini)
-rlutcs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,TOA Outgoing Clear-Sky Longwave Radiation,toa_outgoing_longwave_flux_assuming_clear_sky,ACLWUPTC I_ACLWUPTC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every wp_step hours (grid ini)
-z0,CORDEX-CMIP6,TIER 2,m,i,,,,x,x,,Surface Roughness Length,surface_roughness_length,COSALPHA SINALPHA U10 V10 UST,"CORDEX_Cmor: RCM_sfc_z0 (out2 varset); written daily; z0 = 10 exp(-k U10/UST), from the 10 m wind and UST (not ZNT)"
+clh,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,,High Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud1 varset); written every 6 hours
+clm,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,,Mid Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud1 varset); written every 6 hours
+cll,CORDEX-CMIP6,TIER 2,%,a,,,x,x,x,,Low Level Cloud Fraction,cloud_area_fraction_in_atmosphere_layer,CLDFRA P PB PSFC,CORDEX_Cmor: RCM_sfc_cloud (cloud2 varset); written every 6 hours
+rsdscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Downwelling Clear-Sky Shortwave Radiation,surface_downwelling_shortwave_flux_in_air_assuming_clear_sky,ACSWDNBC I_ACSWDNBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every 6 hours
+rldscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Downwelling Clear-Sky Longwave Radiation,surface_downwelling_longwave_flux_in_air_assuming_clear_sky,ACLWDNBC I_ACLWDNBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every 6 hours
+rsuscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Upwelling Clear-Sky Shortwave Radiation,surface_upwelling_shortwave_flux_in_air_assuming_clear_sky,ACSWUPBC I_ACSWUPBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every 6 hours
+rluscs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,Surface Upwelling Clear-Sky Longwave Radiation,surface_upwelling_longwave_flux_in_air_assuming_clear_sky,ACLWUPBC I_ACLWUPBC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every 6 hours
+rsutcs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,TOA Outgoing Clear-Sky Shortwave Radiation,toa_outgoing_shortwave_flux_assuming_clear_sky,ACSWUPTC I_ACSWUPTC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every 6 hours
+rlutcs,CORDEX-CMIP6,TIER 2,W m-2,a,,,x,x,x,,TOA Outgoing Clear-Sky Longwave Radiation,toa_outgoing_longwave_flux_assuming_clear_sky,ACLWUPTC I_ACLWUPTC,CORDEX_Cmor: RCM_sfc_rad (rad varset); written every 6 hours
+z0,CORDEX-CMIP6,TIER 2,m,i,,,,x,x,,Surface Roughness Length,surface_roughness_length,COSALPHA SINALPHA U10 V10 UST,"CORDEX_Cmor: RCM_sfc_z0 (out2 varset); written hourly; z0 = 10 exp(-k U10/UST), from the 10 m wind and UST (not ZNT)"
 cape,CORDEX-CMIP6,TIER 2; LUCAS TIER 1,J kg-1,i,x,x,,x,x,,Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB,"CORDEX_Cmor: RCM_sfc_cape (cape varset; cin li archived as cape_x); surface parcel lifted to the model top, Romps 2017 LCL, Bolton 1980 pseudo-adiabat, virtual temperature (RIP/wrf-python EL/LFC)"
 li,CORDEX-CMIP6,TIER 2,K,i,x,,,x,x,,Lifted Index,temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface,P PB T QVAPOR PH PHB,CORDEX_Cmor: RCM_sfc_cape (cape varset; cin li archived as cape_x); with cape; at 500 hPa
 cin,CORDEX-CMIP6,TIER 2; LUCAS TIER 1,J kg-1,i,x,,,x,x,,Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB,CORDEX_Cmor: RCM_sfc_cape (cape varset; cin li archived as cape_x); with cape; 0 where there is no CAPE
 capemax,CORDEX-CMIP6,TIER 2,J kg-1,,,,,x,x,,Daily Maximum Convective Available Potential Energy,atmosphere_convective_available_potential_energy_wrt_surface,P PB T QVAPOR PH PHB,"CORDEX_Cmor: tools/aggregate.sh, daily maximum of the hourly cape (RCM_sfc_cape, cape varset)"
 limax,CORDEX-CMIP6,TIER 2,K,,,,,x,x,,Daily Maximum Lifted Index,temperature_difference_between_ambient_air_and_air_lifted_adiabatically_from_the_surface,P PB T QVAPOR PH PHB,"CORDEX_Cmor: tools/aggregate.sh, daily maximum of the hourly li (RCM_sfc_cape, cape varset)"
 cinmax,CORDEX-CMIP6,TIER 2,J kg-1,,,,,x,x,,Daily Maximum Convective Inhibition,atmosphere_convective_inhibition_wrt_surface,P PB T QVAPOR PH PHB,"CORDEX_Cmor: tools/aggregate.sh, daily maximum of the hourly cin (RCM_sfc_cape, cape varset)"
-od550aer,CORDEX-CMIP6,TIER 2,1,,x,,,x,x,,Ambient Aerosol Optical Thickness at 550nm,atmosphere_optical_thickness_due_to_ambient_aerosol_particles,AOD5502D,CORDEX_Cmor: RCM_sfc_od550aer (out1 varset)
-ua150,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua100,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua70,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua50,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-ua30,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
+od550aer,CORDEX-CMIP6,TIER 2,1,,x,,,x,x,,Ambient Aerosol Optical Thickness at 550nm,atmosphere_optical_thickness_due_to_ambient_aerosol_particles,AOD5502D,CORDEX_Cmor: RCM_sfc_od550aer (out1 varset); written hourly
+ua150,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua100,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua70,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua50,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+ua30,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
 ua20,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
 ua10,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
-va150,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va100,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va70,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va50,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-va30,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
+va150,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va100,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va70,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va50,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+va30,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
 va20,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
 va10,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,U V COSALPHA SINALPHA P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
-ta150,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta100,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta70,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta50,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-ta30,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
+ta150,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta100,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta70,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta50,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+ta30,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
 ta20,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
 ta10,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
-hus150,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus100,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus70,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus50,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-hus30,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
+hus150,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus100,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus70,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus50,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+hus30,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
 hus20,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
 hus10,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
-zg150,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg100,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg70,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg50,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-zg30,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
+zg150,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg100,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg70,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg50,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+zg30,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
 zg20,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,PH PHB P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
 zg10,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,PH PHB P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
-wa150,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa100,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa70,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa50,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-wa30,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
+wa150,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa100,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa70,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa50,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+wa30,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
 wa20,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 20 hPa
 wa10,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,not produced by CORDEX_Cmor; header ready; commented lines with all the pressure levels in config/varsets*.sh; missing unless p_top < 10 hPa
-ua750,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset)
-va750,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset)
-ta750,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset)
-hus750,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset)
-zg750,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset)
-wa750,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset)
-ua200m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 200m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset)
-ua250m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 250m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset)
-ua300m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 300m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset)
+ua750,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Eastward Wind,eastward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_ua (plev_ua varset); written every 3 hours
+va750,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Northward Wind,northward_wind,COSALPHA SINALPHA P PB U V,CORDEX_Cmor: RCM_plev_uava (plev_uava varset); written every 3 hours
+ta750,CORDEX-CMIP6,TIER 2,K,i,,x,x,x,x,,Air Temperature,air_temperature,T P PB,CORDEX_Cmor: RCM_plev_ta (plev_ta varset); written every 3 hours
+hus750,CORDEX-CMIP6,TIER 2,1,i,,x,x,x,x,,Specific Humidity,specific_humidity,QVAPOR P PB,CORDEX_Cmor: RCM_plev_hus (plev_hus varset); written every 3 hours
+zg750,CORDEX-CMIP6,TIER 2,m,i,,x,x,x,x,,Geopotential Height,geopotential_height,P PB PH PHB,CORDEX_Cmor: RCM_plev_zg (plev_zg varset); written every 3 hours
+wa750,CORDEX-CMIP6,TIER 2,m s-1,i,,x,x,x,x,,Upward Air Velocity,upward_air_velocity,W P PB,CORDEX_Cmor: RCM_plev_wa (plev_wa varset); written every 3 hours
+ua200m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 200m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset); written hourly
+ua250m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 250m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset); written hourly
+ua300m,CORDEX-CMIP6,TIER 2,m s-1,i,x,,,x,x,,Eastward Wind at 300m,eastward_wind,COSALPHA SINALPHA HGT PH PHB U V,CORDEX_Cmor: RCM_zlev_ua (zlev_ua1 varset); written hourly
 sftgif,CORDEX-CMIP6,TIER 2; LUCAS CORE,%,,,,,,,x,Percentage of the Grid Cell Covered by Glacier,land_ice_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sftgif (fx varset); geo_em LU_INDEX = 15 (MODIS snow and ice)
 mrsofc,CORDEX-CMIP6,TIER 2; LUCAS CORE,kg m-2,,,,,x¹,,x,Capacity of Soil to Store Water  (Field Capacity),soil_moisture_content_at_field_capacity,SCT_DOM,CORDEX_Cmor: RCM_sfc_mrsofc (soil varset); SCT_DOM of geo_em with REFSMC of SOILPARM.TBL (STAS) over the 4 Noah-MP layers
 rootd,CORDEX-CMIP6,TIER 2,m,,,,,,,x,Maximum Root Depth,root_depth,LU_INDEX LANDMASK,"CORDEX_Cmor: RCM_fx_rootd (fx varset); from geo_em; sum of the top NROOT soil layers (VEGPARM.TBL NROOT of the dominant class, LU_INDEX of geo_em)"
@@ -200,21 +200,21 @@ sftlaf,CORDEX-CMIP6,TIER 2,%,,,,,,,x,Percentage of the Grid Cell Occupied by Lak
 sfturf,CORDEX-CMIP6,TIER 2,%,,,,,,x,,Percentage of the Grid Cell Occupied by City,urban_area_fraction,LU_INDEX,CORDEX_Cmor: RCM_fx_sfturf (fx varset); geo_em LU_INDEX = 13 (MODIS urban)
 dtb,CORDEX-CMIP6,TIER 2,m,,,,,,,x,Depth to Bedrock,bedrock_depth,-,not produced by CORDEX_Cmor; header ready; not available from WRF (external dataset)
 areacella,CORDEX-CMIP6,TIER 2; LUCAS CORE,m2,,,,,,,x,Atmosphere Grid-Cell Area,cell_area,MAPFAC_MX MAPFAC_MY MAPFAC_M,CORDEX_Cmor: RCM_fx_areacella (fx varset); DX*DY/(MAPFAC_MX*MAPFAC_MY) of the geo_em file
-hfso,CORDEX-CMIP6,TIER 2,W m-2,a,x,x,,x,x,,Surface Downward Ground Heat Flux,surface_downward_ground_heat_flux,GRDFLX,CORDEX_Cmor: RCM_sfc_hfso (out2 varset); hourly mean of GRDFLX (positive into the soil)
-taspav,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature pavements,pavement_temperature,T2G_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-tasroof,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature roof,roof_temperature,T2R_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-tasgree,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature green spaces,greenspaces_temperature,T2VEG_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-tasblue,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature blue spaces,bluespaces_temperature,T2,CORDEX_Cmor: RCM_sfc_tasblue (urban varset); water cells only (LANDMASK = 0)
+hfso,CORDEX-CMIP6,TIER 2,W m-2,a,x,x,,x,x,,Surface Downward Ground Heat Flux,surface_downward_ground_heat_flux,GRDFLX,CORDEX_Cmor: RCM_sfc_hfso (out2 varset); written hourly; hourly mean of GRDFLX (positive into the soil)
+taspav,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature pavements,pavement_temperature,T2G_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+tasroof,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature roof,roof_temperature,T2R_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+tasgree,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature green spaces,greenspaces_temperature,T2VEG_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+tasblue,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature blue spaces,bluespaces_temperature,T2,CORDEX_Cmor: RCM_sfc_tasblue (urban varset); written hourly; water cells only (LANDMASK = 0)
 anthroheat,FPS-URB-RCC,URB-RCC,W m-2,,x,,,x,x,,Anthropogenic heat flux,anthropogenic_heatflux,-,not produced by CORDEX_Cmor; header ready; not in the WRF history output
-tsskin,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Skin temperature,skin_temperature,TSK,CORDEX_Cmor: RCM_sfc_ts (urban varset); all cells (RCM_sfc_ts with header_tsskin)
-tspav,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature pavements,pavement_surface_temperature,TGROUND_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-tsroof,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature roof,roof_surface_temperature,TROOF_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-tsgree,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature green spaces,greenspaces_surface_temperature,TSK_RURAL,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-tsblue,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature blue spaces,bluespaces_surface_temperature,TSK,CORDEX_Cmor: RCM_sfc_tsblue (urban varset); water cells only (LANDMASK = 0)
-tascan,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature within canyon,temperature_canyon,TCAN_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-hurscan,FPS-URB-RCC,URB-RCC,%,i,x,,,x,x,,Near-Surface Relative Humidity within canyon,relative_humidity_canyon,TCAN_URB2D PSFC QCAN_URB2D,CORDEX_Cmor: RCM_sfc_hurscan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-husscan,FPS-URB-RCC,URB-RCC,1,i,x,,,x,x,,Near-Surface Specific Humidity within canyon,specific_humidity_canyon,QCAN_URB2D,CORDEX_Cmor: RCM_sfc_husscan (urban varset); q = r/(1+r); urban cells only
-sfcWindcan,FPS-URB-RCC,URB-RCC,m s-1,i,x,,,x,x,,Near-Surface Wind Speed within canyon,wind_speed_canyon,UCAN_URB2D,CORDEX_Cmor: RCM_sfc_sfcWindcan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+tsskin,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Skin temperature,skin_temperature,TSK,CORDEX_Cmor: RCM_sfc_ts (urban varset); written hourly; all cells (RCM_sfc_ts with header_tsskin)
+tspav,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature pavements,pavement_surface_temperature,TGROUND_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+tsroof,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature roof,roof_surface_temperature,TROOF_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+tsgree,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature green spaces,greenspaces_surface_temperature,TSK_RURAL,CORDEX_Cmor: RCM_sfc_urb (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+tsblue,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Surface temperature blue spaces,bluespaces_surface_temperature,TSK,CORDEX_Cmor: RCM_sfc_tsblue (urban varset); written hourly; water cells only (LANDMASK = 0)
+tascan,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature within canyon,temperature_canyon,TCAN_URB2D,CORDEX_Cmor: RCM_sfc_urb (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+hurscan,FPS-URB-RCC,URB-RCC,%,i,x,,,x,x,,Near-Surface Relative Humidity within canyon,relative_humidity_canyon,TCAN_URB2D PSFC QCAN_URB2D,CORDEX_Cmor: RCM_sfc_hurscan (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
+husscan,FPS-URB-RCC,URB-RCC,1,i,x,,,x,x,,Near-Surface Specific Humidity within canyon,specific_humidity_canyon,QCAN_URB2D,CORDEX_Cmor: RCM_sfc_husscan (urban varset); written hourly; q = r/(1+r); urban cells only
+sfcWindcan,FPS-URB-RCC,URB-RCC,m s-1,i,x,,,x,x,,Near-Surface Wind Speed within canyon,wind_speed_canyon,UCAN_URB2D,CORDEX_Cmor: RCM_sfc_sfcWindcan (urban varset); written hourly; urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 lai,FPS-LUCAS,CORE,1,i,,,,x,,,leaf area index,leaf_area_index,LAI,CORDEX_Cmor: RCM_sfc_lai (lsm varset); written daily; LUCAS name LAI
 alb,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_alb (lsm varset); written daily
 albc,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,ALBEDO LANDUSEF,CORDEX_Cmor: RCM_sfc_albc (lsm varset); written daily; ALBEDO x vegetated fraction of the cell (LANDUSEF classes of cnc)
@@ -222,36 +222,36 @@ baresoilFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Bare Soil Percentage Area Coverage,ar
 cnc,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage of area covered by vegetation.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF tree+shrub+grass+crop (landuse_field in shared_subs_v2.f90)
 cropFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage Crop Cover,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 cVeg,FPS-LUCAS,TIER 1,kg m-2,i,,,,x,,,Carbon mass per unit area in vegetation.,vegetation_carbon_content,LFMASS RTMASS STMASS WOOD,CORDEX_Cmor: RCM_sfc_cVeg (lsm varset); written daily; meaningful with Noah-MP dynamic vegetation (opt_dveg) only
-evspsblsoi,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Water evaporation from soil (including sublimation).,water_evaporation_flux_from_soil,EDIR,CORDEX_Cmor: RCM_sfc_evspsblsoi (lsm varset)
-evspsblveg,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,The canopy evaporation and sublimation (if present in model); may include dew formation as a negative flux.,water_evaporation_flux_from_canopy,ECAN,CORDEX_Cmor: RCM_sfc_evspsblveg (lsm varset)
+evspsblsoi,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Water evaporation from soil (including sublimation).,water_evaporation_flux_from_soil,EDIR,CORDEX_Cmor: RCM_sfc_evspsblsoi (lsm varset); written hourly
+evspsblveg,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,The canopy evaporation and sublimation (if present in model); may include dew formation as a negative flux.,water_evaporation_flux_from_canopy,ECAN,CORDEX_Cmor: RCM_sfc_evspsblveg (lsm varset); written hourly
 grassFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Natural Grass Area Percentage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
-hflsLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Latent Heat Flux on Land-Use Tile,surface_upward_latent_heat_flux,LH,"CORDEX_Cmor: RCM_sfc_hfls (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
-hfssLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Sensible Heat Flux on Land-Use Tile,surface_upward_sensible_heat_flux,HFX,"CORDEX_Cmor: RCM_sfc_hfss (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
-hussLut,FPS-LUCAS,TIER 1,1,i,x,,,,,,"Normally, the specific humidity should be reported at the 2 meter height",specific_humidity,Q2,"CORDEX_Cmor: RCM_sfc_huss (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
-interception,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,,water intercepted,canopy_water_amount,CANLIQ CANICE,CORDEX_Cmor: RCM_sfc_interception (lsm varset)
-irrLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,surface_downward_mass_flux_of_water_due_to_irrigation,surface_downward_mass_flux_of_water_due_to_irrigation,IRSIVOL IRMIVOL IRFIVOL,CORDEX_Cmor: RCM_sfc_irrLut (irr varset); Noah-MP irrigation (opt_irr); add IRSIVOL IRMIVOL IRFIVOL to wrfout (iofields); no land-use tiles: grid-cell value
+hflsLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Latent Heat Flux on Land-Use Tile,surface_upward_latent_heat_flux,LH,"CORDEX_Cmor: RCM_sfc_hfls (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
+hfssLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Sensible Heat Flux on Land-Use Tile,surface_upward_sensible_heat_flux,HFX,"CORDEX_Cmor: RCM_sfc_hfss (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
+hussLut,FPS-LUCAS,TIER 1,1,i,x,,,,,,"Normally, the specific humidity should be reported at the 2 meter height",specific_humidity,Q2,"CORDEX_Cmor: RCM_sfc_huss (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
+interception,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,,water intercepted,canopy_water_amount,CANLIQ CANICE,CORDEX_Cmor: RCM_sfc_interception (lsm varset); written hourly
+irrLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,surface_downward_mass_flux_of_water_due_to_irrigation,surface_downward_mass_flux_of_water_due_to_irrigation,IRSIVOL IRMIVOL IRFIVOL,CORDEX_Cmor: RCM_sfc_irrLut (irr varset); written hourly; Noah-MP irrigation (opt_irr); add IRSIVOL IRMIVOL IRFIVOL to wrfout (iofields); no land-use tiles: grid-cell value
 laiLut,FPS-LUCAS,TIER 1,1,i,,,,x,,,Leaf Area Index on Land-Use Tile,leaf_area_index,LAI,"CORDEX_Cmor: RCM_sfc_lai (lut varset); written daily; no land-use tiles in WRF: the grid-cell value, with the Lut header"
 landCoverFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage of Area by Vegetation or Land-Cover Category,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landCoverFrac (fx varset)
-mrroLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Total Runoff on Land-Use Tile,runoff_flux,RUNSB RUNSF,"CORDEX_Cmor: RCM_sfc_mrro (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
-mrsoLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,,Total Soil Moisture on Land-Use Tile,mass_content_of_water_in_soil,SMOIS,"CORDEX_Cmor: RCM_sfc_mrso (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
-mrsosLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,,the mass of water in all phases in a thin surface layer; integrate over uppermost 10cm,mass_content_of_water_in_soil_layer,SMOIS,"CORDEX_Cmor: RCM_sfc_mrsos (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
+mrroLut,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Total Runoff on Land-Use Tile,runoff_flux,RUNSB RUNSF,"CORDEX_Cmor: RCM_sfc_mrro (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
+mrsoLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,,Total Soil Moisture on Land-Use Tile,mass_content_of_water_in_soil,SMOIS,"CORDEX_Cmor: RCM_sfc_mrso (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
+mrsosLut,FPS-LUCAS,TIER 1,kg m-2,i,x,,,,,,the mass of water in all phases in a thin surface layer; integrate over uppermost 10cm,mass_content_of_water_in_soil_layer,SMOIS,"CORDEX_Cmor: RCM_sfc_mrsos (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
 npp,FPS-LUCAS,TIER 1,kg m-2 s-1,a,,,,x,,,Net Primary Production on Land as Carbon Mass Flux,net_primary_productivity_of_biomass_expressed_as_carbon,NPP,CORDEX_Cmor: RCM_sfc_npp (lsm varset); written daily; meaningful with Noah-MP dynamic vegetation (opt_dveg) only
 pastureFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage of Land Which Is Anthropogenic Pasture,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset)
 residualFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage of Grid Cell That Is Land but neither Vegetation Covered nor Bare Soil,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LUCAS name resdiualFrac
-rlusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Surface Upwelling Longwave on Land-Use Tile,surface_upwelling_longwave_flux_in_air,ACLWUPB I_ACLWUPB,"CORDEX_Cmor: RCM_sfc_rad (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
+rlusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Surface Upwelling Longwave on Land-Use Tile,surface_upwelling_longwave_flux_in_air,ACLWUPB I_ACLWUPB,"CORDEX_Cmor: RCM_sfc_rad (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
 rough,FPS-LUCAS,TIER 1,m,i,,,,x,,,Roughness Length,roughness_length,ZNT,CORDEX_Cmor: RCM_sfc_rough (lsm varset); written daily
-rsusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Surface Upwelling Shortwave on Land-Use Tile,surface_upwelling_shortwave_flux_in_air,ACSWUPB I_ACSWUPB,"CORDEX_Cmor: RCM_sfc_rad (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
+rsusLut,FPS-LUCAS,TIER 1,W m-2,a,x,,,,,,Surface Upwelling Shortwave on Land-Use Tile,surface_upwelling_shortwave_flux_in_air,ACSWUPB I_ACSWUPB,"CORDEX_Cmor: RCM_sfc_rad (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
 shrubFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Percentage Cover by Shrub,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
-sweLut,FPS-LUCAS,TIER 1,m,i,x,,,,,,Snow Water Equivalent on Land-Use Tile,lwe_thickness_of_surface_snow_amount,SNOW,"CORDEX_Cmor: RCM_sfc_snw (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
-tasLut,FPS-LUCAS,TIER 1,K,i,x,,,,,,"Air temperature is the bulk temperature of the air, not the surface (skin) temperature.",air_temperature,T2,"CORDEX_Cmor: RCM_sfc_tas (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
-tcs,FPS-LUCAS,TIER 1,K,i,x,,,,,,"Vegetation temperature, averaged over all vegetation types",canopy_temperature,TV,CORDEX_Cmor: RCM_sfc_tcs (lsm varset)
-tgs,FPS-LUCAS,TIER 1,K,i,x,,,,,,Surface bare soil temperature,surface_temperature,TGB,CORDEX_Cmor: RCM_sfc_tgs (lsm varset)
-tran,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Transpiration (may include dew formation as a negative flux).,transpiration_flux,ETRAN,CORDEX_Cmor: RCM_sfc_tran (lsm varset)
+sweLut,FPS-LUCAS,TIER 1,m,i,x,,,,,,Snow Water Equivalent on Land-Use Tile,lwe_thickness_of_surface_snow_amount,SNOW,"CORDEX_Cmor: RCM_sfc_snw (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
+tasLut,FPS-LUCAS,TIER 1,K,i,x,,,,,,"Air temperature is the bulk temperature of the air, not the surface (skin) temperature.",air_temperature,T2,"CORDEX_Cmor: RCM_sfc_tas (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
+tcs,FPS-LUCAS,TIER 1,K,i,x,,,,,,"Vegetation temperature, averaged over all vegetation types",canopy_temperature,TV,CORDEX_Cmor: RCM_sfc_tcs (lsm varset); written hourly
+tgs,FPS-LUCAS,TIER 1,K,i,x,,,,,,Surface bare soil temperature,surface_temperature,TGB,CORDEX_Cmor: RCM_sfc_tgs (lsm varset); written hourly
+tran,FPS-LUCAS,TIER 1,kg m-2 s-1,a,x,,,,,,Transpiration (may include dew formation as a negative flux).,transpiration_flux,ETRAN,CORDEX_Cmor: RCM_sfc_tran (lsm varset); written hourly
 treeFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Tree Cover Percentage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF classes grouped (landuse_field in shared_subs_v2.f90)
 treeFracBdlDcd,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entire grid cell that is covered by broadleaf deciduous trees.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset)
 treeFracBdlEvg,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entire grid cell that is covered by broadleaf evergreen trees.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset)
 treeFracNdlDcd,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entire grid cell that is covered by needleleaf deciduous trees.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset)
-tslsiLut,FPS-LUCAS,TIER 1,K,i,x,,,,,,Surface temperature (i.e. temperature at which long-wave radiation emitted),surface_temperature,TSK,"CORDEX_Cmor: RCM_sfc_ts (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
+tslsiLut,FPS-LUCAS,TIER 1,K,i,x,,,,,,Surface temperature (i.e. temperature at which long-wave radiation emitted),surface_temperature,TSK,"CORDEX_Cmor: RCM_sfc_ts (lut varset); written hourly; no land-use tiles in WRF: the grid-cell value, with the Lut header"
 urbanFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Urban Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF urban classes incl. LCZ (landuse_field in shared_subs_v2.f90)
 vortmen,FPS-LUCAS,TIER 1,s-1,i,,x,,,,,relative vorticity,atmosphere_relative_vorticity,U V MAPFAC_U MAPFAC_V MAPFAC_M P PB,"CORDEX_Cmor: RCM_plev_vortmen (plev_vortmen0/1 varsets), as vortmen<p> on each pressure level (1000 to 30 hPa); m^2 [d(v/m_v)/dx - d(u/m_u)/dy] as wrf-python; every wp_step hours (grid ini)"
 wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,,omega,lagrangian_tendency_of_air_pressure,W T QVAPOR P PB,"CORDEX_Cmor: RCM_plev_wap (plev_wap varset), as wap<p> on each pressure level (1000 to 30 hPa); omega = -rho g w; every wp_step hours (grid ini)"

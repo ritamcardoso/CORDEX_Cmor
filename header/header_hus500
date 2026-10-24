@@ -5,6 +5,7 @@ vunts = '1'
 lname = 'Specific Humidity at 500hPa'
 stname = 'specific_humidity'
 cmethods = 'area: mean time: point'
+outstep = 3           ! hours (output step); CORDEX-CMIP6 3h, FPS-LUCAS 3h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
 !

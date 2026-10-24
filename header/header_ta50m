@@ -5,6 +5,7 @@ vunts = 'K'
 lname = 'Air Temperature at 50m'
 stname = 'air_temperature'
 cmethods = 'area: mean time: point'
+outstep = 1           ! hours (output step); CORDEX-CMIP6 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
 !

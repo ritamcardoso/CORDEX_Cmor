@@ -5,6 +5,7 @@ vunts = 'm s-1'
 lname = 'Northward Wind at 250hPa'
 stname = 'northward_wind'
 cmethods = 'area: mean time: point'
+outstep = 3           ! hours (output step); CORDEX-CMIP6 3h, FPS-LUCAS 3h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !
 !

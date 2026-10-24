@@ -6,5 +6,6 @@ vunts = 's-1'
 lname = 'Relative Vorticity at 30hPa'
 stname = 'atmosphere_relative_vorticity'
 cmethods = 'area: mean time: point'
+outstep = 3           ! hours (output step); FPS-LUCAS 3h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

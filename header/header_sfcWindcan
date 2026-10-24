@@ -4,5 +4,6 @@ vunts = 'm s-1'
 lname = 'Near-Surface Wind Speed within canyon'
 stname = 'wind_speed_canyon'
 cmethods = 'area: mean time: point'
+outstep = 1           ! hours (output step); not requested by CORDEX-CMIP6 or FPS-LUCAS: the program step
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

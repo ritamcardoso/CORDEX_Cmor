@@ -5,5 +5,6 @@ vunts = 'W m-2'
 lname = 'Ground Heat Flux'
 stname = 'downward_heat_flux_in_soil'
 cmethods = 'area: time: mean'
+outstep = 1           ! hours (output step); CORDEX-CMIP6 1h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !

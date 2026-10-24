@@ -528,16 +528,20 @@ The LCL height above ground, `lcl` (not a CORDEX variable), is written by `RCM_s
 only the lowest model levels. The earlier `RCM_sfc_cape.f90`, which also wrote `lcl`, is in
 `f90_src/deprecated` (and its OpenMP copy in `f90_src_parallel/deprecated`).
 
-**Output step of a variable (`outstep` in its header).** A program writes its own step, usually 1hr, unless the header sets `outstep`:
-- **`outstep = 'wp'`:** every `wp_step` hours (grid ini). Instantaneous variables ("time: point") keep the values at those hours; means become the mean over the `wp_step` hours, with time bounds.
-- **`outstep = 'day'`:** daily means, or daily sums for "time: sum".
+**Output step of a variable (`outstep` in its header).** Every header of a variable with a time axis has `outstep`, the output step in hours. It is the highest frequency that CORDEX-CMIP6 (CMOR tables) or FPS-LUCAS request:
+- `1`: hourly;
+- `3`: 3-hourly (the pressure-level variables);
+- `6`: 6-hourly (snw, snd, snc, mrfso, snm, mrsfl, clh, clm, cll, the clear-sky radiation);
+- `24`: daily (siconca; the LUCAS daily alb, albc, cVeg, lai, laiLut, npp, rough; and the daily maxima/minima);
+- `0`: `wp_step` of the grid ini. This is only for the variables that CORDEX and LUCAS request at different frequencies: mrso, mrro, mrros, mrsol and tsl (CORDEX 6hr, LUCAS 1hr). So `wp_step = 6` for CORDEX and `1` for LUCAS.
 
-The resampling is `resample_output` / `resample_time` in `shared_subs_v2.f90`. It follows the highest frequency that CORDEX-CMIP6 (CMOR tables) or FPS-LUCAS request:
-- **6hr, so `'wp'`:** snw, snd, snc, mrfso, snm, clh, clm, cll, rldscs, rluscs, rlutcs, rsdscs, rsuscs, rsutcs.
-- **Different in CORDEX and LUCAS, so `'wp'`** (each experiment sets the step in its ini): mrso, mrro, mrros (CORDEX 6hr, LUCAS 1hr).
-- **Daily, so `'day'`:** siconca, sund, z0 (CORDEX); alb, albc, cVeg, lai, laiLut, npp, rough (LUCAS).
+How the step is applied:
+- The hourly programs pass their output through `resample_output` (`shared_subs_v2.f90`), so a shared program (`rad`, `cloud`) writes each variable at the step of its own header. Instantaneous values ("time: point") are taken at those hours; means become the mean over them (with time bounds); "time: sum" is summed.
+- The pressure-level and soil-layer programs read the wrfout files every `outstep` hours.
+- In `RCM_sfc_clouds`, clt is hourly and clh, clm and cll are 6-hourly.
+- sund and z0 are kept hourly.
 
-In `RCM_sfc_clouds`, clt stays hourly and clh, clm and cll are written every `wp_step` hours. The earlier versions of the programs changed for this are in `f90_src/deprecated`.
+The earlier versions of the programs changed for this are in `f90_src/deprecated`.
 
 **Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map` and `plev_interp` (`shared_subs_v2.f90`).
 - `plev_map` builds, for the pressure level, a map of the model level k with p(k) ≥ p_level > p(k+1) at every point.

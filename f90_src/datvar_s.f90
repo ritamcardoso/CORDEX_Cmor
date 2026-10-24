@@ -65,7 +65,8 @@ real :: false_easting, false_northing          ! Lambert, metres
 
 ! Scalar area-type coordinate for sftlaf/sfturf (set in their header)
 character(len=40) :: area_type
-character(len=8)  :: outstep     ! header: '' = the program's step (1hr); 'wp' = every wp_step hours; 'day' = daily (resample_output)
+integer :: outstep   ! header: output step in hours (1, 3, 6 or 24 = daily); 0 = wp_step of the grid ini
+integer :: ostep     ! the step used: outstep, or wp_step for outstep = 0 (-1: no outstep in the header)
 
 real, dimension(4), parameter :: sdepth = [0.1, 0.3, 0.6, 1.0]
 real, dimension(2,4) :: sdepth_bounds

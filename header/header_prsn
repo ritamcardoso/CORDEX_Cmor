@@ -4,6 +4,7 @@ vunts = 'kg m-2 s-1'
 lname = 'Snowfall Flux'
 stname = 'snowfall_flux'
 cmethods = 'area: time: mean'
+outstep = 1           ! hours (output step); CORDEX-CMIP6 1h, FPS-LUCAS 24h
 factor = 0.           ! costant to multipy variable with ( used only if /= 0)
 !                                                                            
 !
