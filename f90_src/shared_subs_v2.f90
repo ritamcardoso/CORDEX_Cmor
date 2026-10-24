@@ -1697,6 +1697,11 @@ pure subroutine romps_lcl(pa, tk, r, zl, tl, pl)
 ! ratio r), Romps (2017, J. Atmos. Sci. 74, 3891), liquid water:
 !   zl: height of the LCL above the parcel (m), tl: its temperature (K), pl: pressure (Pa).
 ! A saturated (or supersaturated) parcel has its LCL at the parcel level.
+! The saturation vapour pressure (pvs) is Romps' own (Rankine-Kirchhoff, pure water vapour),
+! kept on purpose: the exact solution through the Lambert W function needs it. It differs
+! from es_wexler_dt (Wexler x Hardy enhancement factor, used by hurs and the moist ascent in
+! CAPE) by +0.35 to +0.6 % at 1000 hPa (-40 to 40 degC; 0.2-0.3 % at 500 hPa), mostly the
+! enhancement factor. With the RH of es_wexler_dt the LCL would be ~6-8 m higher (~0.05 K).
 real(kind=8), intent(in) :: pa, tk, r
 real(kind=8), intent(out) :: zl, tl, pl
 real(kind=8), parameter :: ttrip=273.16d0, ptrip=611.65d0, e0v=2.3740d6, ggr=9.81d0
