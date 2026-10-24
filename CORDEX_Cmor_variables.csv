@@ -215,7 +215,6 @@ tascan,FPS-URB-RCC,URB-RCC,K,i,x,,,x,x,,Near-surface temperature within canyon,t
 hurscan,FPS-URB-RCC,URB-RCC,%,i,x,,,x,x,,Near-Surface Relative Humidity within canyon,relative_humidity_canyon,TCAN_URB2D PSFC QCAN_URB2D,CORDEX_Cmor: RCM_sfc_hurscan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
 husscan,FPS-URB-RCC,URB-RCC,1,i,x,,,x,x,,Near-Surface Specific Humidity within canyon,specific_humidity_canyon,QCAN_URB2D,CORDEX_Cmor: RCM_sfc_husscan (urban varset); q = r/(1+r); urban cells only
 sfcWindcan,FPS-URB-RCC,URB-RCC,m s-1,i,x,,,x,x,,Near-Surface Wind Speed within canyon,wind_speed_canyon,UCAN_URB2D,CORDEX_Cmor: RCM_sfc_sfcWindcan (urban varset); urban cells only (FRC_URB2D and LU_INDEX of geo_em)
-hu,FPS-LUCAS,CORE,m3/m3,i,x,,,,,,Atmospheric humidity at model levels,specific_humidity,QVAPOR,not produced by CORDEX_Cmor; header ready; model levels
 lai,FPS-LUCAS,CORE,1,i,,,,x,,,leaf area index,leaf_area_index,LAI,CORDEX_Cmor: RCM_sfc_lai (lsm varset); LUCAS name LAI
 alb,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo,surface_albedo,ALBEDO,CORDEX_Cmor: RCM_sfc_alb (lsm varset)
 albc,FPS-LUCAS,TIER 1,1,i,,,,x,,,Albedo of the vegetation: fraction of incoming solar radiation which is reflected before reaching the ground.,canopy_albedo,-,not produced by CORDEX_Cmor; header ready; no canopy albedo in the WRF output
@@ -254,7 +253,7 @@ treeFracBdlEvg,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entir
 treeFracNdlDcd,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,This is the percentage of the entire grid cell that is covered by needleleaf deciduous trees.,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset)
 tslsiLut,FPS-LUCAS,TIER 1,K,i,x,,,,,,Surface temperature (i.e. temperature at which long-wave radiation emitted),surface_temperature,TSK,"CORDEX_Cmor: RCM_sfc_ts (lut varset); no land-use tiles in WRF: the grid-cell value, with the Lut header"
 urbanFrac,FPS-LUCAS,TIER 1,%,,,,,x¹,,x,Urban Percentage Area Coverage,area_fraction,LANDUSEF,CORDEX_Cmor: RCM_fx_landuse (fx varset) and RCM_sfc_landuse (landuse varset); LANDUSEF urban classes incl. LCZ (landuse_field in shared_subs_v2.f90)
-vortmen,FPS-LUCAS,TIER 1,s-1,i,,x,,,,,relative vorticity,atmosphere_relative_vorticity,U V MAPFAC_U MAPFAC_V MAPFAC_M P PB,not produced by CORDEX_Cmor; header ready; relative vorticity on pressure levels
+vortmen,FPS-LUCAS,TIER 1,s-1,i,,x,,,,,relative vorticity,atmosphere_relative_vorticity,U V MAPFAC_U MAPFAC_V MAPFAC_M P PB,"CORDEX_Cmor: RCM_plev_vortmen (plev_vortmen0/1 varsets), as vortmen<p> on each pressure level (1000 to 30 hPa); m^2 [d(v/m_v)/dx - d(u/m_u)/dy] as wrf-python; every wp_step hours (grid ini)"
 wap,FPS-LUCAS,TIER 1,Pa s-1,i,,x,,,,,omega,lagrangian_tendency_of_air_pressure,W T QVAPOR P PB,"CORDEX_Cmor: RCM_plev_wap (plev_wap varset), as wap<p> on each pressure level (1000 to 30 hPa); omega = -rho g w; every wp_step hours (grid ini)"
 slthick,FPS-LUCAS,TIER 1,m,,,,,x¹,,x,Thickness of Soil Layers,cell_thickness,DZS,CORDEX_Cmor: RCM_fx_slthick (fx varset)
 lcvr,FPS-LUCAS,,1,,x,,,x¹,,x,Land Cover Dominant Class,,LU_INDEX,"CORDEX_Cmor: RCM_fx_lcvr (fx varset, from geo_em) and RCM_sfc_landuse (landuse varset); LU_INDEX (dominant land-use class); hourly from wrfout; not in the phase 2 workbook list"

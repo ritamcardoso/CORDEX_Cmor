@@ -1,0 +1,10 @@
+! vortmen70: written by RCM_plev_vortmen (plev_vortmen varset); relative vorticity from U, V, MAPFAC_U/V/M, P, PB
+wrfvar = 'U'
+vaid = 'vortmen70'
+pres = 7000.
+vunts = 's-1'
+lname = 'Relative Vorticity at 70hPa'
+stname = 'atmosphere_relative_vorticity'
+cmethods = 'area: mean time: point'
+factor = 0.           ! costant to multipy variable with ( used only if /= 0)
+!

@@ -93,6 +93,13 @@ declare -A VARSETS=(
   [plev_wap]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400,wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30"
   # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_wap]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400,wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30,wap20,wap10"
+  # Relative vorticity on pressure levels (LUCAS vortmen), not in ORDER; two varsets (levels split
+  # in two, as zlev_uava0/1) so that each fits one job even with wp_step = 3:
+  # ./run.sh lucas <first year> <last year> plev_vortmen0 (and plev_vortmen1)
+  [plev_vortmen0]="RCM_plev_vortmen:vortmen1000,vortmen925,vortmen850,vortmen750,vortmen700,vortmen600,vortmen500,vortmen400"
+  [plev_vortmen1]="RCM_plev_vortmen:vortmen300,vortmen250,vortmen200,vortmen150,vortmen100,vortmen70,vortmen50,vortmen30"
+  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
+  #[plev_vortmen1]="RCM_plev_vortmen:vortmen300,vortmen250,vortmen200,vortmen150,vortmen100,vortmen70,vortmen50,vortmen30,vortmen20,vortmen10"
 )
 
 #
@@ -139,6 +146,8 @@ declare -A TIME=(
   [lut]="24:00:00"    # 12 variables, as rad (~1.3 h each) and mrso/mrsos (SMOIS)
   [irr]="04:00:00"
   [landuse]="10:00:00"
+  [plev_vortmen0]="32:00:00"   # 8 levels, U V P PB: ~1.8 h per level at wp_step 6 (~15 h), double at wp_step 3
+  [plev_vortmen1]="32:00:00"
   [plev_wap]="36:00:00"   # as plev_wa (22 h), plus W, T and QVAPOR for every level
 )
 
@@ -221,6 +230,8 @@ declare -A ADVANCE_YEAR=(
   [clouds]=1
   [wpth]=1
   [plev_wap]=1
+  [plev_vortmen0]=1
+  [plev_vortmen1]=1
 )
 
 #
@@ -252,6 +263,8 @@ declare -A NEXT=(
   [clouds]="clouds"
   [wpth]="wpth"
   [plev_wap]="plev_wap"
+  [plev_vortmen0]="plev_vortmen0"
+  [plev_vortmen1]="plev_vortmen1"
 )
 
 #

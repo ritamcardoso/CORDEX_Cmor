@@ -95,6 +95,9 @@ integer, dimension(:,:), allocatable :: bdtime, outvar_a
 real :: tv, tc, slope
 real :: t2_C, q2_m, psf_kPa, wind2, Rn_MJ, ghf, vpres, es_kPa, gam, ET0   ! RCM_sfc_evspsblpot (slope above)
 real :: dx_geo, dy_geo                                                      ! RCM_fx_areacella
+real :: vo_dx, vo_dy, vo_dudy, vo_dvdx                                     ! RCM_plev_vortmen: grid spacing (m), derivatives
+integer :: vo_hw, vo_he, vo_hs, vo_hn, vo_nxh, vo_nyh, vo_nxf, vo_nyf     ! RCM_plev_vortmen: halo (0/1) W E S N, sizes with halo, full grid
+integer :: vo_i, vo_j, vo_ip, vo_im, vo_jp, vo_jm, vo_dimid                ! RCM_plev_vortmen: indices with halo and neighbours, dimension id
 real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax
 integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax (Brasseur)
 logical :: fx_exists                                                        ! fx programs: output already there
@@ -117,6 +120,7 @@ real(kind=8), dimension(:), allocatable :: buoy_c, zrel_c, ben_c   ! one column,
 real, dimension(:,:), allocatable :: sftlf, hgt, runsf, pblh
 real, dimension(:,:), allocatable :: msftx, msfty     ! map scale factors (RCM_fx_areacella)
 real, dimension(:,:), allocatable :: lsm_a, lsm_b, lsm_c   ! further Noah-MP 2-D fields (RCM_sfc_interception, RCM_sfc_cVeg)
+real, dimension(:,:), allocatable :: vo_mu, vo_mv, vo_mt  ! map factors at U, V and mass points, with halo (RCM_plev_vortmen)
 real, dimension(:,:), allocatable :: wrfv2D, i_wrfv2D, outvar, outvar_i
 real, dimension(:,:), allocatable :: u_s, v_s, wind10, ust, t2, q2, uas, vas, ro, psf
 real, dimension(:,:), allocatable :: t2_i, q2_i, psf_i, wind10_i
