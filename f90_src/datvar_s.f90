@@ -116,6 +116,7 @@ real :: vo_dx, vo_dy, vo_dudy, vo_dvdx                                     ! RCM
 integer :: vo_hw, vo_he, vo_hs, vo_hn, vo_nxh, vo_nyh, vo_nxf, vo_nyf     ! RCM_plev_vortmen: halo (0/1) W E S N, sizes with halo, full grid
 integer :: vo_i, vo_j, vo_ip, vo_im, vo_jp, vo_jm, vo_dimid                ! RCM_plev_vortmen: indices with halo and neighbours, dimension id
 integer :: plev_kg, plev_it, plev_steps, plev_scan              ! plev_map: first guess, iterations, steps walked, full scans
+integer :: zlev_kg, zlev_it, zlev_steps, zlev_scan, zlev_k1, zlev_k2, zlev_nk  ! zlev_map: as plev_map, for heights
 integer :: plev_k1, plev_k2, plev_nk          ! plev_map: the model levels plev_interp needs (all points), and their number
 real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax
 integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax (Brasseur)
@@ -158,6 +159,7 @@ real, dimension(:,:,:), allocatable :: outvar_r          ! resample_time: the ou
 real, dimension(:), allocatable :: ttime_r                 ! ... its times (hours since iniyear)
 integer, dimension(:,:), allocatable :: bdtime_r          ! ... its time bounds
 integer :: nt_r                                           ! ... its number of time steps
+integer, dimension(:,:), allocatable :: zlev_k          ! zlev_map: model level k with z(k) < height <= z(k+1), 0 = missing
 integer, dimension(:,:), allocatable :: plev_k          ! plev_map: model level k with p(k) >= presl > p(k+1), 0 = missing
 real, dimension(:,:), allocatable :: plev_w             ! plev_map: log(p) weight of level k+1
 real, dimension(:,:,:), allocatable :: lc_frac          ! LANDUSEF of every category, % (RCM_fx_landCoverFrac)
