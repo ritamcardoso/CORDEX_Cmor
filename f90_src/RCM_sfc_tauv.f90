@@ -45,7 +45,7 @@ ahouri = pad_int(ihour, 2)
 if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
-allocate(outvar(nlon,nlat), outvar_a(nlon,nlat), outvar_i(nlon,nlat))
+allocate(outvar(nlon,nlat), outvar_i(nlon,nlat))
 allocate(wind10(nlon,nlat), uas(nlon,nlat), vas(nlon,nlat), u_s(nlon,nlat), v_s(nlon,nlat))
 allocate(ro(nlon,nlat), psf(nlon,nlat), t2(nlon,nlat), q2(nlon,nlat))
 allocate(ust(nlon,nlat))
@@ -196,9 +196,7 @@ do year = yeari, yearf,1
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        outvar_a(:,:)=nint(1000.d0*(outvar(:,:)+outvar_i(:,:))/2.)
-
-        outvar_h(:,:,issh)=float(outvar_a(:,:))/1000.d0
+        outvar_h(:,:,issh)=(outvar(:,:)+outvar_i(:,:))/2.     ! mean of the interval, not rounded
 
         outvar_i=outvar
 !        
