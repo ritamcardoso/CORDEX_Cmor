@@ -21,7 +21,7 @@ call init_cordex_environment
 call read_geog
 
 ! --- Initialising grid and time counters
-nz = 15
+nz = 20
 nzt = nz + 1
 nlon_u=nlon+1
 nlat_v=nlat+1
