@@ -2165,8 +2165,9 @@ end function t_from_theta_e
 ! with the vapour that condenses removed at the parcel temperature; trapezoidal averages):
 !   (cpd + r cpv)(T2 - T1) - Rd T ln(pd2/pd1) - r Rv T ln(e2/e1) + L (r2 - r1) = 0
 ! r = eps e/(p - e), pd = p - e. With fi = 0 this is the liquid pseudo-adiabat: within 0.08 K of
-! Bolton's theta_e at 500 hPa, and 1-2 % more CAPE on Weisman-Klemp soundings. Steps of 0.02 in
-! ln p change CAPE by less than 0.05 J kg-1 from steps of 0.002.
+! Bolton's theta_e at 500 hPa, and 1-2 % more CAPE on Weisman-Klemp soundings. Steps of 0.1 in
+! ln p (one step per model layer in most of the troposphere) and a tolerance of 1e-3 K differ
+! from steps of 0.002 by less than 0.31 J kg-1 in CAPE and 0.004 K in LI.
 !
 pure subroutine es_mixed_dt(tk, pa, es, des, fi)
 ! saturation vapour pressure (Pa) of the parcel with ice, its derivative d es / d tk
@@ -2209,12 +2210,12 @@ end function qvs_mixed
 !
 pure function t_pseudo_ice(t1, p1, p2) result(t2)
 ! temperature (K) at p2 (Pa) of the saturated parcel at (t1, p1) lifted along the pseudo-adiabat
-! with ice (see above), in steps of at most 0.02 in ln p (20 hPa at 1000 hPa, 4 hPa at 200 hPa)
+! with ice (see above), in steps of at most 0.1 in ln p (95 hPa at 1000 hPa, 19 hPa at 200 hPa)
 real(kind=8), intent(in) :: t1, p1, p2
 real(kind=8) :: t2, ta, pa, pb, dlnp
 integer :: n, is
 dlnp = log(p1/p2)
-n = max(1, ceiling(abs(dlnp)/0.02d0))
+n = max(1, ceiling(abs(dlnp)/0.1d0))
 ta = t1; pa = p1
 do is = 1, n
   pb = p1*exp(-dlnp*dble(is)/dble(n))
@@ -2249,7 +2250,7 @@ do it = 1, 30
   xn = xb - fb*(xb - xa)/(fb - fa)
   xa = xb; fa = fb
   xb = xn; fb = resid(xb)
-  if (abs(xb - xa) < 1.d-5) exit
+  if (abs(xb - xa) < 1.d-3) exit
 enddo
 t2 = xb
 contains
