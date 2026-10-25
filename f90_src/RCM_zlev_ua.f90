@@ -143,6 +143,10 @@ do year = yeari, yearf,1
         enddo
         deallocate(ph, phb, phi)
 
+        ! levels bracketing heightl at every point (map), and the levels the interpolation
+        ! needs: zlev_k1..zlev_k2, the only levels of U and V that are read
+        call zlev_map(zhgt, heightl)
+
         ! Read wrf var
 
         allocate(ua(nlon_u,nlat,nz), va(nlon,nlat_v,nz))
@@ -150,13 +154,13 @@ do year = yeari, yearf,1
         status=nf90_inq_varid(ncid,'U',varid)
         call ncerror(status,'getting var id U in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,ua,(/xoffset,yoffset,1/),(/nlon_u,nlat,nz/),(/1,1,1/))
+        status=nf90_get_var(ncid,varid,ua(:,:,zlev_k1:zlev_k2),(/xoffset,yoffset,zlev_k1/),(/nlon_u,nlat,zlev_nk/),(/1,1,1/))
         call ncerror(status,'reading U from '//trim(infile))
 
         status=nf90_inq_varid(ncid,'V',varid)
         call ncerror(status,'getting var id V in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,va,(/xoffset,yoffset,1/),(/nlon,nlat_v,nz/),(/1,1,1/))
+        status=nf90_get_var(ncid,varid,va(:,:,zlev_k1:zlev_k2),(/xoffset,yoffset,zlev_k1/),(/nlon,nlat_v,zlev_nk/),(/1,1,1/))
         call ncerror(status,'reading V from '//trim(infile))
 !
         status = nf90_close(ncid)
@@ -166,8 +170,8 @@ do year = yeari, yearf,1
 !
         do ix=1,nlon
           do iy=1,nlat
-            u(ix,iy,:)=(ua(ix,iy,:)+ua(ix+1,iy,:))/2.0
-            v(ix,iy,:)=(va(ix,iy,:)+va(ix,iy+1,:))/2.0
+            u(ix,iy,zlev_k1:zlev_k2)=(ua(ix,iy,zlev_k1:zlev_k2)+ua(ix+1,iy,zlev_k1:zlev_k2))/2.0
+            v(ix,iy,zlev_k1:zlev_k2)=(va(ix,iy,zlev_k1:zlev_k2)+va(ix,iy+1,zlev_k1:zlev_k2))/2.0
           enddo
         enddo
 !
@@ -215,11 +219,8 @@ outvar=huge_val
 !
 do isy=1,nlat
   do isx=1,nlon
-    z_loop: do iz=1,nz-1
-
-      if(zhgt(isx,isy,iz) > heightl)exit z_loop      !skip if above target height. Shouldn't happen!
-
-      if(zhgt(isx,isy,iz+1) >= heightl .and. zhgt(isx,isy,iz) < heightl)then    ! Search in the vertical
+    iz = zlev_k(isx, isy)      ! zlev_map: zhgt(iz) < heightl <= zhgt(iz+1); 0 = missing
+    if (iz > 0) then
 !
 !       Ensure no zero or negative values for logs
 !
@@ -249,9 +250,7 @@ do isy=1,nlat
         outvar(isx,isy)=u_int*cosalp(isx,isy)-v_int*sinalp(isx,isy)
 !        outvar(isx,isy)=v_int*cosalp(isx,isy)+u_int*sinalp(isx,isy)
 
-        exit z_loop
-      endif
-    enddo z_loop
+    endif
 !
   enddo
 enddo

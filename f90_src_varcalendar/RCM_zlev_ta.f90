@@ -100,6 +100,10 @@ do vc_year = yeari, yearf
         enddo
         deallocate(ph, phb, phi)
 
+        ! levels bracketing heightl at every point (map), and the levels the interpolation
+        ! needs: zlev_k1..zlev_k2, the only levels of the variable that are read
+        call zlev_map(zhgt, heightl)
+
         ! Read Pressure and Target Variable
 
         allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
@@ -107,16 +111,16 @@ do vc_year = yeari, yearf
         status = nf90_inq_varid(ncid, 'P', varid)
         call ncerror(status,'getting var id P in '//trim(infile))
 
-        status = nf90_get_var(ncid, varid, p, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, p(:,:,zlev_k1:zlev_k2), (/xoffset, yoffset, zlev_k1/), (/nlon, nlat, zlev_nk/))
         call ncerror(status,'reading P from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'PB', varid)
         call ncerror(status,'getting var id PB in '//trim(infile))
 
-        status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, pb(:,:,zlev_k1:zlev_k2), (/xoffset, yoffset, zlev_k1/), (/nlon, nlat, zlev_nk/))
         call ncerror(status,'reading PB from '//trim(infile))
 
-        press = p + pb
+        press(:,:,zlev_k1:zlev_k2) = p(:,:,zlev_k1:zlev_k2) + pb(:,:,zlev_k1:zlev_k2)
 
         deallocate(p, pb)
 
@@ -124,7 +128,7 @@ do vc_year = yeari, yearf
         status = nf90_inq_varid(ncid, wrfvar, varid)
         call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
 
-        status = nf90_get_var(ncid, varid, wrfv3D, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, wrfv3D(:,:,zlev_k1:zlev_k2), (/xoffset, yoffset, zlev_k1/), (/nlon, nlat, zlev_nk/))
         call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         status = nf90_close(ncid)
@@ -132,7 +136,7 @@ do vc_year = yeari, yearf
 
         ! Convert to Potential Temperature
 
-        wrfv3D = (wrfv3D + 300.) * (press / pconst)**rcp
+        wrfv3D(:,:,zlev_k1:zlev_k2) = (wrfv3D(:,:,zlev_k1:zlev_k2) + 300.) * (press(:,:,zlev_k1:zlev_k2) / pconst)**rcp
 
         deallocate(press)
 
@@ -171,18 +175,14 @@ outvar = huge_val
 
 do isy = 1, nlat
   do isx = 1, nlon
-    z_loop: do iz = 1, nz - 1
-      if (zhgt(isx, isy, iz) > heightl) exit z_loop
-
-      if (zhgt(isx, isy, iz+1) >= heightl .and. zhgt(isx, isy, iz) < heightl) then
+    iz = zlev_k(isx, isy)      ! zlev_map: zhgt(iz) < heightl <= zhgt(iz+1); 0 = missing
+    if (iz > 0) then
 
         slope = (wrfv3D(isx, isy, iz+1) - wrfv3D(isx, isy, iz)) / &
                 (zhgt(isx, isy, iz+1) - zhgt(isx, isy, iz))
         outvar(isx, isy) = wrfv3D(isx, isy, iz) + (heightl - zhgt(isx, isy, iz)) * slope
 
-        exit z_loop
-      endif
-    enddo z_loop
+    endif
   enddo
 enddo
 !

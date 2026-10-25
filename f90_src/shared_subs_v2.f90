@@ -1620,6 +1620,85 @@ end subroutine plev_map
 !
 !-----------------------------------------------------------------------
 !
+subroutine zlev_map(zh, hl)
+! Map of the model levels that bracket the height hl (m above the ground): zlev_k(ix,iy) = k
+! with zh(k) < hl <= zh(k+1), zh the height of the mass levels above the ground (from PH,
+! PHB and HGT). zlev_k = 0 (missing) where hl is not above the lowest model level
+! (zh(1) >= hl) or is above the top (zh(nz) < hl): the same brackets as the search from the
+! bottom of the earlier RCM_zlev programs, which the programs use with their own
+! interpolation (linear in z, or the power law of the winds).
+! Height is smooth in the horizontal, so the level of the previous point (the point to the
+! west; at the start of a row, the first point of the row below) is the first guess, and
+! the search walks from it: down (k-1) while zh(k) >= hl, up (k+1) while zh(k+1) < hl.
+! If the walk does not end within nz steps (non-monotonic column), the column is searched
+! from the bottom as before. The map is kept for the next call (the next time step): the
+! search of the first point starts from its level of the previous time step.
+! zlev_k1..zlev_k2 (zlev_nk levels) are the model levels the interpolation needs, k and k+1
+! of every point: the programs read and compute their fields only on these levels.
+use datvar_s
+real, dimension(nlon,nlat,nz), intent(in) :: zh
+real, intent(in) :: hl
+integer :: zm_i, zm_j, zm_k
+!
+if (.not. allocated(zlev_k)) then
+  allocate(zlev_k(nlon,nlat))
+  zlev_k = 0
+  zlev_kg = 1
+endif
+! first guess of the first point: its level of the previous time step
+if (zlev_k(1,1) > 0) zlev_kg = zlev_k(1,1)
+zlev_k = 0
+zlev_steps = 0
+zlev_scan = 0
+do zm_j = 1, nlat
+  if (zm_j > 1) then
+    if (zlev_k(1,zm_j-1) > 0) zlev_kg = zlev_k(1,zm_j-1)
+  endif
+  do zm_i = 1, nlon
+    if (zh(zm_i,zm_j,1) >= hl .or. zh(zm_i,zm_j,nz) < hl) cycle      ! not above level 1 / above the top
+    zm_k = max(1, min(nz-1, zlev_kg))
+    walk: do zlev_it = 1, nz
+      if (zh(zm_i,zm_j,zm_k) >= hl) then
+        zm_k = zm_k - 1
+      else if (zh(zm_i,zm_j,zm_k+1) < hl) then
+        zm_k = zm_k + 1
+      else
+        exit walk
+      endif
+      zlev_steps = zlev_steps + 1
+      if (zm_k < 1 .or. zm_k > nz-1) exit walk
+    enddo walk
+    if (zm_k < 1 .or. zm_k > nz-1 .or. zlev_it > nz) then
+      ! not monotonic: the search from the bottom of the earlier programs
+      zlev_scan = zlev_scan + 1
+      zm_k = 0
+      do zlev_it = 1, nz-1
+        if (zh(zm_i,zm_j,zlev_it) > hl) exit
+        if (zh(zm_i,zm_j,zlev_it+1) >= hl .and. zh(zm_i,zm_j,zlev_it) < hl) then
+          zm_k = zlev_it
+          exit
+        endif
+      enddo
+      if (zm_k == 0) cycle
+    endif
+    zlev_k(zm_i,zm_j) = zm_k
+    zlev_kg = zm_k
+  enddo
+enddo
+! the levels the interpolation needs (1 level if hl is missing everywhere)
+if (any(zlev_k > 0)) then
+  zlev_k1 = minval(zlev_k, mask = zlev_k > 0)
+  zlev_k2 = maxval(zlev_k) + 1
+else
+  zlev_k1 = 1
+  zlev_k2 = 1
+endif
+zlev_nk = zlev_k2 - zlev_k1 + 1
+!
+end subroutine zlev_map
+!
+!-----------------------------------------------------------------------
+!
 subroutine plev_interp(f3d, f2d)
 ! f3d on the model levels -> f2d on the pressure level of the last plev_map, linear in
 ! log(p): f2d = f3d(k) + plev_w (f3d(k+1) - f3d(k)); missing (1e20) where plev_k = 0

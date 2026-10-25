@@ -91,16 +91,6 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, phb, (/xoffset, yoffset, 1/), (/nlon, nlat, nzt/))
         call ncerror(status,'reading PHB from '//trim(infile))
 
-        ! Read wrf var
-        status = nf90_inq_varid(ncid, wrfvar, varid)
-        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
-
-        status = nf90_get_var(ncid, varid, wrfv3D, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
-        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
-
-        status = nf90_close(ncid)
-        call ncerror(status,'closing '//trim(infile))
-
         ! Calculate height above the surface
 
         phi = (ph + phb) / g
@@ -110,9 +100,24 @@ do vc_year = yeari, yearf
         enddo
         deallocate(ph, phb, phi)
 
+        ! levels bracketing heightl at every point (map), and the levels the interpolation
+        ! needs: zlev_k1..zlev_k2, the only levels of the variable that are read
+        call zlev_map(zhgt, heightl)
+
+        ! Read wrf var
+        status = nf90_inq_varid(ncid, wrfvar, varid)
+        call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
+
+        status = nf90_get_var(ncid, varid, wrfv3D(:,:,zlev_k1:zlev_k2), (/xoffset, yoffset, zlev_k1/), (/nlon, nlat, zlev_nk/))
+        call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
+
+        status = nf90_close(ncid)
+        call ncerror(status,'closing '//trim(infile))
+
+
         ! Calculate specific humidity from mixing ratio
 
-        wrfv3D=wrfv3D/(1.0+wrfv3D)
+        wrfv3D(:,:,zlev_k1:zlev_k2)=wrfv3D(:,:,zlev_k1:zlev_k2)/(1.0+wrfv3D(:,:,zlev_k1:zlev_k2))
 
 
         ! Interpolate to specific height 'heightl'
@@ -150,18 +155,14 @@ outvar = huge_val
 
 do isy = 1, nlat
   do isx = 1, nlon
-    z_loop: do iz = 1, nz - 1
-      if (zhgt(isx, isy, iz) > heightl) exit z_loop
-
-      if (zhgt(isx, isy, iz+1) >= heightl .and. zhgt(isx, isy, iz) < heightl) then
+    iz = zlev_k(isx, isy)      ! zlev_map: zhgt(iz) < heightl <= zhgt(iz+1); 0 = missing
+    if (iz > 0) then
 
         slope = (wrfv3D(isx, isy, iz+1) - wrfv3D(isx, isy, iz)) / &
                 (zhgt(isx, isy, iz+1) - zhgt(isx, isy, iz))
         outvar(isx, isy) = wrfv3D(isx, isy, iz) + (heightl - zhgt(isx, isy, iz)) * slope
 
-        exit z_loop
-      endif
-    enddo z_loop
+    endif
   enddo
 enddo
 !
