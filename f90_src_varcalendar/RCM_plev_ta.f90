@@ -77,24 +77,25 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
+        press = p + pb
+!
+        ! levels bracketing presl at every point (map), and the levels plev_interp needs:
+        ! plev_k1..plev_k2, the only levels of the variable that are read
+        call plev_map(press, presl)
+!
         ! Read wrf var
         status = nf90_inq_varid(ncid, wrfvar, varid)
         call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
 
-        status = nf90_get_var(ncid, varid, wrfv3D, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, wrfv3D(:,:,plev_k1:plev_k2), (/xoffset, yoffset, plev_k1/), (/nlon, nlat, plev_nk/))
         call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
-        press = p + pb
+! Compute variable (levels plev_k1..plev_k2), then the log(p) interpolation
 !
-! Compute variable
-!
-        wrfv3D=(wrfv3D+300.)*(press/pconst)**rcp
-!
-        ! levels bracketing presl at every point (map), then the log(p) interpolation
-        call plev_map(press, presl)
+        wrfv3D(:,:,plev_k1:plev_k2)=(wrfv3D(:,:,plev_k1:plev_k2)+300.)*(press(:,:,plev_k1:plev_k2)/pconst)**rcp
         call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1

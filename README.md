@@ -560,9 +560,12 @@ The earlier versions of the programs changed for this are in `f90_src/deprecated
   - Pressure is smooth in the horizontal, so the search starts from the level found at the neighbouring point.
   - It moves down while p(k) < p_level and up while p(k+1) ≥ p_level. That is under one step per point on average.
   - It falls back to a scan from the bottom only if a column is not monotonic.
+  - The map is kept from one time step to the next: the search at the first point starts from its level at the previous time step.
+- The map is built first, from P and PB. The fields to interpolate (T, QVAPOR, U, V, W, PH, PHB …) are then read and computed only on the model levels the map uses, `plev_k1`..`plev_k2`: the lowest bracketing level of all points to the highest + 1. At one pressure level that is a few levels instead of `nz`.
 - `plev_interp` interpolates any field linearly in log(p) with that map, so u and v share one map.
 - Points where the level is below the ground or above the model top are missing.
 - The earlier programs are in `f90_src/deprecated`. The results are the same, except that a level lying between the two top model levels is now interpolated; the old top-down search never tested that pair.
+- The versions that read every model level of the fields are in `f90_src/deprecated/plev_fullread` (and `f90_src_varcalendar/deprecated/plev_fullread`). Their results are the same.
 
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on

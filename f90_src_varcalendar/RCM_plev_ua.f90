@@ -98,36 +98,38 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
+        press = p + pb
+!
+        ! levels bracketing presl at every point (map), and the levels plev_interp needs:
+        ! plev_k1..plev_k2, the only levels of U and V that are read
+        call plev_map(press, presl)
+!
         status=nf90_inq_varid(ncid,'U',varid)
         call ncerror(status,'getting var id U in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,ua,(/xoffset,yoffset,1/),(/nlon_u,nlat,nz/),(/1,1,1/))
+        status=nf90_get_var(ncid,varid,ua(:,:,plev_k1:plev_k2),(/xoffset,yoffset,plev_k1/),(/nlon_u,nlat,plev_nk/),(/1,1,1/))
         call ncerror(status,'reading U from '//trim(infile))
 
         status=nf90_inq_varid(ncid,'V',varid)
         call ncerror(status,'getting var id V in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,va,(/xoffset,yoffset,1/),(/nlon,nlat_v,nz/),(/1,1,1/))
+        status=nf90_get_var(ncid,varid,va(:,:,plev_k1:plev_k2),(/xoffset,yoffset,plev_k1/),(/nlon,nlat_v,plev_nk/),(/1,1,1/))
         call ncerror(status,'reading V from '//trim(infile))
 !
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
-        press = p + pb
-!
-! Compute variable
+! Compute variable (levels plev_k1..plev_k2), then the log(p) interpolation
 !
         do ix=1,nlon
           do iy=1,nlat
-            wrfv3D(ix,iy,:)=((ua(ix,iy,:)+ua(ix+1,iy,:))/2.)*cosalp(ix,iy)- &
-                           ((va(ix,iy,:)+va(ix,iy+1,:))/2.)*sinalp(ix,iy)              !u
+            wrfv3D(ix,iy,plev_k1:plev_k2)=((ua(ix,iy,plev_k1:plev_k2)+ua(ix+1,iy,plev_k1:plev_k2))/2.)*cosalp(ix,iy)- &
+                           ((va(ix,iy,plev_k1:plev_k2)+va(ix,iy+1,plev_k1:plev_k2))/2.)*sinalp(ix,iy)              !u
 !            wrfv3D(ix,iy,:)=((va(ix,iy,:)+va(ix,iy+1,:))/2.)*cosalp(ix,iy)+ &
 !                           ((ua(ix,iy,:)+ua(ix+1,iy,:))/2.)*sinalp(ix,iy)              !v
           enddo
         enddo
 !
-        ! levels bracketing presl at every point (map), then the log(p) interpolation
-        call plev_map(press, presl)
         call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1

@@ -93,34 +93,37 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
+        press = p + pb
+!
+        ! levels bracketing presl at every point (map), and the levels plev_interp needs:
+        ! plev_k1..plev_k2, the only levels of T and QVAPOR that are read (W, staggered:
+        ! the faces plev_k1..plev_k2+1)
+        call plev_map(press, presl)
+!
         ! Vertical velocity (staggered: nz+1 levels), potential temperature perturbation
         ! and water vapour mixing ratio
         status = nf90_inq_varid(ncid, 'W', varid)
         call ncerror(status,'getting var id W in '//trim(infile))
-        status = nf90_get_var(ncid, varid, w, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        status = nf90_get_var(ncid, varid, w(:,:,plev_k1:plev_k2+1), (/xoffset, yoffset, plev_k1/), (/nlon, nlat, plev_nk+1/))
         call ncerror(status,'reading W from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'T', varid)
         call ncerror(status,'getting var id T in '//trim(infile))
-        status = nf90_get_var(ncid, varid, t, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, t(:,:,plev_k1:plev_k2), (/xoffset, yoffset, plev_k1/), (/nlon, nlat, plev_nk/))
         call ncerror(status,'reading T from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'QVAPOR', varid)
         call ncerror(status,'getting var id QVAPOR in '//trim(infile))
-        status = nf90_get_var(ncid, varid, qv, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
+        status = nf90_get_var(ncid, varid, qv(:,:,plev_k1:plev_k2), (/xoffset, yoffset, plev_k1/), (/nlon, nlat, plev_nk/))
         call ncerror(status,'reading QVAPOR from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
-        press = p + pb
-!
-! Compute variable: omega on the model levels (wrfv3D), then on the pressure level
+! Compute variable: omega on the model levels plev_k1..plev_k2 (wrfv3D), then on the
+! pressure level
 !
         call calc_omega
-!
-        ! levels bracketing presl at every point (map), then the log(p) interpolation
-        call plev_map(press, presl)
         call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1
@@ -146,9 +149,10 @@ contains
 !-------------------------------------------------------------------------------------------------------------------
 !
 subroutine calc_omega
-! omega = -rho g w on the model levels (wp_om), from press, wp_w, wp_t, wp_q
+! omega = -rho g w on the model levels (wp_om), from press, wp_w, wp_t, wp_q; only on the
+! levels plev_k1..plev_k2 that plev_interp needs
 !
-do iz=1,nz
+do iz=plev_k1,plev_k2
   do iy=1,nlat
     do ix=1,nlon
       tv = (t(ix,iy,iz) + 300.) * (press(ix,iy,iz) / pconst)**rcp            ! temperature (K)

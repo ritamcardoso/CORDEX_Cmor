@@ -1551,15 +1551,24 @@ subroutine plev_map(pr, pl)
 ! (pr(1) < pl) or above the model top (pr(nz) >= pl) get plev_k = 0 (missing).
 ! If the walk does not end within nz steps (non-monotonic column), the column is
 ! scanned from the bottom, as the earlier RCM_plev programs did.
+! The map is kept for the next call (the next time step): the search of the first point
+! starts from its level of the previous time step (else from the last level found then).
+! plev_k1..plev_k2 (plev_nk levels) are the model levels plev_interp needs, k and k+1 of
+! every point: the programs read and compute their fields only on these levels.
 use datvar_s
 real, dimension(nlon,nlat,nz), intent(in) :: pr
 real, intent(in) :: pl
 integer :: pm_i, pm_j, pm_k
 !
-if (.not. allocated(plev_k)) allocate(plev_k(nlon,nlat), plev_w(nlon,nlat))
+if (.not. allocated(plev_k)) then
+  allocate(plev_k(nlon,nlat), plev_w(nlon,nlat))
+  plev_k = 0
+  plev_kg = 1
+endif
+! first guess of the first point: its level of the previous time step
+if (plev_k(1,1) > 0) plev_kg = plev_k(1,1)
 plev_k = 0
 plev_w = 0.
-plev_kg = 1
 plev_steps = 0
 plev_scan = 0
 do pm_j = 1, nlat
@@ -1597,6 +1606,15 @@ do pm_j = 1, nlat
     plev_kg = pm_k
   enddo
 enddo
+! the levels plev_interp needs (1 level if pl is below the ground or above the top everywhere)
+if (any(plev_k > 0)) then
+  plev_k1 = minval(plev_k, mask = plev_k > 0)
+  plev_k2 = maxval(plev_k) + 1
+else
+  plev_k1 = 1
+  plev_k2 = 1
+endif
+plev_nk = plev_k2 - plev_k1 + 1
 !
 end subroutine plev_map
 !

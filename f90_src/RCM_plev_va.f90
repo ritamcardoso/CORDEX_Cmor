@@ -117,24 +117,28 @@ do year = yeari, yearf, 1
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
+        press = p + pb
+
+        ! levels bracketing presl at every point (map, once), and the levels plev_interp
+        ! needs: plev_k1..plev_k2, the only levels of U and V that are read
+        call plev_map(press, presl)
+
         ! Explicitly query and fetch staggered metrics simultaneously
         status = nf90_inq_varid(ncid, 'U', varid)
         call ncerror(status,'getting var id U in '//trim(infile))
-        status = nf90_get_var(ncid, varid, ua, (/xoffset, yoffset, 1/), (/nlon_u, nlat, nz/))
+        status = nf90_get_var(ncid, varid, ua(:,:,plev_k1:plev_k2), (/xoffset, yoffset, plev_k1/), (/nlon_u, nlat, plev_nk/))
         call ncerror(status,'reading U from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'V', varid)
         call ncerror(status,'getting var id V in '//trim(infile))
-        status = nf90_get_var(ncid, varid, va, (/xoffset, yoffset, 1/), (/nlon, nlat_v, nz/))
+        status = nf90_get_var(ncid, varid, va(:,:,plev_k1:plev_k2), (/xoffset, yoffset, plev_k1/), (/nlon, nlat_v, plev_nk/))
         call ncerror(status,'reading V from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 
-        press = p + pb
-
-        ! Single pass un-staggering and geographic coordinate frame rotation
-        do iz = 1, nz
+        ! Single pass un-staggering and geographic coordinate frame rotation (levels plev_k1..plev_k2)
+        do iz = plev_k1, plev_k2
           do iy = 1, nlat
             do ix = 1, nlon
               u_unstag = (ua(ix, iy, iz) + ua(ix+1, iy, iz)) / 2.0
@@ -142,16 +146,14 @@ do year = yeari, yearf, 1
 
               ! Earth-relative Eastward Wind component (U)
               wrfv3D_u(ix, iy, iz) = u_unstag * cosalp(ix, iy) - v_unstag * sinalp(ix, iy)
-              
+
               ! Earth-relative Northward Wind component (V)
               wrfv3D_v(ix, iy, iz) = v_unstag * cosalp(ix, iy) + u_unstag * sinalp(ix, iy)
             enddo
           enddo
         enddo
 
-        ! Perform optimized interpolation (Single-pass vertical search loop)
-        ! levels bracketing presl at every point (map, once), then u and v in log(p)
-        call plev_map(press, presl)
+        ! u and v in log(p) on the pressure level
         call plev_interp(wrfv3D_u, outvar_u)
         call plev_interp(wrfv3D_v, outvar_v)
 
