@@ -568,13 +568,15 @@ The earlier versions of the programs changed for this are in `f90_src/deprecated
 - The versions that read every model level of the fields are in `f90_src/deprecated/plev_fullread` (and `f90_src_varcalendar/deprecated/plev_fullread`). Their results are the same.
 
 **Interpolation to heights above the ground (`RCM_zlev_*`).** The same procedure, with `zlev_map` (`shared_subs_v2.f90`):
-- The height above the ground of the mass levels, z, comes from PH, PHB and HGT (as before). `zlev_map` builds, for the height h, a map of the model level k with z(k) < h ≤ z(k+1) at every point. That is the bracket of the earlier search from the bottom.
+- The height above the ground of the mass levels, z, comes from PH, PHB and HGT (as before), in `zlev_heights`. PH and PHB are read only up to the level just above the previous time step's `zlev_k2` (at most level 20). If any point above level 1 might need a higher level (z at the top level read ≤ h), they are read again up to level 20 for that time step, and the log says so. Every point then gets the same bracket as with all 20 levels, so the results do not change.
+- `zlev_map` builds, for the height h, a map of the model level k with z(k) < h ≤ z(k+1) at every point. That is the bracket of the earlier search from the bottom.
 - The search starts from the level of the neighbouring point; the first point starts from its level at the previous time step.
 - The fields (T, P, PB, QVAPOR, U, V) are then read and computed only on the levels the map uses, `zlev_k1`..`zlev_k2`.
 - The interpolation of each program is unchanged: linear in z (`hus`, `ta`), or the power law of the winds (`ua`, `va`, `uava`).
 - The programs use the lowest 20 model levels (`nz = 20`): enough for 300 m even with a very well resolved boundary layer (FPS-URB). A height not above the lowest model level (z(1) ≥ h) or above level 20 is missing.
 - The wind programs (`ua`, `va`, `uava`) used 15 and 14 levels before; they use 20 too.
 - The earlier programs are in `f90_src/deprecated` (and `f90_src_varcalendar/deprecated`). The results are identical, except for the winds at heights above level 14 or 15, which were missing before.
+- The versions that read PH and PHB on all 20 levels at every time step are in `f90_src/deprecated/zlev_fullph` (and `f90_src_varcalendar/deprecated/zlev_fullph`). Their results are the same.
 
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on
