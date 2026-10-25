@@ -117,6 +117,7 @@ integer :: vo_hw, vo_he, vo_hs, vo_hn, vo_nxh, vo_nyh, vo_nxf, vo_nyf     ! RCM_
 integer :: vo_i, vo_j, vo_ip, vo_im, vo_jp, vo_jm, vo_dimid                ! RCM_plev_vortmen: indices with halo and neighbours, dimension id
 integer :: plev_kg, plev_it, plev_steps, plev_scan              ! plev_map: first guess, iterations, steps walked, full scans
 integer :: zlev_kg, zlev_it, zlev_steps, zlev_scan, zlev_k1, zlev_k2, zlev_nk  ! zlev_map: as plev_map, for heights
+integer :: zlev_kz, zlev_nfull = 0     ! zlev_heights: mass levels read this step; steps read again up to nz
 integer :: plev_k1, plev_k2, plev_nk          ! plev_map: the model levels plev_interp needs (all points), and their number
 real :: ws10, wsp, dws, tke_int, vpt_int                                    ! RCM_sfc_wsgsmax
 integer :: nlevs, ilev                                                      ! RCM_sfc_wsgsmax (Brasseur)

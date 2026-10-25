@@ -90,34 +90,10 @@ do vc_year = yeari, yearf
             call ncerror(status,'reading HGT from '//trim(infile))
         endif
 
-        ! Read Geopotential for Height Calculation
-
-        allocate(ph(nlon, nlat, nzt), phb(nlon, nlat, nzt), phi(nlon, nlat, nzt))
-
-        status = nf90_inq_varid(ncid, 'PH', varid)
-        call ncerror(status,'getting var id PH in '//trim(infile))
-
-        status = nf90_get_var(ncid, varid, ph, (/xoffset, yoffset, 1/), (/nlon, nlat, nzt/))
-        call ncerror(status,'reading PH from '//trim(infile))
-
-        status = nf90_inq_varid(ncid, 'PHB', varid)
-        call ncerror(status,'getting var id PHB in '//trim(infile))
-
-        status = nf90_get_var(ncid, varid, phb, (/xoffset, yoffset, 1/), (/nlon, nlat, nzt/))
-        call ncerror(status,'reading PHB from '//trim(infile))
-
-        phi = (ph + phb) / g
-
-        ! Calculate height above the surface
-
-        do iz = 1, nz
-            zhgt(:, :, iz) = ((phi(:, :, iz) + phi(:, :, iz+1)) / 2.) - hgt(:, :)
-        enddo
-        deallocate(ph, phb, phi)
-
-        ! levels bracketing heightl at every point (map), and the levels the interpolation
-        ! needs: zlev_k1..zlev_k2, the only levels of U and V that are read
-        call zlev_map(zhgt, heightl)
+        ! Heights above the ground (PH, PHB: only the lowest levels the previous step's map
+        ! needed, else every level) and the map of the levels bracketing heightl, with the
+        ! levels the interpolation needs: zlev_k1..zlev_k2, the only levels read of the variable
+        call zlev_heights(heightl)
 
         ! Read wrf var
 
