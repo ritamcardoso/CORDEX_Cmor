@@ -5,6 +5,9 @@ program read_wrfout
 ! simulation period sim_start..sim_end of the grid ini (time_chunk, set_time_step).
 ! Change f90_src/RCM_sfc_tauv.f90 and rerun tools/make_varcalendar.py rather than this file.
 !
+! tauv (Pa): surface downward northward wind stress, rho u*^2 vas/|U10|, with the moist-air
+! density at 2 m (PSFC, T2, Q2) and the 10 m wind rotated to the Earth axes. u* is USTM (u* of
+! the surface layer without the convective velocity) when it is in wrfout, else UST.
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
@@ -102,11 +105,20 @@ do vc_year = yeari, yearf
         status=nf90_get_var(ncid,varid,v_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
         call ncerror(status,'reading V10 from '//trim(infile))
 !
-        status=nf90_inq_varid(ncid,'UST',varid)
-        call ncerror(status,'getting var id UST in '//trim(infile))
+        ! u* without the convective velocity (USTM) if it is in the file, else UST
+        status=nf90_inq_varid(ncid,'USTM',varid)
+        if (status == nf90_noerr) then
+          if (it == 0) write(*,*) 'tauv: u* from USTM'
+          status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading USTM from '//trim(infile))
+        else
+          if (it == 0) write(*,*) 'tauv: USTM not in wrfout, u* from UST'
+          status=nf90_inq_varid(ncid,'UST',varid)
+          call ncerror(status,'getting var id UST in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading UST from '//trim(infile))
+          status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading UST from '//trim(infile))
+        endif
 !
         status=nf90_inq_varid(ncid,'T2',varid)
         call ncerror(status,'getting var id T2 in '//trim(infile))

@@ -578,6 +578,12 @@ The earlier versions of the programs changed for this are in `f90_src/deprecated
 - The earlier programs are in `f90_src/deprecated` (and `f90_src_varcalendar/deprecated`). The results are identical, except for the winds at heights above level 14 or 15, which were missing before.
 - The versions that read PH and PHB on all 20 levels at every time step are in `f90_src/deprecated/zlev_fullph` (and `f90_src_varcalendar/deprecated/zlev_fullph`). Their results are the same.
 
+**Surface wind stress (`tauu`, `tauv`).** `RCM_sfc_tauu` and `RCM_sfc_tauv` write ρ u*² u10/|U10| (and v10), with the 10 m wind rotated to the Earth axes and the moist-air density at 2 m, PSFC / (Rd T2) · ε(1+q)/(ε+q) (q = Q2). u* is `USTM` when it is in wrfout, else `UST` (the log says which):
+- `UST` of the revised MM5 surface layer (`sf_sfclay_physics = 1`) includes the convective velocity in the wind speed; `USTM` does not, so ρ USTM² ≈ ρ CD U10² (CD and U10 of the same scheme).
+- With YSU the stress applied to the lowest level is ρ USTM²; with BouLac without BEP it is ρ UST². Add `USTM` to wrfout (`+:h:0:USTM` in the iofields file) for the YSU runs.
+- In urban cells with BEP or BEP+BEM, part of the stress is the drag on the canopy levels, which neither represents.
+- The previous versions (always UST) are in `f90_src/deprecated/tau_ust` (and `f90_src_varcalendar/deprecated/tau_ust`). Without USTM in wrfout the results are identical.
+
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on
 the model levels (from `W`, `T`, `QVAPOR`, `P`, `PB`), interpolated in log(p) to the
