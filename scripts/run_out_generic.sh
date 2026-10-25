@@ -119,6 +119,47 @@ echo $yeari
 yearf=`echo $dateend | cut -c1-4`
 echo $yearf
 
+#
+#--- Simulation period (variable calendar) -----------------------
+# If the grid ini files set sim_start and sim_end ('YYYY-MM-DD_HH', the first
+# and the last wrfout file), the programs are built from f90_src_varcalendar:
+# they process only the time steps inside the simulation period, which may
+# start and end at any hour. The years are limited to the simulation period
+# (also for the chain: year_lim is at most the year of sim_end).
+# Without sim_start/sim_end: f90_src, whole calendar years (imonth .. nmonths).
+#
+# ini_key <file> <key>: the value of key = '...' (empty if not set)
+ini_key() {
+  sed -n "s/^[[:space:]]*$2[[:space:]]*=[[:space:]]*'\([^']*\)'.*/\1/p" "$1" | tail -1
+}
+VARCAL=0
+sim_y0=""; sim_y1=""
+for grid in "${GRIDS[@]}"; do
+  _ini="${EXPERIMENT_DIR}/${exp}_${DOMAIN_ID[${grid}]}_${grid}.ini"
+  _s=$(ini_key "${_ini}" sim_start); _e=$(ini_key "${_ini}" sim_end)
+  if [ -n "${_s}${_e}" ]; then
+    [ -n "${_s}" ] && [ -n "${_e}" ] || fail "${_ini}: set both sim_start and sim_end (or neither)"
+    VARCAL=1
+    [ -z "${sim_y0}" ] || [ "${_s:0:4}" -lt "${sim_y0}" ] && sim_y0="${_s:0:4}"
+    [ -z "${sim_y1}" ] || [ "${_e:0:4}" -gt "${sim_y1}" ] && sim_y1="${_e:0:4}"
+    echo "Grid ${grid}: simulation ${_s} to ${_e} (f90_src_varcalendar)"
+  elif [ "${VARCAL}" = "1" ]; then
+    fail "${_ini}: no sim_start/sim_end, but another grid of ${exp} has them"
+  fi
+done
+if [ "${VARCAL}" = "1" ]; then
+  [ "${yeari}" -lt "${sim_y0}" ] && yeari="${sim_y0}"
+  [ "${yearf}" -gt "${sim_y1}" ] && yearf="${sim_y1}"
+  [ "${year_lim}" -gt "${sim_y1}" ] && year_lim="${sim_y1}"
+  if [ "${yeari}" -gt "${yearf}" ]; then
+    echo "${datebeg}-${dateend} is outside the simulation period (${sim_y0}-${sim_y1}): nothing to do, no archive job, no next job."
+    exit 0
+  fi
+  datebeg="${yeari}"; dateend="${yearf}"
+  echo "Years ${yeari}-${yearf} (year_lim ${year_lim})"
+fi
+VARCAL_DIR="${PROG_DIR_VARCAL:-${PROG_DIR%/}_varcalendar}"
+
 RUN_DIR="${ROOT_RUN_DIR}/${VARSET}"
 mkdir -p "${RUN_DIR}"
 
@@ -197,6 +238,16 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     # with SLURM_CPUS_PER_TASK threads (CPUS in config/varsets.sh).
     src_dir="${PROG_DIR}"; omp=""
     par_dir="${PROG_DIR_PARALLEL:-${PROG_DIR%/}_parallel}"
+    # Variable calendar (sim_start/sim_end in the grid ini): the program of
+    # f90_src_varcalendar (and its parallel/ copy). Programs without a time
+    # loop (fx) are only in f90_src.
+    if [ "${VARCAL}" = "1" ]; then
+      if [ -f "${VARCAL_DIR}/${PROG_NAME}.f90" ]; then
+        src_dir="${VARCAL_DIR}"; par_dir="${VARCAL_DIR}/parallel"
+      elif [[ "${PROG_NAME}" != RCM_fx_* && "${PROG_NAME}" != RCM_sfc_mrsofc ]]; then
+        fail "${PROG_NAME}.f90 is not in ${VARCAL_DIR} (sim_start/sim_end are set in the grid ini)"
+      fi
+    fi
     if [ -n "${OMP_FLAG:-}" ] && [ -f "${par_dir}/${PROG_NAME}.f90" ]; then
       src_dir="${par_dir}"; omp="${OMP_FLAG}"
       export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"

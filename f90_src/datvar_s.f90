@@ -84,6 +84,20 @@ integer :: ish, isd, is3, is6, issh, iss3, iss6, issd, isdm, it, iz, isx, isy, i
 integer :: loop_year
 integer :: year, month, day, hour, dhour, nhours, mydays, yhours
 integer :: ntime, ntime3, ntime6
+! --- Variable calendar (programs of f90_src_varcalendar) ---
+! sim_start, sim_end: first and last wrfout file of the simulation, 'YYYY-MM-DD_HH' (UTC),
+! set in the grid ini. Each year yeari..yearf of a run is one chunk: the part of that year
+! inside the simulation period (time_chunk, set_time_step in shared_subs_v2.f90).
+character(len=13) :: sim_start = '', sim_end = ''
+integer :: t_sim0, t_sim1          ! sim_start, sim_end in hours since iniyear-01-01 00 UTC
+integer :: t_ch0, t_ch1            ! first and last time step of the chunk (hours since iniyear)
+integer :: vc_step                 ! hours between the files read
+integer :: vc_nfiles, vc_ifl       ! files read in the chunk, and the current one
+integer :: vc_year                 ! year of the chunk (the loop over yeari..yearf)
+logical :: vc_interval             ! .true.: interval values from two files (accumulated, means)
+logical :: rs_complete = .false.   ! resample_time: drop windows with missing time steps
+integer :: vc_d0, vc_nd            ! daily programs: first day (hours since iniyear), days
+integer :: vc_k, vc_kf, vc_rec, vc_tf ! ... day, first day of the month, record, file start
 
 ! =====================================================================
 ! --- 3. Scientific Data Arrays ---
@@ -220,7 +234,7 @@ integer :: we_dim, sn_dim, bt_dim
 ! Namelist Group Definitions
 ! -------------------------------------------------------------
 namelist /cordex_config/ &
-    yeari, yearf, iniyear, nmonths, imonth, iday, ihour, &
+    yeari, yearf, iniyear, nmonths, imonth, iday, ihour, sim_start, sim_end, &
     nz, nsoil, nlon, nlat, xoffset, yoffset, p_top, &
     dir_in, dir_out, geog, wrffile, wrfile, dom, outdom, &
     wrfvar, vaid, height, pres, vunits, vunts, &

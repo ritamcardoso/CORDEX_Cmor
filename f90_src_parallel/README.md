@@ -37,10 +37,12 @@ On the test data, the results are bit-for-bit the same as the serial programs, w
 
 For the water paths, and partly for the clouds, it would be faster to read the wrfout files once for several variables (as `RCM_sfc_cape` does for cin, li and lcl) than to add threads.
 
+The variable-calendar versions of these programs (simulation period `sim_start`..`sim_end` in the grid ini) are in `f90_src_varcalendar/parallel`, made by `tools/make_varcalendar.py`.
+
 ## Keeping them in step
 
 After changing one of these programs in `f90_src`, make the same change here and run:
 
     tools/check_parallel_sync.sh
 
-It prints any difference other than the OpenMP lines.
+It prints any difference other than the OpenMP lines. Then run `tools/make_varcalendar.py`, which remakes the variable-calendar versions, in `f90_src_varcalendar` and `f90_src_varcalendar/parallel`.
