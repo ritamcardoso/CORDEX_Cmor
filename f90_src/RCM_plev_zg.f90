@@ -104,34 +104,36 @@ do year = yeari, yearf,1
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
+        press = p + pb
+!
+        ! levels bracketing presl at every point (map), and the levels plev_interp needs:
+        ! plev_k1..plev_k2; PH and PHB (staggered) are read on plev_k1..plev_k2+1 only
+        call plev_map(press, presl)
+!
         ! Read wrf var
         status=nf90_inq_varid(ncid,'PH',varid)
         call ncerror(status,'getting var id PH in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,ph,(/xoffset,yoffset,1/),(/nlon,nlat,nzt/),(/1,1,1/))
+        status=nf90_get_var(ncid,varid,ph(:,:,plev_k1:plev_k2+1),(/xoffset,yoffset,plev_k1/),(/nlon,nlat,plev_nk+1/),(/1,1,1/))
         call ncerror(status,'reading PH from '//trim(infile))
 
         status=nf90_inq_varid(ncid,'PHB',varid)
         call ncerror(status,'getting var id PHB in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,phb,(/xoffset,yoffset,1/),(/nlon,nlat,nzt/),(/1,1,1/))
+        status=nf90_get_var(ncid,varid,phb(:,:,plev_k1:plev_k2+1),(/xoffset,yoffset,plev_k1/),(/nlon,nlat,plev_nk+1/),(/1,1,1/))
         call ncerror(status,'reading PHB from '//trim(infile))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
-        press = p + pb
+! Compute variable (levels plev_k1..plev_k2), then the log(p) interpolation
 !
-! Compute variable
-!
-        phi=(ph+phb)/g
+        phi(:,:,plev_k1:plev_k2+1)=(ph(:,:,plev_k1:plev_k2+1)+phb(:,:,plev_k1:plev_k2+1))/g
 
-        do iz=1,nz
+        do iz=plev_k1,plev_k2
           wrfv3D(:,:,iz)=(phi(:,:,iz)+phi(:,:,iz+1))/2.
         enddo
 
-        ! levels bracketing presl at every point (map), then the log(p) interpolation
-        call plev_map(press, presl)
         call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1

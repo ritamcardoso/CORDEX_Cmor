@@ -82,25 +82,27 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
+        press = p + pb
+!
+        ! levels bracketing presl at every point (map), and the levels plev_interp needs:
+        ! plev_k1..plev_k2; W (staggered) is read on the faces plev_k1..plev_k2+1 only
+        call plev_map(press, presl)
+!
         ! Read wrf var
         status = nf90_inq_varid(ncid, wrfvar, varid)
         call ncerror(status,'getting var id '//trim(wrfvar)//' in '//trim(infile))
 
-        status = nf90_get_var(ncid, varid, w, (/xoffset, yoffset, 1/), (/nlon, nlat, nz+1/))
+        status = nf90_get_var(ncid, varid, w(:,:,plev_k1:plev_k2+1), (/xoffset, yoffset, plev_k1/), (/nlon, nlat, plev_nk+1/))
         call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
         ! destagger: mean of the faces below and above each mass level
-        wrfv3D = 0.5 * (w(:,:,1:nz) + w(:,:,2:nz+1))
+        wrfv3D(:,:,plev_k1:plev_k2) = 0.5 * (w(:,:,plev_k1:plev_k2) + w(:,:,plev_k1+1:plev_k2+1))
 
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
-        press = p + pb
+! Compute variable: the log(p) interpolation
 !
-! Compute variable
-!
-        ! levels bracketing presl at every point (map), then the log(p) interpolation
-        call plev_map(press, presl)
         call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1

@@ -152,15 +152,21 @@ do year = yeari, yearf,1
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
+        press = p + pb
+!
+        ! levels bracketing presl at every point (map), and the levels plev_interp needs:
+        ! plev_k1..plev_k2, the only levels of U and V that are read
+        call plev_map(press, presl)
+!
         ! Winds on the staggered grid and the map factors, with the halo
         status = nf90_inq_varid(ncid, 'U', varid)
         call ncerror(status,'getting var id U in '//trim(infile))
-        status = nf90_get_var(ncid, varid, u, (/xoffset-vo_hw, yoffset-vo_hs, 1/), (/vo_nxh+1, vo_nyh, nz/))
+        status = nf90_get_var(ncid, varid, u(:,:,plev_k1:plev_k2), (/xoffset-vo_hw, yoffset-vo_hs, plev_k1/), (/vo_nxh+1, vo_nyh, plev_nk/))
         call ncerror(status,'reading U from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'V', varid)
         call ncerror(status,'getting var id V in '//trim(infile))
-        status = nf90_get_var(ncid, varid, v, (/xoffset-vo_hw, yoffset-vo_hs, 1/), (/vo_nxh, vo_nyh+1, nz/))
+        status = nf90_get_var(ncid, varid, v(:,:,plev_k1:plev_k2), (/xoffset-vo_hw, yoffset-vo_hs, plev_k1/), (/vo_nxh, vo_nyh+1, plev_nk/))
         call ncerror(status,'reading V from '//trim(infile))
 
         status = nf90_inq_varid(ncid, 'MAPFAC_U', varid)
@@ -181,14 +187,11 @@ do year = yeari, yearf,1
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
-        press = p + pb
 !
-! Compute variable: vorticity on the model levels (wrfv3D), then on the pressure level
+! Compute variable: vorticity on the model levels plev_k1..plev_k2 (wrfv3D), then on the
+! pressure level
 !
         call calc_vort
-!
-        ! levels bracketing presl at every point (map), then the log(p) interpolation
-        call plev_map(press, presl)
         call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1
@@ -221,9 +224,10 @@ contains
 !
 subroutine calc_vort
 ! relative vorticity on the model levels (wrfv3D), wrf-python avo without Coriolis:
-! (ix, iy) of the window is (vo_i, vo_j) of the arrays with halo
+! (ix, iy) of the window is (vo_i, vo_j) of the arrays with halo; only on the levels
+! plev_k1..plev_k2 that plev_interp needs
 !
-do iz=1,nz
+do iz=plev_k1,plev_k2
   do iy=1,nlat
     do ix=1,nlon
       vo_i  = ix + vo_hw
