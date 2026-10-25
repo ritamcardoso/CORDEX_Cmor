@@ -535,6 +535,19 @@ environment interpolated in log(p). `cin` and `li` are archived through the
 companion varset `cape_x` (`CP_EXTRA`); `capemax`, `cinmax` and `limax` are the daily maxima
 made by `tools/aggregate.sh` from the hourly files. About 57 µs per column and hour
 (EUR-12: ~24 h and ~18 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
+
+*Parcel with ice (`cape_ice = 1` in the grid ini; default 0).* Above the LCL the parcel follows a pseudo-adiabat with ice instead of Bolton's θe, integrated in steps of at most 0.02 in ln p (`t_pseudo_ice` in `shared_subs_v2.f90`):
+- The new condensate is all liquid at 0 °C and above, all ice at −40 °C and below, and the ice fraction is linear in between.
+- The saturation is over that mixture. Ice saturation is e_w / S, with e_w the Wexler formula with the enhancement factor and S the water/ice saturation ratio of Ambaum (2020, QJRMS 146, 4252, eq. 20). The exponential in eq. 20 as printed has the wrong sign; with the corrected sign S = 1.47 at −40 °C, as the paper says. e_i is within 5×10⁻⁴ of Murphy & Koop (2005) from −40 to 0 °C.
+- The latent heat is that of the mixture: Lv and Ls varying linearly with T (Ambaum eqs. 15 and 18).
+- The default (0) is the liquid-only parcel of RIP, NCL and wrf-python. The results with 0 are identical to before.
+
+On Weisman–Klemp (1982) soundings (CAPE 650–3400 J/kg), the parcel with ice gives:
+- CAPE 6–14 % higher (+110 to +190 J/kg). About 85 % of that is the ice; the rest is the integrated pseudo-adiabat, which is 0.05–0.08 K warmer than Bolton's.
+- LI 0.1–0.3 K lower.
+- CIN at most 1.4 J/kg lower.
+
+The parcel computation takes about 4 times longer; reading the files does not change. The output files do not record the option, so keep it the same for a whole experiment and say which one in its documentation.
 The LCL height above ground, `lcl` (not a CORDEX variable), is written by `RCM_sfc_lcl.f90`
 (`lcl` varset, not in `ORDER`) from the same parcel and the same Romps (2017) solution. It reads
 only the lowest model levels. The earlier `RCM_sfc_cape.f90`, which also wrote `lcl`, is in

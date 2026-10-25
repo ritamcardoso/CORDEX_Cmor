@@ -45,6 +45,7 @@ integer :: nlon_u, nlat_v
 
 real :: rhours, factor, heightl, presl, pres, p_top
 integer :: wp_step     ! hours between the output times of the 3-hourly/6-hourly programs (grid ini; default 6)
+integer :: cape_ice    ! RCM_sfc_cape parcel above the LCL (grid ini): 0 = liquid only, Bolton theta_e (default); 1 = with ice
 real, dimension(1) :: height, pressure
 real, dimension(2) :: pressure_bounds
 real, dimension(:),   allocatable :: rlon, rlat
@@ -126,6 +127,7 @@ logical :: fx_exists                                                        ! fx
 real(kind=8) :: p_par, t_par, r_par, th_par, the_par, z_lcl, t_lcl, p_lcl
 real(kind=8) :: t_lift, q_lift, z_lift, tv_lift, t_env, q_env, tv_env, fac1, fac2, fden
 real(kind=8) :: ben_min, t500, te500
+real(kind=8) :: t_ice, p_ice                  ! RCM_sfc_cape, cape_ice = 1: parcel at the last level above the LCL
 integer :: kk, klcl, kel, klfc, kmax
 logical :: lcl_in, found_el
 real :: wp_v, wp_i, wp_c, dpk                                             ! RCM_sfc_wpth: column sums, layer thickness
@@ -244,7 +246,7 @@ namelist /cordex_config/ &
     wrfvar, vaid, height, pres, vunits, vunts, &
     lname, stname, cmethods, factor, &
     projection, pole_lat, pole_lon, truelat1, truelat2, stand_lon, cen_lat, &
-    false_easting, false_northing, area_type, wp_step, outstep
+    false_easting, false_northing, area_type, wp_step, outstep, cape_ice
 
 namelist /global_metadata/ &
     conventions, activity_id, contact, cordex_domain, domain_name, &
