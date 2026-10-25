@@ -555,28 +555,17 @@ How the step is applied:
 
 The earlier versions of the programs changed for this are in `f90_src/deprecated`.
 
-**Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map_s` and `plev_interp_s` (`shared_subs_v2.f90`).
-- The pressure of the column has the surface as level 0: `press(:,:,0)` is PSFC, and `press(:,:,1:nz)` are the model levels.
-- `plev_map_s` builds, for the pressure level p_level, a map of the level k with p(k) ≥ p_level > p(k+1) at every point (k = 0 … nz−1):
-  - **k = 0**: between the surface and the lowest model level, interpolated between the surface value of the variable and its value at level 1;
-  - **k = −1**: the level is below the surface (p_level > PSFC). The value is missing and there is no interpolation;
-  - **k = −2**: the level is above the top model level, missing.
-- The search starts from the level found at the neighbouring point, because pressure is smooth in the horizontal. It moves down while p(k) < p_level and up while p(k+1) ≥ p_level, which is under one step per point on average. It falls back to a scan from the surface only if a column is not monotonic.
-- The map is kept from one time step to the next: the search at the first point starts from its level at the previous time step.
-- The map is built first, from P, PB and PSFC. The fields to interpolate (T, QVAPOR, U, V, W, PH, PHB …) are then read and computed only on the model levels the map uses, `plev_k1`..`plev_k2`: the lowest bracketing level of all points (level 1 at least) to the highest + 1. At one pressure level that is a few levels instead of `nz`.
-- `plev_interp_s` interpolates any field dimensioned `0:nz` linearly in log(p) with that map, so u and v share one map. Level 0 of the field is its surface value:
-
-  | Program | Surface value (level 0) |
-  |---|---|
-  | `ta` | T2 |
-  | `hus` | Q2 / (1 + Q2) |
-  | `ua`, `va`, `uava` | U10, V10, rotated to earth-relative like the model levels |
-  | `wa` | W at the lowest face (the surface) |
-  | `wap` | −ρ g W at the lowest face, with ρ from PSFC and the virtual temperature from T2 and Q2 |
-  | `zg` | the height of the lowest face (the terrain height) |
-  | `vortmen` | the relative vorticity of U10 and V10 (centred differences on the mass points, with the map factor) |
-
-- The earlier programs are in `f90_src/deprecated`. The versions that read every model level, and left the levels between the surface and level 1 missing, are in `f90_src/deprecated/plev_fullread` (and `f90_src_varcalendar/deprecated/plev_fullread`). Above level 1 the results are the same. `plev_map` and `plev_interp`, which those copies use, are unchanged.
+**Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map` and `plev_interp` (`shared_subs_v2.f90`).
+- `plev_map` builds, for the pressure level, a map of the model level k with p(k) ≥ p_level > p(k+1) at every point.
+  - Pressure is smooth in the horizontal, so the search starts from the level found at the neighbouring point.
+  - It moves down while p(k) < p_level and up while p(k+1) ≥ p_level. That is under one step per point on average.
+  - It falls back to a scan from the bottom only if a column is not monotonic.
+  - The map is kept from one time step to the next: the search at the first point starts from its level at the previous time step.
+- The map is built first, from P and PB. The fields to interpolate (T, QVAPOR, U, V, W, PH, PHB …) are then read and computed only on the model levels the map uses, `plev_k1`..`plev_k2`: the lowest bracketing level of all points to the highest + 1. At one pressure level that is a few levels instead of `nz`.
+- `plev_interp` interpolates any field linearly in log(p) with that map, so u and v share one map.
+- Points where the level is below the ground or above the model top are missing.
+- The earlier programs are in `f90_src/deprecated`. The results are the same, except that a level lying between the two top model levels is now interpolated; the old top-down search never tested that pair.
+- The versions that read every model level of the fields are in `f90_src/deprecated/plev_fullread` (and `f90_src_varcalendar/deprecated/plev_fullread`). Their results are the same.
 
 **Omega on pressure levels (`plev_wap` varset).** `RCM_plev_wap.f90` writes the LUCAS
 `wap` as `wap1000` … `wap30` (Pa s-1, every `wp_step` hours, instantaneous): omega = -rho g w on

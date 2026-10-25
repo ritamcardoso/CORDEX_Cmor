@@ -28,10 +28,9 @@ nhours = 24
 
 ! --- Main Processing Loops ---
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
-allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, 0:nz))
-allocate(psf(nlon, nlat))          ! surface pressure: press(:,:,0)
+allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
 allocate(ph(nlon, nlat, nzt), phb(nlon, nlat, nzt), phi(nlon, nlat, nzt))
-allocate(wrfv3D(nlon, nlat, 0:nz))
+allocate(wrfv3D(nlon, nlat, nz))
 
 it = 0
 !
@@ -79,17 +78,11 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
-        status = nf90_inq_varid(ncid, 'PSFC', varid)
-        call ncerror(status,'getting var id PSFC in '//trim(infile))
-        status = nf90_get_var(ncid, varid, psf, (/xoffset, yoffset/), (/nlon, nlat/))
-        call ncerror(status,'reading PSFC from '//trim(infile))
-
-        press(:,:,1:nz) = p + pb
-        press(:,:,0) = psf                  ! level 0: the surface
+        press = p + pb
 !
         ! levels bracketing presl at every point (map), and the levels plev_interp needs:
         ! plev_k1..plev_k2; PH and PHB (staggered) are read on plev_k1..plev_k2+1 only
-        call plev_map_s(press, presl)
+        call plev_map(press, presl)
 !
         ! Read wrf var
         status=nf90_inq_varid(ncid,'PH',varid)
@@ -115,8 +108,7 @@ do vc_year = yeari, yearf
           wrfv3D(:,:,iz)=(phi(:,:,iz)+phi(:,:,iz+1))/2.
         enddo
 
-        if (plev_sfc) wrfv3D(:,:,0) = phi(:,:,1)  ! surface: height of the lowest face (the terrain)
-        call plev_interp_s(wrfv3D, outvar)
+        call plev_interp(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)
