@@ -60,8 +60,9 @@ if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
-allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
-allocate(wrfv3D(nlon, nlat, nz))
+allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, 0:nz))
+allocate(psf(nlon, nlat))          ! surface pressure: press(:,:,0)
+allocate(wrfv3D(nlon, nlat, 0:nz))
 !
 ! halo around the output window, from the full grid of the first wrfout file
 amonth = pad_int(imonth, 2)
@@ -94,6 +95,7 @@ vo_nyh = nlat + vo_hs + vo_hn
 write(*,*) 'DX, DY (m):', vo_dx, vo_dy, '  halo W E S N:', vo_hw, vo_he, vo_hs, vo_hn
 allocate(u(vo_nxh+1, vo_nyh, nz), v(vo_nxh, vo_nyh+1, nz))
 allocate(vo_mu(vo_nxh+1, vo_nyh), vo_mv(vo_nxh, vo_nyh+1), vo_mt(vo_nxh, vo_nyh))
+allocate(u_s(vo_nxh, vo_nyh), v_s(vo_nxh, vo_nyh))     ! 10-m wind with the halo (mass points)
 
 it = 0
 !
@@ -152,11 +154,17 @@ do year = yeari, yearf,1
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
-        press = p + pb
+        status = nf90_inq_varid(ncid, 'PSFC', varid)
+        call ncerror(status,'getting var id PSFC in '//trim(infile))
+        status = nf90_get_var(ncid, varid, psf, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading PSFC from '//trim(infile))
+
+        press(:,:,1:nz) = p + pb
+        press(:,:,0) = psf                  ! level 0: the surface
 !
         ! levels bracketing presl at every point (map), and the levels plev_interp needs:
         ! plev_k1..plev_k2, the only levels of U and V that are read
-        call plev_map(press, presl)
+        call plev_map_s(press, presl)
 !
         ! Winds on the staggered grid and the map factors, with the halo
         status = nf90_inq_varid(ncid, 'U', varid)
@@ -184,6 +192,15 @@ do year = yeari, yearf,1
         status = nf90_get_var(ncid, varid, vo_mt, (/xoffset-vo_hw, yoffset-vo_hs/), (/vo_nxh, vo_nyh/))
         call ncerror(status,'reading MAPFAC_M from '//trim(infile))
 
+        ! surface value of the variable (level 0)
+        status = nf90_inq_varid(ncid, 'U10', varid)
+        call ncerror(status,'getting var id U10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, u_s, (/xoffset-vo_hw, yoffset-vo_hs/), (/vo_nxh, vo_nyh/))
+        call ncerror(status,'reading U10 from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'V10', varid)
+        call ncerror(status,'getting var id V10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, v_s, (/xoffset-vo_hw, yoffset-vo_hs/), (/vo_nxh, vo_nyh/))
+        call ncerror(status,'reading V10 from '//trim(infile))
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
@@ -192,7 +209,8 @@ do year = yeari, yearf,1
 ! pressure level
 !
         call calc_vort
-        call plev_interp(wrfv3D, outvar)
+        if (plev_sfc) call calc_vort_sfc        ! surface: vorticity of the 10-m wind
+        call plev_interp_s(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)
@@ -219,6 +237,26 @@ do year = yeari, yearf,1
 enddo
 
 contains
+!
+!-------------------------------------------------------------------------------------------------------------------
+!
+subroutine calc_vort_sfc
+! relative vorticity of the 10-m wind (wrfv3D(:,:,0), the surface level): U10 and V10 are
+! on the mass points, so centred differences there, with the map factor of the mass points
+!
+do iy=1,nlat
+  do ix=1,nlon
+    vo_i  = ix + vo_hw
+    vo_j  = iy + vo_hs
+    vo_ip = min(vo_i+1, vo_nxh); vo_im = max(vo_i-1, 1)
+    vo_jp = min(vo_j+1, vo_nyh); vo_jm = max(vo_j-1, 1)
+    vo_dudy = (u_s(vo_i,vo_jp)/vo_mt(vo_i,vo_jp) - u_s(vo_i,vo_jm)/vo_mt(vo_i,vo_jm)) / (real(vo_jp - vo_jm) * vo_dy)
+    vo_dvdx = (v_s(vo_ip,vo_j)/vo_mt(vo_ip,vo_j) - v_s(vo_im,vo_j)/vo_mt(vo_im,vo_j)) / (real(vo_ip - vo_im) * vo_dx)
+    wrfv3D(ix,iy,0) = vo_mt(vo_i,vo_j)**2 * (vo_dvdx - vo_dudy)
+  enddo
+enddo
+!
+end subroutine calc_vort_sfc
 !
 !-------------------------------------------------------------------------------------------------------------------
 !

@@ -18,4 +18,11 @@ Programs that wrote some variables more often than CORDEX-CMIP6 or FPS-LUCAS req
 
 `RCM_sfc_hurs.f90` and `RCM_sfc_hurscan.f90` computed es inline. The enhancement factor had the second term as b (es/P − 1) instead of Hardy's (1998) b (P/es − 1), giving f ≈ 1.0010 instead of ≈ 1.0039 at 20 °C and 1000 hPa, so RH was about 0.3 % (relative) too high. The copies kept here have the term corrected. The programs in `f90_src` call `es_wexler_dt` (shared_subs_v2.f90), which had the same error and is also corrected (it is used by cape and evspsblpot too).
 
-`plev_fullread/`: the pressure-level programs with the level map that still read every model level (`nz`) of the fields they interpolate (T, QVAPOR, U, V, W, PH, PHB). The programs in `f90_src` build the map from P and PB first, then read and compute the fields only on the levels the map uses (`plev_k1`..`plev_k2` of `plev_map`), and carry the map to the next time step (the search of the first point starts from its previous level). The results are identical. The variable-calendar versions of these copies are in `f90_src_varcalendar/deprecated/plev_fullread`.
+`plev_fullread/`: the pressure-level programs with the level map (`plev_map`, `plev_interp`) that read every model level (`nz`) of the fields they interpolate (T, QVAPOR, U, V, W, PH, PHB). In them, a pressure level between the surface and the lowest model level was missing.
+
+The programs in `f90_src` use `plev_map_s` and `plev_interp_s` instead:
+- The surface is level 0 (`press(:,:,0)` = PSFC). A level between the surface and level 1 is interpolated between the surface value of the variable (T2, Q2, U10/V10 …) and level 1; a level below the surface (−1 in the map) is missing, with no interpolation.
+- The map is built first, from P, PB and PSFC, and the fields are read and computed only on the levels it uses (`plev_k1`..`plev_k2`).
+- The map is carried to the next time step: the search of the first point starts from its previous level.
+
+At the points between model levels the results are identical. The variable-calendar versions of these copies are in `f90_src_varcalendar/deprecated/plev_fullread`.

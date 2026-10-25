@@ -1551,24 +1551,15 @@ subroutine plev_map(pr, pl)
 ! (pr(1) < pl) or above the model top (pr(nz) >= pl) get plev_k = 0 (missing).
 ! If the walk does not end within nz steps (non-monotonic column), the column is
 ! scanned from the bottom, as the earlier RCM_plev programs did.
-! The map is kept for the next call (the next time step): the search of the first point
-! starts from its level of the previous time step (else from the last level found then).
-! plev_k1..plev_k2 (plev_nk levels) are the model levels plev_interp needs, k and k+1 of
-! every point: the programs read and compute their fields only on these levels.
 use datvar_s
 real, dimension(nlon,nlat,nz), intent(in) :: pr
 real, intent(in) :: pl
 integer :: pm_i, pm_j, pm_k
 !
-if (.not. allocated(plev_k)) then
-  allocate(plev_k(nlon,nlat), plev_w(nlon,nlat))
-  plev_k = 0
-  plev_kg = 1
-endif
-! first guess of the first point: its level of the previous time step
-if (plev_k(1,1) > 0) plev_kg = plev_k(1,1)
+if (.not. allocated(plev_k)) allocate(plev_k(nlon,nlat), plev_w(nlon,nlat))
 plev_k = 0
 plev_w = 0.
+plev_kg = 1
 plev_steps = 0
 plev_scan = 0
 do pm_j = 1, nlat
@@ -1606,15 +1597,6 @@ do pm_j = 1, nlat
     plev_kg = pm_k
   enddo
 enddo
-! the levels plev_interp needs (1 level if pl is below the ground or above the top everywhere)
-if (any(plev_k > 0)) then
-  plev_k1 = minval(plev_k, mask = plev_k > 0)
-  plev_k2 = maxval(plev_k) + 1
-else
-  plev_k1 = 1
-  plev_k2 = 1
-endif
-plev_nk = plev_k2 - plev_k1 + 1
 !
 end subroutine plev_map
 !
@@ -1640,6 +1622,122 @@ do pm_j = 1, nlat
 enddo
 !
 end subroutine plev_interp
+!
+!-----------------------------------------------------------------------
+!
+subroutine plev_map_s(pr, pl)
+! Map of the levels that bracket the pressure level pl (Pa), with the surface as level 0:
+! pr(:,:,0) is the surface pressure (PSFC), pr(:,:,1:nz) the pressure of the model levels.
+!   plev_k = k (0 .. nz-1) where pr(k) >= pl > pr(k+1), and plev_w is the log(p) weight of
+!            level k+1 (k = 0: between the surface and the lowest model level);
+!   plev_k = -1 where pl is below the surface (pl > PSFC): missing, no interpolation;
+!   plev_k = -2 where pl is above the top model level (pr(nz) >= pl): missing.
+! Pressure is smooth in the horizontal, so the level of the previous point (the point to
+! the west; at the start of a row, the first point of the row below) is the first guess,
+! and the search walks from it: down (k-1) while pr(k) < pl, up (k+1) while pr(k+1) >= pl.
+! If the walk does not end within nz steps (non-monotonic column), the column is scanned
+! from the bottom. The map is kept for the next call (the next time step): the search of
+! the first point starts from its level of the previous time step.
+! plev_k1..plev_k2 (plev_nk levels) are the model levels plev_interp_s needs (k and k+1 of
+! every point, level 1 at least): the programs read and compute their fields only there.
+! plev_sfc: some point is between the surface and level 1 (the surface value is used).
+use datvar_s
+real, dimension(nlon,nlat,0:nz), intent(in) :: pr
+real, intent(in) :: pl
+integer :: pm_i, pm_j, pm_k
+!
+if (.not. allocated(plev_k)) then
+  allocate(plev_k(nlon,nlat), plev_w(nlon,nlat))
+  plev_k = -1
+  plev_kg = 0
+endif
+! first guess of the first point: its level of the previous time step
+if (plev_k(1,1) >= 0) plev_kg = plev_k(1,1)
+plev_w = 0.
+plev_steps = 0
+plev_scan = 0
+do pm_j = 1, nlat
+  if (pm_j > 1) then
+    if (plev_k(1,pm_j-1) >= 0) plev_kg = plev_k(1,pm_j-1)
+  endif
+  do pm_i = 1, nlon
+    if (pr(pm_i,pm_j,0) < pl) then                      ! below the surface
+      plev_k(pm_i,pm_j) = -1
+      cycle
+    endif
+    if (pr(pm_i,pm_j,nz) >= pl) then                    ! above the top model level
+      plev_k(pm_i,pm_j) = -2
+      cycle
+    endif
+    pm_k = max(0, min(nz-1, plev_kg))
+    walk: do plev_it = 1, nz
+      if (pr(pm_i,pm_j,pm_k) < pl) then
+        pm_k = pm_k - 1
+      else if (pr(pm_i,pm_j,pm_k+1) >= pl) then
+        pm_k = pm_k + 1
+      else
+        exit walk
+      endif
+      plev_steps = plev_steps + 1
+      if (pm_k < 0 .or. pm_k > nz-1) exit walk
+    enddo walk
+    if (pm_k < 0 .or. pm_k > nz-1 .or. plev_it > nz) then
+      ! not monotonic: first bracket from the surface up
+      plev_scan = plev_scan + 1
+      pm_k = -1
+      do plev_it = 0, nz-1
+        if (pr(pm_i,pm_j,plev_it) >= pl .and. pr(pm_i,pm_j,plev_it+1) < pl) then
+          pm_k = plev_it
+          exit
+        endif
+      enddo
+      if (pm_k < 0) then
+        plev_k(pm_i,pm_j) = -1
+        cycle
+      endif
+    endif
+    plev_k(pm_i,pm_j) = pm_k
+    plev_w(pm_i,pm_j) = (log(pr(pm_i,pm_j,pm_k)) - log(pl)) / (log(pr(pm_i,pm_j,pm_k)) - log(pr(pm_i,pm_j,pm_k+1)))
+    plev_kg = pm_k
+  enddo
+enddo
+! the model levels plev_interp_s needs (level 1 if pl is below the ground or above the top
+! everywhere), and whether the surface level is used
+if (any(plev_k >= 0)) then
+  plev_k1 = max(1, minval(plev_k, mask = plev_k >= 0))
+  plev_k2 = maxval(plev_k) + 1
+else
+  plev_k1 = 1
+  plev_k2 = 1
+endif
+plev_nk = plev_k2 - plev_k1 + 1
+plev_sfc = any(plev_k == 0)
+!
+end subroutine plev_map_s
+!
+!-----------------------------------------------------------------------
+!
+subroutine plev_interp_s(f3d, f2d)
+! f3d on the levels 0 (the surface value) .. nz -> f2d on the pressure level of the last
+! plev_map_s, linear in log(p): f2d = f3d(k) + plev_w (f3d(k+1) - f3d(k)); missing (1e20)
+! where the level is below the surface or above the top (plev_k < 0): no interpolation
+use datvar_s
+real, dimension(nlon,nlat,0:nz), intent(in) :: f3d
+real, dimension(nlon,nlat), intent(out) :: f2d
+integer :: pm_i, pm_j, pm_k
+!
+do pm_j = 1, nlat
+  do pm_i = 1, nlon
+    pm_k = plev_k(pm_i,pm_j)
+    if (pm_k >= 0) then
+      f2d(pm_i,pm_j) = f3d(pm_i,pm_j,pm_k) + plev_w(pm_i,pm_j) * (f3d(pm_i,pm_j,pm_k+1) - f3d(pm_i,pm_j,pm_k))
+    else
+      f2d(pm_i,pm_j) = 1.e+20
+    endif
+  enddo
+enddo
+!
+end subroutine plev_interp_s
 !
 !-----------------------------------------------------------------------
 !

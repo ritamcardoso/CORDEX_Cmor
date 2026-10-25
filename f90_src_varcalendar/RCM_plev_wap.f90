@@ -43,8 +43,10 @@ nhours = 24
 
 ! --- Main Processing Loops ---
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
-allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
-allocate(wrfv3D(nlon, nlat, nz))
+allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, 0:nz))
+allocate(psf(nlon, nlat))          ! surface pressure: press(:,:,0)
+allocate(t2(nlon, nlat), q2(nlon, nlat))
+allocate(wrfv3D(nlon, nlat, 0:nz))
 allocate(w(nlon, nlat, nz+1), t(nlon, nlat, nz), qv(nlon, nlat, nz))
 
 it = 0
@@ -93,12 +95,18 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
-        press = p + pb
+        status = nf90_inq_varid(ncid, 'PSFC', varid)
+        call ncerror(status,'getting var id PSFC in '//trim(infile))
+        status = nf90_get_var(ncid, varid, psf, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading PSFC from '//trim(infile))
+
+        press(:,:,1:nz) = p + pb
+        press(:,:,0) = psf                  ! level 0: the surface
 !
         ! levels bracketing presl at every point (map), and the levels plev_interp needs:
         ! plev_k1..plev_k2, the only levels of T and QVAPOR that are read (W, staggered:
         ! the faces plev_k1..plev_k2+1)
-        call plev_map(press, presl)
+        call plev_map_s(press, presl)
 !
         ! Vertical velocity (staggered: nz+1 levels), potential temperature perturbation
         ! and water vapour mixing ratio
@@ -117,6 +125,15 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, qv(:,:,plev_k1:plev_k2), (/xoffset, yoffset, plev_k1/), (/nlon, nlat, plev_nk/))
         call ncerror(status,'reading QVAPOR from '//trim(infile))
 
+        ! surface value of the variable (level 0)
+        status = nf90_inq_varid(ncid, 'T2', varid)
+        call ncerror(status,'getting var id T2 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, t2, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading T2 from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'Q2', varid)
+        call ncerror(status,'getting var id Q2 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, q2, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading Q2 from '//trim(infile))
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
@@ -124,7 +141,9 @@ do vc_year = yeari, yearf
 ! pressure level
 !
         call calc_omega
-        call plev_interp(wrfv3D, outvar)
+        ! surface: -rho g w at the lowest face, rho from PSFC and the 2-m virtual temperature
+        if (plev_sfc) wrfv3D(:,:,0) = -g * psf / (Rd * t2 * (epsilon + q2) / (epsilon * (1. + q2))) * w(:,:,1)
+        call plev_interp_s(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)

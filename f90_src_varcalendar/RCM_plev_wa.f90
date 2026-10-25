@@ -32,8 +32,9 @@ nhours = 24
 
 ! --- Main Processing Loops ---
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
-allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
-allocate(wrfv3D(nlon, nlat, nz))
+allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, 0:nz))
+allocate(psf(nlon, nlat))          ! surface pressure: press(:,:,0)
+allocate(wrfv3D(nlon, nlat, 0:nz))
 allocate(w(nlon, nlat, nz+1))       ! W on the staggered levels
 
 it = 0
@@ -82,11 +83,17 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
-        press = p + pb
+        status = nf90_inq_varid(ncid, 'PSFC', varid)
+        call ncerror(status,'getting var id PSFC in '//trim(infile))
+        status = nf90_get_var(ncid, varid, psf, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading PSFC from '//trim(infile))
+
+        press(:,:,1:nz) = p + pb
+        press(:,:,0) = psf                  ! level 0: the surface
 !
         ! levels bracketing presl at every point (map), and the levels plev_interp needs:
         ! plev_k1..plev_k2; W (staggered) is read on the faces plev_k1..plev_k2+1 only
-        call plev_map(press, presl)
+        call plev_map_s(press, presl)
 !
         ! Read wrf var
         status = nf90_inq_varid(ncid, wrfvar, varid)
@@ -103,7 +110,8 @@ do vc_year = yeari, yearf
 !
 ! Compute variable: the log(p) interpolation
 !
-        call plev_interp(wrfv3D, outvar)
+        if (plev_sfc) wrfv3D(:,:,0) = w(:,:,1)    ! surface: W at the lowest face
+        call plev_interp_s(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)

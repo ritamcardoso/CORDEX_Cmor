@@ -43,8 +43,10 @@ if (ihour > 0) ish = ish + ihour - 1
 
 ! --- Main Processing Loops ---
 allocate(outvar(nlon, nlat), outvar_i(nlon,nlat))
-allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
-allocate(wrfv3D(nlon, nlat, nz))
+allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, 0:nz))
+allocate(psf(nlon, nlat))          ! surface pressure: press(:,:,0)
+allocate(t2(nlon, nlat))
+allocate(wrfv3D(nlon, nlat, 0:nz))
 
 it = 0
 !
@@ -103,11 +105,17 @@ do year = yeari, yearf,1
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
-        press = p + pb
+        status = nf90_inq_varid(ncid, 'PSFC', varid)
+        call ncerror(status,'getting var id PSFC in '//trim(infile))
+        status = nf90_get_var(ncid, varid, psf, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading PSFC from '//trim(infile))
+
+        press(:,:,1:nz) = p + pb
+        press(:,:,0) = psf                  ! level 0: the surface
 !
         ! levels bracketing presl at every point (map), and the levels plev_interp needs:
         ! plev_k1..plev_k2, the only levels of the variable that are read
-        call plev_map(press, presl)
+        call plev_map_s(press, presl)
 !
         ! Read wrf var
         status = nf90_inq_varid(ncid, wrfvar, varid)
@@ -116,13 +124,19 @@ do year = yeari, yearf,1
         status = nf90_get_var(ncid, varid, wrfv3D(:,:,plev_k1:plev_k2), (/xoffset, yoffset, plev_k1/), (/nlon, nlat, plev_nk/))
         call ncerror(status,'reading '//trim(wrfvar)//' from '//trim(infile))
 
+        ! surface value of the variable (level 0)
+        status = nf90_inq_varid(ncid, 'T2', varid)
+        call ncerror(status,'getting var id T2 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, t2, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading T2 from '//trim(infile))
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
 ! Compute variable (levels plev_k1..plev_k2), then the log(p) interpolation
 !
         wrfv3D(:,:,plev_k1:plev_k2)=(wrfv3D(:,:,plev_k1:plev_k2)+300.)*(press(:,:,plev_k1:plev_k2)/pconst)**rcp
-        call plev_interp(wrfv3D, outvar)
+        wrfv3D(:,:,0) = t2                  ! surface: 2-m temperature
+        call plev_interp_s(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)

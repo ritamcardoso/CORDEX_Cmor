@@ -30,10 +30,12 @@ nlat_v=nlat+1
 
 ! --- Main Processing Loops ---
 allocate(outvar(nlon, nlat))
-allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, nz))
+allocate(p(nlon, nlat, nz), pb(nlon, nlat, nz), press(nlon, nlat, 0:nz))
+allocate(psf(nlon, nlat))          ! surface pressure: press(:,:,0)
+allocate(u_s(nlon, nlat), v_s(nlon, nlat))
 allocate(cosalp(nlon,nlat), sinalp(nlon,nlat))
 allocate(ua(nlon_u,nlat,nz), va(nlon,nlat_v,nz))
-allocate(wrfv3D(nlon, nlat, nz))
+allocate(wrfv3D(nlon, nlat, 0:nz))
 
 it = 0
 !
@@ -98,11 +100,17 @@ do vc_year = yeari, yearf
         status = nf90_get_var(ncid, varid, pb, (/xoffset, yoffset, 1/), (/nlon, nlat, nz/))
         call ncerror(status,'reading PB from '//trim(infile))
 
-        press = p + pb
+        status = nf90_inq_varid(ncid, 'PSFC', varid)
+        call ncerror(status,'getting var id PSFC in '//trim(infile))
+        status = nf90_get_var(ncid, varid, psf, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading PSFC from '//trim(infile))
+
+        press(:,:,1:nz) = p + pb
+        press(:,:,0) = psf                  ! level 0: the surface
 !
         ! levels bracketing presl at every point (map), and the levels plev_interp needs:
         ! plev_k1..plev_k2, the only levels of U and V that are read
-        call plev_map(press, presl)
+        call plev_map_s(press, presl)
 !
         status=nf90_inq_varid(ncid,'U',varid)
         call ncerror(status,'getting var id U in '//trim(infile))
@@ -116,6 +124,15 @@ do vc_year = yeari, yearf
         status=nf90_get_var(ncid,varid,va(:,:,plev_k1:plev_k2),(/xoffset,yoffset,plev_k1/),(/nlon,nlat_v,plev_nk/),(/1,1,1/))
         call ncerror(status,'reading V from '//trim(infile))
 !
+        ! surface value of the variable (level 0)
+        status = nf90_inq_varid(ncid, 'U10', varid)
+        call ncerror(status,'getting var id U10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, u_s, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading U10 from '//trim(infile))
+        status = nf90_inq_varid(ncid, 'V10', varid)
+        call ncerror(status,'getting var id V10 in '//trim(infile))
+        status = nf90_get_var(ncid, varid, v_s, (/xoffset, yoffset/), (/nlon, nlat/))
+        call ncerror(status,'reading V10 from '//trim(infile))
         status = nf90_close(ncid)
         call ncerror(status,'closing '//trim(infile))
 !
@@ -130,7 +147,8 @@ do vc_year = yeari, yearf
           enddo
         enddo
 !
-        call plev_interp(wrfv3D, outvar)
+        wrfv3D(:,:,0) = u_s*cosalp - v_s*sinalp    ! surface: 10-m wind, earth-relative u
+        call plev_interp_s(wrfv3D, outvar)
 !
         issh = issh + 1
         bdtime(1, issh) = hours_since_ini(year, month, day, hour)
