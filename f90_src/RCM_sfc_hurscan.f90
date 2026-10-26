@@ -3,13 +3,14 @@ program read_wrfout
 ! RCM_sfc_hurscan — near-surface relative humidity within the canyon (hurscan, 1hr,
 ! instantaneous, %), as hurs, from the canyon temperature TCAN_URB2D, the canyon
 ! mixing ratio QCAN_URB2D and the surface pressure PSFC of the urban scheme output.
-! Kept only at urban cells (urban_cell in shared_subs_v2.f90: FRC_URB2D > 0 and
+! Kept only at urban cells (urban_cell in landuse_subs.f90: FRC_URB2D > 0 and
 ! LU_INDEX an urban category of the MODIS or USGS table of the geo_em file, LCZ
 ! classes included); missing elsewhere.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use landuse_subs
 use humidity_subs
 use netcdf
 !implicit none

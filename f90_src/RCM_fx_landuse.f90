@@ -14,11 +14,12 @@ program read_wrfout
 !   (the dominant land-use category, lcvr, is written by RCM_fx_lcvr from the geo_em file)
 !
 ! The grouping of the land-use categories (weight tables) is in landuse_field
-! (shared_subs_v2.f90). An existing fx file is kept (fixed field).
+! (landuse_subs.f90). An existing fx file is kept (fixed field).
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use landuse_subs
 use netcdf
 !implicit none
 

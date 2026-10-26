@@ -19,6 +19,7 @@ program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use landuse_subs
 use netcdf
 !implicit none
 

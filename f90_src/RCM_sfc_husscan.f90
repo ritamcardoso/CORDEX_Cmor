@@ -3,13 +3,14 @@ program read_wrfout
 ! RCM_sfc_husscan — near-surface specific humidity within the canyon (husscan, 1hr,
 ! instantaneous, kg kg-1) from the canyon mixing ratio of the urban scheme
 ! (QCAN_URB2D, wrfvar of the header): q = r / (1 + r).
-! Kept only at urban cells (urban_cell in shared_subs_v2.f90: FRC_URB2D > 0 and
+! Kept only at urban cells (urban_cell in landuse_subs.f90: FRC_URB2D > 0 and
 ! LU_INDEX an urban category of the MODIS or USGS table of the geo_em file, LCZ
 ! classes included); missing elsewhere.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use landuse_subs
 use netcdf
 !implicit none
 

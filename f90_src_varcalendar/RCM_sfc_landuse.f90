@@ -22,11 +22,12 @@ program read_wrfout
 !   lcvr          LU_INDEX, dominant land-use category (1)
 !
 ! The grouping of the land-use categories (weight tables) is in landuse_field
-! (shared_subs_v2.f90); only the categories of the group are read. No sea mask.
+! (landuse_subs.f90); only the categories of the group are read. No sea mask.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use landuse_subs
 use netcdf
 !implicit none
 
