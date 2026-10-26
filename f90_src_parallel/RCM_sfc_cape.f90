@@ -23,6 +23,11 @@ program read_wrfout
 !    it, a pseudo-adiabat of constant theta_e (Bolton 1980, eq. 43, with the Romps T_L),
 !    inverted for T at every level (Newton; saturation mixing ratio of RCM_sfc_hurs).
 !    Davies-Jones (2009, MWR 137, 3137) finds Bolton's formula accurate to 0.02 K.
+!  - With cape_ice = 1 in the grid ini, the parcel above the LCL follows instead a pseudo-adiabat
+!    with ice (t_pseudo_ice in shared_subs_v2.f90): the condensate freezes progressively from
+!    0 degC (all liquid) to -40 degC (all ice), with saturation over the mixture (ice: Ambaum
+!    2020, QJRMS 146, 4252, eq. 20) and the latent heat of the mixture. The default, 0, is the
+!    liquid-only parcel of RIP / NCL / wrf-python.
 !  - Buoyancy B = g (Tv_parcel - Tv_env) / Tv_env (virtual temperatures), on the model
 !    levels plus two inserted ones: the LCL and every zero crossing of B.
 !  - As RIP / NCL / wrf-python: the accumulated energy E(z) = int_0^z B dz (trapezoids);
@@ -49,6 +54,11 @@ call init_cordex_environment
 ! --- Read Grid Information (Latitude, Longitude) ---
 
 call read_geog
+if (cape_ice == 1) then
+  write(*,*) 'cape, cin, li: parcel with ice above the LCL (cape_ice = 1)'
+else
+  write(*,*) 'cape, cin, li: liquid-only parcel above the LCL (cape_ice = 0)'
+endif
 
 allocate(p(nlon,nlat,nz), pb(nlon,nlat,nz), press(nlon,nlat,nz), t(nlon,nlat,nz), qv(nlon,nlat,nz))
 allocate(ph(nlon,nlat,nz+1), phb(nlon,nlat,nz+1), phi(nlon,nlat,nz+1), zhgt(nlon,nlat,nz))
@@ -149,7 +159,7 @@ subroutine calc_cape
 !$omp   private(ix, k, kk, klcl, kel, klfc, kmax, lcl_in, found_el, &
 !$omp           p_par, t_par, r_par, th_par, the_par, z_lcl, t_lcl, p_lcl, &
 !$omp           t_lift, q_lift, z_lift, tv_lift, t_env, q_env, tv_env, fac1, fac2, fden, &
-!$omp           ben_min, t500, te500, buoy_c, zrel_c, ben_c)
+!$omp           ben_min, t500, te500, t_ice, p_ice, buoy_c, zrel_c, ben_c)
 do iy = 1, nlat
   do ix = 1, nlon
 
@@ -189,6 +199,16 @@ do iy = 1, nlat
           t_env   = t(ix,iy,max(k-1,1)) * fac2 + t(ix,iy,k) * fac1
           q_env   = qv(ix,iy,max(k-1,1)) * fac2 + qv(ix,iy,k) * fac1
           tv_env  = tvirt(t_env, q_env)
+          t_ice   = t_lcl                                   ! start of the pseudo-adiabat with ice
+          p_ice   = p_lcl
+        else if (cape_ice == 1) then
+          ! above the LCL: pseudo-adiabat with ice, from the level below
+          t_lift  = t_pseudo_ice(t_ice, p_ice, real(press(ix,iy,k), 8))
+          q_lift  = qvs_mixed(t_lift, real(press(ix,iy,k), 8))
+          t_ice   = t_lift
+          p_ice   = press(ix,iy,k)
+          z_lift  = zhgt(ix,iy,k) - zhgt(ix,iy,1)
+          tv_env  = tvirt(real(t(ix,iy,k), 8), real(qv(ix,iy,k), 8))
         else
           ! above the LCL: pseudo-adiabat of constant theta_e
           t_lift  = t_from_theta_e(the_par, real(press(ix,iy,k), 8), t_lift)
@@ -260,6 +280,8 @@ do iy = 1, nlat
     if (p_par > 5.d4) then
       if (p_lcl <= 5.d4) then
         t500 = th_par * (5.d4 / pconst)**rcp                  ! still dry at 500 hPa
+      else if (cape_ice == 1) then
+        t500 = t_pseudo_ice(t_lcl, p_lcl, 5.d4)
       else
         t500 = t_from_theta_e(the_par, 5.d4, t_lcl)
       endif

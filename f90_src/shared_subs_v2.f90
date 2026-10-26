@@ -41,6 +41,7 @@ subroutine read_cordex_config(cfg_filename)
     false_easting = 0.;        false_northing = 0.
     wp_step = 6
     outstep = -1
+    cape_ice = 0
 
     read(unit_id, nml=cordex_config, iostat=status_id)
     if (status_id /= 0) then
@@ -52,6 +53,11 @@ subroutine read_cordex_config(cfg_filename)
     ! Step of the sub-daily (3hr/6hr) programs: a divisor of 24 hours
     if (wp_step < 1 .or. mod(24, wp_step) /= 0) then
         print *, "ERROR: wp_step = ", wp_step, " in ", trim(cfg_filename), ": it must divide 24 (e.g. 3 or 6)"
+        stop 95
+    end if
+
+    if (cape_ice /= 0 .and. cape_ice /= 1) then
+        print *, "ERROR: cape_ice = ", cape_ice, " in ", trim(cfg_filename), ": it must be 0 (liquid) or 1 (ice)"
         stop 95
     end if
 
@@ -2138,6 +2144,127 @@ do it = 1, 30
   if (abs(dt) < 1.d-3) exit
 enddo
 end function t_from_theta_e
+!
+!-----------------------------------------------------------------------
+!
+! Parcel with ice (RCM_sfc_cape, cape_ice = 1): saturation over a mixture of liquid and ice,
+! and the pseudo-adiabat (condensate removed as it forms) integrated in steps.
+!
+!   Ice fraction of the new condensate: fi = 0 at 0 degC and above, 1 at -40 degC and below,
+!   linear in between.
+!   e_i = e_w / S, S the water/ice saturation ratio of Ambaum (2020, QJRMS 146, 4252, eq. 20,
+!   triple-point constants), e_w = es_wexler_dt (Wexler x Hardy enhancement factor):
+!     S = (T0/T)**((cpl - cpi)/Rv) exp(Lm/(Rv T) - Lm0/(Rv T0)),  Lm = Lm0 + (cpl - cpi)(T - T0)
+!   (the exponent as printed in the paper has the opposite sign: with it S would be 2.9 at
+!   -40 degC instead of the 1.47 the paper gives). e_i is within 5e-4 of Murphy and Koop
+!   (2005) from -40 to 0 degC. Mixture: e = (1 - fi) e_w + fi e_i.
+!   Latent heats (Ambaum eqs. 15 and 18, triple-point heat capacities):
+!     Lv = Lv0 - (cpl - cpv)(T - T0),  Ls = Lv0 + Lm0 - (cpi - cpv)(T - T0),  L = (1 - fi) Lv + fi Ls
+!
+! The step from (t1, p1) to p2 (first law for the dry air and the vapour, per kg of dry air,
+! with the vapour that condenses removed at the parcel temperature; trapezoidal averages):
+!   (cpd + r cpv)(T2 - T1) - Rd T ln(pd2/pd1) - r Rv T ln(e2/e1) + L (r2 - r1) = 0
+! r = eps e/(p - e), pd = p - e. With fi = 0 this is the liquid pseudo-adiabat: within 0.08 K of
+! Bolton's theta_e at 500 hPa, and 1-2 % more CAPE on Weisman-Klemp soundings. Steps of 0.1 in
+! ln p (one step per model layer in most of the troposphere) and a tolerance of 1e-3 K differ
+! from steps of 0.002 by less than 0.31 J kg-1 in CAPE and 0.004 K in LI.
+!
+pure subroutine es_mixed_dt(tk, pa, es, des, fi)
+! saturation vapour pressure (Pa) of the parcel with ice, its derivative d es / d tk
+! (Pa K-1) and the ice fraction fi of the condensate
+real(kind=8), intent(in) :: tk, pa
+real(kind=8), intent(out) :: es, des, fi
+real(kind=8), parameter :: t0=273.16d0, tw=273.15d0, ti=233.15d0, rv=461.52d0, &
+                           cpl=4220.d0, cpi=2097.d0, lm0=0.3334d6
+real(kind=8) :: ew, dew, ei, dei, sr, lm, dfi
+call es_wexler_dt(tk, pa, ew, dew)
+if (tk >= tw) then
+  es = ew; des = dew; fi = 0.d0
+  return
+endif
+lm  = lm0 + (cpl - cpi)*(tk - t0)
+sr  = (t0/tk)**((cpl - cpi)/rv)*exp(lm/(rv*tk) - lm0/(rv*t0))
+ei  = ew/sr
+dei = ei*(dew/ew + lm/(rv*tk**2))                ! d ln S / dT = -Lm / (Rv T**2)
+if (tk <= ti) then
+  fi = 1.d0; dfi = 0.d0
+else
+  fi = (tw - tk)/(tw - ti); dfi = -1.d0/(tw - ti)
+endif
+es  = (1.d0 - fi)*ew + fi*ei
+des = (1.d0 - fi)*dew + fi*dei + dfi*(ei - ew)
+end subroutine es_mixed_dt
+!
+!-----------------------------------------------------------------------
+!
+pure function qvs_mixed(tk, pa) result(qs)
+! saturation mixing ratio (kg kg-1) of the parcel with ice (es_mixed_dt)
+real(kind=8), intent(in) :: tk, pa
+real(kind=8) :: qs, es, des, fi
+call es_mixed_dt(tk, pa, es, des, fi)
+es = min(es, 0.5d0*pa)
+qs = epsilon*es/(pa - es)
+end function qvs_mixed
+!
+!-----------------------------------------------------------------------
+!
+pure function t_pseudo_ice(t1, p1, p2) result(t2)
+! temperature (K) at p2 (Pa) of the saturated parcel at (t1, p1) lifted along the pseudo-adiabat
+! with ice (see above), in steps of at most 0.1 in ln p (95 hPa at 1000 hPa, 19 hPa at 200 hPa)
+real(kind=8), intent(in) :: t1, p1, p2
+real(kind=8) :: t2, ta, pa, pb, dlnp
+integer :: n, is
+dlnp = log(p1/p2)
+n = max(1, ceiling(abs(dlnp)/0.1d0))
+ta = t1; pa = p1
+do is = 1, n
+  pb = p1*exp(-dlnp*dble(is)/dble(n))
+  ta = ice_step(ta, pa, pb)
+  pa = pb
+enddo
+t2 = ta
+end function t_pseudo_ice
+!
+!-----------------------------------------------------------------------
+!
+pure function ice_step(t1, p1, p2) result(t2)
+! one step of t_pseudo_ice: the first-law equation solved for T2 (secant iterations)
+real(kind=8), intent(in) :: t1, p1, p2
+real(kind=8) :: t2, e1, r1, pd1, l1, fi1, des, xa, xb, fa, fb, xn, gam
+real(kind=8), parameter :: rd=287.04d0, cpd=1005.7d0, cpv=1888.d0, t0=273.16d0, &
+                           lv0=2.501d6, lm0=0.3334d6, cpl=4220.d0, cpi=2097.d0
+real(kind=8) :: rv
+integer :: it
+rv = rd/epsilon
+call es_mixed_dt(t1, p1, e1, des, fi1)
+e1 = min(e1, 0.5d0*p1)
+r1 = epsilon*e1/(p1 - e1); pd1 = p1 - e1
+l1 = (1.d0 - fi1)*(lv0 - (cpl - cpv)*(t1 - t0)) + fi1*(lv0 + lm0 - (cpi - cpv)*(t1 - t0))
+! first guess: moist-adiabatic lapse rate in ln p at (t1, p1)
+gam = (rd*t1 + l1*r1)/(cpd + l1**2*r1/(rv*t1**2))
+xb = t1 + gam*log(p2/p1)
+xa = xb + 0.5d0
+fa = resid(xa); fb = resid(xb)
+do it = 1, 30
+  if (abs(fb - fa) < 1.d-30) exit
+  xn = xb - fb*(xb - xa)/(fb - fa)
+  xa = xb; fa = fb
+  xb = xn; fb = resid(xb)
+  if (abs(xb - xa) < 1.d-3) exit
+enddo
+t2 = xb
+contains
+  pure function resid(tt) result(f)
+  real(kind=8), intent(in) :: tt
+  real(kind=8) :: f, e2, r2, pd2, l2, fi2, d2
+  call es_mixed_dt(tt, p2, e2, d2, fi2)
+  e2 = min(e2, 0.5d0*p2)
+  r2 = epsilon*e2/(p2 - e2); pd2 = p2 - e2
+  l2 = (1.d0 - fi2)*(lv0 - (cpl - cpv)*(tt - t0)) + fi2*(lv0 + lm0 - (cpi - cpv)*(tt - t0))
+  f = (cpd + 0.5d0*(r1 + r2)*cpv)*(tt - t1) - rd*0.5d0*(t1 + tt)*log(pd2/pd1) &
+      - 0.5d0*(r1 + r2)*rv*0.5d0*(t1 + tt)*log(e2/e1) + 0.5d0*(l1 + l2)*(r2 - r1)
+  end function resid
+end function ice_step
 !
 !-----------------------------------------------------------------------
 !
