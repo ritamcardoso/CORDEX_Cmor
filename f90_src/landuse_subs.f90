@@ -5,11 +5,11 @@ module landuse_subs
 ! and the dominant category from LANDUSEF / LU_INDEX of a wrfout file). Used by the land-use
 ! (RCM_fx_landuse, RCM_sfc_landuse, RCM_sfc_albc) and urban (RCM_sfc_urb, RCM_sfc_hurscan,
 ! RCM_sfc_husscan, RCM_sfc_sfcWindcan) programs (use landuse_subs). read_geog, which reads
-! LU_INDEX, MMINLU and FRC_URB2D from the geo_em file, stays in shared_subs_v2.f90.
-! Compiled after shared_subs_v2 (it uses ncerror; scripts/run_out_generic.sh).
+! LU_INDEX, MMINLU and FRC_URB2D from the geo_em file, stays in shared_io_subs.f90.
+! Compiled after shared_io_subs (it uses ncerror; scripts/run_out_generic.sh).
 !
 use datvar_s
-use shared_subs, only: ncerror
+use shared_io_subs, only: ncerror
 use netcdf
 !
 contains

@@ -60,7 +60,7 @@ The `&global_metadata` namelist: global (file-level) CF/CMOR attributes written 
   using a value that isn't in it will produce output that isn't
   CORDEX-CMIP6 compliant even if it runs successfully.
 
-**Written automatically, not set in the ini** (by `write_global_attributes` in `f90_src/shared_subs_v2.f90`):
+**Written automatically, not set in the ini** (by `write_global_attributes` in `f90_src/shared_io_subs.f90`):
 
 - `creation_date` — the time the file is written, in UTC (`YYYY-MM-DDThh:mm:ssZ`).
 - `tracking_id` — `hdl:21.14103/<UUID>`, a new random UUID (version 4) for every file, so there is no need to add it afterwards with cdo.

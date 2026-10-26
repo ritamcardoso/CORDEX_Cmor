@@ -4,7 +4,7 @@ The earlier pressure-level programs (`RCM_plev_*.f90`), kept for reference. They
 
 Each column was searched on its own, from the bottom for levels at or below 500 hPa and from the top above 500 hPa.
 
-The programs in `f90_src` build a map of the model levels that bracket the pressure level instead (`plev_map` and `plev_interp` in `shared_subs_v2.f90`):
+The programs in `f90_src` build a map of the model levels that bracket the pressure level instead (`plev_map` and `plev_interp` in `vert_interp_subs.f90`):
 - The search for each point starts from the level found at its neighbour, because pressure varies smoothly in the horizontal.
 - One map is used for every field interpolated to that level.
 
@@ -16,7 +16,7 @@ Programs that wrote some variables more often than CORDEX-CMIP6 or FPS-LUCAS req
 
 `RCM_sfc_evspsblpot.f90` (potential evapotranspiration) used the FAO-56 Tetens formula for es and its slope; the earlier version is kept here. The program in `f90_src` uses the saturation vapour pressure of hurs and cape (`es_wexler_dt`).
 
-`RCM_sfc_hurs.f90` and `RCM_sfc_hurscan.f90` computed es inline. The enhancement factor had the second term as b (es/P − 1) instead of Hardy's (1998) b (P/es − 1), giving f ≈ 1.0010 instead of ≈ 1.0039 at 20 °C and 1000 hPa, so RH was about 0.3 % (relative) too high. The copies kept here have the term corrected. The programs in `f90_src` call `es_wexler_dt` (shared_subs_v2.f90), which had the same error and is also corrected (it is used by cape and evspsblpot too).
+`RCM_sfc_hurs.f90` and `RCM_sfc_hurscan.f90` computed es inline. The enhancement factor had the second term as b (es/P − 1) instead of Hardy's (1998) b (P/es − 1), giving f ≈ 1.0010 instead of ≈ 1.0039 at 20 °C and 1000 hPa, so RH was about 0.3 % (relative) too high. The copies kept here have the term corrected. The programs in `f90_src` call `es_wexler_dt` (humidity_subs.f90), which had the same error and is also corrected (it is used by cape and evspsblpot too).
 
 `plev_fullread/`: the pressure-level programs with the level map that still read every model level (`nz`) of the fields they interpolate (T, QVAPOR, U, V, W, PH, PHB). The programs in `f90_src` build the map from P and PB first, then read and compute the fields only on the levels the map uses (`plev_k1`..`plev_k2` of `plev_map`), and carry the map to the next time step (the search of the first point starts from its previous level). The results are identical. The variable-calendar versions of these copies are in `f90_src_varcalendar/deprecated/plev_fullread`.
 

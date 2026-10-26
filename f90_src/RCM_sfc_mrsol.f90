@@ -1,12 +1,12 @@
 program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
-use shared_subs
+use shared_io_subs
 use netcdf
 !implicit none
 
 
-! --- Read configuration using shared_subs subroutine
+! --- Read configuration using shared_io_subs subroutine
 
 call init_cordex_environment
 if (ostep < 1) ostep = wp_step       ! output step: outstep of the header (0 or missing: wp_step of the grid ini)
@@ -170,7 +170,7 @@ end subroutine calc_mrsol
 subroutine write_output
 ! Logic to prepare filenames and call NetCDF writer
 use datvar_s
-use shared_subs
+use shared_io_subs
 use netcdf
 
 amonthf = pad_int(month-1, 2)
@@ -202,7 +202,7 @@ ss = pad_int(values(7), 2)
 cdate=yyyy//'-'//mm//'-'//dd//'-T'//hh//':'//mn//':'//ss//'Z'
 creationdate=cdate(1:len_trim(cdate))
 !
-! Call the shared NetCDF writer from shared_subs
+! Call the shared NetCDF writer from shared_io_subs
 !
 call write_netcdf_rtime_soil(outvar_h_4d, ntime, ttime, bdtime)
 

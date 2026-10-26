@@ -5,7 +5,7 @@ module humidity_subs
 ! temperature, exact LCL (Romps 2017), pseudo-equivalent potential temperature (Bolton 1980) and
 ! its inversion, and the pseudo-adiabat with ice. Used by RCM_sfc_hurs, RCM_sfc_hurscan,
 ! RCM_sfc_evspsblpot, RCM_sfc_cape and RCM_sfc_lcl (use humidity_subs). Compiled after datvar_s
-! and before shared_subs_v2 (scripts/run_out_generic.sh). Double precision.
+! and before shared_io_subs (scripts/run_out_generic.sh). Double precision.
 !
 use datvar_s, only: epsilon
 implicit none

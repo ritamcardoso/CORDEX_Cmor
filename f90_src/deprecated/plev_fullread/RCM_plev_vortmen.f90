@@ -13,17 +13,18 @@ program read_wrfout
 !   where the full grid has it (else one-sided at the edge).
 !
 ! zeta is interpolated linearly in log(p) to pres with the level map of plev_map and
-! plev_interp (shared_subs_v2.f90), as the other RCM_plev programs; points where pres is below the
+! plev_interp (vert_interp_subs.f90), as the other RCM_plev programs; points where pres is below the
 ! surface or above the model top are missing (1e20).
 ! Output every wp_step hours (wp_step of the grid's ini: 3 or 6).
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
-use shared_subs
+use shared_io_subs
+use vert_interp_subs
 use netcdf
 !implicit none
 
-! --- Read configuration using shared_subs subroutine
+! --- Read configuration using shared_io_subs subroutine
 
 call init_cordex_environment
 if (ostep < 1) ostep = wp_step       ! output step: outstep of the header (0 or missing: wp_step of the grid ini)
@@ -249,7 +250,7 @@ end subroutine calc_vort
 subroutine write_output
 ! Logic to prepare filenames and call NetCDF writer
 use datvar_s
-use shared_subs
+use shared_io_subs
 use netcdf
 
 amonthf = pad_int(month-1, 2)
@@ -281,7 +282,7 @@ ss = pad_int(values(7), 2)
 cdate=yyyy//'-'//mm//'-'//dd//'-T'//hh//':'//mn//':'//ss//'Z'
 creationdate=cdate(1:len_trim(cdate))
 !
-! Call the shared NetCDF writer from shared_subs
+! Call the shared NetCDF writer from shared_io_subs
 !
 call write_netcdf_rtime_3d(outvar_h, ntime, ttime, bdtime)
 

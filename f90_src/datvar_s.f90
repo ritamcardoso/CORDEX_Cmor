@@ -88,7 +88,7 @@ integer :: ntime, ntime3, ntime6
 ! --- Variable calendar (programs of f90_src_varcalendar) ---
 ! sim_start, sim_end: first and last wrfout file of the simulation, 'YYYY-MM-DD_HH' (UTC),
 ! set in the grid ini. Each year yeari..yearf of a run is one chunk: the part of that year
-! inside the simulation period (time_chunk, set_time_step in shared_subs_v2.f90).
+! inside the simulation period (time_chunk, set_time_step in shared_io_subs.f90).
 character(len=13) :: sim_start = '', sim_end = ''
 integer :: t_sim0, t_sim1          ! sim_start, sim_end in hours since iniyear-01-01 00 UTC
 integer :: t_ch0, t_ch1            ! first and last time step of the chunk (hours since iniyear)
