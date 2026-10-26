@@ -31,6 +31,9 @@ now 3 generic job scripts, submitted through `submit.sh` and driven by:
    your experiment folder's name. Nothing to edit in `scripts/`.
 4. Check `config/varsets.sh` covers the variables you need (§5), and run
    `bash tools/lint_varsets.sh` (§11) after any change to it.
+5. Before the WRF run: append `config/iofields_cordex_fpsurb_lucas.txt`
+   to the WRF iofields file (`iofields_filename`, every domain), so that
+   wrfout has every field the programs read (§5, "WRF output fields").
 
 ### Quick start: `run.sh`
 
@@ -481,7 +484,7 @@ uses). `RCM_fx_rootd.f90` writes `rootd`, the depth of the top `NROOT` soil laye
   - `npp` (NPP, hourly mean, g → kg).
 
   `cVeg` and `npp` are meaningful only with dynamic vegetation (`opt_dveg`).
-- `irr` varset: `irrLut` is the hourly change of the accumulated irrigation water IRSIVOL + IRMIVOL + IRFIVOL, divided by 3600 s. It needs `opt_irr` > 0 and the three fields added to wrfout (`iofields_filename`: `+:h:0:IRSIVOL,IRMIVOL,IRFIVOL`).
+- `irr` varset: `irrLut` is the hourly change of the accumulated irrigation water IRSIVOL + IRMIVOL + IRFIVOL, divided by 3600 s. It needs `opt_irr` > 0 and the three fields added to wrfout (`iofields_filename`: `+:h:0:IRSIVOL,IRMIVOL,IRFIVOL`, in `config/iofields_cordex_fpsurb_lucas.txt`).
 - `lut` varset: WRF has no land-use tiles, so the twelve `…Lut` variables are the grid-cell values. Each is written by the program of the corresponding variable with its own Lut header: `hflsLut`, `hfssLut`, `hussLut`, `tasLut`, `tslsiLut`, `laiLut`, `mrroLut`, `mrsoLut`, `mrsosLut`, `rlusLut`, `rsusLut`, and `sweLut` (snw × 0.001, m).
 - `fx` varset:
   - `slthick` (`RCM_fx_slthick`: DZS on the soil layers, with depth and depth_bnds);
@@ -598,6 +601,19 @@ seven fractions and `lcvr` every hour (instantaneous, `time: point`), from `LAND
 can be used as a mask at any time step. It is not in `ORDER`; run it with
 `./run.sh lucas 2000 2010 landuse`. Daily and monthly means of the fractions are in
 `tools/aggregation_table.txt`.
+
+### WRF output fields (`config/iofields_cordex_fpsurb_lucas.txt`)
+
+The iofields lines that put in wrfout every field the programs of the CORDEX, FPS-URB-RCC and LUCAS experiments read (all varsets, the optional ones included). Several are not on the history stream by default in WRF 4.5.1 and 4.6 (`LANDUSEF`, read from the first wrfout file by `fx` and `landuse`; `AOD5502D`; `ZNT`; `TSK_RURAL`; `USTM`), and a CORDEX iofields file often removes others (`ACSNOM`, and the Noah-MP fields of the `lsm` varset).
+
+- The file has only `+` lines. Append it at the end of the experiment's iofields file: WRF applies the lines in order, so a field removed above is added back.
+- WRF stops reading at the first blank line; a line with `#` anywhere is a comment.
+- A field already on the stream, or not in that build (the FPS-URB urban fields, Noah-MP fields, `QKE` without MYNN, `QHAIL`, the `I_` counters without `bucket_J`) only gives a warning, as long as `ignore_iofields_warning = .true.` (the default).
+- iofields uses the names in wrfout, which are not always the Registry names (e.g. `TC_URB` for the Registry `TC_URB2D`).
+- The daily extremes (`wxtrm`) come from the wrfxtrm file, stream 3 with `output_diagnostics = 1`; the file lists them on `h:3` too.
+- Read only from geo_em, so not in the file: `HGT_M`, `CLAT`/`CLONG`, `XLAT_M`/`XLONG_M`, `FRC_URB2D`, `SCT_DOM` and the projection attributes.
+
+When a program starts reading a new wrfout field, add it to the file.
 
 ### Fortran program naming
 
