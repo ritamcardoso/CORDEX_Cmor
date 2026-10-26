@@ -11,7 +11,7 @@ program read_wrfout
 !
 !   p = P + PB, T = (theta' + 300) (p / 1e5)**rcp, r = QVAPOR of the lowest mass level;
 !   LCL above the parcel: exact solution of Romps (2017, J. Atmos. Sci. 74, 3891)
-!   (romps_lcl in shared_subs_v2.f90); lcl = that height + height of the lowest mass
+!   (romps_lcl in humidity_subs.f90); lcl = that height + height of the lowest mass
 !   level above the ground (from PH + PHB, HGT).
 !
 ! lcl is not a CORDEX-CMIP6 variable (no standard_name). Only the lowest mass level of
@@ -21,6 +21,7 @@ program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use humidity_subs
 use netcdf
 !implicit none
 

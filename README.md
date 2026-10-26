@@ -191,7 +191,9 @@ Place all files and subfolders into a single root directory, maintaining
 the provided folder structure:
 
 ```
-f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90, ...)
+f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90, ...) and the three modules every
+                  program is built with: datvar_s.f90 (variables), humidity_subs.f90 (moist thermodynamics),
+                  shared_subs_v2.f90 (everything else), compiled in that order
 f90_src_varcalendar/ <- the same programs for any simulation period (sim_start/sim_end in the grid ini, §2)
 header/        <- per-variable namelist headers
 experiments/   <- one folder per experiment: <name>.sh (grids, paths) + its ini files (§2, experiments/README.md)
@@ -539,7 +541,7 @@ companion varset `cape_x` (`CP_EXTRA`); `capemax`, `cinmax` and `limax` are the 
 made by `tools/aggregate.sh` from the hourly files. About 57 µs per column and hour
 (EUR-12: ~24 h and ~18 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
 
-*Parcel with ice (`cape_ice = 1` in the grid ini; default 0).* Above the LCL the parcel follows a pseudo-adiabat with ice instead of Bolton's θe, integrated from model level to model level in steps of at most 0.1 in ln p (`t_pseudo_ice` in `shared_subs_v2.f90`; within 0.31 J/kg of steps of 0.002):
+*Parcel with ice (`cape_ice = 1` in the grid ini; default 0).* Above the LCL the parcel follows a pseudo-adiabat with ice instead of Bolton's θe, integrated from model level to model level in steps of at most 0.1 in ln p (`t_pseudo_ice` in `humidity_subs.f90`; within 0.31 J/kg of steps of 0.002):
 - The new condensate is all liquid at 0 °C and above, all ice at −40 °C and below, and the ice fraction is linear in between.
 - The saturation is over that mixture. Ice saturation is e_w / S, with e_w the Wexler formula with the enhancement factor and S the water/ice saturation ratio of Ambaum (2020, QJRMS 146, 4252, eq. 20). The exponential in eq. 20 as printed has the wrong sign; with the corrected sign S = 1.47 at −40 °C, as the paper says. e_i is within 5×10⁻⁴ of Murphy & Koop (2005) from −40 to 0 °C.
 - The latent heat is that of the mixture: Lv and Ls varying linearly with T (Ambaum eqs. 15 and 18).

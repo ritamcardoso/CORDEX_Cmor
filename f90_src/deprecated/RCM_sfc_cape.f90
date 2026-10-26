@@ -11,7 +11,7 @@ program read_wrfout
 !
 ! Parcel: the lowest model level (p = P + PB, T from theta = T + 300, r = QVAPOR).
 !  - LCL: exact solution of Romps (2017, J. Atmos. Sci. 74, 3891) for its height,
-!    temperature T_L and pressure (romps_lcl in shared_subs_v2.f90).
+!    temperature T_L and pressure (romps_lcl in humidity_subs.f90).
 !  - Below the LCL the parcel follows the dry adiabat (theta and r conserved); above
 !    it, a pseudo-adiabat of constant theta_e (Bolton 1980, eq. 43, with the Romps T_L),
 !    inverted for T at every level (Newton; saturation mixing ratio of RCM_sfc_hurs).
@@ -32,6 +32,7 @@ program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use humidity_subs
 use netcdf
 !implicit none
 

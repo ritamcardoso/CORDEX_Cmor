@@ -10,6 +10,7 @@ program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use humidity_subs
 use netcdf
 !implicit none
 
@@ -168,7 +169,7 @@ subroutine calc_rh
 ! Calculates relative humidity.
 ! Following WMO, supercooled water is assumed for temperatures below 0ºC and esat is always calculated in reference to water.
 ! Enhancement factor is used calculate the effective esat in the presence of other gases
-! esat (with the enhancement factor) from es_wexler_dt (shared_subs_v2.f90), as cape and evspsblpot.
+! esat (with the enhancement factor) from es_wexler_dt (humidity_subs.f90), as cape and evspsblpot.
 !
 ! REFERENCES
 ! Wexler, A., Vapor Pressure Formulation for Water in Range 0 to 100°C. A Revision, Journal of Research of the National Bureau of Standards <96> A. Physics and Chemistry, September <96> December 1976, Vol. 80A, Nos.5 and 6, 775-785

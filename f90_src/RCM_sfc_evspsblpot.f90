@@ -7,6 +7,7 @@ program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use humidity_subs
 use netcdf
 !implicit none
 
@@ -243,7 +244,7 @@ subroutine calc_evspsblpot
 !   T    2 m air temperature (degC), mean of the hour (T2)
 !   u2   2 m wind speed: 0.748 x 10 m wind speed (eq. 47), mean of the hour (U10, V10)
 !   es   saturation vapour pressure at T (kPa): ITS-90 / Wexler formula over water with the
-!        enhancement factor (Goff 1949), as hurs and cape (es_wexler_dt in shared_subs_v2.f90),
+!        enhancement factor (Goff 1949), as hurs and cape (es_wexler_dt in humidity_subs.f90),
 !        instead of the FAO-56 Tetens formula (eq. 11)
 !   ea   actual vapour pressure (kPa) from the specific humidity: q p / (0.622 + 0.378 q) (Q2, PSFC)
 !   D    slope of the saturation vapour pressure curve (kPa degC-1): the exact derivative of

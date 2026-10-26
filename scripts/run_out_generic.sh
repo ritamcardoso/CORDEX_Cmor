@@ -255,6 +255,11 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     fi
     # shellcheck disable=SC2086
     $FC $FFLAGS $omp -c "${PROG_DIR}/${MOD_NAME}.f90" || fail "compiling ${MOD_NAME}.f90 failed"
+    # Moist thermodynamics (saturation, LCL, theta_e, parcel with ice): its own module,
+    # after datvar_s (HUM_NAME in env.site.sh; humidity_subs if unset)
+    HUM_NAME="${HUM_NAME:-humidity_subs}"
+    # shellcheck disable=SC2086
+    $FC $FFLAGS $omp -c "${PROG_DIR}/${HUM_NAME}.f90" || fail "compiling ${HUM_NAME}.f90 failed"
     # shellcheck disable=SC2086
     $FC $FFLAGS $omp -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC || fail "compiling ${SUB_NAME}.f90 failed"
     # Every -L folder in ALL_LIBS is also written into the executable
@@ -265,7 +270,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
       case "$w" in -L?*) RPATH+=" -Wl,-rpath,${w#-L}" ;; esac
     done
     # shellcheck disable=SC2086
-    $FC $FFLAGS $omp ${src_dir}/${PROG_NAME}.f90 ${MOD_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
+    $FC $FFLAGS $omp ${src_dir}/${PROG_NAME}.f90 ${MOD_NAME}.o ${HUM_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
       || fail "compiling ${PROG_NAME}.f90 failed"
 
     touch repack_marker
