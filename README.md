@@ -192,8 +192,9 @@ the provided folder structure:
 
 ```
 f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90, ...) and the three modules every
-                  program is built with: datvar_s.f90 (variables), humidity_subs.f90 (moist thermodynamics),
-                  shared_subs_v2.f90 (everything else), compiled in that order
+                  program is built with, compiled in this order: datvar_s.f90 (variables), humidity_subs.f90
+                  (moist thermodynamics), shared_subs_v2.f90 (everything else, read_geog included),
+                  landuse_subs.f90 (land use and urban cells: landuse_field, urban_cell)
 f90_src_varcalendar/ <- the same programs for any simulation period (sim_start/sim_end in the grid ini, §2)
 header/        <- per-variable namelist headers
 experiments/   <- one folder per experiment: <name>.sh (grids, paths) + its ini files (§2, experiments/README.md)
@@ -446,7 +447,7 @@ writes the urban temperatures `tasroof`, `taspav`, `tasgree`, `tascan`, `tsroof`
 canyon humidities and wind; `RCM_sfc_tasblue.f90` and `RCM_sfc_tsblue.f90` the
 2 m and surface temperatures over water cells (`LANDMASK = 0`); and `tsskin`
 (`TSK` everywhere) is written by `RCM_sfc_ts.f90` with `header_tsskin`. Urban cells are those where WRF
-runs the urban scheme (`urban_cell` in `shared_subs_v2.f90`): `FRC_URB2D > 0` and
+runs the urban scheme (`urban_cell` in `landuse_subs.f90`): `FRC_URB2D > 0` and
 `LU_INDEX` an urban category of the land-use table of the geo_em file (`MMINLU`):
 13 or the LCZ classes 51–61 for MODIS, 1 or 31–41 for USGS. All are
 instantaneous (`time: point`), as in the T32 CMOR tables. Only the fpsurb run has
@@ -470,7 +471,7 @@ from `LANDUSEF` of the first wrfout file of the job year, and with
 `RCM_fx_lcvr.f90` the dominant land-cover class `lcvr` (`LU_INDEX` of the geo_em
 file, the LUCAS name). The grouping of the land-use categories (MODIS/IGBP and
 USGS weight tables, with the LCZ urban classes) is in `landuse_field`
-(`shared_subs_v2.f90`); edit it there. Like the other fx files, an existing file
+(`landuse_subs.f90`); edit it there. Like the other fx files, an existing file
 is kept, so the fx fractions are those of the first year processed.
 
 **Grid-cell area and root depth (`fx` varset).** `RCM_fx_areacella.f90` writes

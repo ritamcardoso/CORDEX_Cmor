@@ -262,6 +262,11 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     $FC $FFLAGS $omp -c "${PROG_DIR}/${HUM_NAME}.f90" || fail "compiling ${HUM_NAME}.f90 failed"
     # shellcheck disable=SC2086
     $FC $FFLAGS $omp -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC || fail "compiling ${SUB_NAME}.f90 failed"
+    # Land use and urban cells (urban_cell, landuse_field): after shared_subs, whose ncerror it
+    # uses (LU_NAME in env.site.sh; landuse_subs if unset)
+    LU_NAME="${LU_NAME:-landuse_subs}"
+    # shellcheck disable=SC2086
+    $FC $FFLAGS $omp -c "${PROG_DIR}/${LU_NAME}.f90" $NC_INC || fail "compiling ${LU_NAME}.f90 failed"
     # Every -L folder in ALL_LIBS is also written into the executable
     # (rpath), so it finds the NetCDF/HDF5 libraries it was linked with even
     # when the loaded modules don't put them on LD_LIBRARY_PATH.
@@ -270,7 +275,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
       case "$w" in -L?*) RPATH+=" -Wl,-rpath,${w#-L}" ;; esac
     done
     # shellcheck disable=SC2086
-    $FC $FFLAGS $omp ${src_dir}/${PROG_NAME}.f90 ${MOD_NAME}.o ${HUM_NAME}.o ${SUB_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
+    $FC $FFLAGS $omp ${src_dir}/${PROG_NAME}.f90 ${MOD_NAME}.o ${HUM_NAME}.o ${SUB_NAME}.o ${LU_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
       || fail "compiling ${PROG_NAME}.f90 failed"
 
     touch repack_marker
