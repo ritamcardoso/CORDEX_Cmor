@@ -24,13 +24,13 @@ program read_wrfout
 !
 ! Parcel: the lowest model level (p = P + PB, T from theta = T + 300, r = QVAPOR).
 !  - LCL: exact solution of Romps (2017, J. Atmos. Sci. 74, 3891) for its height,
-!    temperature T_L and pressure (romps_lcl in shared_subs_v2.f90).
+!    temperature T_L and pressure (romps_lcl in humidity_subs.f90).
 !  - Below the LCL the parcel follows the dry adiabat (theta and r conserved); above
 !    it, a pseudo-adiabat of constant theta_e (Bolton 1980, eq. 43, with the Romps T_L),
 !    inverted for T at every level (Newton; saturation mixing ratio of RCM_sfc_hurs).
 !    Davies-Jones (2009, MWR 137, 3137) finds Bolton's formula accurate to 0.02 K.
 !  - With cape_ice = 1 in the grid ini, the parcel above the LCL follows instead a pseudo-adiabat
-!    with ice (t_pseudo_ice in shared_subs_v2.f90): the condensate freezes progressively from
+!    with ice (t_pseudo_ice in humidity_subs.f90): the condensate freezes progressively from
 !    0 degC (all liquid) to -40 degC (all ice), with saturation over the mixture (ice: Ambaum
 !    2020, QJRMS 146, 4252, eq. 20) and the latent heat of the mixture. The default, 0, is the
 !    liquid-only parcel of RIP / NCL / wrf-python.
@@ -50,6 +50,7 @@ program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
+use humidity_subs
 use netcdf
 !implicit none
 
