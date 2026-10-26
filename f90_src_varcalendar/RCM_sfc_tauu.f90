@@ -5,6 +5,9 @@ program read_wrfout
 ! simulation period sim_start..sim_end of the grid ini (time_chunk, set_time_step).
 ! Change f90_src/RCM_sfc_tauu.f90 and rerun tools/make_varcalendar.py rather than this file.
 !
+! tauu (Pa): surface downward eastward wind stress, rho u*^2 uas/|U10|, with the moist-air
+! density at 2 m (PSFC, T2, Q2) and the 10 m wind rotated to the Earth axes. u* is USTM (u* of
+! the surface layer without the convective velocity) when it is in wrfout, else UST.
 ! Use external modules for variables and shared subroutines
 use datvar_s
 use shared_subs
@@ -27,7 +30,7 @@ nhours = 24
 
 
 ! --- Main Processing Loops ---
-allocate(outvar(nlon,nlat), outvar_a(nlon,nlat), outvar_i(nlon,nlat))
+allocate(outvar(nlon,nlat), outvar_i(nlon,nlat))
 allocate(wind10(nlon,nlat), uas(nlon,nlat), vas(nlon,nlat), u_s(nlon,nlat), v_s(nlon,nlat))
 allocate(ro(nlon,nlat), psf(nlon,nlat), t2(nlon,nlat), q2(nlon,nlat))
 allocate(ust(nlon,nlat))
@@ -102,11 +105,20 @@ do vc_year = yeari, yearf
         status=nf90_get_var(ncid,varid,v_s,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
         call ncerror(status,'reading V10 from '//trim(infile))
 !
-        status=nf90_inq_varid(ncid,'UST',varid)
-        call ncerror(status,'getting var id UST in '//trim(infile))
+        ! u* without the convective velocity (USTM) if it is in the file, else UST
+        status=nf90_inq_varid(ncid,'USTM',varid)
+        if (status == nf90_noerr) then
+          if (it == 0) write(*,*) 'tauu: u* from USTM'
+          status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading USTM from '//trim(infile))
+        else
+          if (it == 0) write(*,*) 'tauu: USTM not in wrfout, u* from UST'
+          status=nf90_inq_varid(ncid,'UST',varid)
+          call ncerror(status,'getting var id UST in '//trim(infile))
 
-        status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
-        call ncerror(status,'reading UST from '//trim(infile))
+          status=nf90_get_var(ncid,varid,ust,(/xoffset,yoffset/),(/nlon,nlat/),(/1,1/))
+          call ncerror(status,'reading UST from '//trim(infile))
+        endif
 !
         status=nf90_inq_varid(ncid,'T2',varid)
         call ncerror(status,'getting var id T2 in '//trim(infile))
@@ -144,9 +156,7 @@ do vc_year = yeari, yearf
         bdtime(1, issh) = ish - 1
         bdtime(2, issh) = ish
 
-        outvar_a(:,:)=nint(1000.d0*(outvar(:,:)+outvar_i(:,:))/2.)
-
-        outvar_h(:,:,issh)=float(outvar_a(:,:))/1000.d0
+        outvar_h(:,:,issh)=(outvar(:,:)+outvar_i(:,:))/2.     ! mean of the interval, not rounded
 
         outvar_i=outvar
 !        
