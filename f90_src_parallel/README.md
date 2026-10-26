@@ -10,7 +10,7 @@ These programs are the same as in `f90_src`, with only OpenMP directives added, 
 | `RCM_sfc_wpth.f90` | `calc_wpth` | `wpth` |
 | `RCM_sfc_clivi.f90`, `RCM_sfc_prw.f90`, `RCM_sfc_clwvi.f90`, `RCM_sfc_clgvi.f90`, `RCM_sfc_clhvi.f90` | `calc_prw` | `wpth1` … `wpth4` |
 
-Compiled without the OpenMP flag, the directives are comments and each program is the serial program of `f90_src`. The modules (`datvar_s.f90`, `humidity_subs.f90`, `shared_subs_v2.f90`, `landuse_subs.f90`) are the ones in `f90_src`. Every variable is still declared there.
+Compiled without the OpenMP flag, the directives are comments and each program is the serial program of `f90_src`. The modules (`datvar_s.f90`, `humidity_subs.f90`, `shared_io_subs.f90`, `landuse_subs.f90`, `vert_interp_subs.f90`) are the ones in `f90_src`. Every variable is still declared there.
 
 ## Use
 

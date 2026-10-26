@@ -6,7 +6,7 @@ from those of f90_src (and f90_src_varcalendar/parallel from f90_src_parallel).
 The programs of f90_src loop over whole calendar years (months imonth..nmonths, days 1..31,
 hours ihour..23). The variable-calendar programs process, for each year yeari..yearf, only
 the part of the year inside the simulation period sim_start..sim_end of the grid ini
-(time_chunk and set_time_step in f90_src/shared_subs_v2.f90):
+(time_chunk and set_time_step in f90_src/shared_io_subs.f90):
 
     do vc_year = yeari, yearf
       if (.not. time_chunk(vc_year, <step>, <interval>)) cycle

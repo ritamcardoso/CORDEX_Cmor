@@ -260,13 +260,25 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     HUM_NAME="${HUM_NAME:-humidity_subs}"
     # shellcheck disable=SC2086
     $FC $FFLAGS $omp -c "${PROG_DIR}/${HUM_NAME}.f90" || fail "compiling ${HUM_NAME}.f90 failed"
+    # Configuration, grid, netCDF output, time (SUB_NAME in env.site.sh; shared_io_subs if
+    # unset, or if it still names shared_subs_v2, the file's name before the module split)
+    SUB_NAME="${SUB_NAME:-shared_io_subs}"
+    if [ "${SUB_NAME}" = "shared_subs_v2" ] && [ ! -f "${PROG_DIR}/${SUB_NAME}.f90" ]; then
+      echo "Note: SUB_NAME=shared_subs_v2 in env.site.sh; the file is now shared_io_subs.f90 (using it)"
+      SUB_NAME="shared_io_subs"
+    fi
     # shellcheck disable=SC2086
     $FC $FFLAGS $omp -c "${PROG_DIR}/${SUB_NAME}.f90" $NC_INC || fail "compiling ${SUB_NAME}.f90 failed"
-    # Land use and urban cells (urban_cell, landuse_field): after shared_subs, whose ncerror it
-    # uses (LU_NAME in env.site.sh; landuse_subs if unset)
+    # Land use and urban cells (urban_cell, landuse_field): after shared_io_subs, whose ncerror
+    # it uses (LU_NAME in env.site.sh; landuse_subs if unset)
     LU_NAME="${LU_NAME:-landuse_subs}"
     # shellcheck disable=SC2086
     $FC $FFLAGS $omp -c "${PROG_DIR}/${LU_NAME}.f90" $NC_INC || fail "compiling ${LU_NAME}.f90 failed"
+    # Interpolation to pressure and height levels (plev_map, plev_interp, zlev_heights,
+    # zlev_map): after shared_io_subs (VI_NAME in env.site.sh; vert_interp_subs if unset)
+    VI_NAME="${VI_NAME:-vert_interp_subs}"
+    # shellcheck disable=SC2086
+    $FC $FFLAGS $omp -c "${PROG_DIR}/${VI_NAME}.f90" $NC_INC || fail "compiling ${VI_NAME}.f90 failed"
     # Every -L folder in ALL_LIBS is also written into the executable
     # (rpath), so it finds the NetCDF/HDF5 libraries it was linked with even
     # when the loaded modules don't put them on LD_LIBRARY_PATH.
@@ -275,7 +287,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
       case "$w" in -L?*) RPATH+=" -Wl,-rpath,${w#-L}" ;; esac
     done
     # shellcheck disable=SC2086
-    $FC $FFLAGS $omp ${src_dir}/${PROG_NAME}.f90 ${MOD_NAME}.o ${HUM_NAME}.o ${SUB_NAME}.o ${LU_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
+    $FC $FFLAGS $omp ${src_dir}/${PROG_NAME}.f90 ${MOD_NAME}.o ${HUM_NAME}.o ${SUB_NAME}.o ${LU_NAME}.o ${VI_NAME}.o -o ${PROG_NAME}.exe $ALL_LIBS $RPATH \
       || fail "compiling ${PROG_NAME}.f90 failed"
 
     touch repack_marker

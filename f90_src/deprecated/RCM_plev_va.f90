@@ -1,13 +1,13 @@
 program read_wrfout
 use datvar_s
-use shared_subs
+use shared_io_subs
 use netcdf
 implicit none
 
 real :: u_unstag, v_unstag
 integer :: ix, iy
 
-! Read configuration using shared_subs subroutine
+! Read configuration using shared_io_subs subroutine
 call init_cordex_environment
 
 ! Read Grid Information (Latitude, Longitude)
@@ -242,7 +242,7 @@ end subroutine calc_invplev_dual
 
 subroutine write_dual_output
   use datvar_s
-  use shared_subs
+  use shared_io_subs
   use netcdf
 
   character(len=10) :: p_str

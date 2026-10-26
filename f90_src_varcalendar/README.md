@@ -44,7 +44,7 @@ A year outside the period writes nothing. So does a chunk with no complete windo
   enddo
   ```
 
-  `time_chunk`, `set_time_step` and `sim_period` are in `f90_src/shared_subs_v2.f90`, and their variables are in `f90_src/datvar_s.f90`. Both modules are shared with `f90_src`; the programs there are unchanged.
+  `time_chunk`, `set_time_step` and `sim_period` are in `f90_src/shared_io_subs.f90`, and their variables are in `f90_src/datvar_s.f90`. Both modules are shared with `f90_src`; the programs there are unchanged.
 - **By hand:** `RCM_sfc_xtrm.f90` (monthly wrfxtrm files, one record a day) and `RCM_sfc_wsgsmax.f90` (one value a day from 24 hourly files).
 - **Not here:**
   - programs without a time loop (`RCM_fx_*`, `RCM_sfc_mrsofc`), which are built from `f90_src`;

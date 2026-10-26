@@ -191,10 +191,11 @@ Place all files and subfolders into a single root directory, maintaining
 the provided folder structure:
 
 ```
-f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90, ...) and the three modules every
+f90_src/       <- Fortran source (RCM_sfc_*.f90, RCM_plev_*.f90, RCM_zlev_*.f90, ...) and the five modules every
                   program is built with, compiled in this order: datvar_s.f90 (variables), humidity_subs.f90
-                  (moist thermodynamics), shared_subs_v2.f90 (everything else, read_geog included),
-                  landuse_subs.f90 (land use and urban cells: landuse_field, urban_cell)
+                  (moist thermodynamics), shared_io_subs.f90 (configuration, grid incl. read_geog, netCDF
+                  output, time), landuse_subs.f90 (land use and urban cells: landuse_field, urban_cell),
+                  vert_interp_subs.f90 (pressure and height levels: plev_map, plev_interp, zlev_heights, zlev_map)
 f90_src_varcalendar/ <- the same programs for any simulation period (sim_start/sim_end in the grid ini, §2)
 header/        <- per-variable namelist headers
 experiments/   <- one folder per experiment: <name>.sh (grids, paths) + its ini files (§2, experiments/README.md)
@@ -567,14 +568,14 @@ only the lowest model levels. The earlier `RCM_sfc_cape.f90`, which also wrote `
 - `0`: `wp_step` of the grid ini. This is only for the variables that CORDEX and LUCAS request at different frequencies: mrso, mrro, mrros, mrsol and tsl (CORDEX 6hr, LUCAS 1hr). So `wp_step = 6` for CORDEX and `1` for LUCAS.
 
 How the step is applied:
-- The hourly programs pass their output through `resample_output` (`shared_subs_v2.f90`), so a shared program (`rad`, `cloud`) writes each variable at the step of its own header. Instantaneous values ("time: point") are taken at those hours; means become the mean over them (with time bounds); "time: sum" is summed.
+- The hourly programs pass their output through `resample_output` (`shared_io_subs.f90`), so a shared program (`rad`, `cloud`) writes each variable at the step of its own header. Instantaneous values ("time: point") are taken at those hours; means become the mean over them (with time bounds); "time: sum" is summed.
 - The pressure-level and soil-layer programs read the wrfout files every `outstep` hours.
 - In `RCM_sfc_clouds`, clt is hourly and clh, clm and cll are 6-hourly.
 - sund and z0 are kept hourly.
 
 The earlier versions of the programs changed for this are in `f90_src/deprecated`.
 
-**Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map` and `plev_interp` (`shared_subs_v2.f90`).
+**Interpolation to pressure levels (`RCM_plev_*`).** All the pressure-level programs use `plev_map` and `plev_interp` (`vert_interp_subs.f90`).
 - `plev_map` builds, for the pressure level, a map of the model level k with p(k) ≥ p_level > p(k+1) at every point.
   - Pressure is smooth in the horizontal, so the search starts from the level found at the neighbouring point.
   - It moves down while p(k) < p_level and up while p(k+1) ≥ p_level. That is under one step per point on average.
@@ -586,7 +587,7 @@ The earlier versions of the programs changed for this are in `f90_src/deprecated
 - The earlier programs are in `f90_src/deprecated`. The results are the same, except that a level lying between the two top model levels is now interpolated; the old top-down search never tested that pair.
 - The versions that read every model level of the fields are in `f90_src/deprecated/plev_fullread` (and `f90_src_varcalendar/deprecated/plev_fullread`). Their results are the same.
 
-**Interpolation to heights above the ground (`RCM_zlev_*`).** The same procedure, with `zlev_map` (`shared_subs_v2.f90`):
+**Interpolation to heights above the ground (`RCM_zlev_*`).** The same procedure, with `zlev_map` (`vert_interp_subs.f90`):
 - The height above the ground of the mass levels, z, comes from PH, PHB and HGT (as before), in `zlev_heights`. PH and PHB are read only up to the level just above the previous time step's `zlev_k2` (at most level 20). If any point above level 1 might need a higher level (z at the top level read ≤ h), they are read again up to level 20 for that time step, and the log says so. Every point then gets the same bracket as with all 20 levels, so the results do not change.
 - `zlev_map` builds, for the height h, a map of the model level k with z(k) < h ≤ z(k+1) at every point. That is the bracket of the earlier search from the bottom.
 - The search starts from the level of the neighbouring point; the first point starts from its level at the previous time step.

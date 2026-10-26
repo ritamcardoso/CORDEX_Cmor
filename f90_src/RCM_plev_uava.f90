@@ -1,13 +1,14 @@
 program read_wrfout
 use datvar_s
-use shared_subs
+use shared_io_subs
+use vert_interp_subs
 use netcdf
 implicit none
 
 real :: u_unstag, v_unstag
 integer :: ix, iy
 
-! Read configuration using shared_subs subroutine
+! Read configuration using shared_io_subs subroutine
 call init_cordex_environment
 if (ostep < 1) ostep = wp_step       ! output step: outstep of the header (0 or missing: wp_step of the grid ini)
 
@@ -186,7 +187,7 @@ contains
 
 subroutine write_dual_output
   use datvar_s
-  use shared_subs
+  use shared_io_subs
   use netcdf
 
   character(len=10) :: p_str

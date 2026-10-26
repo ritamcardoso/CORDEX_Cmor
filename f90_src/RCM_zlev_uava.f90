@@ -1,12 +1,13 @@
 program read_wrfout
 ! Use external modules for variables and shared subroutines
 use datvar_s
-use shared_subs
+use shared_io_subs
+use vert_interp_subs
 use netcdf
 !implicit none
 
 
-! --- Read configuration using shared_subs subroutine
+! --- Read configuration using shared_io_subs subroutine
 
 call init_cordex_environment
 
@@ -240,7 +241,7 @@ end subroutine calc_zlev_uv
 
 subroutine write_dual_output
   use datvar_s
-  use shared_subs
+  use shared_io_subs
   use netcdf
 
   character(len=10) :: h_str,h_istr

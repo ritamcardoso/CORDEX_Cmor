@@ -43,12 +43,12 @@ program read_wrfout
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
-use shared_subs
+use shared_io_subs
 use humidity_subs
 use netcdf
 !implicit none
 
-! --- Read configuration using shared_subs subroutine
+! --- Read configuration using shared_io_subs subroutine
 
 call init_cordex_environment
 

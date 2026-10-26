@@ -13,7 +13,7 @@ program read_wrfout
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s
-use shared_subs
+use shared_io_subs
 use netcdf
 !implicit none
 
@@ -27,7 +27,7 @@ real, dimension(19), parameter :: fc_refsmc = [0.192, 0.283, 0.312, 0.360, 0.347
 integer :: fc_cat
 logical :: fc_exists
 
-! --- Read configuration using shared_subs subroutine
+! --- Read configuration using shared_io_subs subroutine
 
 call init_cordex_environment
 
@@ -82,7 +82,7 @@ contains
 subroutine write_output
 ! Logic to prepare filenames and call NetCDF writer
 use datvar_s
-use shared_subs
+use shared_io_subs
 use netcdf
 
 freq='fx'
@@ -108,7 +108,7 @@ ss = pad_int(values(7), 2)
 cdate=yyyy//'-'//mm//'-'//dd//'-T'//hh//':'//mn//':'//ss//'Z'
 creationdate=cdate(1:len_trim(cdate))
 !
-! Call the shared NetCDF writer from shared_subs
+! Call the shared NetCDF writer from shared_io_subs
 !
 call write_netcdf_2D(outvar)
 
