@@ -11,7 +11,8 @@ program read_wrfout
 ! archived through cape_x):
 !
 !   cape  Convective Available Potential Energy (J kg-1)
-!   cin   Convective Inhibition (J kg-1, positive)
+!   cin   Convective Inhibition (J kg-1, negative or 0: E(LFC), as the CORDEX-WRF module
+!         of Fita et al. 2019 and MetPy; RIP / NCL / wrf-python give -E(LFC))
 !   li    Lifted Index at 500 hPa (K): T_environment - T_parcel
 !
 ! The lifting condensation level (lcl, not a CORDEX variable) is written by RCM_sfc_lcl;
@@ -31,9 +32,9 @@ program read_wrfout
 !    liquid-only parcel of RIP / NCL / wrf-python.
 !  - Buoyancy B = g (Tv_parcel - Tv_env) / Tv_env (virtual temperatures), on the model
 !    levels plus two inserted ones: the LCL and every zero crossing of B.
-!  - As RIP / NCL / wrf-python: the accumulated energy E(z) = int_0^z B dz (trapezoids);
+!  - As RIP / NCL / wrf-python (but CIN negative): the accumulated energy E(z) = int_0^z B dz (trapezoids);
 !    EL = highest level at or above the LCL with B >= 0; LFC = level between the LCL and
-!    the EL where E is minimum; CAPE = E(EL) - E(LFC), CIN = -E(LFC) (both >= 0).
+!    the EL where E is minimum; CAPE = E(EL) - E(LFC) >= 0, CIN = E(LFC) <= 0.
 !    No EL (B < 0 everywhere above the LCL): CAPE = CIN = 0. The parcel is lifted to
 !    the model top (every model level), as RIP / NCL / wrf-python.
 !  - LI: parcel at 500 hPa (dry adiabat if the LCL is above 500 hPa, else the theta_e
@@ -258,7 +259,7 @@ do iy = 1, nlat
         endif
       enddo
       outvar_h(ix,iy,issh) = real(max(ben_c(kel) - ben_min, 0.d0))
-      cin_h(ix,iy,issh)    = real(max(-ben_min, 0.d0))
+      cin_h(ix,iy,issh)    = real(min(ben_min, 0.d0))     ! CIN <= 0
     else
       outvar_h(ix,iy,issh) = 0.
       cin_h(ix,iy,issh)    = 0.

@@ -536,11 +536,17 @@ factor (as `hurs`); the buoyancy uses the virtual temperature. CAPE and CIN foll
 RIP/NCL/wrf-python: the LCL and the zero crossings of the buoyancy are inserted in the
 column, the energy is accumulated with the trapezoidal rule, the EL is the highest level of
 positive buoyancy and the LFC the level of minimum energy below it;
-`cape = E(EL) - E(LFC)`, `cin = -E(LFC)`. Without an EL `cape = cin = 0` (so `cin` is 0, not
-missing, where there is no CAPE). `li = T(500 hPa) - T_parcel(500 hPa)`, with the
+`cape = E(EL) - E(LFC)` (≥ 0) and `cin = E(LFC)` (≤ 0: negative, as the CORDEX-WRF module
+of Fita et al. 2019 and MetPy; RIP/NCL/wrf-python give the opposite sign). Without an EL
+`cape = cin = 0` (so `cin` is 0, not missing, where there is no CAPE). The heights are taken
+relative to the parcel level, so the terrain height cancels (only differences enter the
+integral; `RCM_sfc_lcl` subtracts HGT because it writes a height above the ground). The
+version with a positive `cin` is in `deprecated/cin_positive` of `f90_src`,
+`f90_src_parallel` and `f90_src_varcalendar`. `li = T(500 hPa) - T_parcel(500 hPa)`, with the
 environment interpolated in log(p). `cin` and `li` are archived through the
 companion varset `cape_x` (`CP_EXTRA`); `capemax`, `cinmax` and `limax` are the daily maxima
-made by `tools/aggregate.sh` from the hourly files. About 57 µs per column and hour
+made by `tools/aggregate.sh` from the hourly files (with `cin` ≤ 0, `cinmax` is the weakest
+inhibition of the day, as `cinmax` of the CORDEX-WRF module). About 57 µs per column and hour
 (EUR-12: ~24 h and ~18 GB per year). Not in `ORDER`: `./run.sh <experiment> 2000 2010 cape`.
 
 *Parcel with ice (`cape_ice = 1` in the grid ini; default 0).* Above the LCL the parcel follows a pseudo-adiabat with ice instead of Bolton's θe, integrated from model level to model level in steps of at most 0.1 in ln p (`t_pseudo_ice` in `humidity_subs.f90`; within 0.31 J/kg of steps of 0.002):
@@ -552,7 +558,7 @@ made by `tools/aggregate.sh` from the hourly files. About 57 µs per column and 
 On Weisman–Klemp (1982) soundings (CAPE 650–3400 J/kg), the parcel with ice gives:
 - CAPE 6–14 % higher (+110 to +190 J/kg). About 85 % of that is the ice; the rest is the integrated pseudo-adiabat, which is 0.05–0.08 K warmer than Bolton's.
 - LI 0.1–0.3 K lower.
-- CIN at most 1.4 J/kg lower.
+- CIN at most 1.4 J/kg weaker (closer to 0).
 
 Run time: on the test data the program takes ~1.4 times as long as with `cape_ice = 0` (+15 µs per column and hour, on top of ~35 µs with the reading). For EUR-12, from the ~24 h per year of the liquid parcel, expect ~30–35 h; `TIME[cape]` (40 h) still fits. The output files do not record the option, so keep it the same for a whole experiment and say which one in its documentation.
 The LCL height above ground, `lcl` (not a CORDEX variable), is written by `RCM_sfc_lcl.f90`
