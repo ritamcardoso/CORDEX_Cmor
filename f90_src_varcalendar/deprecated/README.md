@@ -9,3 +9,5 @@ Earlier variable-calendar versions, kept for reference; the scripts do not build
 `zlev_fullph/`: the height-level programs that read PH and PHB on all 20 levels at every time step. See `f90_src/deprecated/README.md`.
 
 `tau_ust/`: `RCM_sfc_tauu` and `RCM_sfc_tauv` with u* always from UST. See `f90_src/deprecated/README.md`.
+
+`cin_positive/`: `RCM_sfc_cape` (and `parallel/`, its OpenMP copy) with a positive `cin`. See `f90_src/deprecated/README.md`.
