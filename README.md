@@ -523,9 +523,11 @@ are archived through `clouds_x` and `wpth_x` (`CP_EXTRA`). They replace `cloud1`
 
 **OpenMP versions (optional).** `f90_src_parallel/` has OpenMP versions of the CAPE, cloud and
 water-path programs (the same code with directives that share out the grid columns). They are
-used only when `OMP_FLAG` is set in `env.site.sh`. The job then asks for `CPUS[varset]` cores
-(`config/varsets.sh`). See `f90_src_parallel/README.md`; only `cape` gains much, since the other
-programs mostly read files.
+used only when `OMP_FLAG` is set in `env.site.sh` and the varset has `CPUS[varset]` > 1 in the
+varsets file of the run (`config/varsets.sh`, `varsets_chain.sh` or `varsets_single.sh`); the job
+then asks for that many cores. Every other varset is built from `f90_src` and runs serially (the
+job log says `Serial: <program> from …` or `OpenMP: <program> from …, N thread(s)`). See
+`f90_src_parallel/README.md`; only `cape` gains much, since the other programs mostly read files.
 
 **Convection indices (`cape` varset).** `RCM_sfc_cape.f90` writes, every hour, `cape` and
 `cin` (J kg-1) and `li` (K) for a parcel lifted from the lowest model level, through every
