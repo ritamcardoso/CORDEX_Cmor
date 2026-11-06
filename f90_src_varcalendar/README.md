@@ -50,7 +50,7 @@ A year outside the period writes nothing. So does a chunk with no complete windo
   - programs without a time loop (`RCM_fx_*`, `RCM_sfc_mrsofc`), which are built from `f90_src`;
   - the reference copies that no varset runs (`RCM_sfc_*_monthly`, `RCM_sfc_xtrm_daily`).
 
-The OpenMP copies are in `parallel/`. With `OMP_FLAG` set, `run_out_generic.sh` builds a program from there when it has a copy, as it does with `f90_src_parallel`.
+The OpenMP copies are in `parallel/`. They are used as `f90_src_parallel` is: with `OMP_FLAG` set and `CPUS[varset]` > 1 in the varsets file of the run; otherwise the serial program of this folder.
 
 ## Keeping them in step with f90_src
 
