@@ -233,9 +233,12 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     # Builds the shared module, the shared subroutines and the program, then
     # runs it; any failure stops the job (see "Failure handling").
     #
-    # OpenMP (optional): with OMP_FLAG set in env.site.sh, a program that has
+    # OpenMP (optional): the programs are built from f90_src (serial). Only when
+    # OMP_FLAG is set in env.site.sh AND the varset has CPUS > 1 in the varsets
+    # file of this run (config/${CMOR_VARSETS:-varsets.sh}: varsets_chain.sh or
+    # varsets_single.sh) AND the job has more than one core, a program that has
     # a version in f90_src_parallel is built from there with OMP_FLAG and runs
-    # with SLURM_CPUS_PER_TASK threads (CPUS in config/varsets.sh).
+    # with one thread per core. A varset without CPUS runs serially.
     src_dir="${PROG_DIR}"; omp=""
     par_dir="${PROG_DIR_PARALLEL:-${PROG_DIR%/}_parallel}"
     # Variable calendar (sim_start/sim_end in the grid ini): the program of
@@ -248,10 +251,14 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
         fail "${PROG_NAME}.f90 is not in ${VARCAL_DIR} (sim_start/sim_end are set in the grid ini)"
       fi
     fi
-    if [ -n "${OMP_FLAG:-}" ] && [ -f "${par_dir}/${PROG_NAME}.f90" ]; then
+    omp_cpus="${CPUS[$VARSET]:-1}"; omp_cores="${SLURM_CPUS_PER_TASK:-${omp_cpus}}"
+    if [ -n "${OMP_FLAG:-}" ] && [ "${omp_cpus}" -gt 1 ] && [ "${omp_cores}" -gt 1 ] \
+       && [ -f "${par_dir}/${PROG_NAME}.f90" ]; then
       src_dir="${par_dir}"; omp="${OMP_FLAG}"
-      export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"
+      export OMP_NUM_THREADS="${omp_cores}"
       echo "OpenMP: ${PROG_NAME} from ${par_dir}, ${OMP_NUM_THREADS} thread(s)"
+    else
+      echo "Serial: ${PROG_NAME} from ${src_dir}"
     fi
     # shellcheck disable=SC2086
     $FC $FFLAGS $omp -c "${PROG_DIR}/${MOD_NAME}.f90" || fail "compiling ${MOD_NAME}.f90 failed"

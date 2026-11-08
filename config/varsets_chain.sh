@@ -152,10 +152,13 @@ declare -A MEM=(
 
 #
 #--- CPUS: OpenMP threads of the processing job (optional) ----
-# Used only when OMP_FLAG is set in env.site.sh: the varset's programs
-# that have an OpenMP version in f90_src_parallel are built from there,
-# submit.sh asks for --cpus-per-task=CPUS[varset] and the program runs
-# with as many threads. Without OMP_FLAG this array is ignored.
+# The list of the varsets run in parallel. Used only when OMP_FLAG is set in
+# env.site.sh: for a varset here with CPUS > 1, submit.sh asks for
+# --cpus-per-task=CPUS[varset] and the varset's programs that have an OpenMP
+# version in f90_src_parallel are built from there and run with as many
+# threads. Every other varset (and every varset without OMP_FLAG) is built from
+# f90_src and runs serially; to run one serially with OMP_FLAG set, remove or
+# comment out its line here.
 #
 declare -A CPUS=(
   [cape]=8         # the calculation is about half of the run
@@ -213,7 +216,7 @@ declare -A ADVANCE_YEAR=(
 #
 declare -A NEXT=(
   [plev_uava]="wxtrm"   [wxtrm]="plev_uava"
-  [zlev_uava0]="gust"   [gust]= "zlev_uava0"
+  [zlev_uava0]="gust"   [gust]="zlev_uava0"
   [zlev_uava1]="lcl"    [lcl]="zlev_uava1"
   [cloud1]="wpth1"      [wpth1]="cloud1"
   [cloud2]="wpth3"      [wpth3]="cloud2"
