@@ -22,38 +22,22 @@ declare -A VARSETS=(
   [wpth1]="RCM_sfc_VAR:clivi"
   [wpth2]="RCM_sfc_VAR:prw"
   [wpth3]="RCM_sfc_VAR:clwvi"
-  # Graupel and hail paths (QGRAUP, QHAIL: depend on the microphysics), not in ORDER:
-  # run with ./run.sh <experiment> <first year> <last year> wpth4; drop clhvi without QHAIL
-  [wpth4]="RCM_sfc_VAR:clgvi,clhvi"
-  # Daily maximum wind speed of gust (Brasseur 2001 if QKE is in wrfout, else UPP), not in ORDER:
-  # ./run.sh <experiment> <first year> <last year> gust
+  [wpth4]="RCM_sfc_VAR:clgvi"
+  #[wpth4]="RCM_sfc_VAR:clgvi,clhvi"
   [gust]="RCM_sfc_VAR:wsgsmax"
-  # Surface-parcel CAPE, CIN, lifted index and LCL height (Romps 2017 LCL), hourly, not in ORDER:
-  # ./run.sh <experiment> <first year> <last year> cape. One run of RCM_sfc_cape writes the three
-  # variables; cin and li are archived through the companion varset cape_x (CP_EXTRA).
   [cape]="RCM_sfc_VAR:cape"
-  # LCL height (not a CORDEX variable), not in ORDER: ./run.sh <experiment> <years> lcl
   [lcl]="RCM_sfc_VAR:lcl"
-  # One reading of the wrfout files for several variables, not in ORDER (alternative to
-  # cloud1 + cloud2 and wpth1 + wpth2 + wpth3, same files): ./run.sh <experiment> <years> clouds | wpth
-  # clouds: clt, clh, clm, cll from RCM_sfc_clouds; wpth: prw, clivi, clwvi from RCM_sfc_wpth.
-  # The companions are archived through clouds_x and wpth_x (CP_EXTRA).
   [clouds]="RCM_sfc_clouds:clt"
   [wpth]="RCM_sfc_wpth:prw"
   [plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_wa]="RCM_plev_wa:wa1000,wa925,wa850,wa750,wa700,wa600,wa500,wa400,wa300,wa250,wa200,wa150,wa100,wa70,wa50,wa30,wa20,wa10"
   [plev_zg]="RCM_plev_zg:zg1000,zg925,zg850,zg750,zg700,zg600,zg500,zg400,zg300,zg250,zg200,zg150,zg100,zg70,zg50,zg30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_zg]="RCM_plev_zg:zg1000,zg925,zg850,zg750,zg700,zg600,zg500,zg400,zg300,zg250,zg200,zg150,zg100,zg70,zg50,zg30,zg20,zg10"
   [plev_uava]="RCM_plev_uava:va1000,va925,va850,va750,va700,va600,va500,va400,va300,va250,va200,va150,va100,va70,va50,va30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_uava]="RCM_plev_uava:va1000,va925,va850,va750,va700,va600,va500,va400,va300,va250,va200,va150,va100,va70,va50,va30,va20,va10"
   [plev_hus]="RCM_plev_hus:hus1000,hus925,hus850,hus750,hus700,hus600,hus500,hus400,hus300,hus250,hus200,hus150,hus100,hus70,hus50,hus30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_hus]="RCM_plev_hus:hus1000,hus925,hus850,hus750,hus700,hus600,hus500,hus400,hus300,hus250,hus200,hus150,hus100,hus70,hus50,hus30,hus20,hus10"
   [plev_ta]="RCM_plev_ta:ta1000,ta925,ta850,ta750,ta700,ta600,ta500,ta400,ta300,ta250,ta200,ta150,ta100,ta70,ta50,ta30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_ta]="RCM_plev_ta:ta1000,ta925,ta850,ta750,ta700,ta600,ta500,ta400,ta300,ta250,ta200,ta150,ta100,ta70,ta50,ta30,ta20,ta10"
   [zlev_hus]="RCM_zlev_hus:hus50m"
   [zlev_ta]="RCM_zlev_ta:ta50m"
@@ -69,41 +53,23 @@ declare -A VARSETS=(
   [zlev_va1]="RCM_zlev_va:va200m,va250m,va300m"
   # Archive-only (CP_EXTRA companions, never processed)
   [plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30,ua20,ua10"
   [zlev_ua0]="RCM_zlev_ua:ua100m,ua150m,ua50m"
   [zlev_ua1]="RCM_zlev_ua:ua300m,ua250m,ua200m"
-  [cape_x]="RCM_sfc_cape:cin,li"       # written by RCM_sfc_cape (varset cape)
-  [clouds_x]="RCM_sfc_clouds:clh,clm,cll"   # written by RCM_sfc_clouds (varset clouds)
-  [wpth_x]="RCM_sfc_wpth:clivi,clwvi"       # written by RCM_sfc_wpth (varset wpth)
+  [cape_x]="RCM_sfc_cape:cin,li"      
+  [clouds_x]="RCM_sfc_clouds:clh,clm,cll"   
+  [wpth_x]="RCM_sfc_wpth:clivi,clwvi"       
   # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
-  # run with ./run.sh fpsurb <first year> <last year> urban
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_VAR:hurscan,husscan,sfcWindcan,tasblue,tsblue;RCM_sfc_ts:tsskin"
   # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
-  # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
   [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran,lai,vegFrac,alb,albc,tcs,tgs,interception,rough,cVeg,npp"
-  # FPS-LUCAS "...Lut" variables: WRF has no land-use tiles, so these are the grid-cell values,
-  # written by the programs of the corresponding variables with the Lut headers. Not in ORDER:
-  # ./run.sh <experiment> <first year> <last year> lut
   [lut]="RCM_sfc_hfls:hflsLut;RCM_sfc_hfss:hfssLut;RCM_sfc_huss:hussLut;RCM_sfc_tas:tasLut;RCM_sfc_ts:tslsiLut;RCM_sfc_lai:laiLut;RCM_sfc_mrro:mrroLut;RCM_sfc_mrso:mrsoLut;RCM_sfc_mrsos:mrsosLut;RCM_sfc_rad:rlusLut,rsusLut;RCM_sfc_snw:sweLut"
-  # Irrigation (Noah-MP opt_irr > 0, with IRSIVOL IRMIVOL IRFIVOL added to wrfout by iofields), not in ORDER:
   [irr]="RCM_sfc_VAR:irrLut"
-  # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
-  # run with ./run.sh lucas <first year> <last year> landuse
   [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
-  # Omega on pressure levels (LUCAS wap), not in ORDER; two varsets (levels split in two, as
-  # plev_vortmen0/1) so that each fits one job at the 3-hourly output (outstep = 3):
-  # ./run.sh lucas <first year> <last year> plev_wap0 (and plev_wap1)
   [plev_wap0]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400"
   [plev_wap1]="RCM_plev_wap:wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
-  #[plev_wap1]="RCM_plev_wap:wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30,wap20,wap10"
-  # Relative vorticity on pressure levels (LUCAS vortmen), not in ORDER; two varsets (levels split
-  # in two, as zlev_uava0/1) so that each fits one job even with wp_step = 3:
-  # ./run.sh lucas <first year> <last year> plev_vortmen0 (and plev_vortmen1)
   [plev_vortmen0]="RCM_plev_vortmen:vortmen1000,vortmen925,vortmen850,vortmen750,vortmen700,vortmen600,vortmen500,vortmen400"
   [plev_vortmen1]="RCM_plev_vortmen:vortmen300,vortmen250,vortmen200,vortmen150,vortmen100,vortmen70,vortmen50,vortmen30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_vortmen1]="RCM_plev_vortmen:vortmen300,vortmen250,vortmen200,vortmen150,vortmen100,vortmen70,vortmen50,vortmen30,vortmen20,vortmen10"
 )
 
@@ -221,7 +187,7 @@ declare -A CP_EXTRA=(
 # Exactly one link per stream advances; the stream stops after year_lim.
 #
 declare -A ADVANCE_YEAR=(
-  [wxtrm]=1        [zlev_uava0]=1  [zlev_uava1]=1
+  [wxtrm]=1        [gust]=1        [lcl]=1
   [wpth1]=1        [wpth3]=1       [snw]=1
   [wpth2]=1        [out1]=1        [zlev_ta]=1
   [out2]=1
@@ -231,10 +197,7 @@ declare -A ADVANCE_YEAR=(
   [lut]=1
   [irr]=1
   [landuse]=1
-  [wpth4]=1
-  [gust]=1
   [cape]=1
-  [lcl]=1
   [clouds]=1
   [wpth]=1
   [plev_wap0]=1
@@ -250,26 +213,23 @@ declare -A ADVANCE_YEAR=(
 #
 declare -A NEXT=(
   [plev_uava]="wxtrm"   [wxtrm]="plev_uava"
-  [zlev_uava0]="zlev_uava0"
-  [zlev_uava1]="zlev_uava1"
+  [zlev_uava0]="gust"   [gust]= "zlev_uava0"
+  [zlev_uava1]="lcl"    [lcl]="zlev_uava1"
   [cloud1]="wpth1"      [wpth1]="cloud1"
   [cloud2]="wpth3"      [wpth3]="cloud2"
+  [wpth4]="urban"       [urban]="wpth4"
   [plev_zg]="snw"       [snw]="plev_zg"
   [plev_ta]="wpth2"     [wpth2]="plev_ta"
   [rad]="out1"          [out1]="rad"
   [plev_wa]="zlev_hus"  [zlev_hus]="zlev_ta"  [zlev_ta]="plev_wa"
   [plev_hus]="soil"     [soil]="out2"         [out2]="plev_hus"
-#  [testex]="testex"
+  [cape]="cape"
+  [testex]="testex"
   [teste]="teste"
-  [urban]="urban"
   [lsm]="lsm"
   [lut]="lut"
   [irr]="irr"
   [landuse]="landuse"
-  [wpth4]="wpth4"
-  [gust]="gust"
-  [cape]="cape"
-  [lcl]="lcl"
   [clouds]="clouds"
   [wpth]="wpth"
   [plev_wap0]="plev_wap0"
@@ -283,4 +243,4 @@ declare -A NEXT=(
 # Varsets run_analysis.sh submits, one per stream; the rest of each
 # stream follows through NEXT.
 #
-ORDER=(plev_uava zlev_uava0 zlev_uava1 cloud1 cloud2 plev_zg plev_ta rad plev_wa plev_hus)
+ORDER=(plev_uava zlev_uava0 zlev_uava1 cloud1 cloud2 plev_zg plev_ta rad plev_wa plev_hus wpth4 cape)

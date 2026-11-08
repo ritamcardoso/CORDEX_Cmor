@@ -18,8 +18,8 @@ mkdir -p "${ROOT_RUN_DIR}"
 # Enabling a second grid makes every job longer: raise TIME[] to match.
 #
 declare -A run=(
-  [d01]=1
-#  [d02]=1
+#  [d01]=1
+  [d02]=1
 )
 
 #
@@ -47,7 +47,7 @@ declare -A OUTPUT_WRF=(
 # copies from, so each grid needs its own.
 #
 declare -A OUTPUT_DIR=(
-  [d01]=${ROOT_RUN_DIR}/output
+  [d01]=${ROOT_RUN_DIR}/output_d01
   [d02]=${ROOT_RUN_DIR}/output_d02
 )
 # create the output folder of every grid in run[]

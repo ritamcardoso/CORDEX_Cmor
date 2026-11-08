@@ -23,7 +23,8 @@ declare -A VARSETS=(
   [wpth3]="RCM_sfc_VAR:clwvi"
   # Graupel and hail paths (QGRAUP, QHAIL: depend on the microphysics), not in ORDER:
   # run with ./run.sh <experiment> <first year> <last year> wpth4; drop clhvi without QHAIL
-  [wpth4]="RCM_sfc_VAR:clgvi,clhvi"
+  [wpth4]="RCM_sfc_VAR:clgvi"
+  # [wpth4]="RCM_sfc_VAR:clgvi,clhvi"
   # Daily maximum wind speed of gust (Brasseur 2001 if QKE is in wrfout, else UPP), not in ORDER:
   # ./run.sh <experiment> <first year> <last year> gust
   [gust]="RCM_sfc_VAR:wsgsmax"
@@ -192,8 +193,8 @@ declare -A MEM=(
 #
 declare -A CPUS=(
   [cape]=8         # the calculation is about half of the run
-  [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
-  [cloud2]=4
+ # [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
+ # [cloud2]=4
   [cloud]=4
   [clouds]=4       # four calculations per reading
   # The water paths (wpth1-4) are limited by reading the wrfout files: no gain.
