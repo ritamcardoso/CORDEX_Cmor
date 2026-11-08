@@ -216,7 +216,7 @@ declare -A ADVANCE_YEAR=(
 #
 declare -A NEXT=(
   [plev_uava]="wxtrm"   [wxtrm]="plev_uava"
-  [zlev_uava0]="gust"   [gust]= "zlev_uava0"
+  [zlev_uava0]="gust"   [gust]="zlev_uava0"
   [zlev_uava1]="lcl"    [lcl]="zlev_uava1"
   [cloud1]="wpth1"      [wpth1]="cloud1"
   [cloud2]="wpth3"      [wpth3]="cloud2"
