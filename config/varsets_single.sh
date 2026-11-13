@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 # Varsets — single layout: every varset loops on itself, year by year.
-# Copy over config/varsets.sh to use it. See config/README.md and README.md §0.
+# Read when run.sh is given varsets, or with CMOR_VARSETS=varsets_single.sh.
+# See config/README.md and README.md §0.
 #----------------------------------------------------------------
 
 #

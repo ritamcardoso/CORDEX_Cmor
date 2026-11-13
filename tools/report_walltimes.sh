@@ -44,12 +44,12 @@ if ! command -v sacct >/dev/null 2>&1; then
 fi
 
 #
-#--- Configured limits (config/varsets.sh next to this file) -----
-# Loads config/varsets.sh (found through a symlink too) to compare
+#--- Configured limits (config/varsets_chain.sh next to this file) -----
+# Loads config/varsets_chain.sh, or config/$CMOR_VARSETS (found through a symlink too), to compare
 # against TIME[]/CP_TIME[]; skipped if it isn't there.
 #
 SCRIPT_DIR="$(cd -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")" &>/dev/null && pwd)"
-config="${SCRIPT_DIR}/../config/varsets.sh"
+config="${SCRIPT_DIR}/../config/${CMOR_VARSETS:-varsets_chain.sh}"
 have_config=0
 if [ -f "${config}" ]; then
   # shellcheck source=/dev/null
@@ -183,4 +183,4 @@ done
 
 echo "#"
 echo "# 'wrf-<varset>' rows map to TIME[<varset>]; 'cp-<varset>' rows map to CP_TIME[<varset>]."
-echo "# Suggestions only — edit config/varsets.sh yourself once you're happy with them."
+echo "# Suggestions only — edit config/varsets_chain.sh (and varsets_single.sh) yourself once you're happy with them."

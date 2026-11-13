@@ -17,7 +17,7 @@ Compiled without the OpenMP flag, the directives are comments and each program i
 OpenMP is off by default.
 
 1. In `env.site.sh`, set `OMP_FLAG` to `-qopenmp` (ifort/ifx) or `-fopenmp` (gfortran).
-2. `CPUS[varset]` in the varsets file of the run (`config/varsets.sh`, `varsets_chain.sh` or `varsets_single.sh`) is the list of the varsets run in parallel, with their number of threads. With `OMP_FLAG` set, for a varset with `CPUS` > 1:
+2. `CPUS[varset]` in the varsets file of the run (`config/varsets_chain.sh` or `varsets_single.sh`) is the list of the varsets run in parallel, with their number of threads. With `OMP_FLAG` set, for a varset with `CPUS` > 1:
    - `submit.sh` asks Slurm for `--cpus-per-task=CPUS[varset]`;
    - `run_out_generic.sh` builds the programs above from this folder with `OMP_FLAG`, and runs them with `OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK`. The job log says so (`OpenMP: … thread(s)`).
 

@@ -21,13 +21,13 @@ Usage: $0 [-n] [-c] <experiment> <first year> [<last year>] [<varset> ...]
   <experiment>  a folder in experiments/ (e.g. cordex, fpsurb, lucas)
   <first year>  first year to process
   <last year>   last year to process (default: the first year)
-  <varset> ...  only these varsets (see config/varsets.sh). Each one runs on
+  <varset> ...  only these varsets (see config/varsets_chain.sh). Each one runs on
                 its own (config/varsets_single.sh): it processes a year,
                 submits its archive job and resubmits itself for the next
-                year. Without varsets: every stream of config/varsets.sh,
+                year. Without varsets: every stream of config/varsets_chain.sh,
                 through run_analysis.sh.
   -c            with varsets: let them hand over to the next varset of their
-                stream (config/varsets.sh) instead of running on their own
+                stream (config/varsets_chain.sh) instead of running on their own
   -a            aggregation job instead (scripts/run_aggregate.sh): daily and
                 monthly files from the files already written; the names after
                 the years are then variables (e.g. tas pr), not varsets
@@ -78,8 +78,8 @@ if [ ! -f "${ROOT_DIR}/experiments/${EXP}/${EXP}.sh" ]; then
   exit 1
 fi
 
-# layout: every stream (varsets.sh), or the given varsets on their own (varsets_single.sh)
-if [ ${#VSETS[@]} -gt 0 ] && [ "$CHAIN" = 0 ] && [ "$AGG" = 0 ]; then LAYOUT=varsets_single.sh; else LAYOUT=varsets.sh; fi
+# layout: every stream (varsets_chain.sh), or the given varsets on their own (varsets_single.sh)
+if [ ${#VSETS[@]} -gt 0 ] && [ "$CHAIN" = 0 ] && [ "$AGG" = 0 ]; then LAYOUT=varsets_single.sh; else LAYOUT=varsets_chain.sh; fi
 [ -f "${ROOT_DIR}/config/${LAYOUT}" ] || { echo "No config/${LAYOUT}." >&2; exit 1; }
 
 # experiment: grids and WRF input folders (in a subshell; load_experiment.sh checks the ini files)

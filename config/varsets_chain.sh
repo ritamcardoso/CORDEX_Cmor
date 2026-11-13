@@ -1,8 +1,7 @@
 #!/bin/bash
 #
-# Varsets — chained streams layout.
-# Active as config/varsets.sh (the only file the scripts read); saved copy in
-# config/varsets_chain.sh. See config/README.md.
+# Varsets — chained streams layout: the default file of every job (run.sh
+# without varsets, submit.sh without CMOR_VARSETS). See config/README.md.
 #----------------------------------------------------------------
 
 #

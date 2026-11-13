@@ -38,19 +38,21 @@ echo "$dateend"
 
 #
 #--- Varsets ----------------------------------------------------
-# Loads config/varsets.sh and stops if ORDER is empty.
+# Loads the varsets file (config/varsets_chain.sh, or CMOR_VARSETS) and stops if ORDER is empty.
 #
-source "${REPO_DIR}/config/${CMOR_VARSETS:-varsets.sh}"
+# (a job queued before varsets.sh moved to config/deprecated/ reads its copy, varsets_chain.sh)
+[ "${CMOR_VARSETS:-}" = varsets.sh ] && CMOR_VARSETS=varsets_chain.sh
+source "${REPO_DIR}/config/${CMOR_VARSETS:-varsets_chain.sh}"
 
 if [ "${#ORDER[@]}" -eq 0 ]; then
-  echo "ORDER in config/varsets.sh is empty — nothing to submit. (With varsets_single.sh, uncomment one of its ORDER batches first.)" >&2
+  echo "ORDER in config/${CMOR_VARSETS:-varsets_chain.sh} is empty — nothing to submit. (With varsets_single.sh, uncomment one of its ORDER batches first.)" >&2
   exit 1
 fi
 
 #
 #--- Submit each ORDER entry, 120 s apart -----------------------
 # Submits run_out_generic.sh for each ORDER entry; submit.sh adds its
-# job name, time, memory and log files from config/varsets.sh.
+# job name, time, memory and log files from the varsets file.
 #
 for vs in "${ORDER[@]}"; do
   ${REPO_DIR}/submit.sh "run_out_generic.sh" "${datebeg}" "${dateend}" "${year_lim}" "${vs}"

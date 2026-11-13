@@ -1,21 +1,25 @@
 #!/bin/bash
 #
-# lint_varsets.sh — consistency check of config/varsets.sh (no Slurm needed).
-# Usage: bash lint_varsets.sh    (exit 1 if any error)
+# lint_varsets.sh — consistency check of a varsets file in config/ (no Slurm needed).
+# Usage: bash lint_varsets.sh [<file>]    (exit 1 if any error)
+#   <file>  a file in config/: varsets_chain.sh (the default) or varsets_single.sh
 # See README.md §11.
 #----------------------------------------------------------------
 
 set -uo pipefail
 
 #
-#--- Load config/varsets.sh -------------------------------------
-# Reads the active varsets file from the repo (this script's folder).
+#--- Load the varsets file ---------------------------------------
+# config/<file> of the repo (this script's folder): varsets_chain.sh by default.
 #
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 
+VARSETS_NAME="${1:-varsets_chain.sh}"
+[ -f "${REPO_DIR}/config/${VARSETS_NAME}" ] || { echo "No config/${VARSETS_NAME}." >&2; exit 1; }
+echo "Checking config/${VARSETS_NAME}"
 # shellcheck source=/dev/null
-source "${REPO_DIR}/config/varsets.sh"
+source "${REPO_DIR}/config/${VARSETS_NAME}"
 
 #
 #--- Counters ---------------------------------------------------
