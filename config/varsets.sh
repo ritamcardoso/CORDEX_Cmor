@@ -162,8 +162,8 @@ declare -A MEM=(
 #
 declare -A CPUS=(
   [cape]=8         # the calculation is about half of the run
-#  [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
-#  [cloud2]=4
+  [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
+  [cloud2]=4
   [cloud]=4
   [clouds]=4       # four calculations per reading
   # The water paths (wpth1-4) are limited by reading the wrfout files: no gain.

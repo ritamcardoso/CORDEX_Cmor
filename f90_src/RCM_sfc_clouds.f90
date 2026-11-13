@@ -492,7 +492,7 @@ do nv = 1, ncomb
   if (nv == 1) then
     vo_i = ostep
   else
-    vo_i = 6
+    vo_i = 1
   endif
   if (vo_i > 1) then
     call resample_time(outvar_h_4d(:,:,1:issh,nv), ttime(1:issh), bdtime(:,1:issh), vo_i, cellmethods, outvar_r, ttime_r, bdtime_r, nt_r)
