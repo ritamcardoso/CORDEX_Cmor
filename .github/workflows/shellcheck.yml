@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run ShellCheck
-        # Severity is capped at "error" on purpose: env.site.sh, config/varsets.sh
+        # Severity is capped at "error" on purpose: env.site.sh, config/varsets_*.sh
         # and scripts/*.sh are designed to be sourced into each other rather than
         # run standalone, which makes shellcheck flag plenty of info/warning-level
         # false positives (SC1091 "can't follow non-constant source", SC2034
@@ -25,7 +25,6 @@ jobs:
             scripts/run_analysis.sh \
             scripts/load_experiment.sh \
             experiments/*/*.sh \
-            config/varsets.sh \
             config/varsets_chain.sh \
             config/varsets_single.sh \
             env.site.sh.example \
@@ -40,6 +39,8 @@ jobs:
             scripts/run_aggregate.sh \
             tools/lint_varsets.sh
 
-      - name: Check config/varsets.sh (lint_varsets.sh)
+      - name: Check config/varsets_chain.sh and varsets_single.sh (lint_varsets.sh)
         # Fails if a varset, NEXT/CP_EXTRA entry, program or header is missing.
-        run: bash tools/lint_varsets.sh
+        run: |
+          bash tools/lint_varsets.sh varsets_chain.sh
+          bash tools/lint_varsets.sh varsets_single.sh

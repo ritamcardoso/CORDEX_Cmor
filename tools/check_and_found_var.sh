@@ -69,13 +69,13 @@ mapfile -t VARS < <(sed -e 's/#.*//' -e 's/[[:space:]]//g' "$VARS_FILE" | grep -
 echo "${#VARS[@]} variables in $VARS_FILE, years ${START_YEAR}-${END_YEAR}"
 
 #
-#--- Varset of each variable (config/varsets.sh) ----------------
+#--- Varset of each variable (config/varsets_chain.sh, or CMOR_VARSETS) ----------------
 # varset_of[<var>] = the varset(s) that extract it; the varsets that run
 # (ORDER and what they chain to via NEXT) are preferred over unused ones.
 # The uava programs also write ua<level> for every va<level> they list.
 #
 # shellcheck source=/dev/null
-source "$ROOT_DIR/config/varsets.sh"
+source "$ROOT_DIR/config/${CMOR_VARSETS:-varsets_chain.sh}"
 declare -A active=() varset_of=() varset_any=()
 for vs in "${ORDER[@]}"; do
   while [ -n "$vs" ] && [ -z "${active[$vs]:-}" ]; do

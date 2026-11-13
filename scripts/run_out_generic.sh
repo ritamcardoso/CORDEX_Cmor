@@ -35,11 +35,13 @@ fi
 #
 #--- Environment: site, experiment, varsets ---------------------
 # Loads env.site.sh, the experiment (grids, input, output and archive
-# paths) and config/varsets.sh, then checks the varset exists.
+# paths) and the varsets file (config/varsets_chain.sh, or CMOR_VARSETS), then checks the varset exists.
 #
 source "${REPO_DIR}/env.site.sh"
 source "${REPO_DIR}/scripts/load_experiment.sh"
-source "${REPO_DIR}/config/${CMOR_VARSETS:-varsets.sh}"
+# (a job queued before varsets.sh moved to config/deprecated/ reads its copy, varsets_chain.sh)
+[ "${CMOR_VARSETS:-}" = varsets.sh ] && CMOR_VARSETS=varsets_chain.sh
+source "${REPO_DIR}/config/${CMOR_VARSETS:-varsets_chain.sh}"
 
 if [ -z "${VARSETS[$VARSET]+x}" ]; then
   echo "Unknown varset '${VARSET}'. Known varsets:" >&2
@@ -235,7 +237,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     #
     # OpenMP (optional): the programs are built from f90_src (serial). Only when
     # OMP_FLAG is set in env.site.sh AND the varset has CPUS > 1 in the varsets
-    # file of this run (config/${CMOR_VARSETS:-varsets.sh}: varsets_chain.sh or
+    # file of this run (config/${CMOR_VARSETS:-varsets_chain.sh}: varsets_chain.sh or
     # varsets_single.sh) AND the job has more than one core, a program that has
     # a version in f90_src_parallel is built from there with OMP_FLAG and runs
     # with one thread per core. A varset without CPUS runs serially.

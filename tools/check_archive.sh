@@ -76,13 +76,13 @@ fi
 
 #
 #--- Variable list and their varsets ----------------------------
-# Variables from variables.txt; varset_of[<var>] from config/varsets.sh,
+# Variables from variables.txt; varset_of[<var>] from config/varsets_chain.sh (or CMOR_VARSETS),
 # the running varsets (ORDER and their NEXT links) first, as in
 # check_and_found_var.sh. The uava programs also write ua<level>.
 #
 mapfile -t VARS < <(sed -e 's/#.*//' -e 's/[[:space:]]//g' "$VARS_FILE" | grep -v '^$')
 # shellcheck source=/dev/null
-source "$ROOT_DIR/config/varsets.sh"
+source "$ROOT_DIR/config/${CMOR_VARSETS:-varsets_chain.sh}"
 declare -A active=() varset_of=() varset_any=()
 for vs in "${ORDER[@]}"; do
   while [ -n "$vs" ] && [ -z "${active[$vs]:-}" ]; do

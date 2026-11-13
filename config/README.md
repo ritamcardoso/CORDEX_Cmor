@@ -1,20 +1,23 @@
-# `config/varsets.sh`
+# `config/varsets_chain.sh` and `config/varsets_single.sh`
 
-This file is the single source of truth for the whole pipeline: which
+These files are the single source of truth for the whole pipeline: which
 variables exist, which Fortran program processes them, how long to
 schedule each job for, and how (or whether) jobs chain into one another.
 `scripts/run_out_generic.sh` and `scripts/run_cp_generic.sh` are generic —
 everything specific to a given "varset" lives here, not in the scripts.
 
-The scripts only ever read `config/varsets.sh`. Two saved layouts sit
-next to it, to copy over it when needed (main README §0):
+Every job reads one of two layouts (main README §0); nothing is copied:
 
-| File | Layout |
-|---|---|
-| `varsets_chain.sh` | the chained streams (main README §8) — a saved copy of the default `varsets.sh` |
-| `varsets_single.sh` | every varset loops on itself, year by year |
+| File | Layout | Read by |
+|---|---|---|
+| `varsets_chain.sh` | the chained streams (main README §8) | the default: `run.sh` without varsets (or with `-c`), `submit.sh` without `CMOR_VARSETS` |
+| `varsets_single.sh` | every varset loops on itself, year by year | `run.sh` with varsets, or `CMOR_VARSETS=varsets_single.sh` |
 
-When you change a varset, make the same change in all three files.
+The file is passed to every job of the run (`CMOR_VARSETS`), so the jobs
+it submits read the same one. When you change a varset, make the same
+change in both files. The old `varsets.sh` (the active copy of
+`varsets_chain.sh`) is in `config/deprecated/`; jobs still queued with
+`CMOR_VARSETS=varsets.sh` read `varsets_chain.sh`.
 
 See the main [README.md](../README.md) (§0 to start, §5 for this file)
 for the walkthrough. This file goes one level deeper into the mechanics.
@@ -171,8 +174,8 @@ If you'd rather drive year progression yourself (e.g. from a workflow
 manager, a cron job, or by calling `./submit.sh` once per year yourself)
 instead of letting each varset resubmit the next one:
 
-Whatever you change, make the same change in `varsets_chain.sh` (or
-`varsets_single.sh`) if you want to keep it when you next switch layouts.
+Whatever you change in `varsets_chain.sh`, make the same change in
+`varsets_single.sh` if you want it in the single layout too.
 
 - **Per varset:** leave `NEXT[<varset>]` unset (or delete its entry). Step
   3 above becomes a no-op for that varset — it processes its date range,
@@ -184,8 +187,8 @@ Whatever you change, make the same change in `varsets_chain.sh` (or
   want the next batch processed. With only the stream heads in `ORDER`,
   the other links would then never run, so list every varset you need.
 - **Each varset on its own, year by year:** use
-  `config/varsets_single.sh`, where every varset loops on itself (main
-  README §0 has the steps for switching to it).
+  `config/varsets_single.sh`, where every varset loops on itself (`run.sh`
+  with varsets uses it; main README §0).
 - Archiving is unaffected either way — it's step 2 (controlled only by
   `ARCHIVE` in `env.site.sh`), not part of the chain.
 - `ADVANCE_YEAR[]` only matters to varsets that still have a `NEXT[]`

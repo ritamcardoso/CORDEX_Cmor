@@ -17,12 +17,15 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")" &>/dev/
 export ROOT_DIR="${SCRIPT_DIR}"
 
 #
-#--- Varset layout (CMOR_VARSETS, default varsets.sh) ------------
-# The file in config/ that every job reads: varsets.sh (the default), or e.g.
-# varsets_single.sh for varsets that loop on themselves (run.sh sets it).
-# It is passed on to every job, so chained jobs keep the same layout.
+#--- Varset layout (CMOR_VARSETS, default varsets_chain.sh) ------
+# The file in config/ that every job reads: varsets_chain.sh (the default,
+# the chained streams), or varsets_single.sh for varsets that loop on
+# themselves (run.sh sets it). It is passed on to every job, so chained jobs
+# keep the same layout. varsets.sh is gone (config/deprecated/): jobs queued
+# before with CMOR_VARSETS=varsets.sh read varsets_chain.sh, its copy.
 #
-CMOR_VARSETS="${CMOR_VARSETS:-varsets.sh}"
+CMOR_VARSETS="${CMOR_VARSETS:-varsets_chain.sh}"
+[ "${CMOR_VARSETS}" = varsets.sh ] && CMOR_VARSETS=varsets_chain.sh
 case "${CMOR_VARSETS}" in
   */*|"") echo "CMOR_VARSETS must be a file name in config/, e.g. varsets_single.sh (got '${CMOR_VARSETS}')." >&2; exit 1 ;;
 esac
@@ -148,7 +151,7 @@ done
 #--- Per-varset flags for run_out_generic.sh / run_cp_generic.sh -
 # For run_out_generic.sh / run_cp_generic.sh: job name, --time, --mem,
 # --cpus-per-task (CPUS, with OMP_FLAG only) and log files from
-# config/varsets.sh for the varset (4th argument).
+# the varsets file (CMOR_VARSETS) for the varset (4th argument).
 #
 if [[ "${script_name}" == run_out_generic.sh || "${script_name}" == run_cp_generic.sh ]] && [ $# -ge 4 ]; then
   vs="$4"
@@ -193,7 +196,7 @@ fi
 
 #
 #--- --time for run_analysis.sh ---------------------------------
-# ANALYSIS_TIME from config/varsets.sh (default 00:45:00).
+# ANALYSIS_TIME from the varsets file (default 00:45:00).
 #
 if [ "${script_name}" = run_analysis.sh ] && ! caller_has --time && ! caller_has -t; then
   analysis_time="$(
@@ -207,7 +210,7 @@ fi
 
 #
 #--- run_aggregate.sh: --time (AGGREGATE_TIME), job name, log -------
-# AGGREGATE_TIME from config/varsets.sh (default 24:00:00).
+# AGGREGATE_TIME from the varsets file (default 24:00:00).
 #
 if [ "${script_name}" = run_aggregate.sh ]; then
   if ! caller_has --time && ! caller_has -t; then
