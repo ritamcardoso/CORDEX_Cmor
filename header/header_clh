@@ -4,6 +4,6 @@ vunts = '%'
 lname = 'High Level Cloud Fraction'
 stname = 'cloud_area_fraction_in_atmosphere_layer'
 cmethods = 'area: time: mean'
-outstep = 6           ! hours (output step); CORDEX-CMIP6 6h
+outstep = 1           ! hours (output step); hourly (CORDEX-CMIP6 asks for 6h means: outstep = 6)
 factor = 100.           ! costant to multipy variable with ( used only if /= 0)
 !
