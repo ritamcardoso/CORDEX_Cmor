@@ -450,12 +450,13 @@ do nv = 1, ncomb
       varname = 'cll'; vunits = '%'; longname = 'Low Level Cloud Fraction'
       standardname = 'cloud_area_fraction_in_atmosphere_layer'; cellmethods = 'area: time: mean'
   end select
-  ! output step: clt that of its header (ostep), clh, clm and cll 6 hours (their headers:
-  ! outstep = 6, the CORDEX-CMIP6 6hr means)
+  ! output step: clt that of its header (ostep); clh, clm and cll hourly, as the outstep of
+  ! their headers (header_clh, header_clm, header_cll: outstep = 1). For the CORDEX-CMIP6
+  ! 6hr means set vo_i = 6 here and outstep = 6 in those headers.
   if (nv == 1) then
     vo_i = ostep
   else
-    vo_i = 6
+    vo_i = 1
   endif
   if (vo_i > 1) then
     call resample_time(outvar_h_4d(:,:,1:issh,nv), ttime(1:issh), bdtime(:,1:issh), vo_i, cellmethods, outvar_r, ttime_r, bdtime_r, nt_r)
