@@ -187,7 +187,7 @@ run.sh         <- the simple way to start: ./run.sh <experiment> <first year> [<
 submit.sh      <- submits every job (§6, §9)
 tools/         <- helper scripts (§11): report_walltimes.sh, lint_varsets.sh, merge_soil_monthly.sh,
                   make_varcalendar.py (remakes f90_src_varcalendar from f90_src),
-                  check_and_found_var.sh, check_archive.sh + variables.txt;
+                  check_and_found_var.sh, check_archive.sh (-b: scripts/run_check_archive.sh), variables.txt (-v);
                   ncrepack-cordex (+ its LICENSE), run on every new file (§6);
                   aggregate.sh + aggregation_table.txt: daily and monthly files (§11)
 env.site.sh.example  <- copy to env.site.sh and fill in (§4)
@@ -691,6 +691,7 @@ root), and the two job scripts that need the experiment load it with
 | `run_out_generic.sh` | all `run_out_*.sh` | processes one varset for a year range, then submits the archive job and (if configured) the next varset in the chain |
 | `run_cp_generic.sh` | all `run_cp_*.sh` | archives one varset's output to ECFS + remote |
 | `run_analysis.sh` | itself (orchestrator; `--time` from `ANALYSIS_TIME` in `config/varsets_chain.sh`, 45 min) | submits every varset in `ORDER`, 120s apart |
+| `run_check_archive.sh` | — (new; `--time` from `CHECK_TIME`, 2 h) | runs `tools/check_archive.sh` on a node (`check_archive.sh -b`, §11) |
 
 **Slurm settings:** all set once in `env.site.sh` (`JOB_QOS`,
 `JOB_NODES`, `JOB_NTASKS`, `JOB_HINT`, `JOB_ACCOUNT`, `JOB_MAIL_TYPE`,
@@ -980,18 +981,26 @@ tools/make_varcalendar.py --check   # exit status 1 if it is out of step with f9
 
 ### `check_and_found_var.sh` — which variables were extracted, per year
 
-Checks the output folders for every variable in `variables.txt` (the 172
-CORDEX variables, fixed fields excluded; one per line, `#` comments
-allowed), without reading the extraction logs. Run it **directly on a
-login node** (it only lists files); it can be a symlink, e.g. in `$SCRATCH`
-— `variables.txt` is found next to the real file, and the repository
-(`env.site.sh`, `config/`, `scripts/`) in the folder above `tools/`:
+Checks the output folders for every variable, without reading the
+extraction logs. Run it **directly on a login node** (it only lists
+files); it can be a symlink, e.g. in `$SCRATCH` — the repository
+(`env.site.sh`, `config/`, `scripts/`) is found in the folder above the
+real file's `tools/`.
+
+The variables and the experiment are chosen as for `check_archive.sh`
+(below): without `-v`, every variable of the chained varsets in
+`config/varsets_chain.sh` (`ORDER`, their `NEXT` links and `CP_EXTRA`
+companions), plus the varsets of `-s`; with `-v <file>`, those in the file
+(one per line, `#` comments allowed; e.g. `tools/variables.txt`, the 172
+CORDEX variables). Without `-e` and `-v`, at a terminal, it asks the
+experiment (Enter keeps `EXPERIMENT` from `env.site.sh`).
 
 ```bash
 ln -s $HPCPERM/CORDEX_Cmor/tools/check_and_found_var.sh $SCRATCH/
 cd $SCRATCH
-./check_and_found_var.sh 2015 2020                    # experiment from env.site.sh
-EXPERIMENT=lucas ./check_and_found_var.sh 2015 2020   # another experiment
+./check_and_found_var.sh 2015 2020                    # asks the experiment; the chained varsets
+./check_and_found_var.sh -e lucas -s lsm 2015 2020    # another experiment, and lsm
+./check_and_found_var.sh -v $HPCPERM/CORDEX_Cmor/tools/variables.txt 2015 2020
 ```
 
 The output folders come from the experiment: `OUTPUT_DIR` of every grid in
@@ -1011,26 +1020,51 @@ Per grid it writes to `${ROOT_RUN_DIR}/check_<grid>/`:
 
 | Option | Meaning |
 |---|---|
-| `-v <file>` | another variable list (default: `tools/variables.txt`) |
+| `-e <name>` | experiment (asked for without `-e` and `-v`, at a terminal) |
+| `-v <file>` | variables to check (default: those of the chained varsets) |
+| `-s <varset,...>` | without `-v`: also these varsets |
 | `-o <dir>` | another folder for the reports |
 | `-r <dir>` | the repository folder, if the script is kept elsewhere |
 
 ### `check_archive.sh` — were the files archived correctly?
 
-Checks, per year, that every variable in `variables.txt` reached the
-archive intact: the remote server (`REMOTE_HOST:REMOTE_BASE/<var>/raw`,
-default) and/or ECFS (`ECFS_BASE/<var>`). Like `check_and_found_var.sh`,
-it takes everything from the experiment and `env.site.sh` (grids,
-`OUTPUT_DIR`, `REMOTE_BASE`, `ECFS_BASE`, `REMOTE_HOST`), can be a symlink,
-and runs on a login node:
+Checks, per year, that every variable reached the archive intact: the
+remote server (`REMOTE_HOST:REMOTE_BASE/<var>/raw`, default) and/or ECFS
+(`ECFS_BASE/<var>`). Like `check_and_found_var.sh`, it takes everything
+from the experiment and `env.site.sh` (grids, `OUTPUT_DIR`, `REMOTE_BASE`,
+`ECFS_BASE`, `REMOTE_HOST`) and can be a symlink. It runs where you start
+it, or with `-b` as a job on a compute node.
+
+**Which variables.** With `-v <file>`, those in the file (e.g.
+`tools/variables.txt`). Without `-v`, every variable the chained varsets
+extract: the varsets of `ORDER` in `config/varsets_chain.sh` and all their
+`NEXT` links, with their `CP_EXTRA` companions (`plev_ua`, `zlev_ua0`,
+`cape_x`, …) — so a varset added to a stream is checked with no list to
+update. `-s <varset,...>` adds varsets outside the streams (e.g. `-s lsm`).
+`fx` files have no years, so `-s fx` always reports them missing.
+
+**Which experiment.** `-e <name>`. Without `-e` and `-v`, at a terminal,
+it asks, with `EXPERIMENT` from `env.site.sh` as the default (Enter keeps
+it). Otherwise (`-v` given, or in a job) it uses `CMOR_EXPERIMENT`,
+`EXPERIMENT`, or `EXPERIMENT` from `env.site.sh`.
 
 ```bash
 ln -s $HPCPERM/CORDEX_Cmor/tools/check_archive.sh $SCRATCH/
 cd $SCRATCH
-./check_archive.sh 2015 2020              # remote server
-./check_archive.sh -d both 2015 2020      # remote server and ECFS
-EXPERIMENT=lucas ./check_archive.sh 2015 2020
+./check_archive.sh 2015 2020                        # asks the experiment; remote server
+./check_archive.sh -e fpsurb -d both 2015 2020      # remote server and ECFS
+./check_archive.sh -e fpsurb -s lsm 2015 2020       # the streams and lsm
+./check_archive.sh -v variables_fpsurb.txt 2015 2020
+./check_archive.sh -b -e fpsurb -d both 2015 2020   # as a job (log: check-archive.<jobid>.out)
 ```
+
+With `-b` it asks the experiment first (if needed), then submits
+`scripts/run_check_archive.sh` through `submit.sh` with the same options:
+account, qos and mail from `env.site.sh`, `--time` from `CHECK_TIME` in the
+varsets file (default 2 h; or `./submit.sh --time=04:00:00
+run_check_archive.sh -e <name> ... <start> <end>`). The reports go to the
+same folders. On the node the remote check needs `ssh` to `REMOTE_HOST`
+without a password, as the archive jobs' `scp`; the ECFS check needs `els`.
 
 The remote folder is listed with one `ssh` (as for `scp`, a key must let
 you in without a password); ECFS with `els`. A copy is correct when it has
@@ -1055,9 +1089,13 @@ The script exits with status 1 if anything is missing or wrong.
 
 | Option | Meaning |
 |---|---|
+| `-b` | submit the check as a job (`scripts/run_check_archive.sh`) |
+| `-e <name>` | experiment (asked for without `-e` and `-v`, at a terminal) |
 | `-d remote\|ecfs\|both` | archive(s) to check (default `remote`) |
 | `-t <pct>` | size tolerance against the previous year when the original is gone (default 5) |
-| `-v <file>`, `-o <dir>`, `-r <dir>` | as for `check_and_found_var.sh` |
+| `-v <file>` | variables to check (default: those of the chained varsets) |
+| `-s <varset,...>` | without `-v`: also these varsets |
+| `-o <dir>`, `-r <dir>` | as for `check_and_found_var.sh` |
 
 ### `tools/aggregate.sh` — daily and monthly files
 
