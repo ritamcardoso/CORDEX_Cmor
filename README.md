@@ -1061,9 +1061,11 @@ cd $SCRATCH
 With `-b` it asks the experiment first (if needed), then submits
 `scripts/run_check_archive.sh` through `submit.sh` with the same options:
 account, qos and mail from `env.site.sh`, `--time` from `CHECK_TIME` in the
-varsets file (default 2 h; or `./submit.sh --time=04:00:00
-run_check_archive.sh -e <name> ... <start> <end>`). The reports go to the
-same folders. On the node the remote check needs `ssh` to `REMOTE_HOST`
+varsets file (default 2 h). The options reach the job in
+`CHECK_ARCHIVE_ARGS`, not after the script name, where ECMWF's `ecsbatch`
+would read `-e`, `-d`, `-t` as its own; so for another time limit:
+`CHECK_ARCHIVE_ARGS="-e fpsurb -d both 2015 2020" ./submit.sh --time=04:00:00
+run_check_archive.sh`. The reports go to the same folders. On the node the remote check needs `ssh` to `REMOTE_HOST`
 without a password, as the archive jobs' `scp`; the ECFS check needs `els`.
 
 The remote folder is listed with one `ssh` (as for `scp`, a key must let
