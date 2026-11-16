@@ -3,34 +3,41 @@
 # check_and_found_var.sh — which variables were extracted, per year, without
 # reading the extraction logs. The output folder(s) are taken from the
 # experiment (env.site.sh -> experiments/<name>/<name>.sh: OUTPUT_DIR of every
-# grid in run[]).
-# Usage: ./check_and_found_var.sh [-r <repo>] [-v <variables.txt>] [-o <report dir>] <start_year> <end_year>
-#        EXPERIMENT=lucas ./check_and_found_var.sh 2015 2020     (another experiment)
+# grid in run[]). The variables: those of -v <file>, or (without -v) every
+# variable the chained varsets extract (config/varsets_chain.sh: ORDER and
+# their NEXT links, with their CP_EXTRA companions), plus the varsets of -s.
+# Usage: ./check_and_found_var.sh [-e <experiment>] [-r <repo>] [-v <variables.txt> | -s <varset,...>] [-o <report dir>] <start_year> <end_year>
 #----------------------------------------------------------------
 
 set -euo pipefail
 
 #
 #--- Options ----------------------------------------------------
-# -r repository folder (default: the folder above tools/), -v variable list
-# (default: variables.txt next to this script), -o where to write the reports.
+# -e experiment, -r repository folder (default: the folder above tools/),
+# -v variable list, -s extra varsets (without -v), -o where to write the reports.
 #
 usage() {
   cat >&2 <<EOF
-Usage: $0 [-r <repo dir>] [-v <variables.txt>] [-o <report dir>] <start_year> <end_year>
+Usage: $0 [-e <experiment>] [-r <repo dir>] [-v <variables.txt> | -s <varset,...>] [-o <report dir>] <start_year> <end_year>
+  -e  experiment (default: asked for when -v is not given and you are at a
+      terminal; otherwise CMOR_EXPERIMENT, EXPERIMENT or EXPERIMENT in env.site.sh)
   -r  the CORDEX_Cmor folder (default: the folder above tools/)
-  -v  list of variables, one per line, '#' comments allowed
-      (default: variables.txt next to this script)
+  -v  list of variables, one per line, '#' comments allowed (e.g. variables.txt
+      next to this script). Without -v: every variable of the chained varsets
+      in config/varsets_chain.sh (or CMOR_VARSETS) — ORDER, their NEXT links
+      and CP_EXTRA companions
+  -s  without -v: also these varsets (comma-separated), e.g. -s lsm
   -o  folder for the reports (default: <ROOT_RUN_DIR>/check_<grid> of the experiment)
-The experiment is EXPERIMENT from env.site.sh; set EXPERIMENT=<name> to check another.
 EOF
   exit 1
 }
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")" && pwd)"
-REPO="$(cd -- "$SCRIPT_DIR/.." && pwd)"; VARS_FILE="$SCRIPT_DIR/variables.txt"; REPORT_DIR=""
-while getopts "r:v:o:h" opt; do
+REPO="$(cd -- "$SCRIPT_DIR/.." && pwd)"; VARS_FILE=""; REPORT_DIR=""; EXP_OPT=""; EXTRA_VS=""
+while getopts "e:s:r:v:o:h" opt; do
   case "$opt" in
+    e) EXP_OPT="$OPTARG" ;;
+    s) EXTRA_VS="$OPTARG" ;;
     r) REPO="$OPTARG" ;;
     v) VARS_FILE="$OPTARG" ;;
     o) REPORT_DIR="$OPTARG" ;;
@@ -42,46 +49,69 @@ shift $((OPTIND - 1))
 START_YEAR="$1"; END_YEAR="$2"
 [[ "$START_YEAR" =~ ^[0-9]{4}$ && "$END_YEAR" =~ ^[0-9]{4}$ && "$START_YEAR" -le "$END_YEAR" ]] \
   || { echo "Give two years, start <= end, e.g. 2015 2020." >&2; exit 1; }
-[ -f "$VARS_FILE" ] || { echo "Variables file not found: $VARS_FILE (give it with -v)." >&2; exit 1; }
+if [ -n "$VARS_FILE" ]; then
+  [ -f "$VARS_FILE" ] || { echo "Variables file not found: $VARS_FILE." >&2; exit 1; }
+  [ -z "$EXTRA_VS" ] || { echo "-s is for the list from the varsets; with -v, list the variables in the file." >&2; exit 1; }
+fi
 
 #
 #--- Experiment: output folder of every grid --------------------
-# EXPERIMENT from env.site.sh (read in a subshell, so its modules aren't
-# loaded here), then the experiment file via scripts/load_experiment.sh.
+# -e; else, without -v and at a terminal, ask (default: CMOR_EXPERIMENT,
+# EXPERIMENT, or EXPERIMENT from env.site.sh, read in a subshell so its
+# modules aren't loaded here); then the experiment file via
+# scripts/load_experiment.sh.
 #
 ROOT_DIR="$(cd -- "$REPO" && pwd)"
 [ -f "$ROOT_DIR/scripts/load_experiment.sh" ] \
   || { echo "$ROOT_DIR is not the CORDEX_Cmor folder (no scripts/load_experiment.sh); give it with -r." >&2; exit 1; }
-if [ -z "${EXPERIMENT:-}" ]; then
-  [ -f "$ROOT_DIR/env.site.sh" ] || { echo "No $ROOT_DIR/env.site.sh — or set EXPERIMENT=<name>." >&2; exit 1; }
+EXPERIMENT="${EXP_OPT:-${CMOR_EXPERIMENT:-${EXPERIMENT:-}}}"
+if [ -z "$EXPERIMENT" ] && [ -f "$ROOT_DIR/env.site.sh" ]; then
   # shellcheck source=/dev/null
   EXPERIMENT="$(set +eu; source "$ROOT_DIR/env.site.sh" >/dev/null 2>&1; echo "${EXPERIMENT:-}")"
 fi
+if [ -z "$EXP_OPT" ] && [ -z "$VARS_FILE" ] && [ -t 0 ]; then
+  read -r -p "Experiment [${EXPERIMENT:-none}]: " _ans
+  EXPERIMENT="${_ans:-$EXPERIMENT}"
+fi
+[ -n "$EXPERIMENT" ] || { echo "No experiment: give it with -e <name> (or EXPERIMENT in env.site.sh)." >&2; exit 1; }
+[ -f "$ROOT_DIR/experiments/$EXPERIMENT/$EXPERIMENT.sh" ] \
+  || { echo "No experiment file $ROOT_DIR/experiments/$EXPERIMENT/$EXPERIMENT.sh (experiment '$EXPERIMENT')." >&2; exit 1; }
+CMOR_VARSETS="${CMOR_VARSETS:-varsets_chain.sh}"
+[ "$CMOR_VARSETS" = varsets.sh ] && CMOR_VARSETS=varsets_chain.sh
+[ -f "$ROOT_DIR/config/$CMOR_VARSETS" ] || { echo "No $ROOT_DIR/config/$CMOR_VARSETS (CMOR_VARSETS)." >&2; exit 1; }
 export ROOT_DIR EXPERIMENT
 # shellcheck source=/dev/null
 source "$ROOT_DIR/scripts/load_experiment.sh"
 
 #
-#--- Variable list ----------------------------------------------
-# One variable per line; blank lines and '#' comments are skipped.
-#
-mapfile -t VARS < <(sed -e 's/#.*//' -e 's/[[:space:]]//g' "$VARS_FILE" | grep -v '^$')
-echo "${#VARS[@]} variables in $VARS_FILE, years ${START_YEAR}-${END_YEAR}"
-
-#
 #--- Varset of each variable (config/varsets_chain.sh, or CMOR_VARSETS) ----------------
 # varset_of[<var>] = the varset(s) that extract it; the varsets that run
-# (ORDER and what they chain to via NEXT) are preferred over unused ones.
-# The uava programs also write ua<level> for every va<level> they list.
+# (ORDER and what they chain to via NEXT, their CP_EXTRA companions and the
+# varsets of -s) are preferred over unused ones. The uava programs also
+# write ua<level> for every va<level> they list.
 #
 # shellcheck source=/dev/null
-source "$ROOT_DIR/config/${CMOR_VARSETS:-varsets_chain.sh}"
+source "$ROOT_DIR/config/$CMOR_VARSETS"
 declare -A active=() varset_of=() varset_any=()
+running=()
+# add_running <varset>: mark it as running (once); list it if it is a varset
+add_running() {
+  [ -n "$1" ] && [ -z "${active[$1]:-}" ] || return 0
+  active[$1]=1; [ -n "${VARSETS[$1]+x}" ] && running+=("$1")
+  return 0
+}
 for vs in "${ORDER[@]}"; do
   while [ -n "$vs" ] && [ -z "${active[$vs]:-}" ]; do
-    active[$vs]=1; vs="${NEXT[$vs]:-}"
+    add_running "$vs"; add_running "${CP_EXTRA[$vs]:-}"; vs="${NEXT[$vs]:-}"
   done
 done
+if [ -n "$EXTRA_VS" ]; then
+  IFS=',' read -r -a _extra <<< "$EXTRA_VS"
+  for vs in "${_extra[@]}"; do
+    [ -n "${VARSETS[$vs]+x}" ] || { echo "Unknown varset '$vs' (-s) — not in config/$CMOR_VARSETS." >&2; exit 1; }
+    add_running "$vs"; add_running "${CP_EXTRA[$vs]:-}"
+  done
+fi
 for vs in $(printf '%s\n' "${!VARSETS[@]}" | sort); do
   IFS=';' read -r -a groups <<< "${VARSETS[$vs]}"
   for group in "${groups[@]}"; do
@@ -96,6 +126,31 @@ for vs in $(printf '%s\n' "${!VARSETS[@]}" | sort); do
   done
 done
 varset_for() { echo "${varset_of[$1]:-${varset_any[$1]:-no_varset}}"; }
+
+#
+#--- Variable list ----------------------------------------------
+# -v: one variable per line; blank lines and '#' comments are skipped.
+# Without -v: the variables of the running varsets, in ORDER/NEXT order.
+#
+vars_of() {   # vars_of <varset>: its variables, one per line (and ua<level> for the uava programs)
+  local group v
+  IFS=';' read -r -a _groups <<< "${VARSETS[$1]}"
+  for group in "${_groups[@]}"; do
+    IFS=',' read -r -a _gvars <<< "${group#*:}"
+    for v in "${_gvars[@]}"; do
+      echo "$v"; [[ "${group%%:*}" == *uava* && "$v" == va* ]] && echo "ua${v#va}"
+    done
+  done
+  return 0
+}
+if [ -n "$VARS_FILE" ]; then
+  mapfile -t VARS < <(sed -e 's/#.*//' -e 's/[[:space:]]//g' "$VARS_FILE" | grep -v '^$')
+  echo "${#VARS[@]} variables in $VARS_FILE, years ${START_YEAR}-${END_YEAR}"
+else
+  mapfile -t VARS < <(for vs in "${running[@]}"; do vars_of "$vs"; done | awk 'NF && !seen[$0]++')
+  echo "${#VARS[@]} variables of the varsets in config/${CMOR_VARSETS}, years ${START_YEAR}-${END_YEAR}: ${running[*]}"
+fi
+[ "${#VARS[@]}" -gt 0 ] || { echo "No variables to check." >&2; exit 1; }
 
 #
 #--- Check each grid --------------------------------------------

@@ -187,7 +187,7 @@ run.sh         <- the simple way to start: ./run.sh <experiment> <first year> [<
 submit.sh      <- submits every job (§6, §9)
 tools/         <- helper scripts (§11): report_walltimes.sh, lint_varsets.sh, merge_soil_monthly.sh,
                   make_varcalendar.py (remakes f90_src_varcalendar from f90_src),
-                  check_and_found_var.sh + variables.txt, check_archive.sh (-b: scripts/run_check_archive.sh);
+                  check_and_found_var.sh, check_archive.sh (-b: scripts/run_check_archive.sh), variables.txt (-v);
                   ncrepack-cordex (+ its LICENSE), run on every new file (§6);
                   aggregate.sh + aggregation_table.txt: daily and monthly files (§11)
 env.site.sh.example  <- copy to env.site.sh and fill in (§4)
@@ -981,18 +981,26 @@ tools/make_varcalendar.py --check   # exit status 1 if it is out of step with f9
 
 ### `check_and_found_var.sh` — which variables were extracted, per year
 
-Checks the output folders for every variable in `variables.txt` (the 172
-CORDEX variables, fixed fields excluded; one per line, `#` comments
-allowed), without reading the extraction logs. Run it **directly on a
-login node** (it only lists files); it can be a symlink, e.g. in `$SCRATCH`
-— `variables.txt` is found next to the real file, and the repository
-(`env.site.sh`, `config/`, `scripts/`) in the folder above `tools/`:
+Checks the output folders for every variable, without reading the
+extraction logs. Run it **directly on a login node** (it only lists
+files); it can be a symlink, e.g. in `$SCRATCH` — the repository
+(`env.site.sh`, `config/`, `scripts/`) is found in the folder above the
+real file's `tools/`.
+
+The variables and the experiment are chosen as for `check_archive.sh`
+(below): without `-v`, every variable of the chained varsets in
+`config/varsets_chain.sh` (`ORDER`, their `NEXT` links and `CP_EXTRA`
+companions), plus the varsets of `-s`; with `-v <file>`, those in the file
+(one per line, `#` comments allowed; e.g. `tools/variables.txt`, the 172
+CORDEX variables). Without `-e` and `-v`, at a terminal, it asks the
+experiment (Enter keeps `EXPERIMENT` from `env.site.sh`).
 
 ```bash
 ln -s $HPCPERM/CORDEX_Cmor/tools/check_and_found_var.sh $SCRATCH/
 cd $SCRATCH
-./check_and_found_var.sh 2015 2020                    # experiment from env.site.sh
-EXPERIMENT=lucas ./check_and_found_var.sh 2015 2020   # another experiment
+./check_and_found_var.sh 2015 2020                    # asks the experiment; the chained varsets
+./check_and_found_var.sh -e lucas -s lsm 2015 2020    # another experiment, and lsm
+./check_and_found_var.sh -v $HPCPERM/CORDEX_Cmor/tools/variables.txt 2015 2020
 ```
 
 The output folders come from the experiment: `OUTPUT_DIR` of every grid in
@@ -1012,7 +1020,9 @@ Per grid it writes to `${ROOT_RUN_DIR}/check_<grid>/`:
 
 | Option | Meaning |
 |---|---|
-| `-v <file>` | another variable list (default: `tools/variables.txt`) |
+| `-e <name>` | experiment (asked for without `-e` and `-v`, at a terminal) |
+| `-v <file>` | variables to check (default: those of the chained varsets) |
+| `-s <varset,...>` | without `-v`: also these varsets |
 | `-o <dir>` | another folder for the reports |
 | `-r <dir>` | the repository folder, if the script is kept elsewhere |
 
