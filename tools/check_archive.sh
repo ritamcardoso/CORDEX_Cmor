@@ -99,15 +99,20 @@ CMOR_VARSETS="${CMOR_VARSETS:-varsets_chain.sh}"
 #--- -b: submit this check as a job -------------------------------
 # Through submit.sh (account, qos, mail from env.site.sh; --time from
 # CHECK_TIME in the varsets file, default 02:00:00), with the same options
-# and the experiment fixed, so the job doesn't ask.
+# and the experiment fixed, so the job doesn't ask. The options go to the
+# job in CHECK_ARCHIVE_ARGS, not on the command line: sbatch wrappers such
+# as ECMWF's ecsbatch take -e, -d, -t, ... after the script name as their own.
 #
 if [ "$BATCH" = 1 ]; then
   args=(-e "$EXPERIMENT" -d "$DEST" -t "$THRESHOLD" -r "$ROOT_DIR")
   [ -n "$VARS_FILE" ] && args+=(-v "$VARS_FILE")
   [ -n "$EXTRA_VS" ] && args+=(-s "$EXTRA_VS")
   [ -n "$REPORT_DIR" ] && args+=(-o "$REPORT_DIR")
-  CMOR_EXPERIMENT="$EXPERIMENT" CMOR_VARSETS="$CMOR_VARSETS" \
-    exec "$ROOT_DIR/submit.sh" run_check_archive.sh "${args[@]}" "$START_YEAR" "$END_YEAR"
+  args+=("$START_YEAR" "$END_YEAR")
+  CHECK_ARCHIVE_ARGS="$(printf '%q ' "${args[@]}")"
+  echo "Job options: ${CHECK_ARCHIVE_ARGS}"
+  CHECK_ARCHIVE_ARGS="$CHECK_ARCHIVE_ARGS" CMOR_EXPERIMENT="$EXPERIMENT" CMOR_VARSETS="$CMOR_VARSETS" \
+    exec "$ROOT_DIR/submit.sh" run_check_archive.sh
 fi
 export ROOT_DIR EXPERIMENT
 # shellcheck source=/dev/null
