@@ -37,6 +37,7 @@ jobs:
             tools/ncrepack-cordex \
             tools/aggregate.sh \
             scripts/run_aggregate.sh \
+            scripts/run_check_archive.sh \
             tools/lint_varsets.sh
 
       - name: Check config/varsets_chain.sh and varsets_single.sh (lint_varsets.sh)

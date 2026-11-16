@@ -5,35 +5,48 @@
 # Compares every archived copy with the original in OUTPUT_DIR (same size);
 # where the original is gone, checks it is not empty and its size is within
 # a few percent of the previous year's file.
-# Usage: ./check_archive.sh [-d remote|ecfs|both] [-t pct] [-v file] [-o dir] [-r repo] <start_year> <end_year>
+# The variables: those of -v <file>, or (without -v) every variable the
+# chained varsets extract (config/varsets_chain.sh: ORDER and their NEXT
+# links, with their CP_EXTRA companions), plus the varsets of -s.
+# Usage: ./check_archive.sh [-b] [-e experiment] [-d remote|ecfs|both] [-t pct] [-v file | -s varsets] [-o dir] [-r repo] <start_year> <end_year>
+#   -b submits the check as a job (scripts/run_check_archive.sh, through submit.sh).
 #----------------------------------------------------------------
 
 set -euo pipefail
 
 #
 #--- Options ----------------------------------------------------
-# -d which archive(s) to check, -t size tolerance (%) for files whose
-# original is gone, -v variable list, -o report folder, -r repository.
+# -b submit as a job, -e experiment, -d which archive(s) to check, -t size
+# tolerance (%) for files whose original is gone, -v variable list,
+# -s extra varsets (without -v), -o report folder, -r repository.
 #
 usage() {
   cat >&2 <<EOF
-Usage: $0 [-d remote|ecfs|both] [-t pct] [-v <variables.txt>] [-o <report dir>] [-r <repo dir>] <start_year> <end_year>
+Usage: $0 [-b] [-e <experiment>] [-d remote|ecfs|both] [-t pct] [-v <variables.txt> | -s <varset,...>] [-o <report dir>] [-r <repo dir>] <start_year> <end_year>
+  -b  submit the check as a Slurm job (through submit.sh) instead of running it here
+  -e  experiment (default: asked for when -v is not given and you are at a
+      terminal; otherwise CMOR_EXPERIMENT, EXPERIMENT or EXPERIMENT in env.site.sh)
   -d  archive to check: remote (REMOTE_HOST), ecfs, or both (default: remote)
   -t  allowed size difference from the previous year, in %, for copies whose
       original is no longer in OUTPUT_DIR (default: 5)
-  -v  list of variables (default: variables.txt next to this script)
+  -v  list of variables (e.g. variables.txt next to this script). Without -v:
+      every variable of the chained varsets in config/varsets_chain.sh (or
+      CMOR_VARSETS) — ORDER, their NEXT links and CP_EXTRA companions
+  -s  without -v: also these varsets (comma-separated), e.g. -s fx,lsm
   -o  folder for the reports (default: <ROOT_RUN_DIR>/check_archive_<grid>)
   -r  the CORDEX_Cmor folder (default: the folder above tools/)
-The experiment is EXPERIMENT from env.site.sh; set EXPERIMENT=<name> to check another.
 EOF
   exit 1
 }
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")" && pwd)"
-REPO="$(cd -- "$SCRIPT_DIR/.." && pwd)"; VARS_FILE="$SCRIPT_DIR/variables.txt"; REPORT_DIR=""
-DEST="remote"; THRESHOLD=5
-while getopts "d:t:v:o:r:h" opt; do
+REPO="$(cd -- "$SCRIPT_DIR/.." && pwd)"; VARS_FILE=""; REPORT_DIR=""
+DEST="remote"; THRESHOLD=5; BATCH=0; EXP_OPT=""; EXTRA_VS=""
+while getopts "bd:e:s:t:v:o:r:h" opt; do
   case "$opt" in
+    b) BATCH=1 ;;
+    e) EXP_OPT="$OPTARG" ;;
+    s) EXTRA_VS="$OPTARG" ;;
     d) DEST="$OPTARG" ;;
     t) THRESHOLD="$OPTARG" ;;
     v) VARS_FILE="$OPTARG" ;;
@@ -49,7 +62,12 @@ START_YEAR="$1"; END_YEAR="$2"
   || { echo "Give two years, start <= end, e.g. 2015 2020." >&2; exit 1; }
 case "$DEST" in remote) DESTS=(remote) ;; ecfs) DESTS=(ecfs) ;; both) DESTS=(remote ecfs) ;; *) usage ;; esac
 [[ "$THRESHOLD" =~ ^[0-9]+([.][0-9]+)?$ ]] || { echo "-t needs a number (percent)." >&2; exit 1; }
-[ -f "$VARS_FILE" ] || { echo "Variables file not found: $VARS_FILE (give it with -v)." >&2; exit 1; }
+if [ -n "$VARS_FILE" ]; then
+  [ -f "$VARS_FILE" ] || { echo "Variables file not found: $VARS_FILE." >&2; exit 1; }
+  VARS_FILE="$(realpath -- "$VARS_FILE")"   # absolute, for -b (the job runs elsewhere)
+  [ -z "$EXTRA_VS" ] || { echo "-s is for the list from the varsets; with -v, list the variables in the file." >&2; exit 1; }
+fi
+[ -z "$REPORT_DIR" ] || { mkdir -p "$REPORT_DIR"; REPORT_DIR="$(realpath -- "$REPORT_DIR")"; }
 
 #
 #--- Experiment and archive settings ----------------------------
@@ -62,7 +80,35 @@ ROOT_DIR="$(cd -- "$REPO" && pwd)"
 [ -f "$ROOT_DIR/env.site.sh" ] || { echo "No $ROOT_DIR/env.site.sh." >&2; exit 1; }
 # shellcheck source=/dev/null
 mapfile -t _site < <(set +eu; source "$ROOT_DIR/env.site.sh" >/dev/null 2>&1; echo "${EXPERIMENT:-}"; echo "${REMOTE_HOST:-}")
-EXPERIMENT="${EXPERIMENT:-${_site[0]}}"; REMOTE_HOST="${_site[1]}"
+REMOTE_HOST="${_site[1]}"
+# experiment: -e; else, without -v and at a terminal, ask (default: the one
+# from the environment or env.site.sh); else CMOR_EXPERIMENT / EXPERIMENT / env.site.sh
+EXPERIMENT="${EXP_OPT:-${CMOR_EXPERIMENT:-${EXPERIMENT:-${_site[0]}}}}"
+if [ -z "$EXP_OPT" ] && [ -z "$VARS_FILE" ] && [ -t 0 ]; then
+  read -r -p "Experiment [${EXPERIMENT:-none}]: " _ans
+  EXPERIMENT="${_ans:-$EXPERIMENT}"
+fi
+[ -n "$EXPERIMENT" ] || { echo "No experiment: give it with -e <name> (or EXPERIMENT in env.site.sh)." >&2; exit 1; }
+[ -f "$ROOT_DIR/experiments/$EXPERIMENT/$EXPERIMENT.sh" ] \
+  || { echo "No experiment file $ROOT_DIR/experiments/$EXPERIMENT/$EXPERIMENT.sh (experiment '$EXPERIMENT')." >&2; exit 1; }
+CMOR_VARSETS="${CMOR_VARSETS:-varsets_chain.sh}"
+[ "$CMOR_VARSETS" = varsets.sh ] && CMOR_VARSETS=varsets_chain.sh
+[ -f "$ROOT_DIR/config/$CMOR_VARSETS" ] || { echo "No $ROOT_DIR/config/$CMOR_VARSETS (CMOR_VARSETS)." >&2; exit 1; }
+
+#
+#--- -b: submit this check as a job -------------------------------
+# Through submit.sh (account, qos, mail from env.site.sh; --time from
+# CHECK_TIME in the varsets file, default 02:00:00), with the same options
+# and the experiment fixed, so the job doesn't ask.
+#
+if [ "$BATCH" = 1 ]; then
+  args=(-e "$EXPERIMENT" -d "$DEST" -t "$THRESHOLD" -r "$ROOT_DIR")
+  [ -n "$VARS_FILE" ] && args+=(-v "$VARS_FILE")
+  [ -n "$EXTRA_VS" ] && args+=(-s "$EXTRA_VS")
+  [ -n "$REPORT_DIR" ] && args+=(-o "$REPORT_DIR")
+  CMOR_EXPERIMENT="$EXPERIMENT" CMOR_VARSETS="$CMOR_VARSETS" \
+    exec "$ROOT_DIR/submit.sh" run_check_archive.sh "${args[@]}" "$START_YEAR" "$END_YEAR"
+fi
 export ROOT_DIR EXPERIMENT
 # shellcheck source=/dev/null
 source "$ROOT_DIR/scripts/load_experiment.sh"
@@ -76,19 +122,54 @@ fi
 
 #
 #--- Variable list and their varsets ----------------------------
-# Variables from variables.txt; varset_of[<var>] from config/varsets_chain.sh (or CMOR_VARSETS),
-# the running varsets (ORDER and their NEXT links) first, as in
-# check_and_found_var.sh. The uava programs also write ua<level>.
+# varset_of[<var>] from config/varsets_chain.sh (or CMOR_VARSETS), the
+# running varsets (ORDER and their NEXT links, with their CP_EXTRA
+# companions, and the varsets of -s) first, as in check_and_found_var.sh.
+# The uava programs also write ua<level>. The variables: those of -v, or
+# every variable of the running varsets, in ORDER/NEXT order.
 #
-mapfile -t VARS < <(sed -e 's/#.*//' -e 's/[[:space:]]//g' "$VARS_FILE" | grep -v '^$')
 # shellcheck source=/dev/null
-source "$ROOT_DIR/config/${CMOR_VARSETS:-varsets_chain.sh}"
+source "$ROOT_DIR/config/$CMOR_VARSETS"
 declare -A active=() varset_of=() varset_any=()
+running=()
+# add_running <varset>: mark it as running (once); list it if it is a varset
+add_running() {
+  [ -n "$1" ] && [ -z "${active[$1]:-}" ] || return 0
+  active[$1]=1; [ -n "${VARSETS[$1]+x}" ] && running+=("$1")
+  return 0
+}
 for vs in "${ORDER[@]}"; do
   while [ -n "$vs" ] && [ -z "${active[$vs]:-}" ]; do
-    active[$vs]=1; vs="${NEXT[$vs]:-}"
+    add_running "$vs"; add_running "${CP_EXTRA[$vs]:-}"; vs="${NEXT[$vs]:-}"
   done
 done
+if [ -n "$EXTRA_VS" ]; then
+  IFS=',' read -r -a _extra <<< "$EXTRA_VS"
+  for vs in "${_extra[@]}"; do
+    [ -n "${VARSETS[$vs]+x}" ] || { echo "Unknown varset '$vs' (-s) — not in config/$CMOR_VARSETS." >&2; exit 1; }
+    add_running "$vs"; add_running "${CP_EXTRA[$vs]:-}"
+  done
+fi
+# vars_of <varset>: its variables, one per line (and ua<level> for the uava programs)
+vars_of() {
+  local group v
+  IFS=';' read -r -a _groups <<< "${VARSETS[$1]}"
+  for group in "${_groups[@]}"; do
+    IFS=',' read -r -a _gvars <<< "${group#*:}"
+    for v in "${_gvars[@]}"; do
+      echo "$v"; [[ "${group%%:*}" == *uava* && "$v" == va* ]] && echo "ua${v#va}"
+    done
+  done
+  return 0
+}
+if [ -n "$VARS_FILE" ]; then
+  mapfile -t VARS < <(sed -e 's/#.*//' -e 's/[[:space:]]//g' "$VARS_FILE" | grep -v '^$')
+  echo "Variables from ${VARS_FILE}"
+else
+  mapfile -t VARS < <(for vs in "${running[@]}"; do vars_of "$vs"; done | awk 'NF && !seen[$0]++')
+  echo "Variables of the varsets in config/${CMOR_VARSETS} (experiment ${EXPERIMENT}): ${running[*]}"
+fi
+[ "${#VARS[@]}" -gt 0 ] || { echo "No variables to check." >&2; exit 1; }
 for vs in $(printf '%s\n' "${!VARSETS[@]}" | sort); do
   IFS=';' read -r -a groups <<< "${VARSETS[$vs]}"
   for group in "${groups[@]}"; do
