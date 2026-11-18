@@ -37,7 +37,7 @@ OUT = os.path.join(ROOT, 'f90_src_varcalendar')
 OUTPAR = os.path.join(OUT, 'parallel')
 
 # no time loop: built from f90_src (run_out_generic.sh falls back to it)
-NO_TIME = ('RCM_fx_', 'RCM_sfc_mrsofc')
+NO_TIME = ('RCM_fx_',)
 # kept for reference only in f90_src, not used by any varset: not converted
 NOT_USED = {'RCM_sfc_mrsfl_monthly', 'RCM_sfc_mrsol_monthly', 'RCM_sfc_tsl_monthly',
             'RCM_sfc_xtrm_daily', 'RCM_sfc_xtrm_monthly'}

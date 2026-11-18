@@ -249,7 +249,7 @@ for(( j = ${yeari}; j <= ${yearf}; j++ )) ; do
     if [ "${VARCAL}" = "1" ]; then
       if [ -f "${VARCAL_DIR}/${PROG_NAME}.f90" ]; then
         src_dir="${VARCAL_DIR}"; par_dir="${VARCAL_DIR}/parallel"
-      elif [[ "${PROG_NAME}" != RCM_fx_* && "${PROG_NAME}" != RCM_sfc_mrsofc ]]; then
+      elif [[ "${PROG_NAME}" != RCM_fx_* ]]; then
         fail "${PROG_NAME}.f90 is not in ${VARCAL_DIR} (sim_start/sim_end are set in the grid ini)"
       fi
     fi
