@@ -12,7 +12,7 @@
 declare -A VARSETS=(
   [out1]="RCM_sfc_VAR:tas,ts,th,hurs,huss,hfls,hfss,evspsbl,psl,zmla,od550aer,uas,vas"
   [out2]="RCM_sfc_VAR:ps,sfcWind,z0,tauu,tauv,evspsblpot,hfso"
-  [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol,mrsofc"
+  [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol"
   [rad]="RCM_sfc_rad:rsds,rlds,rsus,rlus,rldscs,rluscs,rlut,rlutcs,rsdscs,rsdsdir,rsdt,rsuscs,rsut,rsutcs"
   [snw]="RCM_sfc_VAR:prsn,snm,snc,snw,snd,siconca,pr,prc,sund"
   [cloud1]="RCM_sfc_cloud:clh,clm"
@@ -42,7 +42,7 @@ declare -A VARSETS=(
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
-  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
+  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,mrsofc,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
   [teste]="RCM_sfc_rad:rsds"
   # Manual runs only (not in any stream)
@@ -79,8 +79,8 @@ declare -A VARSETS=(
 #
 declare -A TIME=(
   [out1]="14:00:00"
-  [out2]="12:00:00"   # + hfso
-  [soil]="12:00:00"
+  [out2]="16:00:00"   # + hfso
+  [soil]="16:00:00"
   [rad]="18:00:00"
   [snw]="12:00:00"
   [cloud1]="17:00:00"
@@ -89,12 +89,12 @@ declare -A TIME=(
   [wpth1]="13:00:00"
   [wpth2]="10:00:00"
   [wpth3]="13:00:00"
-  [wpth4]="24:00:00"   # two variables as clivi (13 h each)
+  [wpth4]="26:00:00"   # two variables as clivi (13 h each)
   [clouds]="16:00:00"  # one cloud1 variable (~8.5 h) x ~1.4 (test: 4 variables in 1.4x the time of one)
   [wpth]="20:00:00"    # one water path (10-13 h) x ~1.4
   [cape]="40:00:00"    # ~57 us per column and hour (EUR-12: ~24 h) + reading 6 3D fields
   [lcl]="08:00:00"     # lowest levels only
-  [gust]="16:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
+  [gust]="30:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
   [plev_wa]="26:00:00"     # 3hr output (outstep = 3): 2 x max 10h57 at 6hr + 4 h
   [plev_zg]="34:00:00"     # 3hr output (outstep = 3): 2 x max 14h35 at 6hr + 4 h
   [plev_uava]="44:00:00"     # 3hr output (outstep = 3): 2 x max 19h38 at 6hr + 4 h

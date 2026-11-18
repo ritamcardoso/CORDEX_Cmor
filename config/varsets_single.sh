@@ -13,7 +13,7 @@
 declare -A VARSETS=(
   [out1]="RCM_sfc_VAR:tas,ts,th,hurs,huss,hfls,hfss,evspsbl,psl,zmla,od550aer,uas,vas"
   [out2]="RCM_sfc_VAR:ps,sfcWind,z0,tauu,tauv,evspsblpot,hfso"
-  [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol,mrsofc"
+  [soil]="RCM_sfc_VAR:mrfso,mrfsos,mrso,mrsos,mrro,mrros,tsl,mrsfl,mrsol"
   [rad]="RCM_sfc_rad:rsds,rlds,rsus,rlus,rldscs,rluscs,rlut,rlutcs,rsdscs,rsdsdir,rsdt,rsuscs,rsut,rsutcs"
   [snw]="RCM_sfc_VAR:prsn,snm,snc,snw,snd,siconca,pr,prc,sund"
   [cloud1]="RCM_sfc_cloud:clh,clm"
@@ -60,9 +60,9 @@ declare -A VARSETS=(
   [zlev_ta]="RCM_zlev_ta:ta50m"
   [zlev_uava0]="RCM_zlev_uava:va50m,va100m,va150m"
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
-  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
+  [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,mrsofc,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
-  [teste]="RCM_sfc_rad:rsds"
+  [teste]="RCM_sfc_VAR:hfso,mrsofc"
   # Manual runs only (not in any stream)
   [cloud]="RCM_sfc_cloud:clh,clm,cll,clt"
   [tau]="RCM_sfc_VAR:tauu,tauv"
@@ -70,7 +70,6 @@ declare -A VARSETS=(
   [zlev_va1]="RCM_zlev_va:va200m,va250m,va300m"
   # Archive-only (CP_EXTRA companions, never processed)
   [plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_ua]="RCM_plev_ua:ua1000,ua925,ua850,ua750,ua700,ua600,ua500,ua400,ua300,ua250,ua200,ua150,ua100,ua70,ua50,ua30,ua20,ua10"
   [zlev_ua0]="RCM_zlev_ua:ua100m,ua150m,ua50m"
   [zlev_ua1]="RCM_zlev_ua:ua300m,ua250m,ua200m"
@@ -78,33 +77,19 @@ declare -A VARSETS=(
   [clouds_x]="RCM_sfc_clouds:clh,clm,cll"   # written by RCM_sfc_clouds (varset clouds)
   [wpth_x]="RCM_sfc_wpth:clivi,clwvi"       # written by RCM_sfc_wpth (varset wpth)
   # FPS-URB-RCC urban variables (WRF BEP+BEM output; fpsurb only, so not in ORDER):
-  # run with ./run.sh fpsurb <first year> <last year> urban
   [urban]="RCM_sfc_urb:tasroof,taspav,tasgree,tascan,tspav,tsroof,tsgree;RCM_sfc_VAR:hurscan,husscan,sfcWindcan,tasblue,tsblue;RCM_sfc_ts:tsskin"
-  # Noah-MP land-surface variables (LUCAS; needs LAI, FVEG, ALBEDO, EDIR/ECAN/ETRAN
-  # in wrfout), not in ORDER: run with ./run.sh lucas <first year> <last year> lsm
   [lsm]="RCM_sfc_VAR:evspsblsoi,evspsblveg,tran,lai,vegFrac,alb,albc,tcs,tgs,interception,rough,cVeg,npp"
   # FPS-LUCAS "...Lut" variables: WRF has no land-use tiles, so these are the grid-cell values,
-  # written by the programs of the corresponding variables with the Lut headers. Not in ORDER:
-  # ./run.sh <experiment> <first year> <last year> lut
   [lut]="RCM_sfc_hfls:hflsLut;RCM_sfc_hfss:hfssLut;RCM_sfc_huss:hussLut;RCM_sfc_tas:tasLut;RCM_sfc_ts:tslsiLut;RCM_sfc_lai:laiLut;RCM_sfc_mrro:mrroLut;RCM_sfc_mrso:mrsoLut;RCM_sfc_mrsos:mrsosLut;RCM_sfc_rad:rlusLut,rsusLut;RCM_sfc_snw:sweLut"
   # Irrigation (Noah-MP opt_irr > 0, with IRSIVOL IRMIVOL IRFIVOL added to wrfout by iofields), not in ORDER:
   [irr]="RCM_sfc_VAR:irrLut"
   # Hourly land-cover fractions for land-use change runs (LUCAS), not in ORDER:
-  # run with ./run.sh lucas <first year> <last year> landuse
   [landuse]="RCM_sfc_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,lcvr,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
-  # Omega on pressure levels (LUCAS wap), not in ORDER; two varsets (levels split in two, as
-  # plev_vortmen0/1) so that each fits one job at the 3-hourly output (outstep = 3):
-  # ./run.sh lucas <first year> <last year> plev_wap0 (and plev_wap1)
   [plev_wap0]="RCM_plev_wap:wap1000,wap925,wap850,wap750,wap700,wap600,wap500,wap400"
   [plev_wap1]="RCM_plev_wap:wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_wap1]="RCM_plev_wap:wap300,wap250,wap200,wap150,wap100,wap70,wap50,wap30,wap20,wap10"
-  # Relative vorticity on pressure levels (LUCAS vortmen), not in ORDER; two varsets (levels split
-  # in two, as zlev_uava0/1) so that each fits one job even with wp_step = 3:
-  # ./run.sh lucas <first year> <last year> plev_vortmen0 (and plev_vortmen1)
   [plev_vortmen0]="RCM_plev_vortmen:vortmen1000,vortmen925,vortmen850,vortmen750,vortmen700,vortmen600,vortmen500,vortmen400"
   [plev_vortmen1]="RCM_plev_vortmen:vortmen300,vortmen250,vortmen200,vortmen150,vortmen100,vortmen70,vortmen50,vortmen30"
-  # all the CORDEX-CMIP6 pressure levels (20 and 10 hPa need p_top < 20 hPa):
   #[plev_vortmen1]="RCM_plev_vortmen:vortmen300,vortmen250,vortmen200,vortmen150,vortmen100,vortmen70,vortmen50,vortmen30,vortmen20,vortmen10"
 )
 
@@ -130,7 +115,7 @@ declare -A TIME=(
   [wpth]="20:00:00"    # one water path (10-13 h) x ~1.4
   [cape]="40:00:00"    # ~57 us per column and hour (EUR-12: ~24 h) + reading 6 3D fields
   [lcl]="08:00:00"     # lowest levels only
-  [gust]="16:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
+  [gust]="18:00:00"    # U, V, PH, PHB every hour, + T, QVAPOR, QCLOUD, QKE with QKE (~30 h)
   [plev_wa]="26:00:00"     # 3hr output (outstep = 3): 2 x max 10h57 at 6hr + 4 h
   [plev_zg]="34:00:00"     # 3hr output (outstep = 3): 2 x max 14h35 at 6hr + 4 h
   [plev_uava]="44:00:00"     # 3hr output (outstep = 3): 2 x max 19h38 at 6hr + 4 h
@@ -142,7 +127,7 @@ declare -A TIME=(
   [zlev_uava1]="25:00:00"
   [fx]="01:00:00"
   [testex]="08:00:00"
-  [teste]="08:00:00"
+  [teste]="18:00:00"
   # Manual runs only
   [cloud]="28:00:00"
   [tau]="16:00:00"
@@ -197,8 +182,8 @@ declare -A MEM=(
 #
 declare -A CPUS=(
   [cape]=8         # the calculation is about half of the run
- # [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
- # [cloud2]=4
+  [cloud1]=4       # calculation ~20-25 % of the run (the rest is reading)
+  [cloud2]=4
   [cloud]=4
   [clouds]=4       # four calculations per reading
   # The water paths (wpth1-4) are limited by reading the wrfout files: no gain.
