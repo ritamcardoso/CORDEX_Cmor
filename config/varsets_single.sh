@@ -62,7 +62,7 @@ declare -A VARSETS=(
   [zlev_uava1]="RCM_zlev_uava:va200m,va250m,va300m"
   [fx]="RCM_fx_VAR:orog,sftlaf,sftlf,sfturf,sftgif,lcvr,areacella,rootd,mrsofc,slthick,landCoverFrac;RCM_fx_landuse:treeFrac,shrubFrac,grassFrac,cropFrac,baresoilFrac,urbanFrac,cnc,treeFracBdlDcd,treeFracBdlEvg,treeFracNdlDcd,residualFrac,pastureFrac"
   [testex]="RCM_sfc_xtrm:tasmax,tasmin,sfcWindmax,prcmax,prncmax"
-  [teste]="RCM_sfc_VAR:hfso,mrsofc"
+  [teste]="RCM_sfc_VAR:hfso;RCM_fx_VAR:mrsofc"
   # Manual runs only (not in any stream)
   [cloud]="RCM_sfc_cloud:clh,clm,cll,clt"
   [tau]="RCM_sfc_VAR:tauu,tauv"

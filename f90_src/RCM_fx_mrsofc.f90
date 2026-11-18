@@ -1,6 +1,6 @@
 program read_wrfout
 !
-! RCM_sfc_mrsofc — Capacity of Soil to Store Water (Field Capacity), mrsofc (fx, kg m-2):
+! RCM_fx_mrsofc — Capacity of Soil to Store Water (Field Capacity), mrsofc (fx, kg m-2):
 !
 !   mrsofc = 1000 kg m-3 x REFSMC(soil category) x total depth of the soil layers
 !
@@ -9,7 +9,7 @@ program read_wrfout
 ! dominant top-soil category SCT_DOM of the geo_em file (what real.exe gives
 ! Noah-MP as ISLTYP). Layers: the 4 Noah-MP layers (sdepth, 0.1+0.3+0.6+1.0 = 2 m),
 ! as for mrso. Sea points (LANDMASK = 0) and unknown categories are missing.
-! In the soil varset (RCM_sfc_VAR): written by the first year's job, kept afterwards.
+! In the fx varset (RCM_fx_VAR): no time loop, written once.
 !
 ! Use external modules for variables and shared subroutines
 use datvar_s

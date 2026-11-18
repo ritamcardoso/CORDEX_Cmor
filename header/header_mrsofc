@@ -1,4 +1,4 @@
-wrfvar = 'SCT_DOM'      ! dominant soil category (geo_em); REFSMC from SOILPARM.TBL, in RCM_sfc_mrsofc
+wrfvar = 'SCT_DOM'      ! dominant soil category (geo_em); REFSMC from SOILPARM.TBL, in RCM_fx_mrsofc
 vaid = 'mrsofc'
 vunts = 'kg m-2'
 lname = 'Capacity of Soil to Store Water  (Field Capacity)'

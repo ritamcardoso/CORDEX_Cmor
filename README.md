@@ -435,7 +435,7 @@ instantaneous (`time: point`), as in the T32 CMOR tables. Only the fpsurb run ha
 these fields, so `urban` is not in `ORDER`; run it on its own, e.g.
 `./run.sh fpsurb 2000 2010 urban`. Its daily and monthly means are in
 `tools/aggregation_table.txt`. The field capacity `mrsofc` (fx) is written by
-the `soil` varset (`RCM_sfc_mrsofc.f90`), from the dominant soil category of the
+the `fx` varset (`RCM_fx_mrsofc.f90`), from the dominant soil category of the
 geo_em file and the STAS field capacities of `SOILPARM.TBL`.
 
 **Noah-MP land-surface variables (`lsm` varset) and land cover (`fx`).**
