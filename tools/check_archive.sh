@@ -8,7 +8,9 @@
 # The variables: those of -v <file>, or (without -v) every variable the
 # chained varsets extract (config/varsets_chain.sh: ORDER and their NEXT
 # links, with their CP_EXTRA companions), plus the varsets of -s.
-# Usage: ./check_archive.sh [-b] [-e experiment] [-d remote|ecfs|both] [-t pct] [-v file | -s varsets] [-o dir] [-r repo] <start_year> <end_year>
+# Only the files of this run count: names with the grid's outdom (from its
+# ini, e.g. _PARIS-3_ERA5_..._WRF451R-CTRL_v1-r1_), or with -m <text>.
+# Usage: ./check_archive.sh [-b] [-e experiment] [-d remote|ecfs|both] [-t pct] [-m text] [-v file | -s varsets] [-o dir] [-r repo] <start_year> <end_year>
 #   -b submits the check as a job (scripts/run_check_archive.sh, through submit.sh).
 #----------------------------------------------------------------
 
@@ -22,13 +24,16 @@ set -euo pipefail
 #
 usage() {
   cat >&2 <<EOF
-Usage: $0 [-b] [-e <experiment>] [-d remote|ecfs|both] [-t pct] [-v <variables.txt> | -s <varset,...>] [-o <report dir>] [-r <repo dir>] <start_year> <end_year>
+Usage: $0 [-b] [-e <experiment>] [-d remote|ecfs|both] [-t pct] [-m <text>] [-v <variables.txt> | -s <varset,...>] [-o <report dir>] [-r <repo dir>] <start_year> <end_year>
   -b  submit the check as a Slurm job (through submit.sh) instead of running it here
   -e  experiment (default: asked for when -v is not given and you are at a
       terminal; otherwise CMOR_EXPERIMENT, EXPERIMENT or EXPERIMENT in env.site.sh)
   -d  archive to check: remote (REMOTE_HOST), ecfs, or both (default: remote)
   -t  allowed size difference from the previous year, in %, for copies whose
       original is no longer in OUTPUT_DIR (default: 5)
+  -m  only archived files whose name contains <text> (default: the outdom of
+      each grid's ini, e.g. _PARIS-3_ERA5_evaluation_r1i1p1f1_IDL-FCUL_WRF451R-CTRL_v1-r1_;
+      -m all: every file, whatever its name)
   -v  list of variables (e.g. variables.txt next to this script). Without -v:
       every variable of the chained varsets in config/varsets_chain.sh (or
       CMOR_VARSETS) — ORDER, their NEXT links and CP_EXTRA companions
@@ -41,9 +46,10 @@ EOF
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")" && pwd)"
 REPO="$(cd -- "$SCRIPT_DIR/.." && pwd)"; VARS_FILE=""; REPORT_DIR=""
-DEST="remote"; THRESHOLD=5; BATCH=0; EXP_OPT=""; EXTRA_VS=""
-while getopts "bd:e:s:t:v:o:r:h" opt; do
+DEST="remote"; THRESHOLD=5; BATCH=0; EXP_OPT=""; EXTRA_VS=""; MATCH=""
+while getopts "bd:e:m:s:t:v:o:r:h" opt; do
   case "$opt" in
+    m) MATCH="$OPTARG" ;;
     b) BATCH=1 ;;
     e) EXP_OPT="$OPTARG" ;;
     s) EXTRA_VS="$OPTARG" ;;
@@ -108,6 +114,7 @@ if [ "$BATCH" = 1 ]; then
   [ -n "$VARS_FILE" ] && args+=(-v "$VARS_FILE")
   [ -n "$EXTRA_VS" ] && args+=(-s "$EXTRA_VS")
   [ -n "$REPORT_DIR" ] && args+=(-o "$REPORT_DIR")
+  [ -n "$MATCH" ] && args+=(-m "$MATCH")
   args+=("$START_YEAR" "$END_YEAR")
   CHECK_ARCHIVE_ARGS="$(printf '%q ' "${args[@]}")"
   echo "Job options: ${CHECK_ARCHIVE_ARGS}"
@@ -225,6 +232,18 @@ status=0
 for grid in "${GRIDS[@]}"; do
   out="${OUTPUT_DIR[$grid]%/}"
 
+  # files of this run: names containing tag (-m, or outdom of the grid's ini)
+  if [ "$MATCH" = all ]; then
+    tag=""
+  elif [ -n "$MATCH" ]; then
+    tag="$MATCH"
+  else
+    ini="$ROOT_DIR/experiments/$EXPERIMENT/${EXPERIMENT}_${DOMAIN_ID[$grid]}_${grid}.ini"
+    tag="$(sed -n "s/^[[:space:]]*outdom[[:space:]]*=[[:space:]]*'\([^']*\)'.*/\1/p" "$ini" | head -1)"
+    [ -n "$tag" ] || { echo "  ERROR: no outdom in ${ini} — give the file-name text with -m (or -m all)." >&2; status=1; continue; }
+  fi
+  echo "Grid ${grid}: files with '${tag:-any name}'"
+
   # originals: local_size[<file name>]
   declare -A local_size=()
   if [ -d "$out" ]; then
@@ -248,7 +267,8 @@ for grid in "${GRIDS[@]}"; do
       fi
       while read -r path size; do
         [ -n "$path" ] || continue
-        name="${path##*/}"; arch_size[$name]=$size; arch_files[${path%%/*}]+="$name "
+        name="${path##*/}"; [[ "$name" == *"$tag"* ]] || continue
+        arch_size[$name]=$size; arch_files[${path%%/*}]+="$name "
       done <<< "$listing"
     else
       where="${ECFS_BASE[$grid]}"
@@ -256,7 +276,7 @@ for grid in "${GRIDS[@]}"; do
       for v in "${VARS[@]}"; do
         # els -l: like ls -l, size in column 5, name last; a missing folder is just empty
         while read -r size name; do
-          [[ "$name" == *.nc ]] || continue
+          [[ "$name" == *.nc && "$name" == *"$tag"* ]] || continue
           arch_size[$name]=$size; arch_files[$v]+="$name "
         done < <(els -l "${where}/${v}/" 2>/dev/null | awk 'NF >= 9 {print $5, $NF}')
       done

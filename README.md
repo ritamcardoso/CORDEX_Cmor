@@ -1043,6 +1043,12 @@ extract: the varsets of `ORDER` in `config/varsets_chain.sh` and all their
 update. `-s <varset,...>` adds varsets outside the streams (e.g. `-s lsm`).
 `fx` files have no years, so `-s fx` always reports them missing.
 
+**Which files.** Only the files of this run: names containing the grid's
+`outdom` from its ini (e.g.
+`_PARIS-3_ERA5_evaluation_r1i1p1f1_IDL-FCUL_WRF451R-CTRL_v1-r1_`), so copies
+left from an older run with another name (e.g. `…_WRF451R_v1-r1_`) are not
+counted. `-m <text>` matches another text instead; `-m all` takes every file.
+
 **Which experiment.** `-e <name>`. Without `-e` and `-v`, at a terminal,
 it asks, with `EXPERIMENT` from `env.site.sh` as the default (Enter keeps
 it). Otherwise (`-v` given, or in a job) it uses `CMOR_EXPERIMENT`,
@@ -1095,6 +1101,7 @@ The script exits with status 1 if anything is missing or wrong.
 | `-e <name>` | experiment (asked for without `-e` and `-v`, at a terminal) |
 | `-d remote\|ecfs\|both` | archive(s) to check (default `remote`) |
 | `-t <pct>` | size tolerance against the previous year when the original is gone (default 5) |
+| `-m <text>` | only archived files whose name contains it (default: the grid's `outdom`; `all`: any name) |
 | `-v <file>` | variables to check (default: those of the chained varsets) |
 | `-s <varset,...>` | without `-v`: also these varsets |
 | `-o <dir>`, `-r <dir>` | as for `check_and_found_var.sh` |
